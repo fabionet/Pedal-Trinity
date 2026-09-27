@@ -4,7 +4,8 @@
 #   cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release [-DPT_JUCE_DIR=/percorso/JUCE] [-DPT_ASIO_SDK_DIR=...]
 #   cmake --build build
 #
-# Se PT_JUCE_DIR non e' indicato, JUCE 7.0.12 viene scaricato automaticamente.
+# Se PT_JUCE_DIR non e' indicato, JUCE 7.0.12 viene scaricato automaticamente
+# da un commit SHA fisso.
 # Su Windows, se PT_ASIO_SDK_DIR punta allo Steinberg ASIO SDK (GPLv3), lo
 # Standalone viene compilato con il supporto ai driver ASIO.
 
@@ -22,6 +23,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(PT_VERSION_STRING "1.0.0-beta")
 set(PT_JUCE_DIR "" CACHE PATH "Cartella dei sorgenti di JUCE 7 (vuoto = download automatico)")
 set(PT_ASIO_SDK_DIR "" CACHE PATH "Cartella dello Steinberg ASIO SDK (solo Windows)")
+set(PT_JUCE_GIT_SHA "4f43011b96eb0636104cb3e433894cda98243626")
 
 # ------------------------------------------------------------------ JUCE 7
 if(PT_JUCE_DIR)
@@ -30,7 +32,7 @@ else()
     include(FetchContent)
     FetchContent_Declare(JUCE
         GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
-        GIT_TAG 7.0.12
+        GIT_TAG ${PT_JUCE_GIT_SHA}
         GIT_SHALLOW TRUE)
     FetchContent_MakeAvailable(JUCE)
 endif()
