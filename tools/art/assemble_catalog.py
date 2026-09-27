@@ -13,7 +13,7 @@ import sys
 import unicodedata
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
@@ -67,7 +67,20 @@ def convert_image(mid):
         # render trasparente (pedale + ombra): colore in JPEG, alfa in una maschera PNG a 8 bit.
         # Il colore dove l'alfa e' ~0 viene portato a nero (ombre) per non creare aloni.
         rgb = np.where(alpha > 0.01, rgb, 0.0)
-        Image.fromarray(np.clip(rgba[..., 3], 0, 255).astype(np.uint8), "L").save(os.path.join(RES, mid + "_a.png"), optimize=True)
+        # ombra: il rumore del render si comprime male. Sfocatura leggera solo dove il colore e' nero
+        # (ombra pura, non i bordi del pedale) e 128 livelli di alfa: maschere ~3 volte piu' piccole.
+        a8 = rgba[..., 3]
+        blurred = np.asarray(Image.fromarray(np.clip(a8, 0, 255).astype(np.uint8), "L")
+                             .filter(ImageFilter.GaussianBlur(1.6))).astype(np.float32)
+        shadow = (a8 < 245) & (rgb.max(axis=2) < 10)
+        # l'ombra deve svanire prima del bordo dell'immagine (altrimenti su una pedana chiara
+        # si vede un rettangolo): attenuazione verso i bordi e intensita' leggermente ridotta
+        yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+        edge = np.clip(np.minimum.reduce([xx, w - 1 - xx, yy, h - 1 - yy]) / (0.10 * min(w, h)), 0, 1)
+        edge = edge * edge * (3 - 2 * edge)
+        a8 = np.where(shadow, blurred * 0.85 * edge, a8)
+        a8 = np.round(a8 / 2.0) * 2.0
+        Image.fromarray(np.clip(a8, 0, 255).astype(np.uint8), "L").save(os.path.join(RES, mid + "_a.png"), optimize=True)
     else:
         # render opaco (vecchia scena): bordi sfumati verso il colore dello slot
         yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
