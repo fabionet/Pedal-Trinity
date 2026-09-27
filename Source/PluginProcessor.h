@@ -5,12 +5,8 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
-#include <juce_dsp/juce_dsp.h>
-
-#include "Parameters.h"
-#include "dsp/Overdrive.h"
-#include "dsp/Distortion.h"
-#include "dsp/GraphicEQ.h"
+#include "engine/Chain.h"
+#include "Presets.h"
 
 class PedalTrinityProcessor : public juce::AudioProcessor
 {
@@ -31,7 +27,7 @@ public:
     bool acceptsMidi() const override { return false; }
     bool producesMidi() const override { return false; }
     bool isMidiEffect() const override { return false; }
-    double getTailLengthSeconds() const override { return 0.0; }
+    double getTailLengthSeconds() const override { return 2.0; }
 
     int getNumPrograms() override { return 1; }
     int getCurrentProgram() override { return 0; }
@@ -42,34 +38,27 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    /** Stato completo (catena + parametri globali + interfaccia) per i preset. */
+    juce::ValueTree captureState() const;
+    void restoreState (const juce::ValueTree&);
+
+    /** Catena di default (i tre pedali originali). */
+    void loadDefaultChain();
+
     juce::AudioProcessorValueTreeState apvts;
+    pt::engine::Chain chain;
+    pt::PresetManager presets { *this };
+    juce::ValueTree uiState { "UI" };       // vista, pagina, zoom (salvati nel progetto)
 
 private:
-    /** Gestisce l'accensione/spegnimento senza click (dissolvenza 12 ms). */
-    struct BypassFader
-    {
-        juce::SmoothedValue<float> mix;
-        bool fullyOff() const { return ! mix.isSmoothing() && mix.getTargetValue() < 0.5f; }
-    };
+    static juce::AudioProcessorValueTreeState::ParameterLayout createLayout();
+    void migrateFromV1 (const juce::XmlElement&);
 
-    template <typename ProcessFn, typename ResetFn>
-    void runPedal (BypassFader& fader, bool on, juce::AudioBuffer<float>& buffer, int numCh, int numSamples,
-                   ProcessFn&& process, ResetFn&& resetFn);
-
-    std::atomic<float>* p (const juce::String& id) { return apvts.getRawParameterValue (id); }
-
-    pt::dsp::Overdrive overdrive;
-    pt::dsp::Distortion distortion;
-    pt::dsp::GraphicEQ eq;
-    BypassFader odFade, distFade, eqFade;
-    juce::AudioBuffer<float> dryBuffer;
-
-    std::atomic<float>* odOn {}; std::atomic<float>* odDrive {}; std::atomic<float>* odTone {}; std::atomic<float>* odLevel {};
-    std::atomic<float>* distOn {}; std::atomic<float>* distLevel {}; std::atomic<float>* distGain {};
-    std::atomic<float>* distLow {}; std::atomic<float>* distHigh {}; std::atomic<float>* distMid {};
-    std::atomic<float>* distMidFreq {}; std::atomic<float>* distMode {};
-    std::atomic<float>* eqOn {}; std::atomic<float>* eqLevel {};
-    std::atomic<float>* eqBand[pt::ids::eqBands] {};
+    juce::SmoothedValue<float> inGain, outGain;
+    std::atomic<float>* inParam {};
+    std::atomic<float>* outParam {};
+    std::atomic<float>* bypassParam {};
+    int maxBlock = 512;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PedalTrinityProcessor)
 };

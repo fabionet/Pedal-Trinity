@@ -1,0 +1,4332 @@
+[
+  {
+    "code": "CS-1",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Sustain",
+        "pot": "1M",
+        "taper": "A",
+        "role": "gain/feedback network (series 15k)",
+        "range": "compression 60 dB"
+      },
+      {
+        "name": "Level",
+        "pot": "50k",
+        "taper": "B",
+        "role": "output level",
+        "range": ""
+      },
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "switch",
+        "role": "NORMAL/TREBLE",
+        "range": ""
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "input_emitter_follower",
+        "components": {
+          "C": "0.1u",
+          "R": "1k",
+          "Q": "2SC1815-Y",
+          "R_bias": "220k",
+          "R_e": "10k"
+        },
+        "derived": {
+          "z_in_ohm": 220000
+        },
+        "notes": "z_in inferred"
+      },
+      {
+        "order": 2,
+        "type": "variable_gain_opamp_opto",
+        "components": {
+          "opamp": "TA7136P",
+          "R_in": "100k",
+          "Rf": "2.2M",
+          "Cf": "220p",
+          "opto": "P873G35-380 (2x LED/CdS)",
+          "C_shunt": "0.47u",
+          "comp": "27k,22p,47p"
+        },
+        "derived": {
+          "gain_ldr_dark": 22,
+          "gain_db": 26.8,
+          "fc_hz_full_gain": 329
+        },
+        "notes": "LDR PH1 across feedback, PH2 shunt; bandwidth rises with compression"
+      },
+      {
+        "order": 3,
+        "type": "mode_network",
+        "components": {
+          "treble": "0.15u+560R",
+          "normal": "1u+2.2k"
+        },
+        "derived": {
+          "treble_fc_hz": 1890,
+          "normal_fc_hz": 72
+        },
+        "notes": "factory test: TREBLE +8 dB @2 kHz, -12 dB @100 Hz vs NORMAL"
+      },
+      {
+        "order": 4,
+        "type": "detector_led_driver",
+        "components": {
+          "splitter": "Q3 2SC1815 10k/10k",
+          "pumps": "Q4/Q5 via 0.047u,100k",
+          "C_hold": "1u",
+          "R_charge": "220R",
+          "R_discharge": "330k",
+          "R_led": "4.7k",
+          "zener": "RD5.1EB"
+        },
+        "derived": {
+          "attack_tau_ms": 0.22,
+          "release_tau_ms": 330,
+          "cds_lag_on_ms": "5-20",
+          "cds_lag_off_ms": "100-1000+"
+        },
+        "notes": "CdS lag values estimated"
+      },
+      {
+        "order": 5,
+        "type": "level_output",
+        "components": {
+          "C": "0.033u",
+          "R": "47k",
+          "pot": "50KB",
+          "switch": "2SK30ATM",
+          "ef_R": "10k",
+          "R_out": "1k",
+          "C_out": "1u",
+          "R_pd": "100k"
+        },
+        "derived": {
+          "z_out_ohm": 1000
+        },
+        "notes": ""
+      }
+    ],
+    "bands": [],
+    "dynamics": {
+      "vca": "LED/CdS optocoupler P873G35-380",
+      "attack_ms": "~0.2 electrical + CdS 5-20 (L)",
+      "release_ms": "~330 electrical + CdS (L)",
+      "ratio": ">=8:1 (50 dB in -> 6 dB out at max sustain)",
+      "threshold": "~-45..-50 dBm input at max sustain (L)",
+      "transfer_table_dbm": [
+        [
+          10,
+          -5
+        ],
+        [
+          0,
+          -8
+        ],
+        [
+          -20,
+          -10
+        ],
+        [
+          -40,
+          -11
+        ]
+      ]
+    },
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "high",
+    "sources": [
+      "https://stompboxelectronics.com/wp-content/uploads/2023/01/BOSS-CS1_ServiceNotes.pdf"
+    ],
+    "specs": {
+      "supply": "9V 5mA",
+      "ein_db": -100,
+      "max_in_db": 5,
+      "max_out_db": -10,
+      "load": ">10k"
+    }
+  },
+  {
+    "code": "CS-2",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Sustain",
+        "pot": "1M",
+        "taper": "C (reverse log)",
+        "role": "series 27k into OTA Iabc: max gain/compression",
+        "range": "38 dB"
+      },
+      {
+        "name": "Attack",
+        "pot": "150k",
+        "taper": "C (reverse log)",
+        "role": "series 10k, recharge of C1 10u (really recovery/release)",
+        "range": "tau 100 ms..1.6 s"
+      },
+      {
+        "name": "Level",
+        "pot": "50k",
+        "taper": "A",
+        "role": "output level",
+        "range": ""
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "input_buffer",
+        "components": {
+          "R": "10k",
+          "C": "22n",
+          "R_bias": "1M",
+          "Q1": "2SK30ATM-Y SF (10k)",
+          "Q4": "2SC732 EF (10k)"
+        },
+        "derived": {
+          "hpf_hz": 7.2
+        },
+        "notes": ""
+      },
+      {
+        "order": 2,
+        "type": "ota_vca",
+        "components": {
+          "ic": "BA662A",
+          "R_in": "2.2k x2",
+          "R_bias": "15k",
+          "C_bias": "10n",
+          "C6": "1u",
+          "R_load": "150k",
+          "R_iabc": "27k + Sustain 1MC",
+          "Q7": "EF buffering C1"
+        },
+        "derived": {
+          "vout": "gm*150k*Vd, gm=Iabc/(2VT)",
+          "iabc": "(V_C1 - Vbe - Vpin1)/(27k+VR1)",
+          "gain_range_db": 31.6
+        },
+        "notes": "pin6 OTA out, pins 7-8 internal buffer"
+      },
+      {
+        "order": 3,
+        "type": "post_ota_lpf",
+        "components": {
+          "R": "15k",
+          "C": "10n"
+        },
+        "derived": {
+          "fc_hz": 1061
+        },
+        "notes": "6 dB/oct, dark CS-2 tone"
+      },
+      {
+        "order": 4,
+        "type": "phase_splitter",
+        "components": {
+          "Q5": "2SC732",
+          "R_c": "10k",
+          "R_e": "10k",
+          "C": "47n",
+          "R": "10k",
+          "pot": "Level 50KA"
+        },
+        "derived": {
+          "hpf_hz": 56
+        },
+        "notes": "audio from emitter"
+      },
+      {
+        "order": 5,
+        "type": "transistor_pump_fullwave_detector",
+        "components": {
+          "Q8_Q9": "2SC1815 antiphase",
+          "C_in": "10n x2",
+          "R_base": "1M x2",
+          "clamp": "1S2473",
+          "C1": "10u/25V"
+        },
+        "derived": {
+          "base_hpf_hz": 15.9
+        },
+        "notes": "Dyna/Ross style; peaks discharge C1"
+      },
+      {
+        "order": 6,
+        "type": "timing",
+        "components": {
+          "R1": "10k",
+          "VR2": "150KC",
+          "C1": "10u"
+        },
+        "derived": {
+          "release_tau_ms": [
+            100,
+            1600
+          ],
+          "attack_ms": "<1..few (L)"
+        },
+        "notes": ""
+      },
+      {
+        "order": 7,
+        "type": "output",
+        "components": {
+          "Q3": "JFET switch",
+          "C20": "47n",
+          "Q6": "EF 10k",
+          "C22": "1u",
+          "R37": "1k",
+          "R36": "100k"
+        },
+        "derived": {
+          "z_out_ohm": 1000
+        },
+        "notes": ""
+      }
+    ],
+    "bands": [],
+    "dynamics": {
+      "vca": "BA662A OTA (Iabc control)",
+      "attack_ms": "<1-few (L)",
+      "release_ms": [
+        100,
+        1600
+      ],
+      "ratio": "~3:1 (-50..-40 dBm), >=80:1 (-40..0 dBm)",
+      "threshold": "program dependent; makeup +38 dB max / +7 dB min",
+      "transfer_table_dbm": [
+        [
+          -50,
+          -12
+        ],
+        [
+          -40,
+          -8.5
+        ],
+        [
+          0,
+          -8
+        ]
+      ]
+    },
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "high",
+    "sources": [
+      "https://stompboxelectronics.com/wp-content/uploads/2023/01/BOSS-CS2_ServiceNotes.pdf",
+      "https://www.freestompboxes.org/viewtopic.php?f=1&t=4405&start=20",
+      "https://support.roland.com/hc/en-us/articles/201947179-CS-2-Specifications"
+    ],
+    "specs": {
+      "supply": "9V 4mA",
+      "z_in": "1M",
+      "load": ">10k",
+      "ein_dbm": -110,
+      "max_in_dbm": -10,
+      "comp_range_db": 38
+    }
+  },
+  {
+    "code": "CS-3",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Level",
+        "pot": "50k",
+        "taper": "A",
+        "role": "output level",
+        "range": ""
+      },
+      {
+        "name": "Tone",
+        "pot": "20k",
+        "taper": "B",
+        "role": "HF shelf boost/cut",
+        "range": "~+/-10 dB (L)"
+      },
+      {
+        "name": "Attack",
+        "pot": "250k",
+        "taper": "C (reverse log)",
+        "role": "recovery of C8 4.7u (CW preserves pick attack)",
+        "range": "tau 103 ms..1.28 s"
+      },
+      {
+        "name": "Sustain",
+        "pot": "20k",
+        "taper": "B",
+        "role": "clamps max control voltage = max gain",
+        "range": "CCW = limiter"
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "input_buffer",
+        "components": {
+          "R": "10k",
+          "C": "22n",
+          "R_bias": "1M to 4.5V",
+          "clamp": "D2/D3",
+          "opamp": "M5218L IC1a"
+        },
+        "derived": {
+          "hpf_hz": 7.2
+        },
+        "notes": ""
+      },
+      {
+        "order": 2,
+        "type": "vca_i2v",
+        "components": {
+          "vca": "uPC1252H2",
+          "C4": "1u",
+          "R9": "10k",
+          "R6": "10k",
+          "C5": "1.8n",
+          "R7": "2.7k",
+          "R8": "47R",
+          "R10": "1k"
+        },
+        "derived": {
+          "unity_gain_at_0V": true,
+          "lpf_hz": 8840,
+          "hpf_hz": 15.9,
+          "control_divider": 0.045,
+          "control_law": "~6 mV/dB (2181 class, L)"
+        },
+        "notes": "V2181/THAT2181 valid substitute"
+      },
+      {
+        "order": 3,
+        "type": "feedback_fullwave_detector",
+        "components": {
+          "pos": "R12 47k, C7 10n, R14 1M, D5 -> Q8 2SC945",
+          "neg": "C6 1u, R15 100k, IC4a inv (R16 100k), R17 47k, C9 10n, R18 1M, D4 -> Q6",
+          "C8": "4.7u/35V",
+          "Q7": "2SK117 SF buffer"
+        },
+        "derived": {
+          "sidechain_hpf_hz": 339,
+          "attack_ms": "<1 (L)"
+        },
+        "notes": "sidechain taken after VCA (feedback)"
+      },
+      {
+        "order": 4,
+        "type": "recovery",
+        "components": {
+          "R2": "22k",
+          "VR3": "250KC",
+          "C8": "4.7u"
+        },
+        "derived": {
+          "release_tau_ms": [
+            103,
+            1280
+          ]
+        },
+        "notes": ""
+      },
+      {
+        "order": 5,
+        "type": "sustain_clamp",
+        "components": {
+          "VR4": "20KB",
+          "R4": "4.7k",
+          "R3": "22k",
+          "buffer": "IC4b",
+          "D6": "clamp"
+        },
+        "derived": {
+          "wiper_v": [
+            4.24,
+            8.09
+          ]
+        },
+        "notes": "wiper range inferred"
+      },
+      {
+        "order": 6,
+        "type": "tone_active_shelf",
+        "components": {
+          "opamp": "BA718 IC2b",
+          "R_in": "10k",
+          "R_fb": "10k",
+          "VR2": "20KB",
+          "R1": "4.7k",
+          "C1": "27n"
+        },
+        "derived": {
+          "shelf_hz_extreme": 1250,
+          "shelf_hz_center": 400,
+          "range_db": 9.9
+        },
+        "notes": "formula L"
+      },
+      {
+        "order": 7,
+        "type": "output",
+        "components": {
+          "C13": "47n",
+          "R36": "10k",
+          "Level": "50KA",
+          "Q4": "JFET",
+          "C15": "47n",
+          "Q1": "EF 10k",
+          "C17": "1u",
+          "R31": "1k",
+          "R30": "100k"
+        },
+        "derived": {
+          "hpf_hz": 56,
+          "z_out_ohm": 1000
+        },
+        "notes": ""
+      }
+    ],
+    "bands": [],
+    "dynamics": {
+      "vca": "NEC uPC1252H2 dB-linear VCA",
+      "attack_ms": "<1 (L)",
+      "release_ms": [
+        103,
+        1280
+      ],
+      "ratio": "program dependent ~3:1..>10:1 (L)",
+      "threshold": "set by Sustain clamp"
+    },
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "high",
+    "sources": [
+      "https://stompboxelectronics.com/wp-content/uploads/2023/01/BOSS-CS3_ServiceNotes.pdf",
+      "https://static.roland.com/assets/media/pdf/CS-3_eng03_W.pdf"
+    ],
+    "specs": {
+      "supply": "9V 10-11mA",
+      "level_dbu": -20,
+      "z_in": "1M",
+      "z_out": "1k",
+      "ein_dbm": -110
+    }
+  },
+  {
+    "code": "LM-2",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Level",
+        "pot": "100k",
+        "taper": "A",
+        "role": "feedback of VCA I-V stage",
+        "range": "max ~+15 dB"
+      },
+      {
+        "name": "Tone",
+        "pot": "20k",
+        "taper": "B",
+        "role": "tone",
+        "range": ""
+      },
+      {
+        "name": "Release",
+        "pot": "1M",
+        "taper": "A",
+        "role": "release of peak hold",
+        "range": "22 ms..1.02 s"
+      },
+      {
+        "name": "Threshold",
+        "pot": "50k",
+        "taper": "B",
+        "role": "threshold (with 330k)",
+        "range": ""
+      },
+      {
+        "name": "Ratio ADJ (trim)",
+        "pot": "1k",
+        "taper": "B",
+        "role": "factory ratio",
+        "range": ""
+      },
+      {
+        "name": "Threshold ADJ (trim)",
+        "pot": "50k",
+        "taper": "B",
+        "role": "factory",
+        "range": ""
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "input_buffer",
+        "components": {
+          "R": "10k",
+          "C": "47n",
+          "R_bias": "1M to 4.3V",
+          "Q2": "2SK117 SF 4.7k"
+        },
+        "derived": {
+          "hpf_hz": 3.4
+        },
+        "notes": ""
+      },
+      {
+        "order": 2,
+        "type": "vca_i2v",
+        "components": {
+          "vca": "uPC1252H2",
+          "C2": "10u",
+          "R13": "18k",
+          "R11": "4.7k",
+          "C11": "10n",
+          "fb": "Level 100KA || 220p",
+          "R14": "47R"
+        },
+        "derived": {
+          "max_gain": 5.6,
+          "max_gain_db": 15,
+          "lpf_hz": 7200
+        },
+        "notes": ""
+      },
+      {
+        "order": 3,
+        "type": "lowpass_shelf",
+        "components": {
+          "R32": "18k",
+          "R33": "5.6k",
+          "C21": "10n",
+          "Q7": "EF"
+        },
+        "derived": {
+          "pole_hz": 674,
+          "zero_hz": 2840,
+          "shelf_db": -12.5
+        },
+        "notes": "L"
+      },
+      {
+        "order": 4,
+        "type": "tone",
+        "components": {
+          "opamp": "M5218L IC2a",
+          "R": "10k x3",
+          "C12": "10p",
+          "VR3": "20kB",
+          "R2": "2.2k",
+          "C": "12n"
+        },
+        "derived": {
+          "corner_hz": 6030
+        },
+        "notes": "M"
+      },
+      {
+        "order": 5,
+        "type": "feedforward_log_rectifier",
+        "components": {
+          "C16": "0.1u",
+          "R37": "47k",
+          "log_amp": "IC3a antiparallel diodes, 1M, 10k, 47u",
+          "rectifier": "IC3b/IC4b precision full-wave",
+          "thermistor": "SPT-1000"
+        },
+        "derived": {},
+        "notes": "sidechain from input buffer"
+      },
+      {
+        "order": 6,
+        "type": "peak_hold",
+        "components": {
+          "C24": "1u tant",
+          "R47": "22k",
+          "VR2": "1MA"
+        },
+        "derived": {
+          "attack_ms": "<1 (L)",
+          "release_tau_ms": [
+            22,
+            1022
+          ]
+        },
+        "notes": ""
+      },
+      {
+        "order": 7,
+        "type": "control_law",
+        "components": {
+          "IC5": "M5223L",
+          "R48": "2.2k",
+          "R49": "1.8k",
+          "D10": "one-sided",
+          "VR5": "1kB",
+          "R28": "2.2k"
+        },
+        "derived": {
+          "ratio": ">=10:1 (L)",
+          "cal": "100 Hz 0 dBm in -> -18 dBm out"
+        },
+        "notes": "acts only above threshold"
+      },
+      {
+        "order": 8,
+        "type": "output",
+        "components": {
+          "C13": "47n",
+          "Q4": "JFET",
+          "C3": "47n",
+          "Q1": "EF 10k",
+          "C28": "10u",
+          "R5": "1k",
+          "R6": "100k"
+        },
+        "derived": {
+          "z_out_ohm": 1000
+        },
+        "notes": ""
+      }
+    ],
+    "bands": [],
+    "dynamics": {
+      "vca": "NEC uPC1252H2 (feed-forward)",
+      "attack_ms": "<1 (L)",
+      "release_ms": [
+        22,
+        1022
+      ],
+      "ratio": ">=10:1 fixed (L)",
+      "threshold": "Threshold pot 50KB + 330k"
+    },
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "high",
+    "sources": [
+      "https://stompboxelectronics.com/wp-content/uploads/2023/01/BOSS-LM2_ServiceNotes.pdf"
+    ],
+    "specs": {
+      "supply": "9V 12mA",
+      "noise_dbm": -100,
+      "z_in": "1M",
+      "load": ">=10k"
+    }
+  },
+  {
+    "code": "LMB-3",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Threshold",
+        "pot": "",
+        "taper": "",
+        "role": "threshold",
+        "range": ""
+      },
+      {
+        "name": "Ratio",
+        "pot": "",
+        "taper": "",
+        "role": "ratio",
+        "range": "~1:1..limit (L)"
+      },
+      {
+        "name": "Enhance",
+        "pot": "",
+        "taper": "",
+        "role": "harmonic/EQ enhancer lows+highs",
+        "range": ""
+      },
+      {
+        "name": "Level",
+        "pot": "",
+        "taper": "",
+        "role": "output",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {
+      "vca": "unknown",
+      "attack_ms": null,
+      "release_ms": null,
+      "ratio": "variable (2:1 example in manual)",
+      "threshold": "variable"
+    },
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "low",
+    "sources": [
+      "https://www.boss.info/us/products/lmb-3/specifications/",
+      "https://www.strumentimusicali.net/manuali/BOSS_LMB3_ENG.pdf"
+    ],
+    "specs": {
+      "level_dbu": -20,
+      "z_in": "1M",
+      "z_out": "1k",
+      "noise_dbu": -86,
+      "current_ma": 17
+    }
+  },
+  {
+    "code": "NS-2",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Threshold",
+        "pot": "",
+        "taper": "",
+        "role": "threshold",
+        "range": ""
+      },
+      {
+        "name": "Decay",
+        "pot": "",
+        "taper": "",
+        "role": "decay (CW longer)",
+        "range": "~30 ms..1-2 s (L)"
+      },
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "switch",
+        "role": "REDUCTION/MUTE",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {
+      "vca": "VCA (probably uPC1252H2, L)",
+      "attack_ms": "~1 (L)",
+      "release_ms": "Decay ~30..2000 (L)",
+      "ratio": "downward expander ~1:2..1:4 below threshold (L)",
+      "threshold": "Threshold knob"
+    },
+    "pitch": {},
+    "routing": {
+      "input": "to SEND and detector",
+      "return": "RETURN -> VCA -> OUTPUT",
+      "key": "clean input keys the VCA on loop"
+    },
+    "modes": [
+      "REDUCTION mode: pedal Normal/Reduction",
+      "MUTE mode: pedal Reduction/Mute"
+    ],
+    "confidence": "medium",
+    "sources": [
+      "https://static.roland.com/assets/media/pdf/NS-2_e01_W.pdf"
+    ],
+    "specs": {
+      "level_dbu": -20,
+      "z_in": "1M",
+      "z_out": "1k",
+      "current_ma": 20
+    }
+  },
+  {
+    "code": "SG-1",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Sens",
+        "pot": "100k",
+        "taper": "A",
+        "role": "trigger sensitivity",
+        "range": "~0.25 mV peak at max (L)"
+      },
+      {
+        "name": "Attack",
+        "pot": "20k",
+        "taper": "B",
+        "role": "swell time",
+        "range": "tau 100..400 ms (fade 0.3..2 s)"
+      },
+      {
+        "name": "TR1 (trim)",
+        "pot": "10k",
+        "taper": "",
+        "role": "attack offset",
+        "range": ""
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "input_emitter_follower",
+        "components": {
+          "R1": "1k",
+          "C1": "47n",
+          "T1": "2SC/BC549",
+          "R2": "470k",
+          "R3": "10k"
+        },
+        "derived": {
+          "z_in_ohm": 470000
+        },
+        "notes": "L"
+      },
+      {
+        "order": 2,
+        "type": "jfet_attenuator_audio",
+        "components": {
+          "R4": "22k",
+          "C3": "1u",
+          "R6": "470k to 5.6V zener rail",
+          "T2": "2SK30A",
+          "R7": "47k",
+          "C6": "0.47u",
+          "R8": "1M",
+          "T3": "EF 1M/10k",
+          "out": "1k,1u,100k"
+        },
+        "derived": {
+          "gate_tau_ms": 22
+        },
+        "notes": ""
+      },
+      {
+        "order": 3,
+        "type": "trigger_detector",
+        "components": {
+          "C2": "22n",
+          "Sens": "100kA",
+          "R14": "470R",
+          "C9": "22n",
+          "R15": "220k",
+          "R17": "1M",
+          "R16": "390R (or 3.9k)",
+          "C10": "1u",
+          "R19": "390k||1n",
+          "T4": "phase splitter 4.7k/4.7k",
+          "T5_T6": "pulse switches"
+        },
+        "derived": {
+          "hpf_hz": 32.9,
+          "gain": 2565,
+          "gain_db": 68,
+          "gain_hpf_hz": 408,
+          "alt_gain_R16_3k9": 257
+        },
+        "notes": "sources disagree on R16"
+      },
+      {
+        "order": 4,
+        "type": "ramp",
+        "components": {
+          "C16": "10u",
+          "C15": "47n",
+          "D4": "",
+          "R24": "10k",
+          "TR1": "10k",
+          "Attack": "20kB"
+        },
+        "derived": {
+          "attack_tau_ms": [
+            100,
+            400
+          ],
+          "fade_in_s": [
+            0.3,
+            2.0
+          ]
+        },
+        "notes": "reset on each new note"
+      }
+    ],
+    "bands": [],
+    "dynamics": {
+      "vca": "JFET 2SK30A variable resistance",
+      "attack_ms": [
+        300,
+        2000
+      ],
+      "release_ms": "reset at new note",
+      "ratio": "n/a (swell)",
+      "threshold": "Sens"
+    },
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "medium",
+    "sources": [
+      "https://generalguitargadgets.com/wp-content/uploads/ggg_sgo_sc.pdf",
+      "https://stompboxelectronics.com/wp-content/uploads/2023/01/BOSS-SG1_ServiceNotes.pdf"
+    ]
+  },
+  {
+    "code": "CP-1X",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Comp",
+        "pot": "",
+        "taper": "",
+        "role": "comp",
+        "range": ""
+      },
+      {
+        "name": "Ratio",
+        "pot": "",
+        "taper": "",
+        "role": "ratio",
+        "range": ""
+      },
+      {
+        "name": "Attack",
+        "pot": "",
+        "taper": "",
+        "role": "attack",
+        "range": ""
+      },
+      {
+        "name": "Level",
+        "pot": "",
+        "taper": "",
+        "role": "level",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {
+      "vca": "DSP (MDP multiband, band count unpublished)",
+      "attack_ms": null,
+      "release_ms": null,
+      "ratio": "variable",
+      "threshold": "variable"
+    },
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "high",
+    "sources": [
+      "https://www.boss.info/global/products/cp-1x/specifications/"
+    ],
+    "specs": {
+      "level_dbu": -20,
+      "z_in": "1M",
+      "z_out": "1k",
+      "current_ma": 90,
+      "internal_v": 18,
+      "meter": "gain reduction"
+    }
+  },
+  {
+    "code": "BC-1X",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Threshold",
+        "pot": "",
+        "taper": "",
+        "role": "threshold",
+        "range": ""
+      },
+      {
+        "name": "Ratio",
+        "pot": "",
+        "taper": "",
+        "role": "ratio",
+        "range": ""
+      },
+      {
+        "name": "Release",
+        "pot": "",
+        "taper": "",
+        "role": "release",
+        "range": ""
+      },
+      {
+        "name": "Level",
+        "pot": "",
+        "taper": "",
+        "role": "level",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {
+      "vca": "DSP (MDP multiband, band count unpublished)",
+      "attack_ms": null,
+      "release_ms": null,
+      "ratio": "variable",
+      "threshold": "variable"
+    },
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "high",
+    "sources": [
+      "https://www.boss.info/global/products/bc-1x/specifications/"
+    ],
+    "specs": {
+      "level_dbu": -20,
+      "z_in": "1M",
+      "z_out": "1k",
+      "current_ma": 90,
+      "internal_v": 18,
+      "meter": "12-seg gain reduction"
+    }
+  },
+  {
+    "code": "NS-1X",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Threshold",
+        "pot": "",
+        "taper": "",
+        "role": "threshold",
+        "range": ""
+      },
+      {
+        "name": "Decay",
+        "pot": "",
+        "taper": "",
+        "role": "decay",
+        "range": ""
+      },
+      {
+        "name": "Damp",
+        "pot": "",
+        "taper": "",
+        "role": "attenuation depth (name to verify)",
+        "range": ""
+      },
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "",
+        "role": "Gate/Reduction/Mute",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {
+      "vca": "DSP (MDP)",
+      "attack_ms": null,
+      "release_ms": "Decay",
+      "ratio": null,
+      "threshold": "Threshold"
+    },
+    "pitch": {},
+    "routing": {
+      "send_return": true
+    },
+    "modes": [
+      "Gate",
+      "Reduction",
+      "Mute"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://www.boss.info/global/products/ns-1x/specifications/"
+    ],
+    "specs": {
+      "fs_hz": 48000,
+      "ad": "24-bit + AF",
+      "da_bits": 32,
+      "dsp": "32-bit float",
+      "level_dbu": -20,
+      "max_dbu": 7,
+      "z_in": "1M",
+      "z_out": "1k",
+      "current_ma": 60
+    }
+  },
+  {
+    "code": "GE-7",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "100",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band boost/cut slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "200",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band boost/cut slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "400",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band boost/cut slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "800",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band boost/cut slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "1.6k",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band boost/cut slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "3.2k",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band boost/cut slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "6.4k",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band boost/cut slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "Level",
+        "pot": "10k",
+        "taper": "B",
+        "role": "level slider",
+        "range": "+/-15 dB"
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "input_preemphasis",
+        "components": {
+          "R30": "10k",
+          "C22": "47n",
+          "R29": "470k",
+          "opamp": "HA12017",
+          "Rf": "4.7k",
+          "Rg": "470R",
+          "Cg": "15n",
+          "C21": "47p"
+        },
+        "derived": {
+          "hpf_hz": 7.2,
+          "shelf_gain": 11,
+          "shelf_db": 20.8,
+          "zero_hz": 2050,
+          "pole_hz": 22600
+        },
+        "notes": "cancelled by de-emphasis"
+      },
+      {
+        "order": 2,
+        "type": "level_stage",
+        "components": {
+          "opamp": "JRC4558 U4B",
+          "R27": "10k",
+          "R26": "10k",
+          "VR8": "10kB",
+          "R2": "2.2k",
+          "C16": "10u"
+        },
+        "derived": {
+          "gain_extreme": 5.55,
+          "range_db": 14.9
+        },
+        "notes": ""
+      },
+      {
+        "order": 3,
+        "type": "eq_summing_amp",
+        "components": {
+          "opamp": "JRC4558 U4A",
+          "R24": "3.3k",
+          "R25": "3.3k",
+          "sliders": "7x B10K between nodes A and B"
+        },
+        "derived": {
+          "boost_gain": "1 + 3.3k/|Zbranch|",
+          "ideal_peak_db": 20.8
+        },
+        "notes": "branch to B end = boost, A end = cut; solve nodally"
+      },
+      {
+        "order": 4,
+        "type": "gyrator_branches",
+        "components": {
+          "opamps": "TL022 U1-U3 (followers)",
+          "R2": "330R",
+          "pulldown": "470k"
+        },
+        "derived": {
+          "q_branch": "3.1-4.1",
+          "q_effective": "0.7-0.9 (L)"
+        },
+        "notes": "see bands"
+      },
+      {
+        "order": 5,
+        "type": "band_6k4_rc_shelf",
+        "components": {
+          "C1": "47n",
+          "R3": "820R"
+        },
+        "derived": {
+          "fc_hz": 4130,
+          "gain_extreme": 5.0
+        },
+        "notes": "not a gyrator"
+      },
+      {
+        "order": 6,
+        "type": "bypass_deemphasis",
+        "components": {
+          "C19": "1u",
+          "R32": "1M",
+          "jfets": "2SK30A Q4/Q5",
+          "ff": "2SC945",
+          "R33": "4.7k",
+          "R36": "470R",
+          "C27": "15n"
+        },
+        "derived": {
+          "pole_hz": 2050,
+          "zero_hz": 22600
+        },
+        "notes": ""
+      },
+      {
+        "order": 7,
+        "type": "output_ef",
+        "components": {
+          "C26": "47n",
+          "R34": "1M",
+          "Q1": "2SC732",
+          "R15": "10k",
+          "R14": "1k",
+          "C11": "1u",
+          "R12": "100k"
+        },
+        "derived": {
+          "z_out_ohm": 1000
+        },
+        "notes": ""
+      }
+    ],
+    "bands": [
+      {
+        "f_hz": 100,
+        "q": 3.36,
+        "range_db": 15,
+        "f0_calc_hz": 95.6,
+        "R1": 100000.0,
+        "R2": 330,
+        "Cs": 1.5e-06,
+        "Cg": 5.6e-08,
+        "L_H": 1.848,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 200,
+        "q": 3.47,
+        "range_db": 15,
+        "f0_calc_hz": 204.2,
+        "R1": 82000.0,
+        "R2": 330,
+        "Cs": 6.8e-07,
+        "Cg": 3.3e-08,
+        "L_H": 0.893,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 400,
+        "q": 3.71,
+        "range_db": 15,
+        "f0_calc_hz": 393.8,
+        "R1": 100000.0,
+        "R2": 330,
+        "Cs": 3.3e-07,
+        "Cg": 1.5e-08,
+        "L_H": 0.495,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 800,
+        "q": 4.07,
+        "range_db": 15,
+        "f0_calc_hz": 790.0,
+        "R1": 100000.0,
+        "R2": 330,
+        "Cs": 1.5e-07,
+        "Cg": 8.2e-09,
+        "L_H": 0.2706,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 1600,
+        "q": 3.11,
+        "range_db": 15,
+        "f0_calc_hz": 1549.3,
+        "R1": 82000.0,
+        "R2": 330,
+        "Cs": 1e-07,
+        "Cg": 3.9e-09,
+        "L_H": 0.1055,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 3200,
+        "q": 3.74,
+        "range_db": 15,
+        "f0_calc_hz": 3303.0,
+        "R1": 82000.0,
+        "R2": 330,
+        "Cs": 3.9e-08,
+        "Cg": 2.2e-09,
+        "L_H": 0.0595,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 6400,
+        "q": null,
+        "range_db": 14,
+        "type": "rc_high_shelf",
+        "R": 820,
+        "C": 4.7e-08,
+        "fc_calc_hz": 4130
+      }
+    ],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "high",
+    "sources": [
+      "https://experimentalistsanonymous.com/diy/Schematics/Tone%20Control%20and%20EQs/BOSS%20GE-7.pdf",
+      "https://cushychicken.github.io/ltspice-boss-ge7-equalizer/",
+      "http://effectslayouts.com/wp-content/uploads/2023/05/Prismatic-EQ-Build-Doc.pdf",
+      "https://tagboardeffects.blogspot.com/2014/05/4-band-gyrator-eq.html",
+      "https://www.boss.info/us/products/ge-7/specifications/"
+    ],
+    "specs": {
+      "z_in": "1M (schematic ~470k)",
+      "z_out": "1k",
+      "level_dbu": -20,
+      "current_ma": 30,
+      "noise_uvrms_sim": 7.8
+    }
+  },
+  {
+    "code": "GE-7B",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "62",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "125",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "250",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "500",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "1k",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "2k",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "4k",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "Level",
+        "pot": "10k",
+        "taper": "B",
+        "role": "level",
+        "range": "+/-15 dB"
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "same_as_GE-7",
+        "components": {},
+        "derived": {},
+        "notes": "GE-7 topology with bass branch values"
+      }
+    ],
+    "bands": [
+      {
+        "f_hz": 62,
+        "q": 3.36,
+        "range_db": 15,
+        "f0_calc_hz": 65.2,
+        "R1": 100000.0,
+        "R2": 330,
+        "Cs": 2.2e-06,
+        "Cg": 8.2e-08,
+        "L_H": 2.706,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 125,
+        "q": 2.79,
+        "range_db": 15,
+        "f0_calc_hz": 115.2,
+        "R1": 82000.0,
+        "R2": 330,
+        "Cs": 1.5e-06,
+        "Cg": 4.7e-08,
+        "L_H": 1.2718,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 250,
+        "q": 3.77,
+        "range_db": 15,
+        "f0_calc_hz": 272.5,
+        "R1": 100000.0,
+        "R2": 330,
+        "Cs": 4.7e-07,
+        "Cg": 2.2e-08,
+        "L_H": 0.726,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 500,
+        "q": 4.07,
+        "range_db": 15,
+        "f0_calc_hz": 539.2,
+        "R1": 100000.0,
+        "R2": 330,
+        "Cs": 2.2e-07,
+        "Cg": 1.2e-08,
+        "L_H": 0.396,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 1000,
+        "q": 2.54,
+        "range_db": 15,
+        "f0_calc_hz": 1265.0,
+        "R1": 82000.0,
+        "R2": 330,
+        "Cs": 1.5e-07,
+        "Cg": 3.9e-09,
+        "L_H": 0.1055,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 2000,
+        "q": 3.47,
+        "range_db": 15,
+        "f0_calc_hz": 2042.4,
+        "R1": 82000.0,
+        "R2": 330,
+        "Cs": 6.8e-08,
+        "Cg": 3.3e-09,
+        "L_H": 0.0893,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 4000,
+        "q": null,
+        "range_db": 15,
+        "type": "rc_high_shelf",
+        "R": 560,
+        "C": 6.8e-08,
+        "fc_calc_hz": 4180
+      }
+    ],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "medium",
+    "sources": [
+      "http://effectslayouts.com/wp-content/uploads/2023/05/Prismatic-EQ-Build-Doc.pdf",
+      "https://reverb.com/p/boss-ge-7b-bass-equalizer"
+    ]
+  },
+  {
+    "code": "GEB-7",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "50",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "120",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "400",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "500",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "800",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "4.5k",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "10k",
+        "pot": "10k",
+        "taper": "B",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "Level",
+        "pot": "10k",
+        "taper": "B",
+        "role": "level",
+        "range": "+/-15 dB"
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "same_as_GE-7 (L)",
+        "components": {
+          "mod_list_caps": "C1 27n,C3 15n,C4 2.2n,C5 15n,C6 82n,C7 0.1u,C8 0.15u,C9 1.5u,C10 4.7u,C13 68n,C15 33n,C16 27n,C20 22n,C31 22n"
+        },
+        "derived": {},
+        "notes": "designator mapping uncertain"
+      }
+    ],
+    "bands": [
+      {
+        "f_hz": 50,
+        "q": 3.5,
+        "range_db": 15,
+        "type": "gyrator_peak (designed, L)",
+        "L_H": 3.6765,
+        "Cs": 2.76e-06,
+        "R2": 330
+      },
+      {
+        "f_hz": 120,
+        "q": 3.5,
+        "range_db": 15,
+        "type": "gyrator_peak (designed, L)",
+        "L_H": 1.5319,
+        "Cs": 1.15e-06,
+        "R2": 330
+      },
+      {
+        "f_hz": 400,
+        "q": 3.5,
+        "range_db": 15,
+        "type": "gyrator_peak (designed, L)",
+        "L_H": 0.4596,
+        "Cs": 3.44e-07,
+        "R2": 330
+      },
+      {
+        "f_hz": 500,
+        "q": 3.5,
+        "range_db": 15,
+        "type": "gyrator_peak (designed, L)",
+        "L_H": 0.3676,
+        "Cs": 2.76e-07,
+        "R2": 330
+      },
+      {
+        "f_hz": 800,
+        "q": 3.5,
+        "range_db": 15,
+        "type": "gyrator_peak (designed, L)",
+        "L_H": 0.2298,
+        "Cs": 1.72e-07,
+        "R2": 330
+      },
+      {
+        "f_hz": 4500,
+        "q": 3.5,
+        "range_db": 15,
+        "type": "gyrator_peak (designed, L)",
+        "L_H": 0.0408,
+        "Cs": 3.06e-08,
+        "R2": 330
+      },
+      {
+        "f_hz": 10000,
+        "q": null,
+        "range_db": 15,
+        "type": "rc_high_shelf (L)",
+        "R": 820,
+        "C": 2.7e-08,
+        "fc_calc_hz": 7190
+      }
+    ],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "low",
+    "sources": [
+      "https://www.boss.info/us/products/geb-7/specifications/",
+      "https://www.freestompboxes.org/viewtopic.php?t=723&start=120"
+    ],
+    "specs": {
+      "z_in": "1M",
+      "z_out": "1k",
+      "level_dbu": -20,
+      "current_ma": 30
+    }
+  },
+  {
+    "code": "GE-6",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "100",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "200",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "400",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "800",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "1.6k",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "3.2k",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-15 dB"
+      }
+    ],
+    "stages": [],
+    "bands": [
+      {
+        "f_hz": 100,
+        "q": 3.36,
+        "range_db": 15,
+        "f0_calc_hz": 95.6,
+        "R1": 100000.0,
+        "R2": 330,
+        "Cs": 1.5e-06,
+        "Cg": 5.6e-08,
+        "L_H": 1.848,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 200,
+        "q": 3.47,
+        "range_db": 15,
+        "f0_calc_hz": 204.2,
+        "R1": 82000.0,
+        "R2": 330,
+        "Cs": 6.8e-07,
+        "Cg": 3.3e-08,
+        "L_H": 0.893,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 400,
+        "q": 3.71,
+        "range_db": 15,
+        "f0_calc_hz": 393.8,
+        "R1": 100000.0,
+        "R2": 330,
+        "Cs": 3.3e-07,
+        "Cg": 1.5e-08,
+        "L_H": 0.495,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 800,
+        "q": 4.07,
+        "range_db": 15,
+        "f0_calc_hz": 790.0,
+        "R1": 100000.0,
+        "R2": 330,
+        "Cs": 1.5e-07,
+        "Cg": 8.2e-09,
+        "L_H": 0.2706,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 1600,
+        "q": 3.11,
+        "range_db": 15,
+        "f0_calc_hz": 1549.3,
+        "R1": 82000.0,
+        "R2": 330,
+        "Cs": 1e-07,
+        "Cg": 3.9e-09,
+        "L_H": 0.1055,
+        "type": "gyrator_peak"
+      },
+      {
+        "f_hz": 3200,
+        "q": 3.74,
+        "range_db": 15,
+        "f0_calc_hz": 3303.0,
+        "R1": 82000.0,
+        "R2": 330,
+        "Cs": 3.9e-08,
+        "Cg": 2.2e-09,
+        "L_H": 0.0595,
+        "type": "gyrator_peak"
+      }
+    ],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "low",
+    "sources": [
+      "https://docs.pedalpcb.com/project/6BandEQ-Potentiometer.pdf"
+    ],
+    "specs": {
+      "current_ma": 7
+    },
+    "notes": "no schematic; GE-7 100-3.2k branches reused (L); no level slider"
+  },
+  {
+    "code": "GE-10",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "31.25",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-12 dB"
+      },
+      {
+        "name": "62.5",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-12 dB"
+      },
+      {
+        "name": "125",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-12 dB"
+      },
+      {
+        "name": "250",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-12 dB"
+      },
+      {
+        "name": "500",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-12 dB"
+      },
+      {
+        "name": "1k",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-12 dB"
+      },
+      {
+        "name": "2k",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-12 dB"
+      },
+      {
+        "name": "4k",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-12 dB"
+      },
+      {
+        "name": "8k",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-12 dB"
+      },
+      {
+        "name": "16k",
+        "pot": "",
+        "taper": "",
+        "role": "band slider",
+        "range": "+/-12 dB"
+      },
+      {
+        "name": "Output",
+        "pot": "",
+        "taper": "",
+        "role": "level",
+        "range": "up to +15 dB"
+      }
+    ],
+    "stages": [],
+    "bands": [
+      {
+        "f_hz": 31.25,
+        "q": 1.4,
+        "range_db": 12,
+        "type": "graphic (Q assumed octave, L)"
+      },
+      {
+        "f_hz": 62.5,
+        "q": 1.4,
+        "range_db": 12,
+        "type": "graphic (Q assumed octave, L)"
+      },
+      {
+        "f_hz": 125,
+        "q": 1.4,
+        "range_db": 12,
+        "type": "graphic (Q assumed octave, L)"
+      },
+      {
+        "f_hz": 250,
+        "q": 1.4,
+        "range_db": 12,
+        "type": "graphic (Q assumed octave, L)"
+      },
+      {
+        "f_hz": 500,
+        "q": 1.4,
+        "range_db": 12,
+        "type": "graphic (Q assumed octave, L)"
+      },
+      {
+        "f_hz": 1000,
+        "q": 1.4,
+        "range_db": 12,
+        "type": "graphic (Q assumed octave, L)"
+      },
+      {
+        "f_hz": 2000,
+        "q": 1.4,
+        "range_db": 12,
+        "type": "graphic (Q assumed octave, L)"
+      },
+      {
+        "f_hz": 4000,
+        "q": 1.4,
+        "range_db": 12,
+        "type": "graphic (Q assumed octave, L)"
+      },
+      {
+        "f_hz": 8000,
+        "q": 1.4,
+        "range_db": 12,
+        "type": "graphic (Q assumed octave, L)"
+      },
+      {
+        "f_hz": 16000,
+        "q": 1.4,
+        "range_db": 12,
+        "type": "graphic (Q assumed octave, L)"
+      }
+    ],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "low",
+    "sources": [
+      "https://www.scribd.com/doc/300654764/Boss-GE-10-Service-Notes"
+    ],
+    "specs": {
+      "power": "mains (transformer)"
+    }
+  },
+  {
+    "code": "PQ-4",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Low",
+        "pot": "",
+        "taper": "",
+        "role": "low shelf <100 Hz",
+        "range": "+/-18 dB"
+      },
+      {
+        "name": "Presence",
+        "pot": "",
+        "taper": "",
+        "role": "high shelf >8 kHz",
+        "range": "+/-18 dB"
+      },
+      {
+        "name": "Middle Freq",
+        "pot": "",
+        "taper": "",
+        "role": "mid band freq",
+        "range": "100 Hz-1.6 kHz"
+      },
+      {
+        "name": "Middle Level",
+        "pot": "",
+        "taper": "",
+        "role": "mid level",
+        "range": "+/-18 dB"
+      },
+      {
+        "name": "High Freq",
+        "pot": "",
+        "taper": "",
+        "role": "high band freq",
+        "range": "500 Hz-8 kHz"
+      },
+      {
+        "name": "High Level",
+        "pot": "",
+        "taper": "",
+        "role": "high level",
+        "range": "+/-18 dB"
+      },
+      {
+        "name": "Level",
+        "pot": "",
+        "taper": "",
+        "role": "pre-EQ level",
+        "range": "+/-18 dB"
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "input_buffer",
+        "components": {},
+        "derived": {},
+        "notes": ""
+      },
+      {
+        "order": 2,
+        "type": "level",
+        "components": {},
+        "derived": {
+          "range_db": 18
+        },
+        "notes": "before EQ"
+      },
+      {
+        "order": 3,
+        "type": "parallel_filters_sum",
+        "components": {
+          "filters": "Low LP, Middle BP, High BP, Presence HP"
+        },
+        "derived": {
+          "q_fixed": "~1-1.5 oct (L)"
+        },
+        "notes": ""
+      },
+      {
+        "order": 4,
+        "type": "electronic_switch_output",
+        "components": {},
+        "derived": {},
+        "notes": ""
+      }
+    ],
+    "bands": [
+      {
+        "f_hz": 100,
+        "type": "low_shelf",
+        "q": null,
+        "range_db": 18
+      },
+      {
+        "f_hz": [
+          100,
+          1600
+        ],
+        "type": "peak_sweep",
+        "q": 1.0,
+        "range_db": 18
+      },
+      {
+        "f_hz": [
+          500,
+          8000
+        ],
+        "type": "peak_sweep",
+        "q": 1.0,
+        "range_db": 18
+      },
+      {
+        "f_hz": 8000,
+        "type": "high_shelf",
+        "q": null,
+        "range_db": 18
+      }
+    ],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "high",
+    "sources": [
+      "https://cdn.roland.com/assets/media/pdf/PQ-4_OM.pdf"
+    ],
+    "specs": {
+      "z_in": "1M",
+      "z_out": "1k",
+      "noise_dbm": -98,
+      "current_ma": 23
+    }
+  },
+  {
+    "code": "SP-1",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Spectrum",
+        "pot": "dual-gang (L)",
+        "taper": "",
+        "role": "centre frequency",
+        "range": "500 Hz-5 kHz"
+      },
+      {
+        "name": "Balance",
+        "pot": "",
+        "taper": "",
+        "role": "filtered vs dry mix (boost amount)",
+        "range": ""
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "swept_bandpass_plus_dry (L)",
+        "components": {},
+        "derived": {
+          "q_suggested": "2-4"
+        },
+        "notes": "derived from Roland amp 'Spectrum' circuit"
+      }
+    ],
+    "bands": [
+      {
+        "f_hz": [
+          500,
+          5000
+        ],
+        "type": "peak_sweep",
+        "q": 3,
+        "range_db": null
+      }
+    ],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "low",
+    "sources": [
+      "https://www.bosszone.info/?page_id=14"
+    ],
+    "specs": {
+      "z_in": "220k",
+      "z_out": "600",
+      "snr_db": 80,
+      "current_ma": 23
+    }
+  },
+  {
+    "code": "EQ-200",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Band sliders x10 (A/B)",
+        "pot": "",
+        "taper": "",
+        "role": "band gain",
+        "range": "+/-15 dB"
+      },
+      {
+        "name": "Level",
+        "pot": "",
+        "taper": "",
+        "role": "channel level",
+        "range": ""
+      },
+      {
+        "name": "Type",
+        "pot": "",
+        "taper": "",
+        "role": "band set",
+        "range": "3"
+      },
+      {
+        "name": "Struct",
+        "pot": "",
+        "taper": "",
+        "role": "routing",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [
+      {
+        "f_hz": 30,
+        "q": null,
+        "range_db": 15,
+        "set": "30/800/12.8k"
+      },
+      {
+        "f_hz": 60,
+        "q": null,
+        "range_db": 15,
+        "set": "30/800/12.8k"
+      },
+      {
+        "f_hz": 120,
+        "q": null,
+        "range_db": 15,
+        "set": "30/800/12.8k"
+      },
+      {
+        "f_hz": 200,
+        "q": null,
+        "range_db": 15,
+        "set": "30/800/12.8k"
+      },
+      {
+        "f_hz": 400,
+        "q": null,
+        "range_db": 15,
+        "set": "30/800/12.8k"
+      },
+      {
+        "f_hz": 800,
+        "q": null,
+        "range_db": 15,
+        "set": "30/800/12.8k"
+      },
+      {
+        "f_hz": 1600,
+        "q": null,
+        "range_db": 15,
+        "set": "30/800/12.8k"
+      },
+      {
+        "f_hz": 3200,
+        "q": null,
+        "range_db": 15,
+        "set": "30/800/12.8k"
+      },
+      {
+        "f_hz": 6400,
+        "q": null,
+        "range_db": 15,
+        "set": "30/800/12.8k"
+      },
+      {
+        "f_hz": 12800,
+        "q": null,
+        "range_db": 15,
+        "set": "30/800/12.8k"
+      },
+      {
+        "f_hz": 32,
+        "q": null,
+        "range_db": 15,
+        "set": "32/1k/16k"
+      },
+      {
+        "f_hz": 63,
+        "q": null,
+        "range_db": 15,
+        "set": "32/1k/16k"
+      },
+      {
+        "f_hz": 125,
+        "q": null,
+        "range_db": 15,
+        "set": "32/1k/16k"
+      },
+      {
+        "f_hz": 250,
+        "q": null,
+        "range_db": 15,
+        "set": "32/1k/16k"
+      },
+      {
+        "f_hz": 500,
+        "q": null,
+        "range_db": 15,
+        "set": "32/1k/16k"
+      },
+      {
+        "f_hz": 1000,
+        "q": null,
+        "range_db": 15,
+        "set": "32/1k/16k"
+      },
+      {
+        "f_hz": 2000,
+        "q": null,
+        "range_db": 15,
+        "set": "32/1k/16k"
+      },
+      {
+        "f_hz": 4000,
+        "q": null,
+        "range_db": 15,
+        "set": "32/1k/16k"
+      },
+      {
+        "f_hz": 8000,
+        "q": null,
+        "range_db": 15,
+        "set": "32/1k/16k"
+      },
+      {
+        "f_hz": 16000,
+        "q": null,
+        "range_db": 15,
+        "set": "32/1k/16k"
+      },
+      {
+        "f_hz": 28,
+        "q": null,
+        "range_db": 15,
+        "set": "28/880/14k"
+      },
+      {
+        "f_hz": 55,
+        "q": null,
+        "range_db": 15,
+        "set": "28/880/14k"
+      },
+      {
+        "f_hz": 110,
+        "q": null,
+        "range_db": 15,
+        "set": "28/880/14k"
+      },
+      {
+        "f_hz": 220,
+        "q": null,
+        "range_db": 15,
+        "set": "28/880/14k"
+      },
+      {
+        "f_hz": 440,
+        "q": null,
+        "range_db": 15,
+        "set": "28/880/14k"
+      },
+      {
+        "f_hz": 880,
+        "q": null,
+        "range_db": 15,
+        "set": "28/880/14k"
+      },
+      {
+        "f_hz": 1750,
+        "q": null,
+        "range_db": 15,
+        "set": "28/880/14k"
+      },
+      {
+        "f_hz": 3500,
+        "q": null,
+        "range_db": 15,
+        "set": "28/880/14k"
+      },
+      {
+        "f_hz": 7000,
+        "q": null,
+        "range_db": 15,
+        "set": "28/880/14k"
+      },
+      {
+        "f_hz": 14000,
+        "q": null,
+        "range_db": 15,
+        "set": "28/880/14k"
+      }
+    ],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "channels": 2,
+      "insert_send_return": true,
+      "memories": 128,
+      "midi": true
+    },
+    "modes": [
+      "PARA LINK on (stereo)",
+      "PARA LINK off (dual mono)",
+      "SERIES (A->B, mono sum)"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://static.roland.com/assets/media/pdf/EQ-200_eng01_W.pdf",
+      "https://www.boss.info/us/products/eq-200/specifications/"
+    ],
+    "specs": {
+      "fs_hz": 96000,
+      "ad_da_bits": 32,
+      "dsp": "32-bit float",
+      "level_dbu": -10,
+      "max_dbu": 7,
+      "z_in": "2M",
+      "z_out": "1k",
+      "current_ma": 170
+    },
+    "notes": "'200' in first set breaks octave spacing (expected 240): verify on panel"
+  },
+  {
+    "code": "AC-2",
+    "tech": "analog (probable)",
+    "controls": [
+      {
+        "name": "Level",
+        "pot": "",
+        "taper": "",
+        "role": "output",
+        "range": ""
+      },
+      {
+        "name": "Top",
+        "pot": "",
+        "taper": "",
+        "role": "brilliance/harmonics (~3-8 kHz, L)",
+        "range": ""
+      },
+      {
+        "name": "Body",
+        "pot": "",
+        "taper": "",
+        "role": "body resonance (~100-250 Hz peak + 400-800 Hz scoop, L)",
+        "range": ""
+      },
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "switch",
+        "role": "Standard/Enhance",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {},
+    "modes": [
+      "Standard",
+      "Enhance"
+    ],
+    "confidence": "low",
+    "sources": [
+      "https://www.boss.info/us/products/ac-2/",
+      "https://www.manualslib.com/manual/314778/Boss-Ac-2.html"
+    ],
+    "specs": {
+      "z_in": "1M",
+      "z_out": "1k",
+      "level_dbu": -20,
+      "noise_dbm": -80,
+      "current_ma": 18
+    }
+  },
+  {
+    "code": "AC-3",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "",
+        "role": "body model",
+        "range": "4"
+      },
+      {
+        "name": "Top",
+        "pot": "",
+        "taper": "",
+        "role": "top",
+        "range": ""
+      },
+      {
+        "name": "Body",
+        "pot": "",
+        "taper": "",
+        "role": "body",
+        "range": ""
+      },
+      {
+        "name": "Reverb/Level",
+        "pot": "",
+        "taper": "concentric",
+        "role": "reverb and level",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {},
+    "modes": [
+      "Standard",
+      "Jumbo",
+      "Enhance",
+      "Piezo"
+    ],
+    "confidence": "medium",
+    "sources": [
+      "https://www.boss.info/us/products/ac-3/specifications/"
+    ],
+    "specs": {
+      "z_in": "1M",
+      "z_out": "1k",
+      "level_dbu": -20,
+      "current_ma": 70
+    }
+  },
+  {
+    "code": "AD-2",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Acoustic Resonance",
+        "pot": "",
+        "taper": "",
+        "role": "body/warmth",
+        "range": ""
+      },
+      {
+        "name": "Ambience",
+        "pot": "",
+        "taper": "",
+        "role": "reverb",
+        "range": ""
+      },
+      {
+        "name": "Notch",
+        "pot": "",
+        "taper": "",
+        "role": "feedback notch",
+        "range": "~50-500 Hz (L)"
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "outputs": [
+        "OUTPUT (1k)",
+        "LINE OUT balanced DI (600 ohm)"
+      ]
+    },
+    "modes": [],
+    "confidence": "medium",
+    "sources": [
+      "https://www.boss.info/global/products/ad-2/specifications/"
+    ],
+    "specs": {
+      "z_in": "10M",
+      "level_dbu": -20,
+      "current_ma": 65,
+      "noise_dbm": -94
+    }
+  },
+  {
+    "code": "OC-2",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Direct",
+        "pot": "100k",
+        "taper": "B (assumed)",
+        "role": "dry level (from x4.7 input stage)",
+        "range": "0..1 wiper"
+      },
+      {
+        "name": "Oct1",
+        "pot": "100k",
+        "taper": "B (assumed)",
+        "role": "-1 octave level",
+        "range": "0..1 wiper"
+      },
+      {
+        "name": "Oct2",
+        "pot": "100k",
+        "taper": "B (assumed)",
+        "role": "-2 octave level",
+        "range": "0..1 wiper"
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "input_noninv_amp",
+        "components": {
+          "C_in": "1u",
+          "R_pulldown": "1M",
+          "R_bias": "1M",
+          "Rf": "10k",
+          "Rg": "2k7",
+          "Cg": "10u",
+          "opamp": "TL022 (orig) / TL072"
+        },
+        "derived": {
+          "gain": 4.7,
+          "gain_db": 13.4,
+          "hpf_in_hz": 0.16,
+          "shelf_zero_hz": 5.9,
+          "shelf_pole_hz": 1.25
+        },
+        "notes": "feeds Direct pot, Oct1 multiplier and tracking filter"
+      },
+      {
+        "order": 2,
+        "type": "rc_lpf_analysis",
+        "components": {
+          "R": "22k",
+          "C": "10n"
+        },
+        "derived": {
+          "fc_hz": 723
+        },
+        "notes": "analysis path only"
+      },
+      {
+        "order": 3,
+        "type": "sallen_key_lpf_analysis",
+        "components": {
+          "R1": "330k",
+          "R2": "330k",
+          "C_fb": "2n2",
+          "C_gnd": "220p"
+        },
+        "derived": {
+          "f0_hz": 693,
+          "q": 1.58
+        },
+        "notes": "f0=1/(2piR*sqrt(C1C2)), Q=0.5*sqrt(Cfb/Cgnd)"
+      },
+      {
+        "order": 4,
+        "type": "rc_lpf",
+        "components": {
+          "R": "33k",
+          "C": "330p"
+        },
+        "derived": {
+          "fc_hz": 14600
+        },
+        "notes": "node A = comparator signal"
+      },
+      {
+        "order": 5,
+        "type": "lag_network",
+        "components": {
+          "R_series": "33k",
+          "C": "10n",
+          "R_shunt": "68k"
+        },
+        "derived": {
+          "pole_hz": 157.6,
+          "zero_hz": 234,
+          "hf_gain": 0.673
+        },
+        "notes": "H=(1+sR34C16)/(1+s(R33+R34)C16); node B feeds peak followers"
+      },
+      {
+        "order": 6,
+        "type": "peak_followers_pos_neg",
+        "components": {
+          "R_charge": "1k",
+          "C_hold": "1u",
+          "R_fb": "10k",
+          "diodes": "1SS133/1N914"
+        },
+        "derived": {
+          "attack_tau_ms": 1.0,
+          "release_tau_ms": 11.0
+        },
+        "notes": "env+ and env- asymmetric followers of node B"
+      },
+      {
+        "order": 7,
+        "type": "comparators_sr_latch",
+        "components": {
+          "comparators": "TL022 x2",
+          "latch": "4013 half, CLK/D grounded",
+          "R_out": "22k"
+        },
+        "derived": {
+          "rule": "q=1 if xA<env-; q=0 if xA>env+; else hold"
+        },
+        "notes": "square at f0 with hysteresis ~ peak-to-peak"
+      },
+      {
+        "order": 8,
+        "type": "dividers",
+        "components": {
+          "div2": "4013 (D=Qbar)",
+          "div4": "BA634 T-FF (orig) / CD4027",
+          "gate_net": "1M/1M"
+        },
+        "derived": {
+          "s1_hz": "f0/2",
+          "s2_hz": "f0/4",
+          "vgs_off_v": -4.5,
+          "vgs_on_v": 0.0
+        },
+        "notes": "drive JFET 2SK30A switches"
+      },
+      {
+        "order": 9,
+        "type": "oct1_switched_gain",
+        "components": {
+          "clamp_C": "1u",
+          "clamp_D": "Ge 1S188FM",
+          "R_in_minus": "47k",
+          "R_in_plus": "47k",
+          "R_plus_to_ref": "100k",
+          "Rf": "27k",
+          "jfet": "2SK30ATM-Y"
+        },
+        "derived": {
+          "gain_jfet_off": 0.497,
+          "gain_jfet_on": -0.574,
+          "model": "y1 = 0.5*s1*(x + A(t))",
+          "clamp_release_tau_ms": 36
+        },
+        "notes": "A(t)=negative peak envelope via DC restorer; keeps input envelope"
+      },
+      {
+        "order": 10,
+        "type": "oct1_lpf",
+        "components": {
+          "R": "22k",
+          "C": "22n",
+          "SK_R": "330k/330k",
+          "SK_C_fb": "4n7",
+          "SK_C_gnd": "470p"
+        },
+        "derived": {
+          "rc_fc_hz": 329,
+          "sk_f0_hz": 324,
+          "sk_q": 1.58
+        },
+        "notes": "~3rd order total"
+      },
+      {
+        "order": 11,
+        "type": "oct2_switched_gain",
+        "components": {
+          "input": "filtered Oct1",
+          "clamp_C": "1u",
+          "clamp_D": "Ge",
+          "R": "47k/47k/100k/27k"
+        },
+        "derived": {
+          "gain_jfet_off": 0.497,
+          "gain_jfet_on": -0.574,
+          "switch": "s2 (f0/4)"
+        },
+        "notes": "cascaded from Oct1"
+      },
+      {
+        "order": 12,
+        "type": "oct2_lpf",
+        "components": {
+          "R": "22k",
+          "C": "47n",
+          "SK_R": "330k/330k",
+          "SK_C_fb": "10n",
+          "SK_C_gnd": "1n"
+        },
+        "derived": {
+          "rc_fc_hz": 154,
+          "sk_f0_hz": 152,
+          "sk_q": 1.58
+        },
+        "notes": ""
+      },
+      {
+        "order": 13,
+        "type": "passive_mixer_emitter_follower",
+        "components": {
+          "pots": "3x B100K to VREF",
+          "R_wiper": "100k x3",
+          "Q": "2SC732 / 2N3904",
+          "R_e": "10k",
+          "C_out": "1u",
+          "R_out": "1k",
+          "R_pd": "100k"
+        },
+        "derived": {
+          "vout_approx": "(aD*4.7x + a1*y1 + a2*y2)/3",
+          "direct_max_gain": 1.57,
+          "hpf_out_hz": 1.6
+        },
+        "notes": "pots interact slightly via wiper impedance"
+      }
+    ],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "intervals_semitones": [
+        -12,
+        -24
+      ],
+      "tracking": "monophonic, analog peak-detect + flip-flop division",
+      "latency_ms": 0,
+      "min_input": "-60 dBm @250 Hz"
+    },
+    "routing": {},
+    "modes": [],
+    "confidence": "high",
+    "sources": [
+      "https://docs.pedalpcb.com/project/Ocelot-PedalPCB.pdf",
+      "https://championleccy.com/wp-content/uploads/2018/01/boss_octave_oc2_guitar_effect_pedal_sch.pdf",
+      "https://docs.architolk.nl/subwave/oc-2",
+      "https://toshi.life.coocan.jp/review/en_diy_analog_octaver.html",
+      "https://mirosol.kapsi.fi/2014/08/boss-oc-2-octave/",
+      "https://www.hobby-hour.com/electronics/s/oc2-octave.php"
+    ],
+    "specs": {
+      "z_in": "1M",
+      "z_out_load": ">10k",
+      "max_in_dbm": -5,
+      "max_out_dbm": 0,
+      "noise_dbm": -100,
+      "current_ma": 4
+    }
+  },
+  {
+    "code": "OC-3",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Direct Level",
+        "pot": "",
+        "taper": "",
+        "role": "dry level (total volume in DRIVE)",
+        "range": ""
+      },
+      {
+        "name": "Oct1 Level",
+        "pot": "",
+        "taper": "",
+        "role": "-1 oct level",
+        "range": ""
+      },
+      {
+        "name": "Control",
+        "pot": "",
+        "taper": "",
+        "role": "POLY: range; OCT2: -2 oct level; DRIVE: drive amount",
+        "range": ""
+      },
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "switch",
+        "role": "POLY/OCT2/DRIVE",
+        "range": "3 pos"
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "intervals_semitones": [
+        -12,
+        -24
+      ],
+      "polyphonic": "POLY mode only",
+      "latency_ms": null
+    },
+    "routing": {
+      "inputs": [
+        "GUITAR IN",
+        "BASS IN"
+      ],
+      "outputs": [
+        "OUTPUT",
+        "DIRECT OUT"
+      ]
+    },
+    "modes": [
+      "POLY",
+      "OCT2",
+      "DRIVE"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://static.roland.com/assets/media/pdf/OC-3_e01_W.pdf"
+    ],
+    "specs": {
+      "level_dbu": -20,
+      "z_in": "1M",
+      "z_out": "1k",
+      "current_ma": 50
+    }
+  },
+  {
+    "code": "OC-5",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Direct Level",
+        "pot": "",
+        "taper": "",
+        "role": "dry",
+        "range": ""
+      },
+      {
+        "name": "+1 Oct Level",
+        "pot": "",
+        "taper": "",
+        "role": "+1 oct",
+        "range": ""
+      },
+      {
+        "name": "-1 Oct Level",
+        "pot": "",
+        "taper": "",
+        "role": "-1 oct",
+        "range": ""
+      },
+      {
+        "name": "-2 Oct / Range",
+        "pot": "",
+        "taper": "",
+        "role": "VINTAGE: -2 oct level; POLY: -1 oct bandwidth",
+        "range": ""
+      },
+      {
+        "name": "Vintage/Poly",
+        "pot": "",
+        "taper": "switch",
+        "role": "mode",
+        "range": ""
+      },
+      {
+        "name": "Guitar/Bass",
+        "pot": "",
+        "taper": "switch",
+        "role": "range",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "intervals_semitones": [
+        12,
+        -12,
+        -24
+      ],
+      "polyphonic": "POLY mode",
+      "latency_ms": null
+    },
+    "routing": {
+      "outputs": [
+        "OUTPUT",
+        "DIRECT OUT"
+      ],
+      "bypass": "buffered"
+    },
+    "modes": [
+      "VINTAGE (OC-2 sim, mono)",
+      "POLY"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://static.roland.com/assets/media/pdf/OC-5_eng03_W.pdf",
+      "https://www.boss.info/global/products/oc-5/specifications/"
+    ],
+    "specs": {
+      "level_dbu": -20,
+      "z_in": "1M",
+      "z_out": "1k",
+      "current_ma": 60
+    }
+  },
+  {
+    "code": "PS-2",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "E.Level",
+        "pot": "",
+        "taper": "",
+        "role": "effect level",
+        "range": ""
+      },
+      {
+        "name": "Pitch/Fine",
+        "pot": "",
+        "taper": "",
+        "role": "pitch",
+        "range": "-1..+1 oct"
+      },
+      {
+        "name": "D.Time",
+        "pot": "",
+        "taper": "",
+        "role": "delay time",
+        "range": "30 ms..2 s"
+      },
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "switch",
+        "role": "mode",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "range_semitones": [
+        -12,
+        12
+      ],
+      "effect_bw_hz": [
+        80,
+        6000
+      ],
+      "delay_ms": [
+        30,
+        2000
+      ]
+    },
+    "routing": {},
+    "modes": [
+      "Delay 125ms",
+      "Delay 500ms",
+      "Delay 2s",
+      "Pitch shift manual",
+      "+1 oct",
+      "-1 oct"
+    ],
+    "confidence": "medium",
+    "sources": [
+      "https://support.roland.com/hc/en-us/articles/201958119-PS-2-Specifications",
+      "https://www.effectsdatabase.com/model/boss/compact/ps2"
+    ],
+    "specs": {
+      "noise_dbm": -90,
+      "z_in": "1M",
+      "current_ma": 60,
+      "direct_bw_hz": [
+        10,
+        100000
+      ]
+    }
+  },
+  {
+    "code": "PS-3",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "E.Level",
+        "pot": "",
+        "taper": "",
+        "role": "effect level",
+        "range": ""
+      },
+      {
+        "name": "Fine/F.Back",
+        "pot": "",
+        "taper": "",
+        "role": "fine / feedback",
+        "range": ""
+      },
+      {
+        "name": "Pitch/D.Time",
+        "pot": "",
+        "taper": "",
+        "role": "pitch step / delay",
+        "range": "26 steps"
+      },
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "switch",
+        "role": "11 modes",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "range_semitones": [
+        -24,
+        24
+      ],
+      "steps": "+/-12 chromatic + +/-2 oct",
+      "detune_cents": 30,
+      "fs_hz": 32000,
+      "adc_bits": 16,
+      "dac_bits": 16
+    },
+    "routing": {
+      "outputs": [
+        "A",
+        "B"
+      ]
+    },
+    "modes": [
+      "Detune",
+      "Fast pitch shift",
+      "Slow pitch shift",
+      "Inverse pitch shift",
+      "Detune&Detune",
+      "Detune&Pitch",
+      "Pitch&Pitch",
+      "Delay 32-125ms",
+      "Delay 125-500ms",
+      "Delay 500-2000ms",
+      "EXP"
+    ],
+    "confidence": "medium",
+    "sources": [
+      "https://support.roland.com/hc/en-us/articles/201933129-PS-3-Specifications",
+      "https://musewiki.org/Boss_PS-3"
+    ]
+  },
+  {
+    "code": "PS-5",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "switch",
+        "role": "5 modes",
+        "range": ""
+      },
+      {
+        "name": "Pitch",
+        "pot": "",
+        "taper": "",
+        "role": "interval",
+        "range": "+/-1,2,5,7,12,24 st"
+      },
+      {
+        "name": "H.R Key",
+        "pot": "",
+        "taper": "",
+        "role": "harmonist key",
+        "range": "12"
+      },
+      {
+        "name": "Balance",
+        "pot": "",
+        "taper": "",
+        "role": "dry/wet",
+        "range": "center=equal"
+      },
+      {
+        "name": "D.Time/Speed",
+        "pot": "",
+        "taper": "",
+        "role": "detune delay / T.ARM,FLUTTER speed",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "range_semitones": [
+        -24,
+        24
+      ],
+      "harmonist": "diatonic, mono",
+      "expression": "EV-5 continuous pitch"
+    },
+    "routing": {
+      "outputs": [
+        "A",
+        "B"
+      ]
+    },
+    "modes": [
+      "PITCH SHIFTER",
+      "HARMONIST",
+      "DETUNE",
+      "T.ARM",
+      "FLUTTER"
+    ],
+    "confidence": "medium",
+    "sources": [
+      "https://casaveerkamp.net/archivos/PS-5.pdf",
+      "https://www.manualslib.com/manual/314922/Boss-Ps-5.html"
+    ],
+    "specs": {
+      "current_ma": 50
+    }
+  },
+  {
+    "code": "PS-6",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "switch",
+        "role": "4 modes",
+        "range": ""
+      },
+      {
+        "name": "Key/Fall Time",
+        "pot": "",
+        "taper": "",
+        "role": "key or S-bend fall",
+        "range": ""
+      },
+      {
+        "name": "Shift",
+        "pot": "",
+        "taper": "",
+        "role": "interval select",
+        "range": ""
+      },
+      {
+        "name": "Balance/Rise Time",
+        "pot": "",
+        "taper": "",
+        "role": "mix or S-bend rise",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "harmony": [
+        "-3rd",
+        "-6th",
+        "-1oct",
+        "+1oct",
+        "-4th&-6th",
+        "3rd&5th",
+        "+1oct&-1oct",
+        "3rd&-4th"
+      ],
+      "pitch_shift_semitones": [
+        -12,
+        12,
+        -24,
+        24,
+        "+7&-5",
+        "+12&-5"
+      ],
+      "detune_cents": [
+        5,
+        10,
+        15,
+        20,
+        "5&15"
+      ],
+      "s_bend": [
+        "+1oct",
+        "-1oct",
+        "+2oct",
+        "-2oct",
+        "+3oct",
+        "-3oct",
+        "+4oct",
+        "+2st"
+      ]
+    },
+    "routing": {
+      "outputs": [
+        "A (mono)",
+        "B"
+      ],
+      "exp": true
+    },
+    "modes": [
+      "HARMONY",
+      "PITCH SHIFT",
+      "DETUNE",
+      "S-BEND"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://www.boss.info/global/products/ps-6/specifications/",
+      "https://www.manualslib.com/manual/1016177/Boss-PS-6-Harmonist.html"
+    ],
+    "specs": {
+      "level_dbu": -20,
+      "z_in": "1M",
+      "current_ma": 65
+    }
+  },
+  {
+    "code": "HR-2",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "E.Level",
+        "pot": "",
+        "taper": "",
+        "role": "effect level",
+        "range": ""
+      },
+      {
+        "name": "Voice A",
+        "pot": "",
+        "taper": "switch",
+        "role": "interval A",
+        "range": "11"
+      },
+      {
+        "name": "Voice B",
+        "pot": "",
+        "taper": "switch",
+        "role": "interval B",
+        "range": "11"
+      },
+      {
+        "name": "Key",
+        "pot": "",
+        "taper": "switch",
+        "role": "key",
+        "range": "12, major/minor"
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "intervals": [
+        "-1oct",
+        "-6th",
+        "-5th",
+        "-4th",
+        "-3rd",
+        "detune",
+        "+3rd",
+        "+4th",
+        "+5th",
+        "+6th",
+        "+1oct"
+      ],
+      "voices": 2,
+      "tracking": "monophonic diatonic"
+    },
+    "routing": {
+      "inputs": [
+        "INPUT",
+        "DETECTOR IN"
+      ],
+      "outputs": [
+        "A",
+        "B"
+      ]
+    },
+    "modes": [],
+    "confidence": "medium",
+    "sources": [
+      "https://www.effectsdatabase.com/model/boss/compact/hr2",
+      "https://bkpedalreviews.wordpress.com/2023/02/12/review-boss-hr-2-harmonist/"
+    ],
+    "specs": {
+      "current_ma": 75
+    }
+  },
+  {
+    "code": "SY-1",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Type",
+        "pot": "",
+        "taper": "switch",
+        "role": "11 types",
+        "range": ""
+      },
+      {
+        "name": "Variation",
+        "pot": "",
+        "taper": "switch",
+        "role": "variation",
+        "range": "1..11"
+      },
+      {
+        "name": "Tone/Rate",
+        "pot": "",
+        "taper": "",
+        "role": "tone or rate",
+        "range": ""
+      },
+      {
+        "name": "Depth",
+        "pot": "",
+        "taper": "",
+        "role": "depth",
+        "range": ""
+      },
+      {
+        "name": "Effect",
+        "pot": "",
+        "taper": "",
+        "role": "synth level",
+        "range": ""
+      },
+      {
+        "name": "Direct",
+        "pot": "",
+        "taper": "",
+        "role": "dry level",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "tracking": "polyphonic",
+      "sounds": 121
+    },
+    "routing": {
+      "send_return": "dry path loop",
+      "exp_ctl": [
+        "hold",
+        "+1 oct",
+        "tap tempo"
+      ]
+    },
+    "modes": [
+      "LEAD1",
+      "LEAD2",
+      "PAD",
+      "BASS",
+      "STR",
+      "ORGN",
+      "BELL",
+      "SFX1",
+      "SFX2",
+      "SEQ1",
+      "SEQ2"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://www.boss.info/global/products/sy-1/specifications/",
+      "https://static.roland.com/assets/media/pdf/SY-1_eng03_W.pdf"
+    ],
+    "specs": {
+      "z_in": "2.2M (boss.info) / 1M (manual)",
+      "z_out": "1k",
+      "current_ma": 115
+    }
+  },
+  {
+    "code": "SY-200",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Type",
+        "pot": "",
+        "taper": "switch",
+        "role": "12 modes",
+        "range": ""
+      },
+      {
+        "name": "Memory",
+        "pot": "",
+        "taper": "",
+        "role": "128 memories",
+        "range": ""
+      },
+      {
+        "name": "Knob 1/2/3",
+        "pot": "",
+        "taper": "",
+        "role": "param",
+        "range": ""
+      },
+      {
+        "name": "D.Level",
+        "pot": "",
+        "taper": "",
+        "role": "dry",
+        "range": ""
+      },
+      {
+        "name": "E.Level",
+        "pot": "",
+        "taper": "",
+        "role": "effect",
+        "range": ""
+      },
+      {
+        "name": "Variation",
+        "pot": "",
+        "taper": "",
+        "role": "variation",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "tracking": "polyphonic",
+      "sounds": 171
+    },
+    "routing": {},
+    "modes": [
+      "LEAD",
+      "PAD",
+      "STRING",
+      "BELL",
+      "ORGAN",
+      "BASS",
+      "DUAL",
+      "SWEEP",
+      "NOISE",
+      "SFX",
+      "SEQ",
+      "ARPEGGIO"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://www.boss.info/global/products/sy-200/specifications/"
+    ],
+    "specs": {
+      "fs_hz": 44100,
+      "adc_dac_bits": 24,
+      "dsp": "32-bit float",
+      "z_in": "2M",
+      "z_out": "1k",
+      "current_ma": 230
+    }
+  },
+  {
+    "code": "SYB-3",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Freq",
+        "pot": "",
+        "taper": "",
+        "role": "filter cutoff",
+        "range": ""
+      },
+      {
+        "name": "Reso",
+        "pot": "",
+        "taper": "",
+        "role": "resonance",
+        "range": ""
+      },
+      {
+        "name": "Decay",
+        "pot": "",
+        "taper": "",
+        "role": "filter env time",
+        "range": ""
+      },
+      {
+        "name": "Effect",
+        "pot": "",
+        "taper": "",
+        "role": "synth level",
+        "range": ""
+      },
+      {
+        "name": "Direct",
+        "pot": "",
+        "taper": "",
+        "role": "dry",
+        "range": ""
+      },
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "switch",
+        "role": "11 modes",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "tracking": "monophonic (oscillator modes)"
+    },
+    "routing": {},
+    "modes": [
+      "saw",
+      "square",
+      "PWM",
+      "saw+noise",
+      "saw -1oct",
+      "PWM+noise",
+      "saw+noise -1oct",
+      "wave shape normal",
+      "wave shape reverse",
+      "auto-wah normal",
+      "auto-wah reverse"
+    ],
+    "confidence": "medium",
+    "sources": [
+      "https://www.synthmania.com/syb-3.htm",
+      "https://www.vintagesynth.com/boss/syb-3-bass-synthesizer"
+    ],
+    "specs": {
+      "adc_bits": 19,
+      "dac_bits": 16,
+      "current_ma": 80
+    }
+  },
+  {
+    "code": "SYB-5",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Freq",
+        "pot": "",
+        "taper": "",
+        "role": "cutoff",
+        "range": ""
+      },
+      {
+        "name": "Res",
+        "pot": "",
+        "taper": "",
+        "role": "resonance",
+        "range": ""
+      },
+      {
+        "name": "Decay/Rate",
+        "pot": "",
+        "taper": "",
+        "role": "filter sweep decay (modes 1,2,4,5,7-11; MAX=fixed) or LFO rate (3,6)",
+        "range": ""
+      },
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "switch",
+        "role": "11 modes",
+        "range": ""
+      },
+      {
+        "name": "Effect",
+        "pot": "",
+        "taper": "",
+        "role": "synth level",
+        "range": ""
+      },
+      {
+        "name": "Direct",
+        "pot": "",
+        "taper": "",
+        "role": "dry",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {
+      "tracking": "monophonic (modes 1-9)"
+    },
+    "routing": {
+      "stereo": "effect/direct split"
+    },
+    "modes": [
+      "1 saw",
+      "2 saw + saw-1oct",
+      "3 saw + LFO filter",
+      "4 square",
+      "5 square + square-1oct",
+      "6 square + LFO filter",
+      "7 pulse",
+      "8 pulse + all-pass",
+      "9 PWM",
+      "10 wave shape (filter up)",
+      "11 wave shape (filter down)"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://brianhilmers.com/gear/manuals/boss-syb5-eng01-w.pdf",
+      "https://www.vintagesynth.com/boss/syb-5-bass-synthesizer"
+    ]
+  },
+  {
+    "code": "PC-2",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Pitch",
+        "pot": "",
+        "taper": "",
+        "role": "VCO freq",
+        "range": "85 Hz..3 kHz"
+      },
+      {
+        "name": "Sweep",
+        "pot": "",
+        "taper": "",
+        "role": "pitch bend",
+        "range": ""
+      },
+      {
+        "name": "Decay",
+        "pot": "",
+        "taper": "",
+        "role": "VCA decay",
+        "range": "30 ms..5 s"
+      },
+      {
+        "name": "LFO Depth",
+        "pot": "",
+        "taper": "",
+        "role": "LFO depth",
+        "range": ""
+      },
+      {
+        "name": "LFO Rate",
+        "pot": "",
+        "taper": "",
+        "role": "LFO rate",
+        "range": "2..400 Hz"
+      },
+      {
+        "name": "Sensitivity",
+        "pot": "",
+        "taper": "",
+        "role": "pad trigger sens",
+        "range": ""
+      }
+    ],
+    "stages": [
+      {
+        "order": 1,
+        "type": "vco_triangle",
+        "components": {},
+        "derived": {
+          "range_hz": [
+            85,
+            3000
+          ]
+        },
+        "notes": ""
+      },
+      {
+        "order": 2,
+        "type": "lfo_tri_square",
+        "components": {},
+        "derived": {
+          "range_hz": [
+            2,
+            400
+          ]
+        },
+        "notes": ""
+      },
+      {
+        "order": 3,
+        "type": "vca_ad",
+        "components": {},
+        "derived": {
+          "attack": "instant",
+          "decay_ms": [
+            30,
+            5000
+          ]
+        },
+        "notes": "trigger from velocity pad or positive pulse input"
+      }
+    ],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {},
+    "modes": [],
+    "confidence": "medium",
+    "sources": [
+      "https://www.vintagesynth.com/boss/pc-2-percussion-synthesizer",
+      "https://www.effectsdatabase.com/model/boss/pc2"
+    ],
+    "notes": "not a guitar-input effect; drum synth in near-compact case"
+  },
+  {
+    "code": "AB-2",
+    "tech": "passive",
+    "controls": [
+      {
+        "name": "Pedal",
+        "pot": "",
+        "taper": "latching",
+        "role": "toggle A<->B",
+        "range": "2 states"
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "jacks": [
+        "IN/OUT",
+        "A",
+        "B"
+      ],
+      "passive": true,
+      "bidirectional": true,
+      "as_selector": "A or B -> IN/OUT",
+      "as_splitter": "IN/OUT -> A or B (exclusive)",
+      "simultaneous_a_b": false,
+      "gain_db": 0,
+      "buffer": null,
+      "power": "2x AAA for LEDs only (<=5 mA), on when IN/OUT plugged; no DC jack"
+    },
+    "modes": [
+      "A",
+      "B"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://www.boss.info/global/products/ab-2/specifications/",
+      "https://www.manualslib.com/manual/314777/Boss-Ab-2.html"
+    ],
+    "specs": {
+      "level_dbu": -20
+    }
+  },
+  {
+    "code": "LS-2",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Mode",
+        "pot": "",
+        "taper": "rotary",
+        "role": "6 modes",
+        "range": ""
+      },
+      {
+        "name": "Level A",
+        "pot": "",
+        "taper": "",
+        "role": "Return A level",
+        "range": "-inf..0 dB (center)..+20 dB"
+      },
+      {
+        "name": "Level B",
+        "pot": "",
+        "taper": "",
+        "role": "Return B level",
+        "range": "-inf..0 dB (center)..+20 dB"
+      },
+      {
+        "name": "Pedal",
+        "pot": "",
+        "taper": "",
+        "role": "step state",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "jacks": [
+        "INPUT",
+        "OUTPUT",
+        "SEND A",
+        "SEND B",
+        "RETURN A",
+        "RETURN B",
+        "DC IN",
+        "DC OUT"
+      ],
+      "active": true,
+      "buffered_bypass": true,
+      "z_in": "1M",
+      "z_out": "1k",
+      "level_knobs_apply_to": "returns (inactive in OUTPUT SELECT)",
+      "dc_out": "adaptor only, total within PSA rating (200/500 mA)"
+    },
+    "modes": [
+      "A<->B",
+      "A<->BYPASS",
+      "B<->BYPASS",
+      "A->B->BYPASS",
+      "A+B MIX<->BYPASS (IN to both sends, returns summed)",
+      "OUTPUT SELECT (IN->SEND A / SEND B / OUTPUT)"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://static.roland.com/assets/media/pdf/LS-2_eng01_W.pdf",
+      "https://www.boss.info/global/products/ls-2/specifications/",
+      "http://www.egodeath.com/bossls2.htm"
+    ],
+    "specs": {
+      "level_dbu": -20,
+      "load": ">=10k",
+      "current_ma": "25-30"
+    }
+  },
+  {
+    "code": "ES-5",
+    "tech": "digital-control/analog-path",
+    "controls": [],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "loops": 5,
+      "parallel": true,
+      "patches": 200,
+      "buffers": "per patch",
+      "z_in": "1M",
+      "z_out": "1k",
+      "level_dbu": -10,
+      "max_dbu": 13
+    },
+    "modes": [],
+    "confidence": "high",
+    "sources": [
+      "https://www.boss.info/global/products/es-5/specifications/"
+    ],
+    "specs": {
+      "current_ma": 125
+    }
+  },
+  {
+    "code": "ES-8",
+    "tech": "digital-control/analog-path",
+    "controls": [],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "loops": "8 (7,8 stereo) + volume loop",
+      "parallel": true,
+      "patches": 800,
+      "inputs": 2,
+      "z_in": "1M",
+      "z_out": "1k",
+      "level_dbu": -10,
+      "max_dbu": 18
+    },
+    "modes": [],
+    "confidence": "high",
+    "sources": [
+      "https://www.boss.info/global/products/es-8/specifications/"
+    ],
+    "specs": {
+      "current_ma": 400
+    }
+  },
+  {
+    "code": "FV-500H",
+    "tech": "passive",
+    "controls": [
+      {
+        "name": "Volume",
+        "pot": "250k",
+        "taper": "log (assumed)",
+        "role": "volume",
+        "range": "min..max"
+      },
+      {
+        "name": "Minimum Volume",
+        "pot": "",
+        "taper": "",
+        "role": "heel-down floor",
+        "range": "0..~unity"
+      },
+      {
+        "name": "Expression",
+        "pot": "10k",
+        "taper": "",
+        "role": "EXP out (TRS)",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "jacks": [
+        "INPUT",
+        "OUTPUT",
+        "TUNER OUT",
+        "EXP"
+      ],
+      "impedance": "high"
+    },
+    "modes": [],
+    "confidence": "medium",
+    "sources": [
+      "https://www.boss.info/us/products/fv-500h_500l/",
+      "https://forum.seymourduncan.com/forum/the-pedal-board/325766-superb-boss-fv500h-mod"
+    ]
+  },
+  {
+    "code": "FV-500L",
+    "tech": "passive",
+    "controls": [
+      {
+        "name": "Volume",
+        "pot": "25k",
+        "taper": "log (assumed)",
+        "role": "stereo volume",
+        "range": ""
+      },
+      {
+        "name": "Minimum Volume",
+        "pot": "",
+        "taper": "",
+        "role": "heel-down floor",
+        "range": ""
+      },
+      {
+        "name": "Expression",
+        "pot": "10k",
+        "taper": "",
+        "role": "EXP out",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "jacks": [
+        "IN 1",
+        "IN 2",
+        "OUT 1",
+        "OUT 2",
+        "TUNER OUT (from IN 1)",
+        "EXP"
+      ],
+      "impedance": "low (<600 ohm sources)"
+    },
+    "modes": [],
+    "confidence": "medium",
+    "sources": [
+      "https://static.roland.com/assets/media/pdf/FV-500L_eng06_W.pdf",
+      "https://forum.fractalaudio.com/threads/boss-fv-500l-pot-replacements.40946/"
+    ]
+  },
+  {
+    "code": "FV-50H/FV-50L",
+    "tech": "passive",
+    "controls": [
+      {
+        "name": "Volume",
+        "pot": "unknown (likely 250k H / 25k L)",
+        "taper": "",
+        "role": "volume",
+        "range": ""
+      },
+      {
+        "name": "Minimum Volume",
+        "pot": "",
+        "taper": "",
+        "role": "heel-down floor",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "jacks": [
+        "IN x2",
+        "OUT x2",
+        "TUNER OUT"
+      ]
+    },
+    "modes": [],
+    "confidence": "low",
+    "sources": [
+      "https://www.boss.info/global/products/fv-50h_50l/"
+    ]
+  },
+  {
+    "code": "TU-3",
+    "tech": "digital",
+    "controls": [
+      {
+        "name": "Mode/Stream-Cent",
+        "pot": "",
+        "taper": "",
+        "role": "tuning mode / meter mode / brightness",
+        "range": ""
+      },
+      {
+        "name": "Pedal",
+        "pot": "",
+        "taper": "",
+        "role": "tuner on (mute)",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "output_when_tuner_on": "muted",
+      "bypass_jack": "always passes input",
+      "tuner_off": "buffered",
+      "dc_out": "PCS-20A, within PSA rating"
+    },
+    "modes": [
+      "Chromatic (+b, bb)",
+      "Guitar (flat to -6 st, 7-string)",
+      "Bass (flat to -3 st, 5/6-string)",
+      "CENT meter",
+      "STREAM meter",
+      "High Brightness"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://www.boss.info/global/products/tu-3/specifications/",
+      "https://www.manualslib.com/manual/1208038/Boss-TU-3.html"
+    ],
+    "specs": {
+      "detect_range": "C0 16.35 Hz - C8 4186 Hz",
+      "accuracy_cents": 1,
+      "ref_a4_hz": [
+        436,
+        445
+      ],
+      "z_in": "1M",
+      "z_out": "1k",
+      "current_ma": "20 (80 HB)"
+    }
+  },
+  {
+    "code": "TU-3W",
+    "tech": "digital",
+    "controls": [],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "output_when_tuner_on": "muted",
+      "bypass_select": [
+        "buffered",
+        "true"
+      ]
+    },
+    "modes": [
+      "same as TU-3",
+      "Bypass select: buffered / true bypass"
+    ],
+    "confidence": "high",
+    "sources": [
+      "https://www.boss.info/global/products/tu-3w/specifications/"
+    ],
+    "specs": {
+      "detect_range": "C0-C8",
+      "accuracy_cents": 1,
+      "ref_a4_hz": [
+        436,
+        445
+      ],
+      "z_in": "1M",
+      "z_out": "1k",
+      "current_ma": "50 (110 HB)"
+    }
+  },
+  {
+    "code": "TU-2",
+    "tech": "digital",
+    "controls": [],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "output_when_tuner_on": "muted",
+      "bypass_jack": "always passes input",
+      "dc_out": "total <=200 mA"
+    },
+    "modes": [
+      "Chromatic",
+      "Guitar",
+      "Bass",
+      "flat -1",
+      "double flat -2",
+      "cent meter",
+      "stream meter"
+    ],
+    "confidence": "medium",
+    "sources": [
+      "https://support.roland.com/hc/en-us/articles/201958219-TU-2-The-Bypass-Output-Jack",
+      "https://www.manualslib.com/manual/618627/Boss-Chromatic-Tuner-TU-2.html"
+    ],
+    "specs": {
+      "detect_range": "C0-C8",
+      "accuracy_cents": 3,
+      "ref_a4_hz": [
+        438,
+        445
+      ],
+      "z_in": "1M",
+      "current_ma": 55
+    }
+  },
+  {
+    "code": "PSM-5",
+    "tech": "analog",
+    "controls": [
+      {
+        "name": "Pedal",
+        "pot": "",
+        "taper": "",
+        "role": "loop on/off",
+        "range": ""
+      }
+    ],
+    "stages": [],
+    "bands": [],
+    "dynamics": {},
+    "pitch": {},
+    "routing": {
+      "off": "GUITAR -> AMP",
+      "on": "GUITAR -> SEND -> RETURN -> AMP",
+      "z_in": "1M (GUITAR, RETURN)",
+      "load": ">10k",
+      "power": "PSA 9V 200mA, DC out up to 7 pedals"
+    },
+    "modes": [],
+    "confidence": "medium",
+    "sources": [
+      "https://support.roland.com/hc/en-us/articles/201952179-PSM-5-Specifications",
+      "https://www.craveguitars.co.uk/home/features/effects/feature-1986-boss-psm-5-power-supply-master-switch/",
+      "https://schematicsonline.com/wp-content/uploads/2022/11/Boss-PSM-5-Power-Supply-Master-Switch.pdf"
+    ],
+    "specs": {
+      "current_ma_switch": 13
+    }
+  }
+]

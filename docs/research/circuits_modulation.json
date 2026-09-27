@@ -1,0 +1,3501 @@
+[
+ {
+  "code": "CE-2",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "100k",
+    "taper": "B (linear)",
+    "role": "LFO speed: pot is a divider of the square wave feeding the integrator (lug1 via 10k to Vref)",
+    "range": "~0.32-3.5 Hz (derived)"
+   },
+   {
+    "name": "Depth",
+    "pot": "100k",
+    "taper": "B (linear)",
+    "role": "LFO triangle amplitude into clock CV (divider between LFO out and Vref)",
+    "range": "0 = clock frozen ~110 kHz; noon ~100-128 kHz (measured)"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (emitter follower)",
+    "components": "R1 1k, C1 47n, R2 470k bias from VB, Q1 2SC732TM-GR (sub 2N5088), R3 10k emitter, pulldown 2M2",
+    "derived": {
+     "gain": 1.0
+    },
+    "notes": "Aion numbering (Azure)."
+   },
+   {
+    "order": 2,
+    "type": "pre-emphasis inverting op-amp",
+    "components": "C2 470n, C3 6n8 + R4 10k in parallel with R5 47k; IC1A 4558, R7 47k || C4 100p feedback",
+    "derived": {
+     "order": 1,
+     "type": "inverting shelving (pre-emphasis)",
+     "gain_low_db": 0.0,
+     "gain_high_db": 15.1,
+     "f_zero_hz": 410,
+     "f_pole_hz": 2341,
+     "formula": "H(s) = -(Rf||1/sCf) / (Rin || (Rs + 1/sCs)); Rin=47k, Rs=10k, Cs=6n8, Rf=47k, Cf=100p (LPF ~33.9 kHz)"
+    },
+    "notes": "Both dry and wet are pre-emphasised; de-emphasis at mixer restores flat dry response and cuts BBD HF noise/clock by 15 dB."
+   },
+   {
+    "order": 3,
+    "type": "HPF + bias injection",
+    "components": "C8 33n, R13 100k to VB (BBD bias)",
+    "derived": {
+     "fc_hz": 48.2
+    },
+    "notes": "ElectroSmash numbering R8/C5."
+   },
+   {
+    "order": 4,
+    "type": "anti-alias LPF, 3rd order single-transistor (unity-gain Sallen-Key type)",
+    "components": "R14=R15=R16=10k; C9 3n3 node1->GND, C10 8n2 node2->emitter (feedback), C11 470p base->GND; Q2 follower, R17 10k emitter, R18 4k7 to BBD in",
+    "derived": {
+     "f_minus3db_hz": 6800,
+     "f_minus20db_hz": 14700,
+     "f_minus40db_hz": 31700,
+     "poles_hz_electrosmash": [
+      6600,
+      6900
+     ],
+     "passband_ripple_db": 0.0
+    },
+    "notes": "Computed by nodal analysis with ideal follower; ~Butterworth-like, no peaking."
+   },
+   {
+    "order": 5,
+    "type": "BBD",
+    "components": "MN3007 (1024 stages) + MN3101 clock (CE-2 original); VD = 9V via 33R + 9.1V zener; bias trim 10k between 4k7/4k7",
+    "derived": {
+     "delay_formula": "t = N/(2 fclk) = 512/fclk"
+    },
+    "notes": "Output loaded by R19 56k; Aion clone can use MN3207/MN3102 via jumpers."
+   },
+   {
+    "order": 6,
+    "type": "HPF",
+    "components": "C13 33n, R20 330k to VB",
+    "derived": {
+     "fc_hz": 14.6
+    },
+    "notes": ""
+   },
+   {
+    "order": 7,
+    "type": "reconstruction LPF, 3rd order (identical to AA filter)",
+    "components": "R21-23 10k; C14 3n3, C15 8n2 (fb), C16 470p; Q3 follower, R24 10k",
+    "derived": {
+     "f_minus3db_hz": 6800,
+     "wet_path_total_minus3db_hz": 5830,
+     "wet_path_minus40db_hz": 14700
+    },
+    "notes": "Wet path total = AA x recon (6th order)."
+   },
+   {
+    "order": 8,
+    "type": "wet output coupling",
+    "components": "C17 33n (CE-2B: 12n) into R25 1M to VB, then R26 47k into mixer",
+    "derived": {
+     "hpf_hz_into_47k": 103,
+     "hpf_hz_ce2b_12n": 282
+    },
+    "notes": "HPF corner with the 47k summing resistor (virtual ground): 1/(2pi*47k*C17)."
+   },
+   {
+    "order": 9,
+    "type": "mixer + de-emphasis (IC1B inverting sum)",
+    "components": "dry R8 47k, wet R26 47k, feedback R9 47k || C5 100p || (C6 6n8 + R10 10k)",
+    "derived": {
+     "order": 1,
+     "type": "inverting shelving (de-emphasis, mirror of pre-emphasis)",
+     "gain_low_db": 0.0,
+     "gain_high_db": -15.1,
+     "f_pole_hz": 410,
+     "f_zero_hz": 2341,
+     "formula": "feedback Zf = 47k || (10k + 1/(s*6n8)) || 1/(s*100p); input 47k"
+    },
+    "notes": "Dry:wet = 1:1 (50%)."
+   },
+   {
+    "order": 10,
+    "type": "output",
+    "components": "R11 470R, C7 1u, R12 100k",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 11,
+    "type": "LFO triangle (Schmitt + integrator, TL022)",
+    "components": "IC4A Schmitt: R30 47k fb, R31 33k from integrator; IC4B integrator R33 1M, C19 100n; Rate 100kB + R32 10k divider of square",
+    "derived": {
+     "f_formula": "f = k*R30/(4*R31*R33*C19), k = divider fraction 10k/110k..1",
+     "f_max_hz": 3.56,
+     "f_min_hz": 0.32,
+     "triangle_amplitude": "+/- (33/47)*Vsq around VC (~4.5V)"
+    },
+    "notes": "ElectroSmash: f = 3.5 Hz at max Rate."
+   },
+   {
+    "order": 12,
+    "type": "LFO smoothing + clock CV",
+    "components": "Depth wiper -> R34 220k, C20 10n -> Q5 follower -> R35/R36 4k7, D3 -> clock timing node; Q4 discharges C18 47p charged by R29 150k (MN3101/3102 RC astable)",
+    "derived": {
+     "lfo_lpf_hz": 72
+    },
+    "notes": "LFO sets start voltage of timing cap: fclk rises/falls roughly linearly with LFO voltage."
+   }
+  ],
+  "bbd": {
+   "chip": "MN3007 (+MN3101)",
+   "stages": 1024,
+   "clock_hz_min": 100000,
+   "clock_hz_max": 128000,
+   "delay_ms_min": 4.0,
+   "delay_ms_max": 5.1,
+   "aa_filter": "3rd-order 10k/10k/10k, 3n3-8n2(fb)-470p, -3 dB ~6.7 kHz, identical pre and post; plus 15 dB pre/de-emphasis 410 Hz-2.34 kHz",
+   "notes": "Clock measured: Depth=0 ~110 kHz (4.65 ms); Depth noon 100-128 kHz. Full-depth extremes not measured (estimate ~85-150 kHz, 3.4-6 ms, low confidence)."
+  },
+  "lfo": {
+   "shape": "triangle",
+   "rate_hz_min": 0.32,
+   "rate_hz_max": 3.5,
+   "depth": "linear pot; modulates MN3101 RC-oscillator start voltage (clock frequency), smoothed by 72 Hz RC"
+  },
+  "filter": {
+   "pre_emphasis": {
+    "order": 1,
+    "type": "inverting shelving (pre-emphasis)",
+    "gain_low_db": 0.0,
+    "gain_high_db": 15.1,
+    "f_zero_hz": 410,
+    "f_pole_hz": 2341,
+    "formula": "H(s) = -(Rf||1/sCf) / (Rin || (Rs + 1/sCs)); Rin=47k, Rs=10k, Cs=6n8, Rf=47k, Cf=100p (LPF ~33.9 kHz)"
+   },
+   "de_emphasis": {
+    "order": 1,
+    "type": "inverting shelving (de-emphasis, mirror of pre-emphasis)",
+    "gain_low_db": 0.0,
+    "gain_high_db": -15.1,
+    "f_pole_hz": 410,
+    "f_zero_hz": 2341,
+    "formula": "feedback Zf = 47k || (10k + 1/(s*6n8)) || 1/(s*100p); input 47k"
+   }
+  },
+  "modes": [],
+  "mix": "fixed 50/50 (dry 47k, wet 47k, feedback 47k)",
+  "confidence": "high",
+  "sources": [
+   "https://aionfx.com/app/files/docs/azure_documentation.pdf",
+   "https://aionfx.com/project/azure-analog-chorus/",
+   "https://www.electrosmash.com/boss-ce-2-analysis",
+   "https://www.diystompboxes.com/smfforum/index.php?topic=89044.0",
+   "https://www.synthxl.com/wp-content/uploads/2019/12/Boss-CE-2_CE-2B_Chorus_Service_Manual.pdf",
+   "https://aionfx.com/component/mn3007/",
+   "https://www.hsu-hh.de/ant/wp-content/uploads/sites/699/2018/09/Holters-Parker-2018-A-Combined-Model-for-a-Bucket-Brigade-Device-and-its-Input-and-Output-Filters.pdf"
+  ]
+ },
+ {
+  "code": "CE-2B",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "100k",
+    "taper": "B",
+    "role": "LFO speed",
+    "range": "as CE-2 (~0.32-3.5 Hz derived)"
+   },
+   {
+    "name": "Depth",
+    "pot": "100k",
+    "taper": "B",
+    "role": "LFO amplitude",
+    "range": "as CE-2"
+   },
+   {
+    "name": "E.Level (mix)",
+    "pot": "250k",
+    "taper": "C (reverse log)",
+    "role": "wet level into mixer",
+    "range": "0 .. CE-2 level"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "same as CE-2",
+    "components": "service manual (Boss numbering): C14 33n->12n (wet output cap = Aion C17), C26/C27 470p->220p, R53 100R->390R, R42 1k->100R, D6 zener 5.1V->5.6V, added E.Level VR4 250kC; NJM4558, TL022, MN3007",
+    "derived": {
+     "wet_hpf_hz_into_47k": 282
+    },
+    "notes": "Low frequencies are left dry/unmodulated to keep bass in tune. Zin 470k, 10 mA."
+   }
+  ],
+  "bbd": {
+   "chip": "MN3007 (+MN3101)",
+   "stages": 1024,
+   "clock_hz_min": 100000,
+   "clock_hz_max": 128000,
+   "delay_ms_min": 4.0,
+   "delay_ms_max": 5.1,
+   "aa_filter": "as CE-2"
+  },
+  "lfo": {
+   "shape": "triangle",
+   "rate_hz_min": 0.32,
+   "rate_hz_max": 3.5,
+   "depth": "as CE-2"
+  },
+  "filter": {
+   "wet_highpass": "C17 12n into 47k virtual ground -> ~282 Hz 1st-order HPF on wet only"
+  },
+  "modes": [],
+  "mix": "variable wet level (E.Level) against fixed dry",
+  "confidence": "medium",
+  "sources": [
+   "https://aionfx.com/app/files/docs/azure_documentation.pdf",
+   "https://aionfx.com/project/azure-analog-chorus/",
+   "https://www.synthxl.com/wp-content/uploads/2019/12/Boss-CE-2_CE-2B_Chorus_Service_Manual.pdf",
+   "https://www.hobby-hour.com/electronics/s/boss-ce2b-bass-chorus.php"
+  ]
+ },
+ {
+  "code": "BF-2",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Manual",
+    "pot": "50k",
+    "taper": "B",
+    "role": "base delay (clock CV via Q7 follower, 68k/150k/470k network)",
+    "range": "clock 40 kHz (min, 12.8 ms) .. ~500 kHz +/-20% (max, ~1.0 ms)"
+   },
+   {
+    "name": "Depth",
+    "pot": "50k",
+    "taper": "B",
+    "role": "balance of LFO vs Manual voltage into clock CV (R38 220k)",
+    "range": "0..full sweep"
+   },
+   {
+    "name": "Speed (Rate)",
+    "pot": "250k",
+    "taper": "C (reverse log)",
+    "role": "LFO integrator resistor (with R47 1k5)",
+    "range": "~0.074-12 Hz derived; spec 0.1 s-16 s period"
+   },
+   {
+    "name": "Resonance",
+    "pot": "50k",
+    "taper": "C",
+    "role": "feedback amount from wet output back into BBD input summer; internal RES.TRIM 22k limits max below oscillation",
+    "range": "0..near self-oscillation"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer",
+    "components": "R1 1k, C1 47n, R2 470k, Q1 2N5088 (orig 2SC732), R3 10k",
+    "derived": {
+     "gain": 1.0
+    },
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "pre-emphasis inverting amp (IC1A)",
+    "components": "C2 1u, C3 6n8 + R4 10k || R5 47k, R7 47k || C4 100p",
+    "derived": {
+     "order": 1,
+     "type": "inverting shelving (pre-emphasis)",
+     "gain_low_db": 0.0,
+     "gain_high_db": 15.1,
+     "f_zero_hz": 410,
+     "f_pole_hz": 2341,
+     "formula": "H(s) = -(Rf||1/sCf) / (Rin || (Rs + 1/sCs)); Rin=47k, Rs=10k, Cs=6n8, Rf=47k, Cf=100p (LPF ~33.9 kHz)"
+    },
+    "notes": "Same network as CE-2."
+   },
+   {
+    "order": 3,
+    "type": "BBD input summer + soft limiter (IC2A)",
+    "components": "dry in: R12 82k in parallel with (R13 220k + C8 220p), then C9 47n to IC2A(-); resonance in: Resonance wiper -> RES_TRIM 22k (rheostat) -> C24 47n -> R31 39k -> IC2A(-); feedback R15 47k || (R16 4k7 + D2/D3 1N914 antiparallel); + input R14 10k to VB",
+    "derived": {
+     "dry_gain_lf": -0.573,
+     "dry_gain_hf": -0.78,
+     "dry_shelf_zero_hz": 3290,
+     "resonance_gain_max": "-47k/(39k + trim) <= 1.2",
+     "limiter": "above ~0.6 V peak the 4k7+diode branch takes over: gain -> ~4k7/82k"
+    },
+    "notes": "Diode feedback limiter keeps BBD from hard clipping at high resonance."
+   },
+   {
+    "order": 4,
+    "type": "anti-alias LPF, 2nd-order Sallen-Key (transistor)",
+    "components": "R17 10k, R18 10k, C10 12n (fb to emitter), C11 150p base->GND, Q2 2N5088, R19 10k, C12 33n to BBD",
+    "derived": {
+     "f0_hz": 11860,
+     "Q": 4.47,
+     "peak_db": 13.1,
+     "peak_hz": 11700,
+     "f_minus3db_hz": 18300
+    },
+    "notes": "High-Q values computed with ideal follower; verify in SPICE."
+   },
+   {
+    "order": 5,
+    "type": "BBD",
+    "components": "MN3207 1024 stages + MN3102; VC ~5.6 V from 78L05 lifted by 1N914; bias trim 22k, R20 100k",
+    "derived": {
+     "delay_formula": "t = 512/fclk",
+     "delay_ms_at_40kHz": 12.8,
+     "delay_ms_at_500kHz": 1.02
+    },
+    "notes": "Output loads R21 56k, R22 330k."
+   },
+   {
+    "order": 6,
+    "type": "reconstruction LPF part 1, 3rd order transistor",
+    "components": "C15 33n in, R23-25 10k, C16 3n9 GND, C17 8n2 fb, C18 330p GND, Q3, R26 10k",
+    "derived": {
+     "f_minus3db_hz": 7390
+    },
+    "notes": ""
+   },
+   {
+    "order": 7,
+    "type": "reconstruction LPF part 2, MFB 2nd order (IC2B)",
+    "components": "C19 220n, R27 47k in, C20 1n node->GND, R28 22k to inv, R29 47k fb, C21 150p fb",
+    "derived": {
+     "f0_hz": 12780,
+     "Q": 0.91,
+     "gain": -1.0,
+     "post_total_minus3db_hz": 8140,
+     "wet_path_total_minus3db_hz": 12790,
+     "wet_path_peak_db": 3.2,
+     "wet_path_peak_hz": 10900
+    },
+    "notes": "Wet total = SK2 pre x 3p x MFB; pre-filter peak compensates post roll-off."
+   },
+   {
+    "order": 8,
+    "type": "feedback (Resonance) path",
+    "components": "IC2B out -> C22 220n -> C23 47n -> Resonance 50kC -> RES_TRIM 22kB -> C24 47n -> R31 39k -> IC2A sum node",
+    "derived": {},
+    "notes": "Feedback polarity set by IC2A/IC2B inversions; tune max with RES.TRIM just below oscillation."
+   },
+   {
+    "order": 9,
+    "type": "mixer + de-emphasis (IC1B)",
+    "components": "dry R8 47k; wet R30 27k; feedback R10 47k || C6 100p || (C5 6n8 + R9 10k)",
+    "derived": {
+     "dry_gain": -1.0,
+     "wet_gain": -1.74,
+     "de_emphasis": {
+      "order": 1,
+      "type": "inverting shelving (de-emphasis, mirror of pre-emphasis)",
+      "gain_low_db": 0.0,
+      "gain_high_db": -15.1,
+      "f_pole_hz": 410,
+      "f_zero_hz": 2341,
+      "formula": "feedback Zf = 47k || (10k + 1/(s*6n8)) || 1/(s*100p); input 47k"
+     }
+    },
+    "notes": ""
+   },
+   {
+    "order": 10,
+    "type": "LFO (IC5 TL022 on ~5.6 V)",
+    "components": "IC5A integrator C29+C30 33u back-to-back (16.5 uF bipolar), R47 1k5 + Speed 250kC; IC5B Schmitt R46 180k in, R48 220k fb, C31 10n; Vref R43/R44 10k + C28 47u",
+    "derived": {
+     "f_formula": "f = R48/(4*R46*R*C) = 1/(3.27*R*C)",
+     "f_max_hz": 12.3,
+     "f_min_hz": 0.074
+    },
+    "notes": "Triangle output; BOSS spec 100 ms-16 s period."
+   },
+   {
+    "order": 11,
+    "type": "clock CV + MN3102 oscillator",
+    "components": "Manual 50kB -> R39 68k -> Q7 (R40 150k, R41 470k, R42 4k7); Depth 50kB, R38 220k; CLOCK trim 500k + R37 330k + R36 4k7; Q5/Q6 2N5088 current mirror; D4, R34/R35 4k7; Q4 2N3906 current source; MN3102 C25 47p, R32 33k, C26 5p; C27 22u",
+    "derived": {},
+    "notes": "Current-controlled clock => fclk roughly proportional to CV."
+   }
+  ],
+  "bbd": {
+   "chip": "MN3207 (+MN3102)",
+   "stages": 1024,
+   "clock_hz_min": 40000,
+   "clock_hz_max": 500000,
+   "delay_ms_min": 1.02,
+   "delay_ms_max": 12.8,
+   "aa_filter": "pre: 2nd-order SK f0 11.9 kHz Q 4.5; post: 3rd-order (3n9/8n2/330p) + MFB 2nd-order f0 12.8 kHz Q 0.91; 15 dB pre/de-emphasis"
+  },
+  "lfo": {
+   "shape": "triangle",
+   "rate_hz_min": 0.0625,
+   "rate_hz_max": 10,
+   "depth": "Depth pot mixes LFO against Manual DC into current-controlled clock",
+   "notes": "Spec period 0.1-16 s; component-derived 0.074-12.3 Hz"
+  },
+  "filter": {
+   "pre_emphasis": {
+    "order": 1,
+    "type": "inverting shelving (pre-emphasis)",
+    "gain_low_db": 0.0,
+    "gain_high_db": 15.1,
+    "f_zero_hz": 410,
+    "f_pole_hz": 2341,
+    "formula": "H(s) = -(Rf||1/sCf) / (Rin || (Rs + 1/sCs)); Rin=47k, Rs=10k, Cs=6n8, Rf=47k, Cf=100p (LPF ~33.9 kHz)"
+   },
+   "de_emphasis": {
+    "order": 1,
+    "type": "inverting shelving (de-emphasis, mirror of pre-emphasis)",
+    "gain_low_db": 0.0,
+    "gain_high_db": -15.1,
+    "f_pole_hz": 410,
+    "f_zero_hz": 2341,
+    "formula": "feedback Zf = 47k || (10k + 1/(s*6n8)) || 1/(s*100p); input 47k"
+   }
+  },
+  "modes": [],
+  "mix": "dry 47k : wet 27k into 47k -> wet ~1.74x dry at mixer (compensates BBD loss)",
+  "confidence": "high",
+  "sources": [
+   "https://aionfx.com/app/files/docs/aerolith_documentation.pdf",
+   "https://aionfx.com/project/aerolith-analog-flanger/",
+   "https://www.hobby-hour.com/electronics/s/boss-bf2-flanger.php",
+   "https://mirosol.kapsi.fi/2014/12/boss-bf-2-flanger/",
+   "https://www.freestompboxes.org/viewtopic.php?t=31788"
+  ]
+ },
+ {
+  "code": "DM-2",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Repeat Rate (delay)",
+    "pot": "1M",
+    "taper": "B",
+    "role": "clock RC resistor of MN3101 (with 1M CLOCK trim, R15 10k, R16 18k, R17 22k; C17 100p)",
+    "range": "20-300 ms; original: CW = shorter delay"
+   },
+   {
+    "name": "Intensity (feedback)",
+    "pot": "50k",
+    "taper": "B (Aion suggests A)",
+    "role": "expander output -> R27 22k -> C28 100n back to input summer",
+    "range": "self-oscillation from ~12:00"
+   },
+   {
+    "name": "Echo (level)",
+    "pot": "50k",
+    "taper": "B",
+    "role": "wet level to mixer (R28 47k)",
+    "range": "0..~unity"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer",
+    "components": "R1 10k, C2 47n, R2 470k, Q1 2N5088 (orig 2SC732), R3 10k",
+    "derived": {
+     "gain": 1.0
+    },
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "pre-emphasis inverting amp (IC1A), also feedback summing point",
+    "components": "C3 1u, C4 6n8 + R4 10k || R5 47k, R6 47k || C5 100p",
+    "derived": {
+     "order": 1,
+     "type": "inverting shelving (pre-emphasis)",
+     "gain_low_db": 0.0,
+     "gain_high_db": 15.1,
+     "f_zero_hz": 410,
+     "f_pole_hz": 2341,
+     "formula": "H(s) = -(Rf||1/sCf) / (Rin || (Rs + 1/sCs)); Rin=47k, Rs=10k, Cs=6n8, Rf=47k, Cf=100p (LPF ~33.9 kHz)"
+    },
+    "notes": ""
+   },
+   {
+    "order": 3,
+    "type": "compressor (NE570/571 half A)",
+    "components": "C6 10u in, C9 220n rectifier cap (attack/release), C11 10u, R8/R9 10k + C7 10u DC feedback",
+    "derived": {
+     "ratio": "2:1 (dB)",
+     "rectifier_tau_ms": "~2.2 (internal 10k x Crect 220n; release governed by 10k*Crect, attack faster - NE570 datasheet/AN174)"
+    },
+    "notes": "Standard NE571 compressor; restores with expander after BBD."
+   },
+   {
+    "order": 4,
+    "type": "anti-alias LPF 3rd order (transistor)",
+    "components": "R10-12 10k; C12 6n8 GND, C13 82n fb, C14 330p GND; Q2, R13 10k; C15 1u to BBD; bias R14 100k from BIAS 22k trim",
+    "derived": {
+     "f_minus3db_hz": 3230,
+     "peak_db": 4.4,
+     "peak_hz": 2170,
+     "f_minus40db_hz": 12900
+    },
+    "notes": "Chebyshev-like (ripple) - needed because min clock is only 6.8 kHz (Nyquist 3.4 kHz)."
+   },
+   {
+    "order": 5,
+    "type": "BBD",
+    "components": "MN3005 4096 stages + MN3101 (v1, 1981); MN3205 + MN3102 (v2, 1982, 8.2 V zener); outputs OUT1/OUT2 via R18/R19 100k and CANCEL 10k trim (clock cancel)",
+    "derived": {
+     "delay_formula": "t = 2048/fclk",
+     "fclk_at_300ms_hz": 6827,
+     "fclk_at_20ms_hz": 102400
+    },
+    "notes": "Service calibration: 6.8 kHz (146 us period) at longest delay."
+   },
+   {
+    "order": 6,
+    "type": "reconstruction LPF 3rd order",
+    "components": "R20-22 10k; C19 2n2 GND, C20 33n fb, C21 1n GND; Q3, R23 10k",
+    "derived": {
+     "f_minus3db_hz": 2890,
+     "peak_db": 6.2,
+     "peak_hz": 1830
+    },
+    "notes": ""
+   },
+   {
+    "order": 7,
+    "type": "reconstruction LPF 2nd order SK",
+    "components": "R24/R25 10k; C22 39n fb, C23 330p GND; Q4, R26 10k",
+    "derived": {
+     "f0_hz": 4436,
+     "Q": 5.44,
+     "post_total_minus3db_hz": 4800,
+     "wet_path_total_minus3db_hz": 3270,
+     "wet_path_peak_db": 11.8,
+     "wet_path_peak_hz": 1970,
+     "wet_path_minus40db_hz": 6140
+    },
+    "notes": "Computed with ideal followers - strong resonant hump ~2 kHz explains early self-oscillation; verify in SPICE."
+   },
+   {
+    "order": 8,
+    "type": "expander (NE570/571 half B)",
+    "components": "C24 10u in, C25 220n rectifier, C26 100p, C27 1u out",
+    "derived": {
+     "ratio": "1:2"
+    },
+    "notes": ""
+   },
+   {
+    "order": 9,
+    "type": "mixer + de-emphasis (IC1B)",
+    "components": "dry R29 47k; wet via Echo pot + R28 47k (C29 1u); fb R31 47k || C30 100p || (C31 6n8 + R30 10k); out R32 470R, C32 1u, R33 100k",
+    "derived": {
+     "de_emphasis": {
+      "order": 1,
+      "type": "inverting shelving (de-emphasis, mirror of pre-emphasis)",
+      "gain_low_db": 0.0,
+      "gain_high_db": -15.1,
+      "f_pole_hz": 410,
+      "f_zero_hz": 2341,
+      "formula": "feedback Zf = 47k || (10k + 1/(s*6n8)) || 1/(s*100p); input 47k"
+     },
+     "dry_gain": -1.0
+    },
+    "notes": "Dry always unity."
+   }
+  ],
+  "bbd": {
+   "chip": "MN3005 (+MN3101) v1; MN3205 (+MN3102) v2",
+   "stages": 4096,
+   "clock_hz_min": 6800,
+   "clock_hz_max": 102000,
+   "delay_ms_min": 20,
+   "delay_ms_max": 300,
+   "aa_filter": "pre 3rd-order (6n8/82n/330p) -3 dB 3.2 kHz; post 3rd-order (2n2/33n/1n) + SK2 (39n/330p): wet total -3 dB ~3.3 kHz, -40 dB ~6.1 kHz, +~12 dB hump ~2 kHz (derived)",
+   "compander": "NE570/NE571 2:1 / 1:2"
+  },
+  "lfo": null,
+  "filter": {
+   "pre_emphasis": {
+    "order": 1,
+    "type": "inverting shelving (pre-emphasis)",
+    "gain_low_db": 0.0,
+    "gain_high_db": 15.1,
+    "f_zero_hz": 410,
+    "f_pole_hz": 2341,
+    "formula": "H(s) = -(Rf||1/sCf) / (Rin || (Rs + 1/sCs)); Rin=47k, Rs=10k, Cs=6n8, Rf=47k, Cf=100p (LPF ~33.9 kHz)"
+   },
+   "de_emphasis": {
+    "order": 1,
+    "type": "inverting shelving (de-emphasis, mirror of pre-emphasis)",
+    "gain_low_db": 0.0,
+    "gain_high_db": -15.1,
+    "f_pole_hz": 410,
+    "f_zero_hz": 2341,
+    "formula": "feedback Zf = 47k || (10k + 1/(s*6n8)) || 1/(s*100p); input 47k"
+   }
+  },
+  "modes": [
+   {
+    "name": "v1 (1981)",
+    "notes": "MN3005/MN3101, S/N 75 dB spec"
+   },
+   {
+    "name": "v2 (1982)",
+    "notes": "MN3205/MN3102, audio path identical, BBD/clock on inverted supply"
+   }
+  ],
+  "mix": "dry unity + variable wet (Echo)",
+  "confidence": "high",
+  "sources": [
+   "https://aionfx.com/app/files/docs/amethyst_documentation.pdf",
+   "https://aionfx.com/project/amethyst-analog-delay/",
+   "https://aionfx.com/component/mn3005/",
+   "https://www.hobby-hour.com/electronics/s/dm2-delay.php",
+   "https://www.henrikhansson.com/product/dm-2-delay/",
+   "https://thatdelaypedal.com/2019/01/14/boss-dm-2-all-you-need-to-know/",
+   "https://www.hsu-hh.de/ant/wp-content/uploads/sites/699/2018/09/Holters-Parker-2018-A-Combined-Model-for-a-Bucket-Brigade-Device-and-its-Input-and-Output-Filters.pdf",
+   "https://www.dafx.de/paper-archive/details/JhVfAOFXD1lAtctkMTUODg"
+  ]
+ },
+ {
+  "code": "PH-1R",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "1M",
+    "taper": "C (reverse log)",
+    "role": "LFO RC charging resistor (+R36 4k7) into C19 15u tantalum",
+    "range": "~0.067-14 Hz derived"
+   },
+   {
+    "name": "Depth",
+    "pot": "100k",
+    "taper": "B",
+    "role": "LFO amplitude into JFET gate bus (R38 68k in, wiper -> R40 2M2 -> VC bus)",
+    "range": "0..full"
+   },
+   {
+    "name": "Resonance",
+    "pot": "10k",
+    "taper": "B",
+    "role": "feedback from last all-pass output to IC1A + input (R7 12k, C5 33n)",
+    "range": "0..~0.8 loop gain (derived)"
+   },
+   {
+    "name": "Level",
+    "pot": "100k",
+    "taper": "A",
+    "role": "output volume",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer",
+    "components": "R1 10k, C1 47n, R2 470k, Q1 2N5088 (orig 2SC732TM-GR), R3 10k",
+    "derived": {
+     "gain": 1.0
+    },
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "input/feedback summer IC1A",
+    "components": "C2 1u, R4 47k to -, R5 47k || C3 47p fb; + input: R6 47k || C4 100p to VB, receives feedback via Resonance 10kB wiper -> R7 12k -> C5 33n",
+    "derived": {
+     "dry_gain": -1.0,
+     "fb_max_gain": "~2*47k/(47k+12k)=1.59 at HF",
+     "fb_hpf_hz": 82
+    },
+    "notes": "Frequency-dependent (high-passed) feedback. Chain output reaches Res pot via C14/C15 1u. Topology read from Aion schematic: C5 line crosses R4 (jumper arc) and lands on the + input node; an alternative reading (into the - summing node, gain 47k/12k=3.9, HPF 402 Hz) was reported by a second reviewer - verify against original PH-1R schematic."
+   },
+   {
+    "order": 3,
+    "type": "divider",
+    "components": "R8 1k5 / R9 1k5 to VB",
+    "derived": {
+     "gain": 0.5
+    },
+    "notes": "Halves signal into all-pass chain -> loop gain max ~0.8."
+   },
+   {
+    "order": 4,
+    "type": "4x first-order op-amp all-pass (JFET)",
+    "components": "each: 10k in, 10k fb (4558); C 10n series to + input; + node to VB via Rds(JFET 2SK30A-GR, now 2SK208-GR) || 100k; gate: 330k from drain (via 10n) + 330k from control bus",
+    "derived": {
+     "H": "(s*R*C - 1)/(s*R*C + 1), R = Rds||100k, C = 10n",
+     "f_min_hz": 159,
+     "f_formula": "f90 = 1/(2*pi*R*C)",
+     "f_range_hz_est": "~160 Hz - ~8 kHz for Rds 100k..2k (est.)"
+    },
+    "notes": "JFETs matched Vgs(off) within 0.05 V (orig color codes: orange -1.71..-1.73, green -1.78..-1.83, blue -1.92..-1.96 V). Gate = (Vd_ac + Vcv)/2 linearisation."
+   },
+   {
+    "order": 5,
+    "type": "mixer IC1B",
+    "components": "dry R31 47k (from IC1A out), wet C14 1u + R30 22k, fb R32 47k || C16 47p; out R33 470R, C17 1u, Level 100kA",
+    "derived": {
+     "dry_gain": -1.0,
+     "wet_gain_vs_ic1a_out": "-(47/22)*0.5 = -1.07"
+    },
+    "notes": "~50/50 mix -> 2 notches (4 stages)."
+   },
+   {
+    "order": 6,
+    "type": "LFO relaxation oscillator (TL022)",
+    "components": "IC4A Schmitt: R34 150k to VB on +, R35 470k fb; senses C19 via R37 150k; C18 10n; C19 15u charged via R36 4k7 + Rate 1MC; IC4B follower",
+    "derived": {
+     "threshold_beta": 0.242,
+     "period_formula": "T = 2*R*C*ln((1+b)/(1-b)) = 0.988*R*C",
+     "f_max_hz": 14.3,
+     "f_min_hz": 0.067,
+     "shape": "exponential-segment triangle"
+    },
+    "notes": "Bias trim 100k (fed from VB via 47k, 1N914) sets gate DC through R43 1M onto VC bus; C21 0.1u on VC bus with ~688k source => ~2.3 Hz LPF: effective sweep depth drops at fast rates. Official spec: LFO 100 ms-16 s, 4 stages/720 deg, Zin 470k. Rails: VA ~8.7 V, VB 5.1 V zener via 1k8."
+   }
+  ],
+  "bbd": null,
+  "lfo": {
+   "shape": "RC-exponential triangle",
+   "rate_hz_min": 0.067,
+   "rate_hz_max": 14.3,
+   "depth": "Depth pot into JFET gate bus through 2M2 vs 1M bias feed"
+  },
+  "filter": {
+   "type": "4-stage all-pass phaser",
+   "stages": 4,
+   "element": "JFET 2SK30A-GR",
+   "C": "10n",
+   "feedback": "Resonance, high-passed 82 Hz"
+  },
+  "modes": [],
+  "mix": "~50/50",
+  "confidence": "medium",
+  "sources": [
+   "https://aionfx.com/app/files/docs/emerald_documentation.pdf",
+   "https://aionfx.com/project/emerald-resonant-phaser/",
+   "https://support.roland.com/hc/en-us/articles/201958629-PH-1R-Specifications"
+  ]
+ },
+ {
+  "code": "PH-1",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "1M?",
+    "taper": "C?",
+    "role": "LFO speed",
+    "range": "100 ms-16 s period [spec]"
+   },
+   {
+    "name": "Depth",
+    "pot": "100k?",
+    "taper": "B",
+    "role": "LFO amplitude",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "4x JFET all-pass",
+    "components": "2SK30A, 100k across D-S, 10n (as PH-1R core)",
+    "derived": {
+     "f_min_hz": 159
+    },
+    "notes": "No resonance; PH-1R reportedly added 1/2 divider + makeup gain (unconfirmed)."
+   }
+  ],
+  "bbd": null,
+  "lfo": {
+   "shape": "RC-exponential triangle",
+   "rate_hz_min": 0.0625,
+   "rate_hz_max": 10,
+   "depth": "JFET gate bus"
+  },
+  "filter": {
+   "stages": 4,
+   "phase_deg": 720
+  },
+  "modes": [],
+  "mix": "~50/50",
+  "confidence": "medium",
+  "sources": [
+   "https://support.roland.com/hc/en-us/articles/201932549-PH-1-Specifications",
+   "https://forum.pedalpcb.com/threads/jfet-alternatives-for-boss-ph-1-phaser-can-i-use-any-matched-quad.23457/",
+   "https://aionfx.com/project/emerald-resonant-phaser/"
+  ]
+ },
+ {
+  "code": "PH-2",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "250k",
+    "taper": "C",
+    "role": "LFO integrator R (+2k2)",
+    "range": "100 ms-14 s period [spec]"
+   },
+   {
+    "name": "Depth",
+    "pot": "100k",
+    "taper": "B",
+    "role": "LFO amplitude",
+    "range": ""
+   },
+   {
+    "name": "Res",
+    "pot": "10k",
+    "taper": "B",
+    "role": "feedback",
+    "range": ""
+   },
+   {
+    "name": "Mode",
+    "pot": "switch",
+    "taper": "-",
+    "role": "I: swell high->low; II: sharp phase shift (HD14053 re-routing)",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "JFET input buffer",
+    "components": "2SK30A-Y",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "NE571 compressor",
+    "components": "wraps phaser",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 3,
+    "type": "8x OTA all-pass (2x IR3109) + 4 fixed op-amp all-pass",
+    "components": "OTA stages 470p, 68k/68k/560R attenuators; fixed 10k/10k, 10n + 5k6 (~2.8 kHz, uncertain)",
+    "derived": {
+     "total_stages": 12,
+     "phase_deg": 2160
+    },
+    "notes": "antilog (exponential) CV converter"
+   },
+   {
+    "order": 4,
+    "type": "NE571 expander",
+    "components": "",
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "bbd": null,
+  "lfo": {
+   "shape": "triangle",
+   "rate_hz_min": 0.071,
+   "rate_hz_max": 10,
+   "depth": "exp CV to OTAs"
+  },
+  "filter": {
+   "stages": 12,
+   "element": "OTA IR3109",
+   "compander": "NE571"
+  },
+  "modes": [
+   {
+    "name": "Mode I"
+   },
+   {
+    "name": "Mode II"
+   }
+  ],
+  "mix": "~50/50",
+  "confidence": "medium",
+  "sources": [
+   "https://cdn.roland.com/assets/media/pdf/PH-2_OM.pdf",
+   "http://superphasermods.blogspot.com/2009/08/schematics.html",
+   "https://forum.pedalpcb.com/threads/phabio-the-one-that-got-away.23410/",
+   "https://www.manualslib.com/manual/3362019/Boss-Ph-2.html"
+  ]
+ },
+ {
+  "code": "PH-3",
+  "tech": "digital",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "-",
+    "taper": "-",
+    "role": "sweep speed",
+    "range": "tap 0.2-16 s/cycle"
+   },
+   {
+    "name": "Depth",
+    "pot": "-",
+    "taper": "-",
+    "role": "sweep width; MIN stops sweep (except Rise/Fall)",
+    "range": ""
+   },
+   {
+    "name": "Res",
+    "pot": "-",
+    "taper": "-",
+    "role": "feedback",
+    "range": ""
+   },
+   {
+    "name": "Stage",
+    "pot": "switch",
+    "taper": "-",
+    "role": "4/8/10/12/Fall/Rise/Step",
+    "range": ""
+   }
+  ],
+  "stages": [],
+  "bbd": null,
+  "lfo": {
+   "shape": "DSP",
+   "rate_hz_min": 0.0625,
+   "rate_hz_max": 5,
+   "depth": "-"
+  },
+  "filter": {
+   "stages": "4/8/10/12 (12 = 2x6 in series)"
+  },
+  "modes": [
+   {
+    "name": "4 stage"
+   },
+   {
+    "name": "8 stage"
+   },
+   {
+    "name": "10 stage"
+   },
+   {
+    "name": "12 stage"
+   },
+   {
+    "name": "FALL (barber-pole down)"
+   },
+   {
+    "name": "RISE (barber-pole up)"
+   },
+   {
+    "name": "STEP"
+   }
+  ],
+  "mix": "-",
+  "confidence": "medium",
+  "sources": [
+   "https://images.equipboard.com/uploads/item/manual/867/boss-ph-3-phase-shifter-manual.pdf"
+  ]
+ },
+ {
+  "code": "BF-1",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Manual",
+    "pot": "",
+    "taper": "",
+    "role": "base delay",
+    "range": ""
+   },
+   {
+    "name": "Depth",
+    "pot": "",
+    "taper": "",
+    "role": "sweep width",
+    "range": ""
+   },
+   {
+    "name": "Rate",
+    "pot": "",
+    "taper": "",
+    "role": "LFO speed",
+    "range": "100 ms-20 s"
+   },
+   {
+    "name": "Res",
+    "pot": "",
+    "taper": "",
+    "role": "feedback",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "BBD",
+    "components": "SAD1024 (2x512) + CMOS clock",
+    "derived": {
+     "delay_formula": "t = 1024/(2 fclk)"
+    },
+    "notes": "clock 40 kHz-1 MHz reported vs service notes (unverified)"
+   }
+  ],
+  "bbd": {
+   "chip": "SAD1024",
+   "stages": 1024,
+   "clock_hz_min": 32000,
+   "clock_hz_max": 1000000,
+   "delay_ms_min": 0.5,
+   "delay_ms_max": 16,
+   "aa_filter": "unknown"
+  },
+  "lfo": {
+   "shape": "triangle?",
+   "rate_hz_min": 0.05,
+   "rate_hz_max": 10,
+   "depth": "-"
+  },
+  "filter": {},
+  "modes": [],
+  "mix": "-",
+  "confidence": "low",
+  "sources": [
+   "https://support.roland.com/hc/en-us/articles/201958039-BF-1-Specifications",
+   "https://aionfx.com/app/files/docs/aerolith_documentation.pdf",
+   "https://forum.pedalpcb.com/threads/bandit-of-arizona-boss-bf-1-flanger.23932/"
+  ]
+ },
+ {
+  "code": "HF-2",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Manual",
+    "pot": "50k",
+    "taper": "B",
+    "role": "base delay",
+    "range": ""
+   },
+   {
+    "name": "Depth",
+    "pot": "50k",
+    "taper": "B",
+    "role": "sweep",
+    "range": ""
+   },
+   {
+    "name": "Rate",
+    "pot": "250k",
+    "taper": "C",
+    "role": "LFO",
+    "range": "100 ms-16 s"
+   },
+   {
+    "name": "Res",
+    "pot": "50k",
+    "taper": "C",
+    "role": "feedback",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "as BF-2 board with MN3204 (512 stages)",
+    "components": "R10 22k (BF-2 39k), CL trim 1MB (vs 470kB), R46 100k (vs 330k), extra 33R/47u on 5 V",
+    "derived": {
+     "delay_formula": "t = 256/fclk"
+    },
+    "notes": "'Hi band' = shorter BBD; no hi-cut control"
+   }
+  ],
+  "bbd": {
+   "chip": "MN3204 (+MN3102)",
+   "stages": 512,
+   "clock_hz_min": 40000,
+   "clock_hz_max": 500000,
+   "delay_ms_min": 0.5,
+   "delay_ms_max": 6.5,
+   "aa_filter": "as BF-2 (approx.)"
+  },
+  "lfo": {
+   "shape": "triangle",
+   "rate_hz_min": 0.0625,
+   "rate_hz_max": 10,
+   "depth": "as BF-2"
+  },
+  "filter": {},
+  "modes": [],
+  "mix": "as BF-2",
+  "confidence": "medium",
+  "sources": [
+   "https://support.roland.com/hc/en-us/articles/201948099-HF-2-Specifications",
+   "https://www.hobby-hour.com/electronics/s/boss-hf2-hi-band-flanger.php",
+   "https://forum.pedalpcb.com/threads/hero-of-arizona-boss-hf-2-flanger.17330/"
+  ]
+ },
+ {
+  "code": "BF-2B",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Manual",
+    "pot": "50k",
+    "taper": "B",
+    "role": "base delay",
+    "range": ""
+   },
+   {
+    "name": "Depth",
+    "pot": "50k",
+    "taper": "B",
+    "role": "sweep",
+    "range": ""
+   },
+   {
+    "name": "Rate",
+    "pot": "250k",
+    "taper": "C",
+    "role": "LFO",
+    "range": "100 ms-16 s"
+   },
+   {
+    "name": "Res",
+    "pot": "50k",
+    "taper": "C",
+    "role": "feedback",
+    "range": "factory trim low"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "HF-2 board, MN3204",
+    "components": "C6 10n (HF-2 47n) wet coupling into 82k: HPF 41->194 Hz; C7 15n (HF-2 47n) in resonance return: HPF ~55-87 -> ~174-272 Hz",
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "bbd": {
+   "chip": "MN3204 (+MN3102)",
+   "stages": 512,
+   "clock_hz_min": 40000,
+   "clock_hz_max": 500000,
+   "delay_ms_min": 0.5,
+   "delay_ms_max": 6.5,
+   "aa_filter": "as HF-2"
+  },
+  "lfo": {
+   "shape": "triangle",
+   "rate_hz_min": 0.0625,
+   "rate_hz_max": 10,
+   "depth": "-"
+  },
+  "filter": {
+   "wet_hpf_hz": 194
+  },
+  "modes": [],
+  "mix": "as BF-2",
+  "confidence": "medium",
+  "sources": [
+   "https://support.roland.com/hc/en-us/articles/201950079-BF-2B-Specifications",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=977"
+  ]
+ },
+ {
+  "code": "BF-3",
+  "tech": "digital",
+  "controls": [
+   {
+    "name": "Manual",
+    "pot": "-",
+    "taper": "-",
+    "role": "base delay (range depends on mode/input)",
+    "range": ""
+   },
+   {
+    "name": "Depth",
+    "pot": "-",
+    "taper": "-",
+    "role": "sweep; max disables Manual",
+    "range": ""
+   },
+   {
+    "name": "Rate",
+    "pot": "-",
+    "taper": "-",
+    "role": "LFO",
+    "range": "tap 0.1-18 s"
+   },
+   {
+    "name": "Res",
+    "pot": "-",
+    "taper": "-",
+    "role": "feedback",
+    "range": ""
+   },
+   {
+    "name": "Mode",
+    "pot": "switch",
+    "taper": "-",
+    "role": "Standard/Ultra/Gate-Pan/Momentary",
+    "range": ""
+   }
+  ],
+  "stages": [],
+  "bbd": {
+   "chip": "DSP",
+   "stages": null,
+   "clock_hz_min": null,
+   "clock_hz_max": null,
+   "delay_ms_min": 0.3,
+   "delay_ms_max": 14.4,
+   "aa_filter": "-",
+   "notes": "Bass In: 0.3-6.3 ms"
+  },
+  "lfo": {
+   "shape": "DSP",
+   "rate_hz_min": 0.056,
+   "rate_hz_max": 10,
+   "depth": "-"
+  },
+  "filter": {},
+  "modes": [
+   {
+    "name": "STANDARD"
+   },
+   {
+    "name": "ULTRA",
+    "notes": "stronger"
+   },
+   {
+    "name": "GATE/PAN",
+    "notes": "slicer mono / auto-pan stereo"
+   },
+   {
+    "name": "MOMENTARY",
+    "notes": "effect while held, sweep starts low"
+   }
+  ],
+  "mix": "-",
+  "confidence": "medium",
+  "sources": [
+   "https://www.manualslib.com/manual/19659/Boss-Bf-3.html",
+   "https://static.roland.com/assets/media/pdf/BF-3_eng01_W.pdf",
+   "https://support.roland.com/hc/en-us/articles/201947199-BF-3-Specifications"
+  ]
+ },
+ {
+  "code": "VB-2",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "250k",
+    "taper": "C",
+    "role": "LFO (bridged-T sine)",
+    "range": "2-15 Hz"
+   },
+   {
+    "name": "Depth",
+    "pot": "50k",
+    "taper": "B",
+    "role": "LFO amplitude",
+    "range": ""
+   },
+   {
+    "name": "Rise Time",
+    "pot": "250k",
+    "taper": "A",
+    "role": "OTA rise envelope",
+    "range": "150 ms-5 s"
+   },
+   {
+    "name": "Mode",
+    "pot": "switch",
+    "taper": "-",
+    "role": "latch/unlatch",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "pre filter",
+    "components": "15k/15k/47k with 6n8, then 10k/10k with 10n and 47p",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "BBD",
+    "components": "MN3207 + MN3102 (47p, 33k, 2k7), VR4 470kB clock, VR5 10kB bias",
+    "derived": {
+     "center_clock_hz": 128000
+    },
+    "notes": ""
+   },
+   {
+    "order": 3,
+    "type": "post filter",
+    "components": "10k x3 with 2n7, 4n7, 220p; 10k x2 with 3n9, 47p, 150p; output 47k/47k 6n8 33p",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 4,
+    "type": "LFO",
+    "components": "TL022 bridged-T (2x 47n, 2x 1M) around Q8 clipper -> sine",
+    "derived": {
+     "f_center_model_hz": "2.18-11.5"
+    },
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "rise/latch",
+    "components": "BA662A OTA (VCA for rise, inferred) 6u8 + 250kA; BA634 latch logic",
+    "derived": {},
+    "notes": "uncertain"
+   }
+  ],
+  "bbd": {
+   "chip": "MN3207 (+MN3102)",
+   "stages": 1024,
+   "clock_hz_min": null,
+   "clock_hz_max": null,
+   "delay_ms_min": null,
+   "delay_ms_max": null,
+   "aa_filter": "see stages",
+   "notes": "spec delay 4 ms -> ~128 kHz center"
+  },
+  "lfo": {
+   "shape": "sine",
+   "rate_hz_min": 2,
+   "rate_hz_max": 15,
+   "depth": "clock modulation"
+  },
+  "filter": {},
+  "modes": [
+   {
+    "name": "latch"
+   },
+   {
+    "name": "unlatch"
+   }
+  ],
+  "mix": "100% wet",
+  "confidence": "medium",
+  "sources": [
+   "https://support.roland.com/hc/en-us/articles/201967789-VB-2-Specifications",
+   "https://stompboxelectronics.com/wp-content/uploads/2022/12/Boss-VB-2-Vibrato-Schematic.pdf",
+   "https://stompboxelectronics.com/2022/12/27/the-boss-vb-2-lfo-circuit/"
+  ]
+ },
+ {
+  "code": "VB-2W",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "-",
+    "taper": "-",
+    "role": "LFO",
+    "range": ""
+   },
+   {
+    "name": "Depth",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Rise Time",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "S/C",
+    "pot": "switch",
+    "taper": "-",
+    "role": "S = VB-2; C = emphasized modulation, different freq. response",
+    "range": ""
+   },
+   {
+    "name": "Mode",
+    "pot": "switch",
+    "taper": "-",
+    "role": "UNLATCH/LATCH/BYPASS",
+    "range": ""
+   }
+  ],
+  "stages": [],
+  "bbd": {
+   "chip": "BBD (part unconfirmed)",
+   "stages": null,
+   "clock_hz_min": null,
+   "clock_hz_max": null,
+   "delay_ms_min": null,
+   "delay_ms_max": null,
+   "aa_filter": "-"
+  },
+  "lfo": {
+   "shape": "sine",
+   "rate_hz_min": 2,
+   "rate_hz_max": 15,
+   "depth": "-"
+  },
+  "filter": {},
+  "modes": [
+   {
+    "name": "S"
+   },
+   {
+    "name": "C"
+   }
+  ],
+  "mix": "100% wet",
+  "confidence": "low",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/VB-2W_e01_W.pdf"
+  ]
+ },
+ {
+  "code": "CE-2W",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "-",
+    "taper": "-",
+    "role": "LFO speed",
+    "range": ""
+   },
+   {
+    "name": "Depth",
+    "pot": "-",
+    "taper": "-",
+    "role": "LFO amount (also in CE-1 chorus mode)",
+    "range": ""
+   },
+   {
+    "name": "Mode",
+    "pot": "3-pos",
+    "taper": "-",
+    "role": "STANDARD / CE-1 CHORUS / CE-1 VIBRATO",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "BBD chorus",
+    "components": "analog BBD (part unconfirmed)",
+    "derived": {},
+    "notes": "Standard = CE-2 replica; CE-1 modes emulate CE-1 chorus/vibrato (vibrato = wet only)"
+   }
+  ],
+  "bbd": {
+   "chip": "analog BBD (unconfirmed)",
+   "stages": null,
+   "clock_hz_min": null,
+   "clock_hz_max": null,
+   "delay_ms_min": null,
+   "delay_ms_max": null,
+   "aa_filter": "-"
+  },
+  "lfo": {
+   "shape": "triangle (Standard, as CE-2)",
+   "rate_hz_min": null,
+   "rate_hz_max": null,
+   "depth": "-"
+  },
+  "filter": {},
+  "modes": [
+   {
+    "name": "STANDARD",
+    "notes": "CE-2"
+   },
+   {
+    "name": "CE-1 CHORUS",
+    "notes": "with variable depth (original CE-1 had none)"
+   },
+   {
+    "name": "CE-1 VIBRATO"
+   }
+  ],
+  "mix": "A = mix; stereo: A = wet, B = dry",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/CE-2W_eng02_W.pdf",
+   "https://www.premierguitar.com/gear/boss-ce-2w-waza-craft-chorus-review"
+  ]
+ },
+ {
+  "code": "CE-3",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "100k",
+    "taper": "B",
+    "role": "LFO speed",
+    "range": "period 3 s..270 ms +/-20% (0.33-3.7 Hz) [service note]"
+   },
+   {
+    "name": "Depth",
+    "pot": "100k",
+    "taper": "B",
+    "role": "LFO amount",
+    "range": ""
+   },
+   {
+    "name": "Mode",
+    "pot": "switch",
+    "taper": "-",
+    "role": "I: A=dry+wet, B=dry-wet; II: A=wet, B=dry",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input",
+    "components": "Q1 2SK30A JFET, Zin 1M",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "pre-emphasis IC1",
+    "components": "R20 47k, C2 6n8 + R21 10k, R19 47k fb, C4 100p",
+    "derived": {
+     "f_zero_hz": 410,
+     "f_pole_hz": 2341,
+     "gain_high_db": 15.1
+    },
+    "notes": ""
+   },
+   {
+    "order": 3,
+    "type": "level switch",
+    "components": "Q2 FET + R18 120k lowers level when effect on",
+    "derived": {},
+    "notes": "removing R18 -> closer to CE-2"
+   },
+   {
+    "order": 4,
+    "type": "AA LPF",
+    "components": "C10 33n, 10k x3, C11 3n3 / C14 8n2 fb / C12 470p, Q6",
+    "derived": {
+     "f_minus3db_hz": 6800
+    },
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "BBD",
+    "components": "MN3207 + MN3102, bias VR3 10kB",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 6,
+    "type": "recon LPF",
+    "components": "10k x3, C24 3n3 / C23 8n2 / C22 470p, Q8; C21 68n out",
+    "derived": {
+     "f_minus3db_hz": 6800
+    },
+    "notes": ""
+   },
+   {
+    "order": 7,
+    "type": "output A",
+    "components": "IC1 sum, R8 47k fb, de-emph C6 6n8 + R7 10k, C5 100p",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 8,
+    "type": "output B",
+    "components": "IC2 dry minus wet (47k inverter + 47k sum, 47k fb, 6n8+10k)",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 9,
+    "type": "LFO",
+    "components": "as CE-2 (47k/33k Schmitt, 1M/0.1u integrator), triangle 1.5-5.5 V (4 Vpp) at IC5 pin 7",
+    "derived": {
+     "f_min_hz": 0.33,
+     "f_max_hz": 3.7
+    },
+    "notes": ""
+   },
+   {
+    "order": 10,
+    "type": "clock",
+    "components": "as CE-2: R45 220k, C26 10n, 4k7/4k7, R40 150k, C25 47p, R41 33k, R42 2k7",
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "bbd": {
+   "chip": "MN3207 (+MN3102)",
+   "stages": 1024,
+   "clock_hz_min": null,
+   "clock_hz_max": null,
+   "delay_ms_min": null,
+   "delay_ms_max": null,
+   "aa_filter": "as CE-2 (3n3/8n2/470p)",
+   "notes": "clock Hz not in service notes; assume ~CE-2 (100-128 kHz) - low confidence"
+  },
+  "lfo": {
+   "shape": "triangle",
+   "rate_hz_min": 0.33,
+   "rate_hz_max": 3.7,
+   "depth": "as CE-2"
+  },
+  "filter": {
+   "pre_emphasis": {
+    "f_zero_hz": 410,
+    "f_pole_hz": 2341,
+    "gain_high_db": 15.1
+   }
+  },
+  "modes": [
+   {
+    "name": "Mode I",
+    "notes": "A=dry+wet, B=dry-wet (anti-phase); mono use"
+   },
+   {
+    "name": "Mode II",
+    "notes": "A=wet, B=dry"
+   }
+  ],
+  "mix": "50/50 (A)",
+  "confidence": "high",
+  "sources": [
+   "https://www.synthxl.com/wp-content/uploads/2019/10/Boss-CE-3-Service-Note.pdf",
+   "https://cdn.roland.com/assets/media/pdf/CE-3_OM.pdf",
+   "https://www.hobby-hour.com/electronics/s/boss-ce3-chorus.php"
+  ]
+ },
+ {
+  "code": "CE-5",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "E.Level",
+    "pot": "250k",
+    "taper": "C",
+    "role": "wet level into mixer",
+    "range": ""
+   },
+   {
+    "name": "Rate",
+    "pot": "250k",
+    "taper": "C",
+    "role": "LFO integrator R (+R55 10k)",
+    "range": "~0.27-7.1 Hz (derived)"
+   },
+   {
+    "name": "Depth",
+    "pot": "100k",
+    "taper": "B",
+    "role": "LFO amount (R32 220k/C25 10n/Q9)",
+    "range": ""
+   },
+   {
+    "name": "Low Filter",
+    "pot": "50k dual",
+    "taper": "A",
+    "role": "SVF 2nd-order HPF on wet",
+    "range": "fc ~1026 Hz (cut) .. 88 Hz (flat)"
+   },
+   {
+    "name": "High Filter",
+    "pot": "250k",
+    "taper": "C",
+    "role": "1st-order LPF on wet (VR + 1k into 1n2)",
+    "range": "~133 kHz .. 530 Hz"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input",
+    "components": "Q1 2SK184, Q2 buffer; Zin 1M",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "pre-emphasis + limiter",
+    "components": "IC1b 47k, 6n8 + 10k, 47k fb, 100p; back-to-back RD3.0 zeners",
+    "derived": {
+     "f_zero_hz": 410,
+     "f_pole_hz": 2341,
+     "gain_high_db": 15.1
+    },
+    "notes": "no compander"
+   },
+   {
+    "order": 3,
+    "type": "AA LPF",
+    "components": "10k x3, 470p/1n8/220p, emitter follower",
+    "derived": {
+     "topology": "3rd-order transistor, 10k x3, 470p GND / 1n8 fb / 220p GND",
+     "f_minus3db_hz": 22080,
+     "peak_db": 1.06,
+     "wet_total_minus3db_hz": 19890
+    },
+    "notes": ""
+   },
+   {
+    "order": 4,
+    "type": "BBD",
+    "components": "MN3007 + MN3101 (1st ed.); bias RT1 4k7",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "recon LPF",
+    "components": "same as AA",
+    "derived": {
+     "topology": "3rd-order transistor, 10k x3, 470p GND / 1n8 fb / 220p GND",
+     "f_minus3db_hz": 22080,
+     "peak_db": 1.06,
+     "wet_total_minus3db_hz": 19890
+    },
+    "notes": ""
+   },
+   {
+    "order": 6,
+    "type": "Low Filter (SVF HPF)",
+    "components": "IC2b/IC3a/IC2a, 10k summers, integrators 4k7 + VR1a with 33n",
+    "derived": {
+     "fc_hz_range": [
+      88,
+      1026
+     ],
+     "Q": "unknown"
+    },
+    "notes": ""
+   },
+   {
+    "order": 7,
+    "type": "High Filter (LPF)",
+    "components": "VR1b 250kC + R69 1k into C42 1n2; C38 33n/R61 1M into IC3b",
+    "derived": {
+     "fc_hz_range": [
+      530,
+      133000
+     ]
+    },
+    "notes": ""
+   },
+   {
+    "order": 8,
+    "type": "mixer",
+    "components": "IC1a; E.Level series 250kC",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 9,
+    "type": "LFO",
+    "components": "IC4a Schmitt R53 47k/R54 33k (C34 10n); IC4b integrator R55 10k + VR3 250kC, C35/C36 10u+10u b2b (~5u)",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 10,
+    "type": "clock",
+    "components": "R31 150k, C21 47p || C22 5p, R29 33k, R30 2k7, Q8",
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "bbd": {
+   "chip": "MN3007 (+MN3101)",
+   "stages": 1024,
+   "clock_hz_min": null,
+   "clock_hz_max": null,
+   "delay_ms_min": null,
+   "delay_ms_max": null,
+   "aa_filter": "3rd-order 470p/1n8/220p, -3 dB ~22 kHz (derived)",
+   "notes": "2nd edition (CE-5A) digital: ES56028S echo IC"
+  },
+  "lfo": {
+   "shape": "triangle",
+   "rate_hz_min": 0.27,
+   "rate_hz_max": 7.1,
+   "depth": "clock CV"
+  },
+  "filter": {
+   "low_filter": "SVF HPF 88-1026 Hz",
+   "high_filter": "1st-order LPF 530 Hz-133 kHz",
+   "pre_emphasis": {
+    "f_zero_hz": 410,
+    "f_pole_hz": 2341,
+    "gain_high_db": 15.1
+   }
+  },
+  "modes": [
+   {
+    "name": "1st edition (1991)",
+    "notes": "MN3007/MN3101"
+   },
+   {
+    "name": "CE-5A 2nd edition",
+    "notes": "ES56028S digital echo IC, 22 mA"
+   }
+  ],
+  "mix": "A = mix; stereo: A = wet, B = dry",
+  "confidence": "medium",
+  "sources": [
+   "https://www.synthxl.com/wp-content/uploads/2020/03/Boss-CE-5-Service-Manual.pdf",
+   "https://cdn.roland.com/assets/media/pdf/CE-5_OM.pdf",
+   "https://www.hobby-hour.com/electronics/s/boss-ce5-chorus-ensemble.php"
+  ]
+ },
+ {
+  "code": "CH-1",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "E.Level",
+    "pot": "250k",
+    "taper": "C",
+    "role": "wet level",
+    "range": ""
+   },
+   {
+    "name": "EQ",
+    "pot": "250k",
+    "taper": "C",
+    "role": "1st-order LPF on wet (VR + 1k into 1n2)",
+    "range": "~133 kHz .. 530 Hz"
+   },
+   {
+    "name": "Rate",
+    "pot": "250k",
+    "taper": "C",
+    "role": "LFO (R46 15k + VR3)",
+    "range": "~0.27-4.7 Hz (derived)"
+   },
+   {
+    "name": "Depth",
+    "pot": "100k",
+    "taper": "B",
+    "role": "LFO amount",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "pre-emphasis + limiter",
+    "components": "R3 47k, C31 6n8, R4 10k, RD3.0 zeners",
+    "derived": {
+     "f_zero_hz": 410,
+     "f_pole_hz": 2341,
+     "gain_high_db": 15.1
+    },
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "AA / recon LPF",
+    "components": "10k x3, 470p/1n8/220p",
+    "derived": {
+     "topology": "3rd-order transistor, 10k x3, 470p GND / 1n8 fb / 220p GND",
+     "f_minus3db_hz": 22080,
+     "peak_db": 1.06,
+     "wet_total_minus3db_hz": 19890
+    },
+    "notes": ""
+   },
+   {
+    "order": 3,
+    "type": "BBD",
+    "components": "MN3007 + MN3101; clock R22 150k, C18 47p",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 4,
+    "type": "EQ",
+    "components": "R59 1k + VR2 into C35 1n2; C39 33n/R56 1M into IC5a",
+    "derived": {
+     "fc_hz_range": [
+      530,
+      133000
+     ]
+    },
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "LFO",
+    "components": "R43 47k, R45 33k, integrator R46 15k + VR3 250kC, C26/C27 10u+10u",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 6,
+    "type": "depth",
+    "components": "VR4 100kB -> R18 220k / C9 10n / Q5",
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "bbd": {
+   "chip": "MN3007 (+MN3101)",
+   "stages": 1024,
+   "clock_hz_min": null,
+   "clock_hz_max": null,
+   "delay_ms_min": null,
+   "delay_ms_max": null,
+   "aa_filter": "as CE-5",
+   "notes": "later (~2001+) units digital"
+  },
+  "lfo": {
+   "shape": "triangle",
+   "rate_hz_min": 0.27,
+   "rate_hz_max": 4.7,
+   "depth": "clock CV"
+  },
+  "filter": {
+   "eq": "1st-order LPF 530 Hz-133 kHz"
+  },
+  "modes": [
+   {
+    "name": "analog (1989)"
+   },
+   {
+    "name": "digital (c.2001+)"
+   }
+  ],
+  "mix": "A = mix, B = dry",
+  "confidence": "medium",
+  "sources": [
+   "https://schematicheaven.net/effects/boss_ch1_superchorus.pdf",
+   "https://www.synthxl.com/wp-content/uploads/2020/03/Boss-CH-1-Service-Manual.pdf"
+  ]
+ },
+ {
+  "code": "CEB-3",
+  "tech": "hybrid (analog path, digital echo IC)",
+  "controls": [
+   {
+    "name": "E.Level",
+    "pot": "100k?",
+    "taper": "A?",
+    "role": "wet level",
+    "range": ""
+   },
+   {
+    "name": "Low Filter",
+    "pot": "15k? dual",
+    "taper": "B?",
+    "role": "cuts lows from effect path only",
+    "range": "cut..flat"
+   },
+   {
+    "name": "Rate",
+    "pot": "250k?",
+    "taper": "C?",
+    "role": "LFO",
+    "range": ""
+   },
+   {
+    "name": "Depth",
+    "pot": "100k",
+    "taper": "B",
+    "role": "LFO amount",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input",
+    "components": "Q1/Q3 buffers, IC2 NJM022 pre-stage (R8 27k, C9 100p)",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "delay",
+    "components": "ES56028S echo IC (F_ADJ driven by LFO VCO); internal compander CC/GC 7.5k/75k/0.33u; LPF1: 10k,10k,12k,18k with 270p/2n7/2n7; LPF2: 10k,22k,12k,10k with 270p/3n3/18n/3n3",
+    "derived": {},
+    "notes": "schematic of CEB-3A board; original 1995 part unverified"
+   },
+   {
+    "order": 3,
+    "type": "Low Filter",
+    "components": "IC4 NJM022 active filter on wet with dual pot",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 4,
+    "type": "LFO",
+    "components": "IC3 NJM022 Schmitt + integrator (47k, 10u+10u)",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "outputs",
+    "components": "JFET switching; A = mix / B",
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "bbd": {
+   "chip": "ES56028S (digital echo IC, BBD replacement)",
+   "stages": null,
+   "clock_hz_min": null,
+   "clock_hz_max": null,
+   "delay_ms_min": null,
+   "delay_ms_max": null,
+   "aa_filter": "on-chip op-amp LPFs (see stages)"
+  },
+  "lfo": {
+   "shape": "triangle",
+   "rate_hz_min": null,
+   "rate_hz_max": null,
+   "depth": "F_ADJ clock modulation"
+  },
+  "filter": {
+   "low_filter": "cut lows from wet only"
+  },
+  "modes": [],
+  "mix": "A = mix; stereo: A = wet, B = dry",
+  "confidence": "low",
+  "sources": [
+   "https://cdn.roland.com/assets/media/pdf/CEB-3_OM.pdf",
+   "https://www.schematicsonline.com/wp-content/uploads/2022/11/Boss-CEB-3-Bass-Chorus.pdf"
+  ]
+ },
+ {
+  "code": "CE-20",
+  "tech": "digital",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "-",
+    "taper": "-",
+    "role": "(Intensity for Dimensional D / CE-1)",
+    "range": ""
+   },
+   {
+    "name": "Depth",
+    "pot": "-",
+    "taper": "-",
+    "role": "no effect in Dimensional D / CE-1",
+    "range": ""
+   },
+   {
+    "name": "Brilliance",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Ambience",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Effect Tone Low/High",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "E.Level",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   }
+  ],
+  "stages": [],
+  "bbd": null,
+  "lfo": null,
+  "filter": {},
+  "modes": [
+   {
+    "name": "Rich"
+   },
+   {
+    "name": "Bass"
+   },
+   {
+    "name": "Acoustic"
+   },
+   {
+    "name": "Standard"
+   },
+   {
+    "name": "Dimensional D (SDD-320 model)"
+   },
+   {
+    "name": "CE-1 model"
+   }
+  ],
+  "mix": "E.Level; stereo I/O",
+  "confidence": "medium",
+  "sources": [
+   "https://cdn.roland.com/assets/media/pdf/CE-20_OM.pdf"
+  ]
+ },
+ {
+  "code": "DC-2",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Mode buttons",
+    "pot": "radio x4",
+    "taper": "-",
+    "role": "1..4 (Aion clone: 3 toggles, 7 combinations)",
+    "range": "see modes"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input + compressor",
+    "components": "NE570 (IC2) before BBDs",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "AA LPF (x2)",
+    "components": "10k x3, 470p/1n8/220p",
+    "derived": {
+     "topology": "3rd-order transistor, 10k x3, 470p GND / 1n8 fb / 220p GND",
+     "f_minus3db_hz": 22080,
+     "peak_db": 1.06,
+     "wet_total_minus3db_hz": 19890
+    },
+    "notes": ""
+   },
+   {
+    "order": 3,
+    "type": "BBD x2",
+    "components": "2x MN3207 + 2x MN3102; supply 78L06 -> ~6.8-7 V; bias TR1/TR2 100k ~3.4 V (opt. 3.3-3.8 V)",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 4,
+    "type": "recon LPF (x2)",
+    "components": "10k x3, 470p/1n8/220p",
+    "derived": {
+     "topology": "3rd-order transistor, 10k x3, 470p GND / 1n8 fb / 220p GND",
+     "f_minus3db_hz": 22080,
+     "peak_db": 1.06,
+     "wet_total_minus3db_hz": 19890
+    },
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "expander",
+    "components": "NE570 (IC11) both halves",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 6,
+    "type": "output matrix",
+    "components": "de-emphasis/spatial matrix with 18n, 1n2, 3n3, 4n7; 180k/47k/39k/33k/220k",
+    "derived": {},
+    "notes": "mono sum if only A used"
+   },
+   {
+    "order": 7,
+    "type": "LFO",
+    "components": "single triangle; Schmitt R35 100k/R33 33k; integrator R36 330k + R37 180k, C29/C30 10u+10u b2b; IC6A inverter 47k/47k -> anti-phase to 2nd clock; scaler IC5B R38 22k + R39 33k in, R45 47k fb, R47 5k6/R44 4k7 to clocks",
+    "derived": {
+     "rate_formula": "f = R35/(4*R33*Rint*C)"
+    },
+    "notes": ""
+   }
+  ],
+  "bbd": {
+   "chip": "2x MN3207 (+2x MN3102)",
+   "stages": 1024,
+   "clock_hz_min": null,
+   "clock_hz_max": null,
+   "delay_ms_min": null,
+   "delay_ms_max": null,
+   "aa_filter": "470p/1n8/220p 3rd order, -3 dB ~22 kHz (derived)",
+   "compander": "NE570",
+   "notes": "SDD-320 reported ~5-5.5 ms with 10% offset between channels (unverified)"
+  },
+  "lfo": {
+   "shape": "triangle, anti-phase between channels",
+   "rate_hz_min": 0.3,
+   "rate_hz_max": 0.84,
+   "depth": "mode-switched scaler gain 0.855-1.42"
+  },
+  "filter": {},
+  "modes": [
+   {
+    "name": "1",
+    "rate_hz": 0.3,
+    "depth_gain": 0.855,
+    "switching": "none"
+   },
+   {
+    "name": "2",
+    "rate_hz": 0.3,
+    "depth_gain": 1.42,
+    "switching": "shorts R38"
+   },
+   {
+    "name": "3",
+    "rate_hz": 0.62,
+    "depth_gain": 0.87,
+    "switching": "R98 82k across R36; R97 470k across R38"
+   },
+   {
+    "name": "4",
+    "rate_hz": 0.84,
+    "depth_gain": 0.89,
+    "switching": "shorts R36; R99 220k across R38"
+   }
+  ],
+  "mix": "A/B stereo matrix; mono sum when only A",
+  "confidence": "medium",
+  "sources": [
+   "https://aionfx.com/app/files/docs/blueshift_documentation.pdf",
+   "https://schematicheaven.net/effects/boss_dc2_dimension_chorus.pdf",
+   "https://www.birthofasynth.com/Scott_Stites/Pages/dimc_main.html",
+   "https://cdn.roland.com/assets/media/pdf/DC-2_OM.pdf"
+  ]
+ },
+ {
+  "code": "DC-2W",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Mode buttons",
+    "pot": "1-4",
+    "taper": "-",
+    "role": "combinations allowed (1, 2, 3, 4, 1+4, 2+4, 3+4 as SDD-320)",
+    "range": ""
+   },
+   {
+    "name": "S/SDD-320",
+    "pot": "switch",
+    "taper": "-",
+    "role": "S = DC-2; SDD-320 = brighter",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "as DC-2 (analog path), MCU for mode logic (inferred)",
+    "components": "",
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "bbd": {
+   "chip": "BBD (unconfirmed)",
+   "stages": null,
+   "clock_hz_min": null,
+   "clock_hz_max": null,
+   "delay_ms_min": null,
+   "delay_ms_max": null,
+   "aa_filter": "-"
+  },
+  "lfo": {
+   "shape": "triangle anti-phase",
+   "rate_hz_min": null,
+   "rate_hz_max": null,
+   "depth": "-"
+  },
+  "filter": {},
+  "modes": [
+   {
+    "name": "S (DC-2)"
+   },
+   {
+    "name": "SDD-320"
+   }
+  ],
+  "mix": "stereo I/O (stereo in -> mono out unsupported)",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DC-2W_eng02_W.pdf",
+   "https://static.roland.com/manuals/sh-4d/eng/68126346.html"
+  ]
+ },
+ {
+  "code": "DC-3",
+  "tech": "digital",
+  "controls": [
+   {
+    "name": "E.Level",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Equalizer",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Rate",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Depth",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "DSP",
+    "components": "fs 50 kHz; 20 Hz-20 kHz (+1/-3 dB); noise < -100 dBm",
+    "derived": {
+     "fs_hz": 50000
+    },
+    "notes": ""
+   }
+  ],
+  "bbd": null,
+  "lfo": null,
+  "filter": {},
+  "modes": [],
+  "mix": "E.Level; outputs A/B",
+  "confidence": "medium",
+  "sources": [
+   "https://cdn.roland.com/assets/media/pdf/DC-3_OM.pdf"
+  ]
+ },
+ {
+  "code": "TR-2",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "100k",
+    "taper": "B",
+    "role": "LFO speed (VR2)",
+    "range": "90-900 ms period (1.1-11.1 Hz) [spec]"
+   },
+   {
+    "name": "Wave",
+    "pot": "100k",
+    "taper": "A",
+    "role": "blend triangle -> square (VR1 into summer IC3A)",
+    "range": "triangle..square"
+   },
+   {
+    "name": "Depth",
+    "pot": "100k",
+    "taper": "B",
+    "role": "LFO amount into VCA control (VR3)",
+    "range": "0..full"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input JFET buffer",
+    "components": "2SK184, R15 1M, C8 47n",
+    "derived": {
+     "gain": 1
+    },
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "VCA",
+    "components": "M5207L01 (one half, current output), in via C6 10u + R9 10k",
+    "derived": {},
+    "notes": "later revision reportedly THAT2181 (unverified)"
+   },
+   {
+    "order": 3,
+    "type": "I-V converter",
+    "components": "IC2A M5216, R12 22k || C7 10p",
+    "derived": {
+     "lpf_hz": 723000
+    },
+    "notes": ""
+   },
+   {
+    "order": 4,
+    "type": "output",
+    "components": "JFET switches 2SK118 (Q1 effect, Q3 dry), 2SC2458 follower",
+    "derived": {},
+    "notes": "100% wet"
+   },
+   {
+    "order": 5,
+    "type": "LFO",
+    "components": "IC4A integrator C20/C21 1u back-to-back (0.5u), R31 56k; IC4B comparator R37 47k, C18 11n",
+    "derived": {},
+    "notes": "triangle slightly asymmetric; square duty >50%"
+   },
+   {
+    "order": 6,
+    "type": "CV smoothing",
+    "components": "IC3B (R27 1k5 fb) -> R8 100k -> C4 0.1u to VCA control",
+    "derived": {
+     "tau_ms": 10,
+     "fc_hz": 16
+    },
+    "notes": "rounds square edges"
+   }
+  ],
+  "bbd": null,
+  "lfo": {
+   "shape": "triangle<->square (Wave blend)",
+   "rate_hz_min": 1.1,
+   "rate_hz_max": 11.1,
+   "depth": "VCA gain modulation"
+  },
+  "filter": {},
+  "modes": [],
+  "mix": "100% wet (VCA)",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/TR-2_OM.pdf",
+   "https://www.experimentalistsanonymous.com/diy/Schematics/Tremolos%20and%20Panners/Boss%20TR-2.pdf",
+   "https://tremolo-project.blogspot.com/2017/08/boss-tr-2.html",
+   "https://www.freestompboxes.org/viewtopic.php?t=30098"
+  ]
+ },
+ {
+  "code": "PN-2",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "?",
+    "taper": "?",
+    "role": "LFO speed",
+    "range": "130 ms-14 s period (0.07-7.7 Hz) [spec]; measured 107-1482 ms"
+   },
+   {
+    "name": "Depth",
+    "pot": "?",
+    "taper": "?",
+    "role": "modulation amount",
+    "range": ""
+   },
+   {
+    "name": "Mode",
+    "pot": "4-pos",
+    "taper": "-",
+    "role": "PAN tri / PAN square / TREM tri / TREM square",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input",
+    "components": "inputs A (mono)/B, 1 Mohm (500k mono)",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "VCA x2",
+    "components": "reportedly M5207 dual VCA (as TR-2) - unverified",
+    "derived": {},
+    "notes": "pan: channels driven antiphase"
+   },
+   {
+    "order": 3,
+    "type": "LFO",
+    "components": "triangle / square (~50% duty, more symmetric than TR-2)",
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "bbd": null,
+  "lfo": {
+   "shape": "triangle or square",
+   "rate_hz_min": 0.07,
+   "rate_hz_max": 7.7,
+   "depth": "VCA gain"
+  },
+  "filter": {},
+  "modes": [
+   {
+    "name": "PAN triangle"
+   },
+   {
+    "name": "PAN square"
+   },
+   {
+    "name": "TREMOLO triangle"
+   },
+   {
+    "name": "TREMOLO square"
+   }
+  ],
+  "mix": "100% wet",
+  "confidence": "low",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PN-2_OM.pdf",
+   "https://tremolo-project.blogspot.com/2017/08/boss-pn-2-panning-tremolo.html",
+   "https://www.freestompboxes.org/viewtopic.php?t=27903"
+  ]
+ },
+ {
+  "code": "SG-1",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Sens",
+    "pot": "100k",
+    "taper": "A",
+    "role": "detector input level (with R10 470R)",
+    "range": ""
+   },
+   {
+    "name": "Attack",
+    "pot": "20k (25k ok)",
+    "taper": "B",
+    "role": "series R charging C6 680n -> swell time",
+    "range": "fast (stock)"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer",
+    "components": "Q1 emitter follower",
+    "derived": {
+     "gain": 1
+    },
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "JFET shunt attenuator",
+    "components": "R3 22k series, C2 1u; Q2 2SK30A-GR (R4 470k) shunting to VD 5.6 V zener rail",
+    "derived": {},
+    "notes": "variable divider R3 vs Rds"
+   },
+   {
+    "order": 3,
+    "type": "gate drive",
+    "components": "C6 680n via R8 1M; feedback C5 33n + R7 1M from output to gate",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 4,
+    "type": "output follower",
+    "components": "Q3",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "detector",
+    "components": "LM741 gain 1+1M/390R = 2565 (68 dB); Q4 phase splitter 4k7/4k7; Q5/Q6 pulse detectors R17/R18 100k, C16 10u, C15 47n",
+    "derived": {
+     "gain_db": 68
+    },
+    "notes": "note-onset detector resets/re-triggers swell"
+   }
+  ],
+  "bbd": null,
+  "lfo": null,
+  "filter": {
+   "type": "envelope swell (JFET VCA)",
+   "attack_cap": "680n",
+   "attack_R": "0-20k + 1M"
+  },
+  "modes": [],
+  "mix": "100% wet",
+  "confidence": "medium",
+  "sources": [
+   "https://aionfx.com/app/files/docs/onyx_documentation.pdf"
+  ]
+ },
+ {
+  "code": "TW-1",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Sens",
+    "pot": "50k (+4k7?)",
+    "taper": "B",
+    "role": "envelope sensitivity",
+    "range": ""
+   },
+   {
+    "name": "Peak",
+    "pot": "100k",
+    "taper": "A",
+    "role": "resonance/Q of filter loop",
+    "range": ""
+   },
+   {
+    "name": "Drive",
+    "pot": "switch",
+    "taper": "-",
+    "role": "UP: hard->mellow; DOWN: mellow->hard",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input",
+    "components": "Q2 stage; Zin 220k",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "IC1a inverting",
+    "components": "uPC4558, 100k/100k",
+    "derived": {
+     "gain": -1
+    },
+    "notes": ""
+   },
+   {
+    "order": 3,
+    "type": "resonant band-pass (photocoupler tuned)",
+    "components": "C8 47n + R13 150k -> IC1b, feedback LDR || R14 330k || C9 220p; C10 22n closes loop, Peak sets Q; photocoupler P873G35-380 (LED+CdS)",
+    "derived": {
+     "f_peak_cal_hz": "1300-1650 (Drive=DOWN, 350 Hz -45 dBm in)"
+    },
+    "notes": "topology partly inferred"
+   },
+   {
+    "order": 4,
+    "type": "envelope",
+    "components": "IC2a half-wave rectifier R23 22k, R36 1M, D6/D7; ~1k into C15 1u (attack ~1 ms), ~27k discharge (release ~27 ms, ?)",
+    "derived": {
+     "attack_ms": 1,
+     "release_ms": 27
+    },
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "LED driver",
+    "components": "IC2b 100k/100k polarity (UP/DOWN) -> R32 10k -> Q4/Q5 2SA1015 -> LED; VR3 100k trim",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 6,
+    "type": "output",
+    "components": "JFET switches Q8/Q9",
+    "derived": {},
+    "notes": "100% wet"
+   }
+  ],
+  "bbd": null,
+  "lfo": null,
+  "filter": {
+   "type": "resonant band-pass, LDR (CdS) tuned",
+   "element": "photocoupler P873G35-380"
+  },
+  "modes": [
+   {
+    "name": "UP"
+   },
+   {
+    "name": "DOWN"
+   }
+  ],
+  "mix": "100% wet",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/TW-1_OM.pdf",
+   "https://www.schematicsonline.com/wp-content/uploads/2022/11/Boss-TW-1-Touch-wah.pdf"
+  ]
+ },
+ {
+  "code": "AW-2",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Rate",
+    "pot": "250k",
+    "taper": "C",
+    "role": "LFO integrator R (VR4)",
+    "range": "~0.2-9 Hz (derived, ?)"
+   },
+   {
+    "name": "Depth",
+    "pot": "50k",
+    "taper": "B",
+    "role": "LFO amount (VR3)",
+    "range": ""
+   },
+   {
+    "name": "Manual",
+    "pot": "50k",
+    "taper": "B",
+    "role": "base frequency LO-HI (VR2)",
+    "range": ""
+   },
+   {
+    "name": "Sens",
+    "pot": "50k",
+    "taper": "B",
+    "role": "envelope sensitivity (VR1)",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input",
+    "components": "Q9 2SC3378; Zin 1M",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "IC1a",
+    "components": "M5218, 220k/220k",
+    "derived": {
+     "gain": -1
+    },
+    "notes": ""
+   },
+   {
+    "order": 3,
+    "type": "resonant band-pass (photocoupler)",
+    "components": "C8 47n + R16 82k -> IC1b, LDR || R50 330k || C9 220p; C21 4n7 closes loop; L1 700 mH network (R46 39k, R45 100k)",
+    "derived": {},
+    "notes": "same photocoupler loop concept as TW-1"
+   },
+   {
+    "order": 4,
+    "type": "envelope",
+    "components": "IC2a BA728 rectifier (R11 10k, R12 2M2); R14 1k + C7 1u attack; R19 68k release; IC3a R21 100k || 0.235u smoothing",
+    "derived": {
+     "attack_ms": 1,
+     "release_ms": 68,
+     "smoothing_ms": 23.5
+    },
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "CV summer + LED drive",
+    "components": "IC3b sums envelope + LFO (Depth) + Manual -> Q7/Q6 2SA1048 -> LED; RT1 100k trim",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 6,
+    "type": "LFO",
+    "components": "IC5b Schmitt (R40 180k, R39 220k) + IC5a integrator (R41 5k6 + Rate, C18/C19 10u b2b = 5u); IC4b D7/D8 + R34 39k triangle->sine shaper",
+    "derived": {
+     "f_formula": "f = R39/(4*R40*R*C)"
+    },
+    "notes": ""
+   }
+  ],
+  "bbd": null,
+  "lfo": {
+   "shape": "sine-shaped triangle",
+   "rate_hz_min": 0.2,
+   "rate_hz_max": 9,
+   "depth": "sums with envelope into LED CV"
+  },
+  "filter": {
+   "type": "resonant band-pass, LDR tuned",
+   "direction": "up only"
+  },
+  "modes": [],
+  "mix": "100% wet",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/AW-2_OM.pdf",
+   "https://www.schematicsonline.com/wp-content/uploads/2022/11/Boss-AW-2-Auto-Wah.pdf"
+  ]
+ },
+ {
+  "code": "AW-3",
+  "tech": "digital",
+  "controls": [
+   {
+    "name": "Decay",
+    "pot": "-",
+    "taper": "-",
+    "role": "envelope decay / humanizer morph time",
+    "range": ""
+   },
+   {
+    "name": "Manual/Vowel2",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Sens/Vowel1",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Mode",
+    "pot": "-",
+    "taper": "-",
+    "role": "UP/DOWN/SHARP/HUMANIZER/TEMPO",
+    "range": ""
+   }
+  ],
+  "stages": [],
+  "bbd": null,
+  "lfo": {
+   "shape": "tempo sweep",
+   "rate_hz_min": 0.25,
+   "rate_hz_max": 5,
+   "depth": "tap 200 ms-4 s (default 500 ms)"
+  },
+  "filter": {
+   "type": "DSP wah / vowel formant"
+  },
+  "modes": [
+   {
+    "name": "UP"
+   },
+   {
+    "name": "DOWN"
+   },
+   {
+    "name": "SHARP",
+    "notes": "stronger, up"
+   },
+   {
+    "name": "HUMANIZER",
+    "notes": "vowel1->vowel2 over Decay"
+   },
+   {
+    "name": "TEMPO",
+    "notes": "tap 200 ms-4 s"
+   }
+  ],
+  "mix": "-",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/AW-3_OM.pdf"
+  ]
+ },
+ {
+  "code": "FT-2",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Q",
+    "pot": "50k",
+    "taper": "A",
+    "role": "damping feedback (VR3)",
+    "range": ""
+   },
+   {
+    "name": "Cutoff Freq",
+    "pot": "50k",
+    "taper": "B",
+    "role": "base cutoff (VR2, R3 1k, R1 4k7)",
+    "range": ""
+   },
+   {
+    "name": "Sens",
+    "pot": "250k",
+    "taper": "B",
+    "role": "envelope sensitivity (VR1)",
+    "range": ""
+   },
+   {
+    "name": "Mode",
+    "pot": "switch",
+    "taper": "-",
+    "role": "DOWN / UP / MANUAL (EXP jack)",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "state-variable filter (VCA-tuned)",
+    "components": "M5207L01 dual VCA -> M5218 integrators C28=C29=1n5; IC4a/IC4b summers 47k; band-pass output (?) -> R56 47k, C9 6n8",
+    "derived": {},
+    "notes": "f proportional to VCA gain / (R*C)"
+   },
+   {
+    "order": 2,
+    "type": "envelope",
+    "components": "IC5b gain; IC5a/IC6a full-wave rectifier (10k, R41 20k, R37 47k); R38 10k + C22 2u2",
+    "derived": {
+     "tau_ms": 22
+    },
+    "notes": ""
+   },
+   {
+    "order": 3,
+    "type": "envelope post-filter",
+    "components": "Sallen-Key LPF R40/R43 10k, C25 10u, C23 0.22u",
+    "derived": {
+     "f0_hz": 10.7,
+     "Q": 3.4
+    },
+    "notes": "envelope may overshoot (derived, ?)"
+   },
+   {
+    "order": 4,
+    "type": "direction",
+    "components": "IC3b polarity UP/DOWN",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "output",
+    "components": "JFET switch",
+    "derived": {},
+    "notes": "100% wet"
+   }
+  ],
+  "bbd": null,
+  "lfo": null,
+  "filter": {
+   "type": "state-variable (VCA/OTA-style), band-pass out",
+   "integrator_C": "1n5"
+  },
+  "modes": [
+   {
+    "name": "DOWN"
+   },
+   {
+    "name": "UP"
+   },
+   {
+    "name": "MANUAL"
+   }
+  ],
+  "mix": "100% wet",
+  "confidence": "medium",
+  "sources": [
+   "https://www.schematicsonline.com/wp-content/uploads/2022/11/Boss-FT-2-Dynamic-Filter.pdf"
+  ]
+ },
+ {
+  "code": "DM-3",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Repeat Rate",
+    "pot": "50k",
+    "taper": "B",
+    "role": "clock (VR3 via R54 10k, D5); RT3 100kB trim",
+    "range": "20-300 ms"
+   },
+   {
+    "name": "Intensity",
+    "pot": "50k",
+    "taper": "B",
+    "role": "feedback (VR1)",
+    "range": ""
+   },
+   {
+    "name": "Echo",
+    "pot": "50k",
+    "taper": "B",
+    "role": "wet level (VR2)",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "pre-emphasis",
+    "components": "IC1b R10/R9 47k, C5 100p, C4 6n8, R11 10k",
+    "derived": {
+     "f_zero_hz": 410,
+     "f_pole_hz": 2341
+    },
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "compressor",
+    "components": "uPC1571C (NE570 class)",
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 3,
+    "type": "AA LPF 3rd order",
+    "components": "Q3, 10k x3, C12 10n GND, C14 82n fb, C15 330p GND",
+    "derived": {},
+    "notes": "like DM-2 but 10n first cap"
+   },
+   {
+    "order": 4,
+    "type": "BBD",
+    "components": "MN3205 4096 + MN3102 (C44 220p, R56 560k, Q4 R57 33k/R58 2k7); BIAS RT1 22kB, CANCEL RT2 10kB",
+    "derived": {
+     "fclk_300ms_hz": 6830,
+     "fclk_20ms_hz": 102000
+    },
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "recon LPF",
+    "components": "Q6 3rd order 10k x3, C42 2n2, C18 33n, C41 1n; Q7 SK2 10k x2, C19 39n, C37 330p",
+    "derived": {
+     "sk_f0_hz": 4436,
+     "sk_Q": 5.44
+    },
+    "notes": "same as DM-2 post filter"
+   },
+   {
+    "order": 6,
+    "type": "expander + mixer",
+    "components": "uPC1571C; IC1a R38/R40 47k; MAIN + DIRECT outs",
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "bbd": {
+   "chip": "MN3205 (+MN3102)",
+   "stages": 4096,
+   "clock_hz_min": 6830,
+   "clock_hz_max": 102000,
+   "delay_ms_min": 20,
+   "delay_ms_max": 300,
+   "aa_filter": "as DM-2 (pre first cap 10n instead of 6n8)",
+   "compander": "uPC1571C"
+  },
+  "lfo": null,
+  "filter": {},
+  "modes": [],
+  "mix": "dry unity + wet (Echo)",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DM-3_OM.pdf",
+   "https://www.schematicsonline.com/wp-content/uploads/2022/11/Boss-DM-3-Analog-delay.pdf"
+  ]
+ },
+ {
+  "code": "DM-2W",
+  "tech": "analog",
+  "controls": [
+   {
+    "name": "Repeat Rate",
+    "pot": "-",
+    "taper": "-",
+    "role": "delay",
+    "range": "S: 20-300 ms; C: 40-800 ms"
+   },
+   {
+    "name": "Intensity",
+    "pot": "-",
+    "taper": "-",
+    "role": "feedback",
+    "range": ""
+   },
+   {
+    "name": "Echo",
+    "pot": "-",
+    "taper": "-",
+    "role": "wet level",
+    "range": ""
+   },
+   {
+    "name": "S/C",
+    "pot": "switch",
+    "taper": "-",
+    "role": "Standard (DM-2) / Custom (longer, cleaner)",
+    "range": ""
+   }
+  ],
+  "stages": [],
+  "bbd": {
+   "chip": "BBD (part not confirmed)",
+   "stages": null,
+   "clock_hz_min": null,
+   "clock_hz_max": null,
+   "delay_ms_min": 20,
+   "delay_ms_max": 800,
+   "aa_filter": "-"
+  },
+  "lfo": null,
+  "filter": {},
+  "modes": [
+   {
+    "name": "Standard",
+    "notes": "20-300 ms"
+   },
+   {
+    "name": "Custom",
+    "notes": "40-800 ms, cleaner"
+   }
+  ],
+  "mix": "dry + wet; DIRECT OUT; RATE expression jack",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DM-2W_eng03_W.pdf",
+   "https://www.boss.info/global/products/dm-2w/"
+  ]
+ },
+ {
+  "code": "RT-20",
+  "tech": "digital",
+  "controls": [
+   {
+    "name": "Overdrive",
+    "pot": "-",
+    "taper": "-",
+    "role": "drive",
+    "range": ""
+   },
+   {
+    "name": "Balance",
+    "pot": "-",
+    "taper": "-",
+    "role": "horn/bass rotor",
+    "range": ""
+   },
+   {
+    "name": "Rise Time",
+    "pot": "-",
+    "taper": "-",
+    "role": "slow<->fast transition",
+    "range": ""
+   },
+   {
+    "name": "Slow Speed",
+    "pot": "-",
+    "taper": "-",
+    "role": "CCW stops rotor front",
+    "range": ""
+   },
+   {
+    "name": "Fast Speed",
+    "pot": "-",
+    "taper": "-",
+    "role": "center = standard",
+    "range": ""
+   },
+   {
+    "name": "Direct Level",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Effect Level",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "DSP",
+    "components": "TC220CCA0AF-B01, codec AK4552VT, 11.2896 MHz xtal",
+    "derived": {
+     "fs_hz": 44100
+    },
+    "notes": ""
+   }
+  ],
+  "bbd": null,
+  "lfo": null,
+  "filter": {},
+  "modes": [
+   {
+    "name": "I",
+    "notes": "Leslie 122 standard + OD"
+   },
+   {
+    "name": "II",
+    "notes": "on-mic, more tremolo"
+   },
+   {
+    "name": "III",
+    "notes": "Marshall 1959 dist"
+   },
+   {
+    "name": "IV",
+    "notes": "Uni-Vibe + Marshall; Balance = vibe intensity"
+   }
+  ],
+  "mix": "Direct/Effect levels",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RT-20_OM.pdf",
+   "https://www.schematicsonline.com/wp-content/uploads/2022/11/Boss-RT-20-Rotary-Ensemble.pdf"
+  ]
+ },
+ {
+  "code": "SL-2",
+  "tech": "digital",
+  "controls": [
+   {
+    "name": "Variation",
+    "pot": "-",
+    "taper": "-",
+    "role": "pattern variation",
+    "range": ""
+   },
+   {
+    "name": "Attack",
+    "pot": "-",
+    "taper": "-",
+    "role": "slice attack",
+    "range": ""
+   },
+   {
+    "name": "Duty",
+    "pot": "-",
+    "taper": "-",
+    "role": "slice length",
+    "range": ""
+   },
+   {
+    "name": "Balance",
+    "pot": "-",
+    "taper": "-",
+    "role": "dry/wet",
+    "range": ""
+   },
+   {
+    "name": "Tempo",
+    "pot": "-",
+    "taper": "-",
+    "role": "40-300 BPM, tap",
+    "range": ""
+   }
+  ],
+  "stages": [],
+  "bbd": null,
+  "lfo": {
+   "shape": "rhythmic patterns",
+   "rate_hz_min": null,
+   "rate_hz_max": null,
+   "depth": "40-300 BPM"
+  },
+  "filter": {},
+  "modes": [
+   {
+    "name": "SINGLE 1-2"
+   },
+   {
+    "name": "DUAL 3-4"
+   },
+   {
+    "name": "TREMOLO 5"
+   },
+   {
+    "name": "HARMONIC 6"
+   },
+   {
+    "name": "SFX 7-8"
+   }
+  ],
+  "mix": "Balance knob",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/SL-2_eng01_W.pdf"
+  ]
+ },
+ {
+  "code": "SL-20",
+  "tech": "digital",
+  "controls": [
+   {
+    "name": "Pattern/Bank",
+    "pot": "-",
+    "taper": "-",
+    "role": "pattern select (harmonic banks 4-5)",
+    "range": ""
+   },
+   {
+    "name": "Attack",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Duty",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Effect Level",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Direct Level",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Tempo",
+    "pot": "-",
+    "taper": "-",
+    "role": "30-250 BPM",
+    "range": ""
+   }
+  ],
+  "stages": [],
+  "bbd": null,
+  "lfo": {
+   "shape": "1-bar patterns",
+   "rate_hz_min": null,
+   "rate_hz_max": null,
+   "depth": "30-250 BPM, MIDI clock"
+  },
+  "filter": {},
+  "modes": [
+   {
+    "name": "MONO"
+   },
+   {
+    "name": "STEREO FIXED"
+   },
+   {
+    "name": "RANDOM"
+   },
+   {
+    "name": "PING-PONG"
+   },
+   {
+    "name": "AUTO"
+   },
+   {
+    "name": "3D Cross"
+   },
+   {
+    "name": "3D Panner"
+   }
+  ],
+  "mix": "Effect/Direct levels",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/SL-20_OM.pdf"
+  ]
+ },
+ {
+  "code": "MO-2",
+  "tech": "digital",
+  "controls": [
+   {
+    "name": "Balance",
+    "pot": "-",
+    "taper": "-",
+    "role": "dry/effect",
+    "range": ""
+   },
+   {
+    "name": "Tone",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Detune",
+    "pot": "-",
+    "taper": "-",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "Mode",
+    "pot": "-",
+    "taper": "-",
+    "role": "3 modes",
+    "range": ""
+   }
+  ],
+  "stages": [],
+  "bbd": null,
+  "lfo": null,
+  "filter": {},
+  "modes": [
+   {
+    "name": "Mode 1"
+   },
+   {
+    "name": "Mode 2"
+   },
+   {
+    "name": "Mode 3"
+   }
+  ],
+  "mix": "Balance",
+  "confidence": "low",
+  "sources": [
+   "https://www.boss.info/global/products/mo-2/"
+  ]
+ }
+]

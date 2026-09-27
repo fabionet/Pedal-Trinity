@@ -22,207 +22,191 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "Version.h"
+#include "engine/Circuit.h"
 
 namespace
 {
     //==============================================================================
-    // Autotest del DSP
+    // Autotest del motore
     //==============================================================================
-    struct TestResult { juce::String name; bool ok; juce::String detail; };
-
-    float rmsDb (const juce::AudioBuffer<float>& b, int ch, int start, int len)
+    float rmsDb (const juce::AudioBuffer<float>& b, int start, int len)
     {
-        return juce::Decibels::gainToDecibels (b.getRMSLevel (ch, start, len), -200.0f);
-    }
-
-    /** Processa un seno e restituisce l'uscita (ultimo secondo, a regime). */
-    juce::AudioBuffer<float> render (PedalTrinityProcessor& p, float freq, float amp, double sr = 48000.0,
-                                     int block = 256, int seconds = 2)
-    {
-        p.setPlayConfigDetails (2, 2, sr, block);
-        p.prepareToPlay (sr, block);
-        const int total = (int) sr * seconds;
-        juce::AudioBuffer<float> out (2, total);
-        juce::MidiBuffer midi;
-        juce::AudioBuffer<float> buf (2, block);
-        for (int pos = 0; pos < total; pos += block)
-        {
-            const int n = juce::jmin (block, total - pos);
-            buf.setSize (2, n, false, false, true);
-            for (int i = 0; i < n; ++i)
-            {
-                const float s = amp * std::sin (2.0f * juce::MathConstants<float>::pi * freq * (float) (pos + i) / (float) sr);
-                buf.setSample (0, i, s);
-                buf.setSample (1, i, s);
-            }
-            p.processBlock (buf, midi);
-            for (int c = 0; c < 2; ++c)
-                out.copyFrom (c, pos, buf, c, 0, n);
-        }
-        return out;
-    }
-
-    void setParam (PedalTrinityProcessor& p, const juce::String& id, float value)
-    {
-        if (auto* param = p.apvts.getParameter (id))
-            param->setValueNotifyingHost (param->convertTo0to1 (value));
+        return juce::Decibels::gainToDecibels (b.getRMSLevel (0, start, len), -200.0f);
     }
 
     bool allFinite (const juce::AudioBuffer<float>& b)
     {
         for (int c = 0; c < b.getNumChannels(); ++c)
             for (int i = 0; i < b.getNumSamples(); ++i)
-                if (! std::isfinite (b.getSample (c, i)))
-                    return false;
+                if (! std::isfinite (b.getSample (c, i))) return false;
         return true;
+    }
+
+    /** Segnale di prova: nota di chitarra (fondamentale + armoniche) con inviluppo. */
+    void fillGuitar (juce::AudioBuffer<float>& b, double sr, float amp, int offset)
+    {
+        for (int i = 0; i < b.getNumSamples(); ++i)
+        {
+            const double t = (double) (i + offset) / sr;
+            const double env = std::exp (-2.0 * std::fmod (t, 1.0));
+            double v = 0;
+            for (int h = 1; h <= 6; ++h) v += std::sin (2.0 * juce::MathConstants<double>::pi * 110.0 * h * t) / (h * h);
+            for (int c = 0; c < b.getNumChannels(); ++c) b.setSample (c, i, (float) (amp * env * v));
+        }
+    }
+
+    /** Processa 1.5 s con un effetto e restituisce l'uscita. */
+    juce::AudioBuffer<float> runEffect (pt::engine::Effect& fx, double sr, int block, float amp)
+    {
+        fx.prepare (sr, block);
+        const int total = (int) (sr * 1.5);
+        juce::AudioBuffer<float> out (2, total), buf (2, block);
+        for (int pos = 0; pos < total; pos += block)
+        {
+            const int n = juce::jmin (block, total - pos);
+            buf.setSize (2, n, false, false, true);
+            fillGuitar (buf, sr, amp, pos);
+            fx.messageThreadUpdate();
+            fx.process (buf.getArrayOfWritePointers(), 2, n);
+            for (int c = 0; c < 2; ++c) out.copyFrom (c, pos, buf, c, 0, n);
+        }
+        return out;
     }
 
     int runSelfTest()
     {
-        std::vector<TestResult> results;
-        auto add = [&] (juce::String n, bool ok, juce::String d) { results.push_back ({ n, ok, d }); };
-        const int sr = 48000;
-
-        {   // tutto spento = bypass perfetto
-            PedalTrinityProcessor p;
-            setParam (p, pt::ids::odOn, 0); setParam (p, pt::ids::distOn, 0); setParam (p, pt::ids::eqOn, 0);
-            auto out = render (p, 440.0f, 0.5f);
-            float maxErr = 0;
-            for (int i = sr; i < out.getNumSamples(); ++i)
-            {
-                const float ref = 0.5f * std::sin (2.0f * juce::MathConstants<float>::pi * 440.0f * (float) i / (float) sr);
-                maxErr = juce::jmax (maxErr, std::abs (out.getSample (0, i) - ref));
-            }
-            add ("Bypass totale trasparente", maxErr < 1.0e-6f, "errore max " + juce::String (maxErr, 9));
-        }
-        {   // overdrive: saturazione, livello ragionevole, niente NaN
-            PedalTrinityProcessor p;
-            setParam (p, pt::ids::eqOn, 0);
-            setParam (p, pt::ids::odDrive, 10.0f);
-            auto out = render (p, 110.0f, 0.3f);
-            const float lvl = rmsDb (out, 0, sr, sr);
-            add ("Overdrive drive max: uscita finita e ragionevole", allFinite (out) && lvl > -30.0f && lvl < 6.0f,
-                 "RMS " + juce::String (lvl, 1) + " dBFS");
-            setParam (p, pt::ids::odDrive, 0.0f);
-            auto clean = render (p, 110.0f, 0.3f);
-            const float lvlClean = rmsDb (clean, 0, sr, sr);
-            add ("Overdrive: il drive aumenta la saturazione", lvl > lvlClean - 3.0f, juce::String (lvlClean, 1) + " -> " + juce::String (lvl, 1) + " dB");
-        }
-        {   // distorsore modo S e C
-            for (int mode = 0; mode < 2; ++mode)
-            {
-                PedalTrinityProcessor p;
-                setParam (p, pt::ids::odOn, 0); setParam (p, pt::ids::eqOn, 0); setParam (p, pt::ids::distOn, 1);
-                setParam (p, pt::ids::distMode, (float) mode);
-                setParam (p, pt::ids::distGain, 10.0f);
-                setParam (p, pt::ids::distLow, 15.0f); setParam (p, pt::ids::distHigh, 15.0f); setParam (p, pt::ids::distMid, 15.0f);
-                auto out = render (p, 82.4f, 0.2f);
-                const float lvl = rmsDb (out, 0, sr, sr);
-                add (juce::String ("Distorsore modo ") + (mode ? "C" : "S") + ", tutto al massimo",
-                     allFinite (out) && lvl > -30.0f && lvl < 12.0f, "RMS " + juce::String (lvl, 1) + " dBFS");
-            }
-        }
-        {   // EQ: +15 dB sulla banda a 800 Hz
-            PedalTrinityProcessor p;
-            setParam (p, pt::ids::odOn, 0); setParam (p, pt::ids::distOn, 0); setParam (p, pt::ids::eqOn, 1);
-            auto flat = render (p, 800.0f, 0.1f);
-            setParam (p, pt::ids::eqBand (3), 15.0f);
-            auto boosted = render (p, 800.0f, 0.1f);
-            const float gain = rmsDb (boosted, 0, sr, sr) - rmsDb (flat, 0, sr, sr);
-            add ("EQ banda 800 Hz a +15 dB", std::abs (gain - 15.0f) < 0.6f, "guadagno misurato " + juce::String (gain, 2) + " dB");
-            setParam (p, pt::ids::eqBand (3), 0.0f);
-            setParam (p, pt::ids::eqLevel, -6.0f);
-            auto lower = render (p, 800.0f, 0.1f);
-            const float lv = rmsDb (lower, 0, sr, sr) - rmsDb (flat, 0, sr, sr);
-            add ("EQ level a -6 dB", std::abs (lv + 6.0f) < 0.2f, "misurato " + juce::String (lv, 2) + " dB");
-        }
-        {   // catena completa a varie frequenze di campionamento e blocchi irregolari
-            bool ok = true;
-            juce::String info;
-            for (double rate : { 44100.0, 48000.0, 96000.0 })
-            {
-                PedalTrinityProcessor p;
-                setParam (p, pt::ids::distOn, 1);
-                auto out = render (p, 196.0f, 0.4f, rate, 97, 1);
-                ok = ok && allFinite (out);
-                info << juce::String (rate / 1000.0, 1) << "k:" << juce::String (rmsDb (out, 0, 0, out.getNumSamples()), 1) << "dB ";
-            }
-            add ("Catena completa (44.1/48/96 kHz, blocchi da 97)", ok, info);
-        }
-        {   // mono
-            PedalTrinityProcessor p;
-            p.setPlayConfigDetails (1, 1, 48000.0, 128);
-            juce::AudioProcessor::BusesLayout mono;
-            mono.inputBuses.add (juce::AudioChannelSet::mono());
-            mono.outputBuses.add (juce::AudioChannelSet::mono());
-            const bool layoutOk = p.setBusesLayout (mono);
-            p.prepareToPlay (48000.0, 128);
-            juce::AudioBuffer<float> b (1, 128);
-            juce::MidiBuffer m;
-            bool fin = true;
-            for (int k = 0; k < 400; ++k)
-            {
-                for (int i = 0; i < 128; ++i)
-                    b.setSample (0, i, 0.3f * std::sin ((float) (k * 128 + i) * 0.05f));
-                p.processBlock (b, m);
-                fin = fin && allFinite (b);
-            }
-            add ("Configurazione mono", layoutOk && fin, layoutOk ? "ok" : "layout rifiutato");
-        }
-        {   // salvataggio / ripristino dello stato
-            PedalTrinityProcessor a, b;
-            setParam (a, pt::ids::odDrive, 7.3f);
-            setParam (a, pt::ids::distMidFreq, 2500.0f);
-            juce::MemoryBlock state;
-            a.getStateInformation (state);
-            b.setStateInformation (state.getData(), (int) state.getSize());
-            const float d = b.apvts.getRawParameterValue (pt::ids::odDrive)->load();
-            const float f = b.apvts.getRawParameterValue (pt::ids::distMidFreq)->load();
-            add ("Salvataggio/ripristino preset", std::abs (d - 7.3f) < 0.01f && std::abs (f - 2500.0f) < 1.0f,
-                 "drive " + juce::String (d, 2) + ", mid freq " + juce::String (f, 0));
-        }
-
-        int failed = 0;
-        std::cout << "\nPedal Trinity " << pt::versionString << " - autotest DSP\n";
-        for (auto& r : results)
+        using namespace pt::engine;
+        int failed = 0, total = 0;
+        auto report = [&] (const juce::String& name, bool ok, const juce::String& detail)
         {
-            std::cout << (r.ok ? "  [OK]    " : "  [FALLITO] ") << r.name << "  (" << r.detail << ")\n";
-            failed += r.ok ? 0 : 1;
+            ++total;
+            if (! ok) ++failed;
+            std::cout << (ok ? "  [OK]      " : "  [FALLITO] ") << name << "  (" << detail << ")\n";
+        };
+
+        std::cout << "\nPedal Trinity " << pt::versionString << " - autotest del motore (" << numModels() << " modelli)\n";
+
+        // 1. ogni modello: netlist valida, uscita finita e livello plausibile con i comandi a min/meta'/max
+        for (int m = 0; m < numModels(); ++m)
+        {
+            const auto& def = model (m);
+            juce::String detail;
+            bool ok = true;
+            for (float setting : { 0.0f, 0.5f, 1.0f })
+            {
+                auto fx = createEffect (def);
+                if (auto* c = dynamic_cast<CircuitEffect*> (fx.get()); c != nullptr && ! c->error.empty())
+                {
+                    ok = false;
+                    detail << "netlist: " << c->error << " ";
+                    break;
+                }
+                for (int k = 0; k < def.numControls; ++k)
+                    if (def.controls[k].kind != ControlKind::Button)
+                        fx->params[k].store (setting);
+                auto out = runEffect (*fx, 48000.0, 256, 0.25f);
+                const float lvl = rmsDb (out, 24000, out.getNumSamples() - 24000);
+                const bool fin = allFinite (out);
+                const bool sane = lvl < 24.0f;
+                if (! fin || ! sane) ok = false;
+                detail << juce::String (setting, 1) << ":" << (fin ? juce::String (lvl, 1) : juce::String ("NaN")) << "dB ";
+            }
+            report (juce::String (def.code) + " " + def.name + " [" + def.inspiredBy + "]", ok, detail.trim());
         }
-        std::cout << (failed == 0 ? "Tutti i test superati.\n" : "Alcuni test sono falliti.\n") << std::flush;
+
+        // 2. catena: 100 slot, spostamenti, rimozioni, stato
+        {
+            Chain chain;
+            chain.prepare (48000.0, 256);
+            for (int i = 0; i < maxSlots + 5; ++i)
+                chain.insert (-1, numModels() > 0 ? model (i % numModels()).id : "");
+            report ("Limite di 100 slot", chain.size() == maxSlots, juce::String (chain.size()) + " slot");
+            chain.move (0, 50); chain.move (99, 0); chain.remove (10);
+            const auto state = chain.toValueTree();
+            Chain copy;
+            copy.fromValueTree (state);
+            report ("Salvataggio/ripristino della catena", copy.toValueTree().isEquivalentTo (state), juce::String (copy.size()) + " slot");
+            juce::AudioBuffer<float> buf (2, 256);
+            fillGuitar (buf, 48000.0, 0.2f, 0);
+            chain.process (buf, 2);
+            report ("Catena di 99 pedali: uscita finita", allFinite (buf), "RMS " + juce::String (rmsDb (buf, 0, 256), 1) + " dB");
+        }
+
+        // 3. processore completo e bypass
+        {
+            PedalTrinityProcessor p;
+            p.chain.fromValueTree (juce::ValueTree ("CHAIN"));
+            p.setPlayConfigDetails (2, 2, 48000.0, 256);
+            p.prepareToPlay (48000.0, 256);
+            juce::AudioBuffer<float> buf (2, 256), ref (2, 256);
+            fillGuitar (buf, 48000.0, 0.3f, 0);
+            ref.makeCopyOf (buf);
+            juce::MidiBuffer midi;
+            p.processBlock (buf, midi);
+            float err = 0;
+            for (int i = 0; i < 256; ++i) err = juce::jmax (err, std::abs (buf.getSample (0, i) - ref.getSample (0, i)));
+            report ("Catena vuota trasparente", err < 1.0e-6f, "errore max " + juce::String (err, 9));
+        }
+
+        std::cout << (failed == 0 ? "Tutti i test superati (" : "Test falliti: ") << (failed == 0 ? total : failed)
+                  << (failed == 0 ? ")\n" : "\n") << std::flush;
         return failed == 0 ? 0 : 1;
     }
 
     //==============================================================================
     // Screenshot dell'interfaccia (per la guida PDF)
+    //   --screenshot file.png [--scale s] [--size WxH] [--view n] [--first i] [--factory k]
+    //   [--zoom slot] [--info] [--chain id,id,...] [--set slot:ctrl=val]
     //==============================================================================
     int runScreenshot (const juce::StringArray& args)
     {
         const int idx = args.indexOf ("--screenshot");
-        if (idx < 0 || idx + 1 >= args.size())
-            return 2;
+        if (idx < 0 || idx + 1 >= args.size()) return 2;
         const juce::File outFile = juce::File::getCurrentWorkingDirectory().getChildFile (args[idx + 1].unquoted());
 
         PedalTrinityProcessor p;
         float scale = 1.0f;
+        int w = 1280, h = 760, zoomSlot = -1;
         bool info = false;
         for (int i = 0; i < args.size(); ++i)
         {
-            if (args[i] == "--scale" && i + 1 < args.size())
-                scale = args[i + 1].getFloatValue();
-            else if (args[i] == "--info")
-                info = true;
-            else if (args[i] == "--set" && i + 1 < args.size())
-                setParam (p, args[i + 1].upToFirstOccurrenceOf ("=", false, false),
-                          args[i + 1].fromFirstOccurrenceOf ("=", false, false).getFloatValue());
+            const auto next = i + 1 < args.size() ? args[i + 1] : juce::String();
+            if (args[i] == "--scale") scale = next.getFloatValue();
+            else if (args[i] == "--size") { w = next.upToFirstOccurrenceOf ("x", false, false).getIntValue(); h = next.fromFirstOccurrenceOf ("x", false, false).getIntValue(); }
+            else if (args[i] == "--view") p.uiState.setProperty ("view", next.getIntValue(), nullptr);
+            else if (args[i] == "--first") p.uiState.setProperty ("first", next.getIntValue(), nullptr);
+            else if (args[i] == "--factory") p.presets.loadFactory (next.getIntValue());
+            else if (args[i] == "--zoom") zoomSlot = next.getIntValue();
+            else if (args[i] == "--info") info = true;
+            else if (args[i] == "--chain")
+            {
+                juce::ValueTree t ("CHAIN");
+                for (auto& id : juce::StringArray::fromTokens (next, ",", ""))
+                {
+                    juce::ValueTree s ("SLOT");
+                    s.setProperty ("model", id, nullptr);
+                    s.setProperty ("on", true, nullptr);
+                    t.appendChild (s, nullptr);
+                }
+                p.chain.fromValueTree (t);
+            }
+            else if (args[i] == "--set")
+            {
+                const int slot = next.upToFirstOccurrenceOf (":", false, false).getIntValue();
+                const auto rest = next.fromFirstOccurrenceOf (":", false, false);
+                p.chain.setParam (slot, rest.upToFirstOccurrenceOf ("=", false, false).getIntValue(),
+                                  rest.fromFirstOccurrenceOf ("=", false, false).getFloatValue());
+            }
         }
+        p.uiState.setProperty ("w", w, nullptr);
+        p.uiState.setProperty ("h", h, nullptr);
 
         std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
         auto* editor = dynamic_cast<PedalTrinityEditor*> (ed.get());
-        if (editor == nullptr)
-            return 3;
-        if (info)
-            editor->showInfo (true);
+        if (editor == nullptr) return 3;
+        editor->setSize (w, h);
+        if (zoomSlot >= 0) editor->showZoom (zoomSlot);
+        if (info) editor->showInfo (true);
         auto img = editor->createComponentSnapshot (editor->getLocalBounds(), true, scale);
         outFile.deleteFile();
         juce::FileOutputStream os (outFile);

@@ -60,18 +60,35 @@ juce_add_plugin(PedalTrinity
 target_sources(PedalTrinity PRIVATE
     Source/PluginProcessor.cpp
     Source/PluginEditor.cpp
+    Source/Presets.cpp
     Source/StandaloneApp.cpp
+    Source/engine/Catalog.cpp
+    Source/engine/Chain.cpp
+    Source/engine/Circuit.cpp
+    Source/engine/Effects.cpp
+    Source/engine/FxAmp.cpp
+    Source/engine/FxDynamics.cpp
+    Source/engine/FxFilters.cpp
+    Source/engine/FxModulation.cpp
+    Source/engine/FxPitch.cpp
+    Source/engine/FxTime.cpp
+    Source/engine/FxUtility.cpp
     Source/gui/Assets.cpp
     Source/gui/Controls.cpp
-    Source/gui/InfoPanel.cpp)
+    Source/gui/InfoPanel.cpp
+    Source/gui/PedalView.cpp
+    Source/gui/Rack.cpp)
 
-target_include_directories(PedalTrinity PRIVATE Source Source/gui)
+target_include_directories(PedalTrinity PRIVATE Source Source/gui Source/engine)
+
+# immagini renderizzate dei pedali (una per modello del catalogo)
+file(GLOB PT_PEDAL_IMAGES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Resources/pedals/*.jpg")
 
 juce_add_binary_data(PedalTrinityData
     HEADER_NAME BinaryData.h
     NAMESPACE BinaryData
     SOURCES
-        Resources/background.jpg
+        ${PT_PEDAL_IMAGES}
         Resources/strip_ts_big.png
         Resources/strip_ts_small.png
         Resources/strip_boss.png

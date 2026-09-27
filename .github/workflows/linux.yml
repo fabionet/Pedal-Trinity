@@ -3,10 +3,10 @@ name: Linux build
 
 on:
   push:
-    branches: [main-linux]
+    branches: [main-linux, dev-rack]
     tags: ["v*-linux"]
   pull_request:
-    branches: [main-linux]
+    branches: [main-linux, dev-rack]
   workflow_dispatch:
 
 permissions:

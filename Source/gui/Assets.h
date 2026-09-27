@@ -1,13 +1,14 @@
 /*
     Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
 
-    Caricamento delle immagini incorporate (foto dei pedali e filmstrip 3D).
+    Immagini incorporate: filmstrip 3D dei comandi (condivise) e render
+    dei pedali. Si usa tramite juce::SharedResourcePointer<Assets>.
 */
 
 #pragma once
 
 #include <juce_gui_basics/juce_gui_basics.h>
-#include "UILayout.h"
+#include "Strips.h"
 
 namespace pt::ui
 {
@@ -16,22 +17,20 @@ namespace pt::ui
     public:
         Assets();
 
-        const juce::Image& background() const { return bg; }
+        /** Disegna il fotogramma "index" della filmstrip con l'ancoraggio in (x, y) (px logici). */
+        void drawFrame (juce::Graphics& g, int stripId, int index, float x, float y) const;
+        static juce::Rectangle<float> frameBounds (int stripId, float x, float y);
+        static int frameForProportion (int stripId, double proportion);
+        static int frameCount (int stripId);
 
-        /** Disegna il fotogramma "index" della filmstrip con l'ancoraggio in (x, y) (px @1x). */
-        void drawFrame (juce::Graphics& g, StripId id, int index, float x, float y) const;
-
-        /** Rettangolo (px @1x) occupato da un fotogramma ancorato in (x, y). */
-        static juce::Rectangle<float> frameBounds (StripId id, float x, float y);
-
-        static int frameForProportion (StripId id, double proportion);
+        /** Immagine di un pedale (dalla cache di JUCE). */
+        static juce::Image pedalImage (const char* resource);
 
         static juce::Image loadResource (const char* name);
         static juce::String resourceAsString (const char* name);
         static juce::MemoryBlock resourceAsBlock (const char* name);
 
     private:
-        juce::Image bg;
         juce::Image images[numStrips];
     };
 }
