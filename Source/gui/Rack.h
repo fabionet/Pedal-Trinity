@@ -55,6 +55,8 @@ namespace pt::ui
         std::unique_ptr<IconButton> left, right, zoomBtn, del, power;
         PedalView view;
         bool dropHover = false;
+        std::unique_ptr<juce::FileChooser> chooser;
+        void showContextMenu();
     };
 
     //==============================================================================

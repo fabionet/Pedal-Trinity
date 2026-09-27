@@ -98,7 +98,8 @@ namespace pt::ui
         del->onClick = [this]
         {
             const int idx = index;
-            juce::MessageManager::callAsync ([cbRemoved = cb.removed, idx] { if (cbRemoved) cbRemoved (idx); });
+            const auto removed = cb.removed;      // copia locale: niente 'this' nella lambda annidata (MSVC)
+            juce::MessageManager::callAsync ([removed, idx] { if (removed) removed (idx); });
         };
         power->onClick = [this] { if (auto* s = chain.slot (index)) chain.setEnabled (index, ! s->enabled.load()); };
 
@@ -196,7 +197,51 @@ namespace pt::ui
         }
     }
 
-    void SlotComponent::mouseDown (const juce::MouseEvent&) {}
+    void SlotComponent::mouseDown (const juce::MouseEvent& e)
+    {
+        if (e.mods.isPopupMenu() && headerArea().contains (e.getPosition()))
+            showContextMenu();
+    }
+
+    void SlotComponent::showContextMenu()
+    {
+        auto* s = chain.slot (index);
+        const bool hasFx = s != nullptr && s->fx != nullptr;
+        juce::PopupMenu m;
+        m.addSectionHeader ("Slot " + juce::String (index + 1));
+        if (hasFx && s->fx->acceptsFiles())
+            m.addItem (1, "Carica risposta all'impulso (.wav)...");
+        m.addItem (2, "Duplica lo slot", hasFx && chain.canAdd());
+        m.addItem (3, "Inserisci slot vuoto prima", chain.canAdd());
+        m.addItem (4, "Inserisci slot vuoto dopo", chain.canAdd());
+        m.addItem (5, "Svuota lo slot", hasFx);
+        m.showMenuAsync (juce::PopupMenu::Options().withTargetComponent (&selector), [this] (int r)
+        {
+            auto* sl = chain.slot (index);
+            if (r == 1 && sl != nullptr && sl->fx != nullptr)
+            {
+                chooser = std::make_unique<juce::FileChooser> ("Risposta all'impulso", juce::File(), "*.wav;*.aif;*.aiff");
+                chooser->launchAsync (juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
+                                      [this] (const juce::FileChooser& fc)
+                {
+                    const auto f = fc.getResult();
+                    auto* s2 = chain.slot (index);
+                    if (s2 != nullptr && s2->fx != nullptr && f.existsAsFile())
+                        s2->fx->loadFile (f.getFullPathName().toStdString());
+                });
+            }
+            else if (r == 2 && sl != nullptr && sl->def != nullptr)
+            {
+                const int at = chain.insert (index + 1, sl->def->id);
+                if (at >= 0)
+                    for (int k = 0; k < sl->def->numControls; ++k)
+                        chain.setParam (at, k, sl->fx->p (k));
+            }
+            else if (r == 3) chain.insert (index, {});
+            else if (r == 4) chain.insert (index + 1, {});
+            else if (r == 5) chain.setModel (index, {});
+        });
+    }
 
     void SlotComponent::mouseDrag (const juce::MouseEvent& e)
     {

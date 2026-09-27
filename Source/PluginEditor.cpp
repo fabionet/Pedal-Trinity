@@ -359,10 +359,10 @@ void PedalTrinityEditor::showPresetMenu()
 void PedalTrinityEditor::showZoom (int slotIndex)
 {
     zoomPanel = std::make_unique<ZoomPanel> (processor.chain, slotIndex, this);
-    zoomPanel->onClose = [this]
+    const juce::Component::SafePointer<PedalTrinityEditor> safeThis (this);
+    zoomPanel->onClose = [safeThis]
     {
-        juce::MessageManager::callAsync ([sp = juce::Component::SafePointer<PedalTrinityEditor> (this)]
-                                         { if (sp != nullptr) sp->zoomPanel.reset(); });
+        juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->zoomPanel.reset(); });
     };
     zoomPanel->setBounds (getLocalBounds());
     addAndMakeVisible (*zoomPanel);
