@@ -8,7 +8,8 @@
       * riga di comando:
           --selftest                         verifica automatica del DSP
           --screenshot file.png [opzioni]    salva un'immagine dell'interfaccia
-              --scale 1.0   --info   --set id=valore (ripetibile)
+              --scale s  --size WxH  --view n  --first i  --factory numero|nome
+              --zoom slot  --info  --chain id,id,...  --set slot:comando=valore (ripetibile)
 */
 
 #include <juce_audio_devices/juce_audio_devices.h>
@@ -153,9 +154,23 @@ namespace
         return failed == 0 ? 0 : 1;
     }
 
+    // Indice di un preset di fabbrica dato il numero o il nome (esatto o parziale, senza maiuscole); -1 se assente
+    int findFactoryPreset (const juce::String& key)
+    {
+        const auto k = key.trim().unquoted();
+        if (k.isEmpty()) return -1;
+        if (k.containsOnly ("0123456789")) return k.getIntValue();
+        const auto names = pt::PresetManager::factoryNames();
+        for (int n = 0; n < names.size(); ++n)
+            if (names[n].equalsIgnoreCase (k)) return n;
+        for (int n = 0; n < names.size(); ++n)
+            if (names[n].containsIgnoreCase (k)) return n;
+        return -1;
+    }
+
     //==============================================================================
     // Screenshot dell'interfaccia (per la guida PDF)
-    //   --screenshot file.png [--scale s] [--size WxH] [--view n] [--first i] [--factory k]
+    //   --screenshot file.png [--scale s] [--size WxH] [--view n] [--first i] [--factory numero|nome]
     //   [--zoom slot] [--info] [--chain id,id,...] [--set slot:ctrl=val]
     //==============================================================================
     int runScreenshot (const juce::StringArray& args)
@@ -175,7 +190,17 @@ namespace
             else if (args[i] == "--size") { w = next.upToFirstOccurrenceOf ("x", false, false).getIntValue(); h = next.fromFirstOccurrenceOf ("x", false, false).getIntValue(); }
             else if (args[i] == "--view") p.uiState.setProperty ("view", next.getIntValue(), nullptr);
             else if (args[i] == "--first") p.uiState.setProperty ("first", next.getIntValue(), nullptr);
-            else if (args[i] == "--factory") p.presets.loadFactory (next.getIntValue());
+            else if (args[i] == "--factory")
+            {
+                const int k = findFactoryPreset (next);
+                if (! p.presets.loadFactory (k))
+                {
+                    std::cerr << "Preset di fabbrica non trovato: \"" << next << "\". Disponibili:\n";
+                    const auto names = pt::PresetManager::factoryNames();
+                    for (int n = 0; n < names.size(); ++n) std::cerr << "  " << n << "  " << names[n] << "\n";
+                    return 5;
+                }
+            }
             else if (args[i] == "--zoom") zoomSlot = next.getIntValue();
             else if (args[i] == "--info") info = true;
             else if (args[i] == "--chain")
