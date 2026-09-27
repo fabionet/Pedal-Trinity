@@ -1,0 +1,3051 @@
+[
+ {
+  "code": "DD-2",
+  "tech": "digital 12-bit, analog logarithmic compression (companding), custom IC derived from Roland SDE-3000, 1983",
+  "controls": [
+   {
+    "name": "E.LEVEL",
+    "role": "wet level (max = wet equal to dry)",
+    "range": "0..max"
+   },
+   {
+    "name": "F.BACK",
+    "role": "feedback / number of repeats",
+    "range": "single repeat (min) .. oscillation (max)"
+   },
+   {
+    "name": "D.TIME",
+    "role": "fine delay time within selected range",
+    "range": "range-dependent"
+   },
+   {
+    "name": "MODE",
+    "role": "range / function selector",
+    "range": "see modes"
+   }
+  ],
+  "modes": [
+   {
+    "name": "S",
+    "description": "short",
+    "params": {
+     "min_ms": 12.5,
+     "max_ms": 50
+    }
+   },
+   {
+    "name": "M",
+    "description": "middle",
+    "params": {
+     "min_ms": 50,
+     "max_ms": 200
+    }
+   },
+   {
+    "name": "L",
+    "description": "long",
+    "params": {
+     "min_ms": 200,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "HOLD",
+    "description": "sample hold while pedal held; D.TIME sets loop 200-800 ms; turning D.TIME during hold changes pitch (CW lowers)",
+    "params": {
+     "min_ms": 200,
+     "max_ms": 800,
+     "feedback": "disabled"
+    }
+   }
+  ],
+  "delay": {
+   "min_ms": 12.5,
+   "max_ms": 800,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": "40-7000 (-3/+1 dB) delay path; direct 10-60000",
+   "modulation": "none"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "mono in; OUTPUT + DIRECT OUT; 'stereo' mode = delay-only on main out, dry on direct out",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-2_OM.pdf",
+   "https://www.bossus.com/blog/2015/11/11/echoes-in-time-the-history-of-boss-delay-pedals/"
+  ],
+  "notes": "D.TIME scales range setting x0.25..x1. Residual noise -95 dBm IHF-A. High-frequency input can cause beat notes (aliasing) per manual. Hold effect only while pedal held (momentary)."
+ },
+ {
+  "code": "DD-3",
+  "tech": "digital 12-bit log-companded; RDD63H101 custom IC + DRAM (1986), later MN51010RBA gate array (DD-3A 1991), SMD (DD-3B 2002), Roland DSP (2014+)",
+  "controls": [
+   {
+    "name": "E.LEVEL",
+    "role": "wet level (max = wet equal to dry)",
+    "range": "0..max"
+   },
+   {
+    "name": "F.BACK",
+    "role": "feedback / number of repeats",
+    "range": "single repeat (min) .. oscillation (max)"
+   },
+   {
+    "name": "D.TIME",
+    "role": "fine delay time within selected range",
+    "range": "range-dependent"
+   },
+   {
+    "name": "MODE",
+    "role": "range / function selector",
+    "range": "see modes"
+   }
+  ],
+  "modes": [
+   {
+    "name": "S",
+    "description": "",
+    "params": {
+     "min_ms": 12.5,
+     "max_ms": 50
+    }
+   },
+   {
+    "name": "M",
+    "description": "",
+    "params": {
+     "min_ms": 50,
+     "max_ms": 200
+    }
+   },
+   {
+    "name": "L",
+    "description": "",
+    "params": {
+     "min_ms": 200,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "HOLD",
+    "description": "sample hold, loop time 200-800 ms, feedback inactive",
+    "params": {
+     "min_ms": 200,
+     "max_ms": 800
+    }
+   }
+  ],
+  "delay": {
+   "min_ms": 12.5,
+   "max_ms": 800,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": "40-7000 (-3/+1 dB)",
+   "modulation": "none"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "mono in; OUTPUT (mix) + DIRECT OUT (when used, OUTPUT = wet only)",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-3_eng01_W.pdf",
+   "https://stompboxelectronics.com/2023/07/20/history-of-the-boss-dd-3/",
+   "https://www.boss.info/us/products/dd-3/"
+  ],
+  "notes": "Sampling rate not published. Estimate from original 3x64 kbit DRAM and 800 ms: ~20 kHz at 12 bit (inference, low confidence). Model the repeats with a ~7 kHz LPF in the loop plus 12-bit companded quantization."
+ },
+ {
+  "code": "DD-3T",
+  "tech": "digital (DD-3 voicing) + tap tempo, 2019",
+  "controls": [
+   {
+    "name": "E.LEVEL",
+    "role": "wet level",
+    "range": "0..unity"
+   },
+   {
+    "name": "FEEDBACK",
+    "role": "repeats",
+    "range": "single..oscillation"
+   },
+   {
+    "name": "TIME",
+    "role": "delay within range",
+    "range": "range-dependent"
+   },
+   {
+    "name": "MODE",
+    "role": "S.50ms/M.200ms/L.800ms/SHORT LOOP",
+    "range": "4 positions"
+   }
+  ],
+  "modes": [
+   {
+    "name": "S.50ms",
+    "description": "",
+    "params": {
+     "min_ms": 12.5,
+     "max_ms": 50
+    }
+   },
+   {
+    "name": "M.200ms",
+    "description": "",
+    "params": {
+     "min_ms": 50,
+     "max_ms": 200
+    }
+   },
+   {
+    "name": "L.800ms",
+    "description": "",
+    "params": {
+     "min_ms": 200,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "SHORT LOOP",
+    "description": "loops audio just before the press while pedal is held; TIME = 200-800 ms loop; changing TIME changes pitch",
+    "params": {
+     "min_ms": 200,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "TAP",
+    "description": "tap via pedal (hold 2 s) or TEMPO jack; MODE knob selects note value",
+    "params": {
+     "range_ms": "133-800 (BPM 75-300)",
+     "subdivisions": [
+      "quarter-note triplet",
+      "dotted eighth",
+      "quarter"
+     ]
+    }
+   }
+  ],
+  "delay": {
+   "min_ms": 12.5,
+   "max_ms": 800,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": "assume DD-3 (40-7000)",
+   "modulation": "none"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "mono in; OUTPUT + DIRECT OUT",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-3T_eng02_W.pdf",
+   "https://www.boss.info/us/products/dd-3t/specifications/"
+  ],
+  "notes": null
+ },
+ {
+  "code": "DD-5",
+  "tech": "digital 16-bit linear, 64x oversampling quad delta-sigma A/D, AF method, 32 kHz, 1995",
+  "controls": [
+   {
+    "name": "E.LEVEL",
+    "role": "wet level (max = wet equal to dry)",
+    "range": "0..max"
+   },
+   {
+    "name": "F.BACK",
+    "role": "feedback / number of repeats",
+    "range": "single repeat (min) .. oscillation (max)"
+   },
+   {
+    "name": "D.TIME",
+    "role": "fine delay time within selected range",
+    "range": "range-dependent"
+   },
+   {
+    "name": "MODE",
+    "role": "range / function selector",
+    "range": "see modes"
+   },
+   {
+    "name": "Tempo",
+    "role": "TEMPO jack (FS-5U) tap",
+    "range": "modes 8-11"
+   }
+  ],
+  "modes": [
+   {
+    "name": "1",
+    "description": "delay",
+    "params": {
+     "min_ms": 1,
+     "max_ms": 50
+    }
+   },
+   {
+    "name": "2",
+    "description": "delay",
+    "params": {
+     "min_ms": 50,
+     "max_ms": 200
+    }
+   },
+   {
+    "name": "3",
+    "description": "delay",
+    "params": {
+     "min_ms": 200,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "4",
+    "description": "delay",
+    "params": {
+     "min_ms": 800,
+     "max_ms": 2000
+    }
+   },
+   {
+    "name": "5 HOLD",
+    "description": "records up to 2 s and loops",
+    "params": {
+     "max_ms": 2000
+    }
+   },
+   {
+    "name": "6 REVERSE",
+    "description": "reverse playback",
+    "params": {
+     "min_ms": 1000,
+     "max_ms": 2000
+    }
+   },
+   {
+    "name": "7 E/D",
+    "description": "delay 1-400 ms; direct and effect on separate outputs (OUTPUT/PANNING OUT)",
+    "params": {
+     "min_ms": 1,
+     "max_ms": 400
+    }
+   },
+   {
+    "name": "8-11 TEMPO",
+    "description": "tap tempo note values: quarter, dotted eighth, eighth, quarter triplet (e.g. 300/225/150/200 ms for a 300 ms tap)",
+    "params": {}
+   }
+  ],
+  "delay": {
+   "min_ms": 1,
+   "max_ms": 2000,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": "~16000 max (fs 32 kHz; exact response not published)",
+   "modulation": "none"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "mono in; OUTPUT + PANNING OUT (ping-pong in modes 1-6 when both used)",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-5_OM.pdf",
+   "https://www.bossus.com/blog/2015/11/11/echoes-in-time-the-history-of-boss-delay-pedals/"
+  ],
+  "notes": "Mode ranges read from scanned manual (modes 1-7); reverse range per retailer listing."
+ },
+ {
+  "code": "DD-6",
+  "tech": "digital, 2-in/2-out stereo, 2002",
+  "controls": [
+   {
+    "name": "E.LEVEL",
+    "role": "wet level (max = wet equal to dry)",
+    "range": "0..max"
+   },
+   {
+    "name": "F.BACK",
+    "role": "feedback / number of repeats",
+    "range": "single repeat (min) .. oscillation (max)"
+   },
+   {
+    "name": "D.TIME",
+    "role": "fine delay time within selected range",
+    "range": "range-dependent"
+   },
+   {
+    "name": "MODE",
+    "role": "range / function selector",
+    "range": "see modes"
+   }
+  ],
+  "modes": [
+   {
+    "name": "80ms",
+    "description": "",
+    "params": {
+     "max_ms": 80,
+     "long_ms": 160
+    }
+   },
+   {
+    "name": "300ms",
+    "description": "",
+    "params": {
+     "max_ms": 300,
+     "long_ms": 600
+    }
+   },
+   {
+    "name": "800ms",
+    "description": "",
+    "params": {
+     "max_ms": 800,
+     "long_ms": 1600
+    }
+   },
+   {
+    "name": "2600ms",
+    "description": "",
+    "params": {
+     "max_ms": 2600,
+     "long_ms": 5200
+    }
+   },
+   {
+    "name": "REVERSE",
+    "description": "reverse; E.LEVEL near max = wet only",
+    "params": {
+     "max_ms": 2600,
+     "long_ms": 5200
+    }
+   },
+   {
+    "name": "HOLD",
+    "description": "5.2 s sound-on-sound",
+    "params": {
+     "max_ms": 5200
+    }
+   },
+   {
+    "name": "WARP",
+    "description": "pressing pedal raises feedback and effect level above knob settings (swell into oscillation)",
+    "params": {
+     "max_ms": 800,
+     "long_ms": 1600
+    }
+   }
+  ],
+  "delay": {
+   "min_ms": 1,
+   "max_ms": 5200,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": "none"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "stereo in/out; output methods: Panning, Effect+Direct, Long Delay (A in, B out = time doubled), Stereo",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-6_OM.pdf"
+  ],
+  "notes": "Range minimums per mode not stated in manual; overall 1 ms-5.2 s. Some effects limited to 2.6 s in stereo. Residual noise -90 dBu."
+ },
+ {
+  "code": "DD-7",
+  "tech": "digital, 2008",
+  "controls": [
+   {
+    "name": "E.LEVEL",
+    "role": "wet level (max = wet equal to dry)",
+    "range": "0..max"
+   },
+   {
+    "name": "F.BACK",
+    "role": "feedback / number of repeats",
+    "range": "single repeat (min) .. oscillation (max)"
+   },
+   {
+    "name": "D.TIME",
+    "role": "fine delay time within selected range",
+    "range": "range-dependent"
+   },
+   {
+    "name": "MODE",
+    "role": "range / function selector",
+    "range": "see modes"
+   },
+   {
+    "name": "EXP/TEMPO",
+    "role": "expression (time/feedback/level) or tap footswitch",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "50ms",
+    "description": "",
+    "params": {
+     "min_ms": 1,
+     "max_ms": 50,
+     "long": "2-100"
+    }
+   },
+   {
+    "name": "200ms",
+    "description": "",
+    "params": {
+     "min_ms": 50,
+     "max_ms": 200,
+     "long": "100-400"
+    }
+   },
+   {
+    "name": "800ms",
+    "description": "",
+    "params": {
+     "min_ms": 200,
+     "max_ms": 800,
+     "long": "400-1600"
+    }
+   },
+   {
+    "name": "3200ms",
+    "description": "",
+    "params": {
+     "min_ms": 800,
+     "max_ms": 3200,
+     "long": "1600-6400"
+    }
+   },
+   {
+    "name": "HOLD",
+    "description": "looper sound-on-sound",
+    "params": {
+     "max_s": 40,
+     "stereo_max_s": 20
+    }
+   },
+   {
+    "name": "MODULATE",
+    "description": "delay with chorus-like modulation",
+    "params": {
+     "min_ms": 20,
+     "max_ms": 800,
+     "long": "40-1600"
+    }
+   },
+   {
+    "name": "ANALOG",
+    "description": "models BOSS DM-2; repeats progressively degrade",
+    "params": {
+     "min_ms": 20,
+     "max_ms": 800,
+     "long": "40-1600"
+    }
+   },
+   {
+    "name": "REVERSE",
+    "description": "",
+    "params": {
+     "min_ms": 300,
+     "max_ms": 3200,
+     "long": "600-6400"
+    }
+   }
+  ],
+  "delay": {
+   "min_ms": 1,
+   "max_ms": 6400,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": "MODULATE mode only (chorus-type)"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "2-in/2-out; Panning, Effect+Direct, Long (time doubled), Stereo",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-7_e01_W.pdf",
+   "https://www.boss.info/us/products/dd-7/specifications/"
+  ],
+  "notes": null
+ },
+ {
+  "code": "DD-8",
+  "tech": "digital, 2019",
+  "controls": [
+   {
+    "name": "E.LEVEL",
+    "role": "wet level (3 o'clock = unity)",
+    "range": ""
+   },
+   {
+    "name": "FEEDBACK",
+    "role": "repeats; in GLT = effect depth",
+    "range": ""
+   },
+   {
+    "name": "TIME",
+    "role": "delay time",
+    "range": "mode-dependent"
+   },
+   {
+    "name": "MODE",
+    "role": "11 modes",
+    "range": ""
+   },
+   {
+    "name": "CARRYOVER",
+    "role": "trails on/off switch",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "STANDARD",
+    "description": "clear digital delay",
+    "params": {
+     "min_ms": 20,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "ANALOG",
+    "description": "mild analog delay",
+    "params": {
+     "min_ms": 20,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "TAPE",
+    "description": "tape-echo modulation",
+    "params": {
+     "min_ms": 20,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "WARM",
+    "description": "mild digital delay",
+    "params": {
+     "min_ms": 20,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "REVERSE",
+    "description": "reverse; E.LEVEL max = wet only",
+    "params": {
+     "min_ms": 300,
+     "max_ms": 5000
+    }
+   },
+   {
+    "name": "+RV",
+    "description": "delay + reverb",
+    "params": {
+     "min_ms": 20,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "SHIM",
+    "description": "delay with pitch-shifted sound",
+    "params": {
+     "min_ms": 200,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "MOD",
+    "description": "digital delay with modulation",
+    "params": {
+     "min_ms": 20,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "WARP",
+    "description": "dreamlike sound",
+    "params": {
+     "min_ms": 20,
+     "max_ms": 800
+    }
+   },
+   {
+    "name": "GLT",
+    "description": "machine-gun style glitch while pedal held; tap times = 1/4",
+    "params": {
+     "min_ms": 10,
+     "max_ms": 400
+    }
+   },
+   {
+    "name": "LOOP",
+    "description": "looper with overdub",
+    "params": {
+     "max_s_mono": 40,
+     "max_s_stereo": 20
+    }
+   }
+  ],
+  "delay": {
+   "min_ms": 10,
+   "max_ms": 10000,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": "TAPE/MOD/WARP modes"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 40,
+   "functions": [
+    "rec",
+    "overdub",
+    "play",
+    "stop",
+    "clear"
+   ]
+  },
+  "stereo": "stereo in/out; output settings incl. Long (A in/B out, time doubled), panning, wide stereo",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-8_eng03_W.pdf",
+   "https://static.roland.com/assets/media/pdf/DD-8_Reference_eng01_W.pdf",
+   "https://www.boss.info/us/products/dd-8/specifications/"
+  ],
+  "notes": "Tap range 67-10000 ms (BPM 24-300); TAP DIVISION selectable; TWIST via external switch; EXP controls parameters."
+ },
+ {
+  "code": "DD-20",
+  "tech": "digital twin-pedal Giga Delay, 2003",
+  "controls": [
+   {
+    "name": "DELAY TIME",
+    "role": "1 ms steps; push = Time Advance",
+    "range": "1 ms-23 s"
+   },
+   {
+    "name": "E.LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "F.BACK",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TONE",
+    "role": "flat at center; CW boosts highs, CCW cuts",
+    "range": ""
+   },
+   {
+    "name": "MODE",
+    "role": "11 modes",
+    "range": ""
+   },
+   {
+    "name": "TAP/TEMPO/MEMORY",
+    "role": "4 memories + manual",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "SMOOTH",
+    "description": "spread, reverb-like delay",
+    "params": {}
+   },
+   {
+    "name": "TAPE",
+    "description": "models RE-201; 1 or 2 playback heads (HEd1/HEd2)",
+    "params": {}
+   },
+   {
+    "name": "ANALOG",
+    "description": "models BOSS DM-2",
+    "params": {}
+   },
+   {
+    "name": "STANDARD",
+    "description": "normal delay",
+    "params": {}
+   },
+   {
+    "name": "DUAL",
+    "description": "short + long delay in series; short default 50 ms",
+    "params": {}
+   },
+   {
+    "name": "PAN",
+    "description": "ping-pong panning delay",
+    "params": {}
+   },
+   {
+    "name": "MODULATE",
+    "description": "rate/depth editable (default r80/d70)",
+    "params": {}
+   },
+   {
+    "name": "REVERSE",
+    "description": "reverse",
+    "params": {}
+   },
+   {
+    "name": "SOS",
+    "description": "sound-on-sound",
+    "params": {
+     "max_s": 23
+    }
+   },
+   {
+    "name": "TWIST",
+    "description": "holding pedal: delay oscillates, speeds up and rises in pitch",
+    "params": {}
+   },
+   {
+    "name": "WARP",
+    "description": "holding pedal raises feedback and level",
+    "params": {}
+   }
+  ],
+  "delay": {
+   "min_ms": 1,
+   "max_ms": 23000,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": "MODULATE; TAPE wow"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 23,
+   "functions": [
+    "rec",
+    "overdub",
+    "play"
+   ]
+  },
+  "stereo": "stereo in/out; output modes selectable",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-20_OM.pdf",
+   "https://www.boss.info/us/products/dd-20/specifications/"
+  ],
+  "notes": "Residual noise -93 dBu IHF-A."
+ },
+ {
+  "code": "DD-200",
+  "tech": "digital, 96 kHz, 32-bit AD/DA, 32-bit float",
+  "controls": [
+   {
+    "name": "TIME",
+    "role": "delay or memory select",
+    "range": ""
+   },
+   {
+    "name": "FEEDBACK",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "E.LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "PARAM",
+    "role": "mode-specific",
+    "range": ""
+   },
+   {
+    "name": "TONE",
+    "role": "flat at center",
+    "range": ""
+   },
+   {
+    "name": "MOD DEPTH",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TAP DIVISION",
+    "role": "33%-300% of tapped quarter",
+    "range": "9 values"
+   }
+  ],
+  "modes": [
+   {
+    "name": "STANDARD",
+    "description": "clear digital",
+    "params": {
+     "param": "attack"
+    }
+   },
+   {
+    "name": "ANALOG",
+    "description": "mild analog",
+    "params": {
+     "param": "character/distortion"
+    }
+   },
+   {
+    "name": "TAPE",
+    "description": "models Roland RE-201",
+    "params": {
+     "param": "3-head combination; '.' adds distortion"
+    }
+   },
+   {
+    "name": "DRUM",
+    "description": "models Binson EchoRec 2",
+    "params": {
+     "param": "4-head combination/ALL; '.' adds distortion"
+    }
+   },
+   {
+    "name": "SHIMMER",
+    "description": "pitch-shifted delay",
+    "params": {
+     "param": "brilliance"
+    }
+   },
+   {
+    "name": "TERA ECHO",
+    "description": "neither reverb nor delay, spacious",
+    "params": {
+     "param": "character"
+    }
+   },
+   {
+    "name": "PAD ECHO",
+    "description": "drifting feel",
+    "params": {
+     "param": "attack"
+    }
+   },
+   {
+    "name": "PATTERN",
+    "description": "16 delays",
+    "params": {
+     "param": "pattern select"
+    }
+   },
+   {
+    "name": "LO-FI",
+    "description": "fat, distorted",
+    "params": {
+     "param": "distortion"
+    }
+   },
+   {
+    "name": "DUAL",
+    "description": "two delays in series",
+    "params": {
+     "param": "D2 time as % of D1"
+    }
+   },
+   {
+    "name": "DUCKING",
+    "description": "level/feedback duck with input",
+    "params": {
+     "param": "sensitivity"
+    }
+   },
+   {
+    "name": "REVERSE",
+    "description": "",
+    "params": {
+     "param": "attack"
+    }
+   }
+  ],
+  "delay": {
+   "min_ms": 1,
+   "max_ms": 10000,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": "MOD DEPTH knob on all modes"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 60,
+   "functions": [
+    "rec",
+    "overdub",
+    "play",
+    "stop",
+    "clear"
+   ]
+  },
+  "stereo": "stereo in/out",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-200_eng03_W.pdf",
+   "https://www.boss.info/us/products/dd-200/specifications/",
+   "https://articles.boss.info/exploring-the-differences-between-boss-delay-pedals/"
+  ],
+  "notes": "127 memories + MAN; MIDI; max delay 10 s per BOSS article (medium)."
+ },
+ {
+  "code": "DD-500",
+  "tech": "digital, 96 kHz, 32-bit AD/DA, 32-bit float, 2015",
+  "controls": [
+   {
+    "name": "MODE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TIME/VALUE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "FEEDBACK",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "E.LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TONE",
+    "role": "flat at center",
+    "range": ""
+   },
+   {
+    "name": "MOD DEPTH",
+    "role": "",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "STANDARD",
+    "description": "clear digital",
+    "params": {}
+   },
+   {
+    "name": "ANALOG",
+    "description": "BBD model",
+    "params": {
+     "param": "STAGE (number of BBD stages, time scales with stages)"
+    }
+   },
+   {
+    "name": "TAPE",
+    "description": "RE-201 (heads 1/2/3 at 1x/2x/3x) and other tape types",
+    "params": {}
+   },
+   {
+    "name": "VINTAGE DIGITAL",
+    "description": "SDE-3000, SDE-2000 (and DD-2 per retailers)",
+    "params": {
+     "param": "TIMEx2 halves fs and doubles time; phase/feedback phase invert; SDE-3000 high-cut"
+    }
+   },
+   {
+    "name": "DUAL",
+    "description": "two delays series/parallel",
+    "params": {}
+   },
+   {
+    "name": "PATTERN",
+    "description": "16 taps, time/level/pan each",
+    "params": {}
+   },
+   {
+    "name": "REVERSE",
+    "description": "",
+    "params": {}
+   },
+   {
+    "name": "SFX",
+    "description": "bit depth, sample rate reduction, tremolo",
+    "params": {}
+   },
+   {
+    "name": "SHIMMER",
+    "description": "pitch-shifted feedback",
+    "params": {}
+   },
+   {
+    "name": "FILTER",
+    "description": "swept filter delay, LFO",
+    "params": {}
+   },
+   {
+    "name": "SLOW ATTACK",
+    "description": "auto-swell delay",
+    "params": {}
+   },
+   {
+    "name": "TERA ECHO",
+    "description": "MDP ambient echo",
+    "params": {}
+   }
+  ],
+  "delay": {
+   "min_ms": 1,
+   "max_ms": 10000,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": "per mode"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 120,
+   "functions": [
+    "60 s mono @96k, 120 s mono @48k, 60 s stereo @48k"
+   ]
+  },
+  "stereo": "stereo in/out",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-500_e02_W.pdf",
+   "https://www.boss.info/us/products/dd-500/specifications/",
+   "https://www.effectsdatabase.com/model/boss/500/dd500"
+  ],
+  "notes": null
+ },
+ {
+  "code": "RE-2",
+  "tech": "digital Space Echo model (RE-201), 2022",
+  "controls": [
+   {
+    "name": "ECHO",
+    "role": "echo level (0 = reverb only)",
+    "range": ""
+   },
+   {
+    "name": "REVERB",
+    "role": "spring reverb level",
+    "range": ""
+   },
+   {
+    "name": "INTENSITY",
+    "role": "feedback; max = oscillation",
+    "range": ""
+   },
+   {
+    "name": "TONE",
+    "role": "tilt: CW highs up/lows down",
+    "range": ""
+   },
+   {
+    "name": "REPEAT RATE",
+    "role": "tape speed; tone changes with speed",
+    "range": "RE-201 range (Normal) or 2x (Long)"
+   },
+   {
+    "name": "WOW & FLUTTER",
+    "role": "tape speed wavering",
+    "range": ""
+   },
+   {
+    "name": "MODE",
+    "role": "11 head/reverb combinations",
+    "range": ""
+   },
+   {
+    "name": "CARRYOVER",
+    "role": "trails",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "1",
+    "description": "H1",
+    "params": {}
+   },
+   {
+    "name": "2",
+    "description": "H2",
+    "params": {}
+   },
+   {
+    "name": "3",
+    "description": "H3",
+    "params": {}
+   },
+   {
+    "name": "4",
+    "description": "H2+H3",
+    "params": {}
+   },
+   {
+    "name": "5",
+    "description": "H1+Rev",
+    "params": {}
+   },
+   {
+    "name": "6",
+    "description": "H2+Rev",
+    "params": {}
+   },
+   {
+    "name": "7",
+    "description": "H3+Rev",
+    "params": {}
+   },
+   {
+    "name": "8",
+    "description": "H1+H2+Rev",
+    "params": {}
+   },
+   {
+    "name": "9",
+    "description": "H2+H3+Rev",
+    "params": {}
+   },
+   {
+    "name": "10",
+    "description": "H1+H3+Rev",
+    "params": {}
+   },
+   {
+    "name": "11",
+    "description": "H1+H2+H3+Rev",
+    "params": {}
+   }
+  ],
+  "delay": {
+   "min_ms": null,
+   "max_ms": 3000,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": "wow & flutter knob"
+  },
+  "reverb": {
+   "types": [
+    "spring (RE-201)"
+   ],
+   "decay_s_min": null,
+   "decay_s_max": null,
+   "predelay_ms": null
+  },
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "stereo in/out; reverb stereo",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RE-2_eng01_W.pdf",
+   "https://www.soundonsound.com/reviews/boss-space-echo-re-202-re-2"
+  ],
+  "notes": "Head 2 = 2x, head 3 = 3x head-1 time. Tap sets head 1: max 1 s (Normal) / 2 s (Long). Direct path selectable: analog bypass or RE-201 preamp simulation. TWIST on long-press or CTL2."
+ },
+ {
+  "code": "RE-202",
+  "tech": "digital Space Echo, 48 kHz, 24-bit AD + AF, 32-bit DA, 32-bit float",
+  "controls": [
+   {
+    "name": "REPEAT RATE",
+    "role": "tape speed",
+    "range": ""
+   },
+   {
+    "name": "INTENSITY",
+    "role": "feedback",
+    "range": ""
+   },
+   {
+    "name": "ECHO VOL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "REVERB VOL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "BASS",
+    "role": "echo lows",
+    "range": ""
+   },
+   {
+    "name": "TREBLE",
+    "role": "echo highs",
+    "range": ""
+   },
+   {
+    "name": "SATURATION",
+    "role": "preamp distortion + tape saturation compression",
+    "range": ""
+   },
+   {
+    "name": "WOW & FLUTTER",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TAPE",
+    "role": "new vs aged tape",
+    "range": ""
+   },
+   {
+    "name": "MODE",
+    "role": "12 head combos",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "1",
+    "description": "H1",
+    "params": {}
+   },
+   {
+    "name": "2",
+    "description": "H2",
+    "params": {}
+   },
+   {
+    "name": "3",
+    "description": "H3",
+    "params": {}
+   },
+   {
+    "name": "4",
+    "description": "H1+H2",
+    "params": {}
+   },
+   {
+    "name": "5",
+    "description": "H2+H3",
+    "params": {}
+   },
+   {
+    "name": "6",
+    "description": "H1+H3",
+    "params": {}
+   },
+   {
+    "name": "7",
+    "description": "H1+H2+H3",
+    "params": {}
+   },
+   {
+    "name": "8",
+    "description": "H1+H4",
+    "params": {}
+   },
+   {
+    "name": "9",
+    "description": "H3+H4",
+    "params": {}
+   },
+   {
+    "name": "10",
+    "description": "H1+H3+H4",
+    "params": {}
+   },
+   {
+    "name": "11",
+    "description": "H1+H2+H4",
+    "params": {}
+   },
+   {
+    "name": "12",
+    "description": "H1+H2+H3+H4",
+    "params": {}
+   }
+  ],
+  "delay": {
+   "min_ms": null,
+   "max_ms": 8000,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": "wow & flutter; tape age"
+  },
+  "reverb": {
+   "types": [
+    "RE-201 spring",
+    "hall",
+    "plate",
+    "room",
+    "ambience"
+   ],
+   "decay_s_min": null,
+   "decay_s_max": null,
+   "predelay_ms": null
+  },
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "stereo in/out, MIDI",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RE-202_reference_eng02_W.pdf",
+   "https://www.boss.info/us/products/re-202/specifications/",
+   "https://www.soundonsound.com/reviews/boss-space-echo-re-202-re-2"
+  ],
+  "notes": "Heads 2/3/4 = 2x/3x/4x head 1. Tap for head 1 max 1 s (Normal) / 2 s (Long). Head table parsed from PDF coordinates (modes 8-12 medium confidence). max_ms = 4 x 2 s, inferred."
+ },
+ {
+  "code": "RE-20",
+  "tech": "COSM RE-201 model, twin pedal, 2007",
+  "controls": [
+   {
+    "name": "REPEAT RATE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "INTENSITY",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "ECHO VOLUME",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "REVERB VOLUME",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "BASS/TREBLE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "MODE SELECTOR",
+    "role": "12 positions",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "1-11",
+    "description": "RE-201 head/reverb combinations",
+    "params": {}
+   },
+   {
+    "name": "12",
+    "description": "reverb only",
+    "params": {}
+   }
+  ],
+  "delay": {
+   "min_ms": null,
+   "max_ms": 6000,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": "wow/flutter, tape saturation"
+  },
+  "reverb": {
+   "types": [
+    "spring"
+   ],
+   "decay_s_min": null,
+   "decay_s_max": null,
+   "predelay_ms": null
+  },
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "stereo out",
+  "confidence": "medium",
+  "sources": [
+   "https://media.sweetwater.com/store/media/re-20_om.pdf",
+   "https://www.boss.info/us/products/re-20/"
+  ],
+  "notes": "Tap max 3 s at modes 3/7 (Normal), 6 s (Long)."
+ },
+ {
+  "code": "TE-2",
+  "tech": "digital MDP (Multi-Dimensional Processing), 2013",
+  "controls": [
+   {
+    "name": "E.LEVEL",
+    "role": "wet level",
+    "range": ""
+   },
+   {
+    "name": "TONE",
+    "role": "brightness (resonant filter per SOS)",
+    "range": ""
+   },
+   {
+    "name": "FEEDBACK",
+    "role": "decay length",
+    "range": ""
+   },
+   {
+    "name": "S-TIME",
+    "role": "spread time / length",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "NORMAL",
+    "description": "ambient multitap echo with lengthening tap spacing, envelope-responsive filter",
+    "params": {}
+   },
+   {
+    "name": "HOLD",
+    "description": "hold pedal: freeze effect sound (approx. 1 s loop)",
+    "params": {}
+   }
+  ],
+  "delay": {
+   "min_ms": null,
+   "max_ms": null,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": "signal-dependent filter/pitch movement (undisclosed)"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "mono/stereo in, stereo out",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/TE-2_M_eng02_W.pdf",
+   "https://www.soundonsound.com/reviews/boss-te2-tera-echo",
+   "https://www.boss.info/us/products/te-2/specifications/"
+  ],
+  "notes": "Algorithm proprietary; behaviour described qualitatively."
+ },
+ {
+  "code": "SDE-3",
+  "tech": "compact dual digital delay (SDE-3000 heritage)",
+  "controls": [
+   {
+    "name": "TIME",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "FEEDBACK",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "E.LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "OFFSET",
+    "role": "time offset of 2nd line",
+    "range": ""
+   },
+   {
+    "name": "HI CUT",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "MOD",
+    "role": "",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "STEREO",
+    "description": "two parallel delays on A/B",
+    "params": {}
+   },
+   {
+    "name": "PANNING",
+    "description": "ping-pong",
+    "params": {}
+   }
+  ],
+  "delay": {
+   "min_ms": null,
+   "max_ms": 1600,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": "yes"
+  },
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "stereo",
+  "confidence": "low",
+  "sources": [
+   "https://www.guitarworld.com/gear/effects-pedals/boss-sde-3-dual-digital-delay-review",
+   "https://www.boss.info/global/products/sde-3/"
+  ],
+  "notes": "800 ms stereo, 1600 ms mono."
+ },
+ {
+  "code": "RV-2",
+  "tech": "digital reverb/delay, 31.25 kHz, 12-bit linear, 1987",
+  "controls": [
+   {
+    "name": "E.LEVEL",
+    "role": "wet (max = equal to dry)",
+    "range": ""
+   },
+   {
+    "name": "PRE EQ",
+    "role": "tone of wet",
+    "range": ""
+   },
+   {
+    "name": "TIME",
+    "role": "reverb/gate/delay time",
+    "range": ""
+   },
+   {
+    "name": "MODE",
+    "role": "6 modes",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "ROOM",
+    "description": "room up to 8 m2",
+    "params": {}
+   },
+   {
+    "name": "HALL 1",
+    "description": "small hall up to 15 m2",
+    "params": {}
+   },
+   {
+    "name": "HALL 2",
+    "description": "large hall up to 30 m2",
+    "params": {}
+   },
+   {
+    "name": "PLATE",
+    "description": "bright plate",
+    "params": {}
+   },
+   {
+    "name": "DELAY",
+    "description": "mono delay / stereo ping-pong",
+    "params": {}
+   },
+   {
+    "name": "GATE",
+    "description": "gated reverb",
+    "params": {}
+   }
+  ],
+  "delay": {
+   "min_ms": null,
+   "max_ms": null,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": "30-10000 (+1/-3 dB)",
+   "modulation": null
+  },
+  "reverb": {
+   "types": [
+    "room",
+    "hall",
+    "plate",
+    "gate"
+   ],
+   "decay_s_min": null,
+   "decay_s_max": null,
+   "predelay_ms": null
+  },
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "mono in, stereo out A/B",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RV-2_OM.pdf"
+  ],
+  "notes": "AC adaptor only; residual noise < -85 dBm; out impedance 4.7k."
+ },
+ {
+  "code": "RV-3",
+  "tech": "digital reverb/delay, 32 kHz, 16-bit linear A/D (128x oversampling, AF) / 16-bit D/A, 1994",
+  "controls": [
+   {
+    "name": "BALANCE",
+    "role": "dry/wet",
+    "range": ""
+   },
+   {
+    "name": "TONE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "R.TIME",
+    "role": "reverb time",
+    "range": ""
+   },
+   {
+    "name": "F.BACK",
+    "role": "delay feedback",
+    "range": ""
+   },
+   {
+    "name": "D.TIME",
+    "role": "delay time",
+    "range": ""
+   },
+   {
+    "name": "MODE",
+    "role": "11 modes",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "1 DELAY",
+    "description": "",
+    "params": {
+     "min_ms": 32,
+     "max_ms": 125
+    }
+   },
+   {
+    "name": "2 DELAY",
+    "description": "",
+    "params": {
+     "min_ms": 125,
+     "max_ms": 500
+    }
+   },
+   {
+    "name": "3 DELAY",
+    "description": "",
+    "params": {
+     "min_ms": 500,
+     "max_ms": 2000
+    }
+   },
+   {
+    "name": "4 DELAY+ROOM1",
+    "description": "reverb time fixed",
+    "params": {
+     "min_ms": 32,
+     "max_ms": 1000
+    }
+   },
+   {
+    "name": "5 DELAY+ROOM2",
+    "description": "reverb time fixed",
+    "params": {}
+   },
+   {
+    "name": "6 DELAY+HALL",
+    "description": "reverb time fixed",
+    "params": {}
+   },
+   {
+    "name": "7 DELAY+PLATE",
+    "description": "reverb time fixed",
+    "params": {}
+   },
+   {
+    "name": "8 ROOM1",
+    "description": "small room",
+    "params": {}
+   },
+   {
+    "name": "9 ROOM2",
+    "description": "larger room",
+    "params": {}
+   },
+   {
+    "name": "10 HALL",
+    "description": "",
+    "params": {}
+   },
+   {
+    "name": "11 PLATE",
+    "description": "metallic, extended highs",
+    "params": {}
+   }
+  ],
+  "delay": {
+   "min_ms": 32,
+   "max_ms": 2000,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": null
+  },
+  "reverb": {
+   "types": [
+    "room1",
+    "room2",
+    "hall",
+    "plate"
+   ],
+   "decay_s_min": null,
+   "decay_s_max": null,
+   "predelay_ms": null
+  },
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "mono in, stereo out",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RV-3_OM.pdf"
+  ],
+  "notes": "Dynamic range 110 dB direct / 95 dB effect. Modes 4-7 delay 32-1000 ms (read from scan)."
+ },
+ {
+  "code": "RV-5",
+  "tech": "digital reverb, 2-in/2-out, 2002",
+  "controls": [
+   {
+    "name": "E.LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TONE",
+    "role": "CW brighter / CCW warmer",
+    "range": ""
+   },
+   {
+    "name": "TIME",
+    "role": "decay",
+    "range": ""
+   },
+   {
+    "name": "MODE",
+    "role": "6",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "SPRING",
+    "description": "models Accutronics spring incl. dual-spring interference",
+    "params": {}
+   },
+   {
+    "name": "PLATE",
+    "description": "metallic, extended highs",
+    "params": {}
+   },
+   {
+    "name": "HALL",
+    "description": "large",
+    "params": {}
+   },
+   {
+    "name": "ROOM",
+    "description": "smaller",
+    "params": {}
+   },
+   {
+    "name": "GATE",
+    "description": "condensed gated reverb",
+    "params": {}
+   },
+   {
+    "name": "MODULATE",
+    "description": "hall + modulation",
+    "params": {}
+   }
+  ],
+  "delay": null,
+  "reverb": {
+   "types": [
+    "spring",
+    "plate",
+    "hall",
+    "room",
+    "gate",
+    "modulate"
+   ],
+   "decay_s_min": null,
+   "decay_s_max": null,
+   "predelay_ms": null
+  },
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "stereo in/out; INPUT-B = wet only",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RV-5_OM.pdf"
+  ],
+  "notes": "Residual noise -93 dBu; decay range not published."
+ },
+ {
+  "code": "RV-6",
+  "tech": "digital reverb, 2015",
+  "controls": [
+   {
+    "name": "E.LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TONE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TIME",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "MODE",
+    "role": "8",
+    "range": ""
+   },
+   {
+    "name": "EXP",
+    "role": "reverb depth",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "ROOM",
+    "description": "warm",
+    "params": {}
+   },
+   {
+    "name": "HALL",
+    "description": "clear, spacious",
+    "params": {}
+   },
+   {
+    "name": "PLATE",
+    "description": "metallic, extended highs",
+    "params": {}
+   },
+   {
+    "name": "SPRING",
+    "description": "amp spring",
+    "params": {}
+   },
+   {
+    "name": "MODULATE",
+    "description": "hall with modulation",
+    "params": {}
+   },
+   {
+    "name": "+DELAY",
+    "description": "reverb + delay; TONE sets delay feedback per reviews",
+    "params": {}
+   },
+   {
+    "name": "SHIMMER",
+    "description": "sparkling high-frequency (octave) overtones",
+    "params": {}
+   },
+   {
+    "name": "DYNAMIC",
+    "description": "depth follows playing dynamics (ducking)",
+    "params": {}
+   }
+  ],
+  "delay": null,
+  "reverb": {
+   "types": [
+    "room",
+    "hall",
+    "plate",
+    "spring",
+    "modulate",
+    "+delay",
+    "shimmer",
+    "dynamic"
+   ],
+   "decay_s_min": null,
+   "decay_s_max": null,
+   "predelay_ms": null
+  },
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "stereo in/out; INPUT-B = wet only (outputs muted when effect off in that config); reverb tail remains after switching off",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RV-6_eng01_W.pdf",
+   "https://guitar.com/reviews/boss-rv-6-reverb-review/"
+  ],
+  "notes": null
+ },
+ {
+  "code": "RV-200",
+  "tech": "digital, 96 kHz, 32-bit AD/DA, 32-bit float",
+  "controls": [
+   {
+    "name": "TIME",
+    "role": "",
+    "range": "0.1-10.0 s"
+   },
+   {
+    "name": "PRE-DELAY",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "E.LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "PARAM",
+    "role": "mode-specific",
+    "range": ""
+   },
+   {
+    "name": "LOW",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "HIGH",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "DENSITY",
+    "role": "button",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "ROOM",
+    "description": "",
+    "params": {
+     "param": "AMBIENCE/SMALL/MEDIUM/LARGE"
+    }
+   },
+   {
+    "name": "HALL",
+    "description": "",
+    "params": {
+     "param": "SMALL/MEDIUM/LARGE"
+    }
+   },
+   {
+    "name": "PLATE",
+    "description": "",
+    "params": {
+     "param": "LOW/HI DAMP -50..50"
+    }
+   },
+   {
+    "name": "SPRING",
+    "description": "",
+    "params": {
+     "param": "springs 1-3"
+    }
+   },
+   {
+    "name": "SHIMMER",
+    "description": "",
+    "params": {
+     "param": "release 0-100"
+    }
+   },
+   {
+    "name": "ARPVERB",
+    "description": "",
+    "params": {
+     "param": "attack"
+    }
+   },
+   {
+    "name": "SLOWVERB",
+    "description": "",
+    "params": {
+     "param": "direct level"
+    }
+   },
+   {
+    "name": "MODULATE",
+    "description": "",
+    "params": {
+     "param": "depth"
+    }
+   },
+   {
+    "name": "+DELAY",
+    "description": "",
+    "params": {
+     "param": "delay level"
+    }
+   },
+   {
+    "name": "LO-FI",
+    "description": "",
+    "params": {
+     "param": "distortion 0-10"
+    }
+   },
+   {
+    "name": "GATE",
+    "description": "",
+    "params": {
+     "param": "threshold"
+    }
+   },
+   {
+    "name": "REVERSE",
+    "description": "",
+    "params": {
+     "param": "high cut 0-15"
+    }
+   }
+  ],
+  "delay": null,
+  "reverb": {
+   "types": [
+    "room",
+    "hall",
+    "plate",
+    "spring",
+    "shimmer",
+    "arpverb",
+    "slowverb",
+    "modulate",
+    "+delay",
+    "lo-fi",
+    "gate",
+    "reverse"
+   ],
+   "decay_s_min": 0.1,
+   "decay_s_max": 10.0,
+   "predelay_ms": null
+  },
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "stereo in/out",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RV-200_eng01_W.pdf",
+   "https://www.boss.info/us/products/rv-200/specifications/"
+  ],
+  "notes": null
+ },
+ {
+  "code": "RV-500",
+  "tech": "digital, 96 kHz, 32-bit AD/DA, 32-bit float",
+  "controls": [
+   {
+    "name": "MODE",
+    "role": "12",
+    "range": ""
+   },
+   {
+    "name": "TIME",
+    "role": "",
+    "range": "0.1-10.0 s"
+   },
+   {
+    "name": "PRE-DELAY",
+    "role": "",
+    "range": "0-200 ms"
+   },
+   {
+    "name": "E.LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "LOW/HIGH",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "DENSITY",
+    "role": "",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "ROOM",
+    "description": "ambience/small/medium/large",
+    "params": {}
+   },
+   {
+    "name": "HALL",
+    "description": "3 types",
+    "params": {}
+   },
+   {
+    "name": "PLATE",
+    "description": "",
+    "params": {}
+   },
+   {
+    "name": "SPRING",
+    "description": "1-3 springs",
+    "params": {}
+   },
+   {
+    "name": "SHIMMER",
+    "description": "2 voices, pitch/fine/release each",
+    "params": {}
+   },
+   {
+    "name": "FAST DECAY",
+    "description": "decay 1-10",
+    "params": {}
+   },
+   {
+    "name": "EARLY REFLECTION",
+    "description": "4 types, 0.1-1.0 s",
+    "params": {}
+   },
+   {
+    "name": "NON-LINEAR",
+    "description": "gate/reverse/granular",
+    "params": {}
+   },
+   {
+    "name": "SFX",
+    "description": "lo-fi, slowverb, storm",
+    "params": {}
+   },
+   {
+    "name": "DUAL",
+    "description": "2 reverbs series/parallel, crossover 100 Hz-4 kHz",
+    "params": {}
+   },
+   {
+    "name": "SRV",
+    "description": "Roland SRV-2000 model (HF damp, ER, 3-band EQ)",
+    "params": {}
+   },
+   {
+    "name": "SPACE ECHO",
+    "description": "RE-201 model, 1 ms-10 s echo",
+    "params": {}
+   }
+  ],
+  "delay": {
+   "min_ms": 1,
+   "max_ms": 2000,
+   "feedback_max": "self-oscillation possible at max",
+   "bandwidth_hz": null,
+   "modulation": null
+  },
+  "reverb": {
+   "types": [
+    "room",
+    "hall",
+    "plate",
+    "spring",
+    "shimmer",
+    "ER",
+    "non-linear",
+    "SRV-2000",
+    "space echo"
+   ],
+   "decay_s_min": 0.1,
+   "decay_s_max": 10.0,
+   "predelay_ms": 200
+  },
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "stereo in/out",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RV-500_eng01_W.pdf",
+   "https://www.boss.info/us/products/rv-500/specifications/"
+  ],
+  "notes": "Low cut FLAT/20-800 Hz; EQ -24..+12 dB, low 40-1000 Hz, high 0.8-9.99 kHz."
+ },
+ {
+  "code": "FRV-1",
+  "tech": "COSM model of 1963 Fender Reverb (6G15 standalone tube spring reverb)",
+  "controls": [
+   {
+    "name": "DWELL",
+    "role": "drive into spring; min = no reverb, high = twangy",
+    "range": ""
+   },
+   {
+    "name": "TONE",
+    "role": "CW brighter",
+    "range": ""
+   },
+   {
+    "name": "MIXER",
+    "role": "dry/wet",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "'63 Reverb",
+    "description": "tube-driven long spring tank model",
+    "params": {}
+   }
+  ],
+  "delay": null,
+  "reverb": {
+   "types": [
+    "spring (6G15)"
+   ],
+   "decay_s_min": null,
+   "decay_s_max": null,
+   "predelay_ms": null
+  },
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "mono",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/FRV-1_ejgfispd03_W.pdf",
+   "https://www.effectsdatabase.com/model/boss/compact/fender/frv1"
+  ],
+  "notes": "Real 6G15 (knowledge, medium): 12AT7 input, 6K6GT driver into transformer, 7025 recovery; 3-spring long-decay Accutronics-type tank."
+ },
+ {
+  "code": "FBM-1",
+  "tech": "COSM model of '59 Fender Bassman 5F6-A (narrow panel 4-input)",
+  "controls": [
+   {
+    "name": "GAIN",
+    "role": "drive + level (amp volume)",
+    "range": ""
+   },
+   {
+    "name": "PRESENCE",
+    "role": "ultra-high",
+    "range": ""
+   },
+   {
+    "name": "MIDDLE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "BASS",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TREBLE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "LEVEL",
+    "role": "output",
+    "range": ""
+   },
+   {
+    "name": "INPUT / BRIGHT IN",
+    "role": "two inputs; BRIGHT emphasises treble",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "NORMAL IN",
+    "description": "",
+    "params": {}
+   },
+   {
+    "name": "BRIGHT IN",
+    "description": "treble-emphasised input",
+    "params": {}
+   }
+  ],
+  "delay": null,
+  "reverb": null,
+  "amp": {
+   "models": [
+    "Fender Bassman 5F6-A"
+   ],
+   "tone_stack": {
+    "topology": "FMV (Fender/Marshall/Vox) passive 3-knob stack driven by cathode follower (<1k source)",
+    "components": {
+     "R_treble_pot": "250k",
+     "R_bass_pot": "1M",
+     "R_mid_pot": "25k",
+     "R_slope": "56k",
+     "C_treble": "250pF",
+     "C_bass": "20nF",
+     "C_mid": "20nF"
+    }
+   }
+  },
+  "cab": null,
+  "looper": null,
+  "stereo": "mono; out impedance 2.2k",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/FBM-1_OM.pdf",
+   "https://ccrma.stanford.edu/~dtyeh/papers/yeh06_dafx.pdf",
+   "https://www.ampbooks.com/mobile/classic-circuits/bassman-tonestack/"
+  ],
+  "notes": "Pedal is a preamp-style voicing for use into an amp (no cab sim documented). Bassman stack: -10 dB mid scoop at min, bass passband -3 dB 142 Hz, treble lower cutoff 2.5 kHz (ampbooks)."
+ },
+ {
+  "code": "FDR-1",
+  "tech": "COSM model of '65 Fender Deluxe Reverb (AB763)",
+  "controls": [
+   {
+    "name": "GAIN",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TREBLE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "BASS",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "REVERB",
+    "role": "spring amount",
+    "range": ""
+   },
+   {
+    "name": "VIBRATO",
+    "role": "depth; rate set by pedal (0.3-3.0 s tap)",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "AMP",
+    "description": "clean-to-edge Deluxe voicing",
+    "params": {}
+   },
+   {
+    "name": "VIBRATO",
+    "description": "amplitude tremolo (Fender 'vibrato')",
+    "params": {
+     "rate_period_s": "0.3-3.0"
+    }
+   }
+  ],
+  "delay": null,
+  "reverb": {
+   "types": [
+    "amp spring"
+   ],
+   "decay_s_min": null,
+   "decay_s_max": null,
+   "predelay_ms": null
+  },
+  "amp": {
+   "models": [
+    "Fender Deluxe Reverb AB763 (1965)"
+   ],
+   "tone_stack": {
+    "topology": "Fender AB763 2-knob stack (no mid pot) driven from plate (higher source Z)",
+    "components": {
+     "R_treble_pot": "250k (A)",
+     "R_bass_pot": "250k (A)",
+     "R_mid_fixed": "6.8k",
+     "R_slope": "100k",
+     "C_treble": "250pF",
+     "C_bass": "0.1uF",
+     "C_mid": "0.047uF (some sources 0.022uF)",
+     "C_bright_vib_channel": "47pF",
+     "volume_pot": "1M"
+    }
+   }
+  },
+  "cab": null,
+  "looper": null,
+  "stereo": "mono; out impedance 2.2k",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/FDR-1_OM.pdf",
+   "https://kr-sound.com/how-the-fender-ab763-deluxe-reverb-works/"
+  ],
+  "notes": null
+ },
+ {
+  "code": "IR-2",
+  "tech": "amp + cab IR, 96 kHz, 24-bit AD+AF, 32-bit DA, 32-bit float",
+  "controls": [
+   {
+    "name": "TYPE",
+    "role": "11 amp/cab pairs",
+    "range": ""
+   },
+   {
+    "name": "GAIN",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "BASS",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "MIDDLE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TREBLE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "AMBIENCE",
+    "role": "room/hall/plate level",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "CLEAN",
+    "description": "neutral clean",
+    "params": {
+     "cab": "1x12 V-Type closed, R-121"
+    }
+   },
+   {
+    "name": "TWN",
+    "description": "Fender Twin Reverb",
+    "params": {
+     "cab": "2x12 A-Type open, MD421+R-121"
+    }
+   },
+   {
+    "name": "TWEED",
+    "description": "Fender Bassman 4x10",
+    "params": {
+     "cab": "4x10 G10 Gold closed, R-121+SM57"
+    }
+   },
+   {
+    "name": "DIAMOND",
+    "description": "VOX AC30",
+    "params": {
+     "cab": "2x12 Celestion Blue open"
+    }
+   },
+   {
+    "name": "CRUNCH",
+    "description": "MDP crunch",
+    "params": {
+     "cab": "2x12 G12-65 open"
+    }
+   },
+   {
+    "name": "BRIT",
+    "description": "Marshall 1959",
+    "params": {
+     "cab": "4x12 G12M Heritage closed, MD421"
+    }
+   },
+   {
+    "name": "HI-GAIN",
+    "description": "MDP high gain",
+    "params": {
+     "cab": "4x12 G12M Creamback closed"
+    }
+   },
+   {
+    "name": "SLDN",
+    "description": "Soldano SLO-100",
+    "params": {
+     "cab": "4x12 V30 closed"
+    }
+   },
+   {
+    "name": "BROWN",
+    "description": "edgy lead",
+    "params": {
+     "cab": "4x12 G12M Heritage closed"
+    }
+   },
+   {
+    "name": "MODDED",
+    "description": "MDP extreme gain",
+    "params": {
+     "cab": "4x12 G12K-100 closed"
+    }
+   },
+   {
+    "name": "RFIER",
+    "description": "Mesa Dual Rectifier ch2 Modern",
+    "params": {
+     "cab": "4x12 V30 closed"
+    }
+   }
+  ],
+  "delay": null,
+  "reverb": null,
+  "amp": {
+   "models": [
+    "Fender Twin Reverb",
+    "Fender Bassman 4x10",
+    "VOX AC30",
+    "Marshall 1959",
+    "Soldano SLO-100",
+    "Mesa Dual Rectifier",
+    "3 MDP originals",
+    "clean"
+   ],
+   "tone_stack": {
+    "topology": "not published (DSP)",
+    "components": {}
+   }
+  },
+  "cab": {
+   "types": [
+    "1x12 closed",
+    "2x12 open",
+    "4x10 closed",
+    "4x12 closed"
+   ],
+   "resonance_hz": "70-85 (Celestion 12in Fs); 80 (G10 Gold)",
+   "lp_hz": "5000-6000 (Celestion rated upper range)",
+   "hp_hz": "~70-80 (rated lower range)"
+  },
+  "looper": null,
+  "stereo": "mono in, stereo out, SEND/RETURN, headphones, USB audio",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/IR-2_eng02_W.pdf",
+   "https://static.roland.com/assets/media/pdf/IR-2_IR_Loader_eng01_W.pdf",
+   "https://www.boss.info/us/products/ir-2/specifications/"
+  ],
+  "notes": "User IR: WAV mono, 44.1/48/96 kHz, 16/24-bit or 32-bit float, 200 or 500 ms. Output setting per destination (LINE, JC-120 RETURN, JC-120 INPUT, etc.)."
+ },
+ {
+  "code": "IR-200",
+  "tech": "amp + IR cab, 96 kHz, 32-bit AD+AF, 32-bit DA, 32-bit float",
+  "controls": [
+   {
+    "name": "AMP",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "CABINET",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "AMBIENCE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "GAIN",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "BASS/MIDDLE/TREBLE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "MEMORY",
+    "role": "128",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "Guitar amps",
+    "description": "Natural, JC-120, Twin Combo, Diamond Amp, Tweed Combo, X-Hi Gain, British Stack, BGR UB Metal",
+    "params": {}
+   },
+   {
+    "name": "Bass amps",
+    "description": "Natural Bass, X-Drive Bass, Concert",
+    "params": {}
+   }
+  ],
+  "delay": null,
+  "reverb": null,
+  "amp": {
+   "models": [
+    "Natural",
+    "JC-120",
+    "Twin Combo",
+    "Diamond Amp",
+    "Tweed Combo",
+    "X-Hi Gain",
+    "British Stack",
+    "BGR UB Metal",
+    "Natural Bass",
+    "X-Drive Bass",
+    "Concert"
+   ],
+   "tone_stack": {
+    "topology": "not published (DSP)",
+    "components": {}
+   }
+  },
+  "cab": {
+   "types": [
+    "1x12 open",
+    "2x12 JC-120",
+    "2x12 Jensen C-12K",
+    "2x12 G12M",
+    "4x10 Jensen P10R",
+    "4x12 G12M",
+    "4x12 G12T-75",
+    "bass 1x18/2x15/4x10/8x10",
+    "10 Celestion IRs"
+   ],
+   "resonance_hz": "see dossier",
+   "lp_hz": "~5000",
+   "hp_hz": "~70-100"
+  },
+  "looper": null,
+  "stereo": "stereo out, dual cab A/B, SEND/RETURN, USB",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/IR-200_eng02_W.pdf",
+   "https://www.boss.info/us/products/ir-200/specifications/"
+  ],
+  "notes": "154 preset IRs, 128 user slots, max IR length 500 ms."
+ },
+ {
+  "code": "RC-1",
+  "tech": "digital looper",
+  "controls": [],
+  "modes": [],
+  "delay": null,
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 720,
+   "functions": [
+    "rec",
+    "overdub",
+    "play",
+    "stop",
+    "undo/redo",
+    "loop indicator ring"
+   ]
+  },
+  "stereo": "stereo in/out",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RC-1_M_eng02_W.pdf"
+  ],
+  "notes": "~12 min stereo, min phrase 0.25 s."
+ },
+ {
+  "code": "RC-2",
+  "tech": "digital looper",
+  "controls": [],
+  "modes": [],
+  "delay": null,
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 960,
+   "functions": [
+    "rec",
+    "overdub",
+    "undo/redo",
+    "loop quantize",
+    "guide rhythms",
+    "11 phrase memories",
+    "AUX IN"
+   ]
+  },
+  "stereo": "stereo out",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RC-2_OM.pdf"
+  ],
+  "notes": null
+ },
+ {
+  "code": "RC-3",
+  "tech": "digital looper",
+  "controls": [],
+  "modes": [],
+  "delay": null,
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 10800,
+   "functions": [
+    "99 phrases",
+    "stereo",
+    "rhythm guide",
+    "auto rec",
+    "WAV import 44.1 kHz/16-bit"
+   ]
+  },
+  "stereo": "stereo",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RC-3_eng03_W.pdf"
+  ],
+  "notes": null
+ },
+ {
+  "code": "RC-5",
+  "tech": "digital looper",
+  "controls": [],
+  "modes": [],
+  "delay": null,
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 46800,
+   "functions": [
+    "99 memories",
+    "1 track",
+    "57x2 rhythms",
+    "undo/redo",
+    "reverse",
+    "quantize",
+    "MIDI",
+    "WAV 44.1 kHz/32f"
+   ]
+  },
+  "stereo": "stereo",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RC-5_eng02_W.pdf",
+   "https://www.boss.info/us/products/rc-5/specifications/"
+  ],
+  "notes": "1.5 h per track, 13 h total; 32-bit AD/DA."
+ },
+ {
+  "code": "RC-10R",
+  "tech": "digital looper",
+  "controls": [],
+  "modes": [],
+  "delay": null,
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 21600,
+   "functions": [
+    "2 tracks",
+    "280+ rhythms, 16 kits",
+    "loop quantize",
+    "WAV 44.1 kHz/32f"
+   ]
+  },
+  "stereo": "stereo",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RC-10R_eng03_W.pdf"
+  ],
+  "notes": null
+ },
+ {
+  "code": "RC-20XL",
+  "tech": "digital looper",
+  "controls": [],
+  "modes": [],
+  "delay": null,
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 960,
+   "functions": [
+    "11 phrases",
+    "reverse",
+    "loop quantize",
+    "guide",
+    "mic input",
+    "undo/redo"
+   ]
+  },
+  "stereo": "stereo",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RC-20XL_OM.pdf"
+  ],
+  "notes": null
+ },
+ {
+  "code": "RC-30",
+  "tech": "digital looper",
+  "controls": [],
+  "modes": [],
+  "delay": null,
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 10800,
+   "functions": [
+    "99 phrases",
+    "2 tracks",
+    "LOOP FX",
+    "rhythms",
+    "mic/aux",
+    "WAV 44.1 kHz/16-bit"
+   ]
+  },
+  "stereo": "stereo",
+  "confidence": "high",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RC-30_eng03_W.pdf"
+  ],
+  "notes": null
+ },
+ {
+  "code": "SL-20",
+  "tech": "digital slicer (twin pedal)",
+  "controls": [
+   {
+    "name": "EFFECT LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "DIRECT LEVEL",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "BANK/PATTERN",
+    "role": "slice patterns incl. HARMONIC",
+    "range": ""
+   },
+   {
+    "name": "ATTACK/DUTY",
+    "role": "envelope of slices",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "SLICER",
+    "description": "rhythmic gating/pitch slicing; 6 stereo types",
+    "params": {}
+   },
+   {
+    "name": "REC",
+    "description": "40 s phrase loop",
+    "params": {}
+   }
+  ],
+  "delay": null,
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": {
+   "max_time_s": 40,
+   "functions": [
+    "rec",
+    "play"
+   ]
+  },
+  "stereo": "stereo out; MIDI IN clock",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/SL-20_OM.pdf"
+  ],
+  "notes": "Tempo 30-250 bpm."
+ },
+ {
+  "code": "MO-2",
+  "tech": "MDP multi-overtone",
+  "controls": [
+   {
+    "name": "MODE",
+    "role": "1-3 overtone depth",
+    "range": ""
+   },
+   {
+    "name": "BALANCE",
+    "role": "dry/wet",
+    "range": ""
+   },
+   {
+    "name": "DETUNE",
+    "role": "",
+    "range": ""
+   },
+   {
+    "name": "TONE",
+    "role": "",
+    "range": ""
+   }
+  ],
+  "modes": [
+   {
+    "name": "1-3",
+    "description": "increasing overtone generation",
+    "params": {}
+   }
+  ],
+  "delay": null,
+  "reverb": null,
+  "amp": null,
+  "cab": null,
+  "looper": null,
+  "stereo": "mono in, stereo out",
+  "confidence": "medium",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/MO-2_M_eng02_W.pdf"
+  ],
+  "notes": null
+ }
+]

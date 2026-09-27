@@ -10,160 +10,378 @@ using namespace pt::ui;
 
 namespace
 {
-    juce::String pedalOnParam (const juce::String& pedal)
-    {
-        if (pedal == "ed9") return ids::odOn;
-        if (pedal == "mc2") return ids::distOn;
-        return ids::eqOn;
-    }
-
-    /** Nome breve mostrato nel fumetto del valore. */
-    juce::String shortName (const juce::String& id)
-    {
-        static const std::map<juce::String, juce::String> names {
-            { "od_drive", "DRIVE" }, { "od_tone", "TONE" }, { "od_level", "LEVEL" },
-            { "dist_level", "LEVEL" }, { "dist_gain", "DIST" }, { "dist_low", "LOW" }, { "dist_high", "HIGH" },
-            { "dist_mid", "MIDDLE" }, { "dist_midfreq", "MID FREQ" },
-            { "eq_0", "100 Hz" }, { "eq_1", "200 Hz" }, { "eq_2", "400 Hz" }, { "eq_3", "800 Hz" },
-            { "eq_4", "1.6 kHz" }, { "eq_5", "3.2 kHz" }, { "eq_6", "6.4 kHz" }, { "eq_level", "LEVEL" } };
-        auto it = names.find (id);
-        return it != names.end() ? it->second : id;
-    }
+    constexpr int toolbarH = 50;
+    constexpr int views[4] = { 3, 6, 9, 18 };
 }
 
-PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p)
-    : AudioProcessorEditor (p), processor (p)
+const juce::Array<juce::Point<int>>& PedalTrinityEditor::sizePresets()
+{
+    static const juce::Array<juce::Point<int>> s = []
+    {
+        juce::Array<juce::Point<int>> a;
+        for (auto p : { juce::Point<int> (1280, 760), juce::Point<int> (1440, 810), juce::Point<int> (1600, 900),
+                        juce::Point<int> (1920, 1080), juce::Point<int> (2560, 1440) })
+            a.add (p);
+        return a;
+    }();
+    return s;
+}
+
+PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcessorEditor (p), processor (p)
 {
     setLookAndFeel (&lookAndFeel);
-    auto& apvts = processor.apvts;
 
-    board.setSize ((int) uiWidth, (int) std::ceil (uiHeight));
-    addAndMakeVisible (board);
+    logo.setText ("PEDAL TRINITY", juce::dontSendNotification);
+    logo.setFont (juce::Font (22.0f, juce::Font::bold));
+    logo.setColour (juce::Label::textColourId, juce::Colour (0xffd9b464));
+    addAndMakeVisible (logo);
 
-    auto setupSlider = [&] (juce::Slider& s, const juce::String& id)
-    {
-        s.setPopupDisplayEnabled (true, false, &board);
-        board.addAndMakeVisible (s);
-        sliderAttachments.add (new juce::AudioProcessorValueTreeState::SliderAttachment (apvts, id, s));
-        if (auto* param = apvts.getParameter (id))
-        {
-            s.setDoubleClickReturnValue (true, param->convertFrom0to1 (param->getDefaultValue()));
-            s.setTitle (param->getName (64));
-        }
-        auto base = s.textFromValueFunction;
-        const auto label = shortName (id);
-        s.textFromValueFunction = [base, label] (double v) { return label + "  " + (base ? base (v) : juce::String (v, 1)); };
-        s.updateText();
-    };
+    presetButton.setTooltip ("Preset: carica, salva, esporta, importa");
+    presetButton.onClick = [this] { showPresetMenu(); };
+    addAndMakeVisible (presetButton);
 
-    // --- pomelli: prima i pomelli esterni, poi quelli interni concentrici (sopra)
-    for (const auto& k : pt::ui::knobs)
+    firstButton.setTooltip ("Pagina precedente");
+    prevButton.setTooltip ("Indietro di 3 pedali");
+    nextButton.setTooltip ("Avanti di 3 pedali");
+    lastButton.setTooltip ("Pagina successiva");
+    firstButton.onClick = [this] { scrollBy (-view); };
+    prevButton.onClick = [this] { scrollBy (-3); };
+    nextButton.onClick = [this] { scrollBy (3); };
+    lastButton.onClick = [this] { scrollBy (view); };
+    for (auto* b : { &firstButton, &prevButton, &nextButton, &lastButton }) addAndMakeVisible (b);
+
+    pageLabel.setJustificationType (juce::Justification::centred);
+    pageLabel.setColour (juce::Label::textColourId, juce::Colour (0xffd9b464));
+    pageLabel.setFont (juce::Font (14.0f, juce::Font::bold));
+    addAndMakeVisible (pageLabel);
+
+    for (int i = 0; i < 4; ++i)
     {
-        if (k.strip == bossInner)
-            continue;
-        float exclusion = 0.0f;
-        if (k.strip == bossOuter)
-            for (const auto& inner : pt::ui::knobs)
-                if (inner.strip == bossInner && std::abs (inner.ax - k.ax) < 1.0f)
-                    exclusion = inner.radius * 1.05f;
-        auto* knob = knobs.add (new FilmstripKnob (assets, k, exclusion));
-        setupSlider (*knob, k.paramId);
-    }
-    for (const auto& k : pt::ui::knobs)
-    {
-        if (k.strip != bossInner)
-            continue;
-        auto* knob = knobs.add (new FilmstripKnob (assets, k));
-        setupSlider (*knob, k.paramId);
+        auto& b = viewButtons[i];
+        b.setButtonText (juce::String (views[i]));
+        b.setClickingTogglesState (false);
+        b.setTooltip ("Mostra " + juce::String (views[i]) + " pedali alla volta");
+        b.onClick = [this, i] { setView (views[i]); };
+        addAndMakeVisible (b);
     }
 
-    // --- cursori del GQ-7
-    for (const auto& f : pt::ui::faders)
-    {
-        auto* fader = faders.add (new FaderCap (assets, f));
-        setupSlider (*fader, f.paramId);
-    }
+    addButton.setTooltip ("Aggiungi uno slot (fino a 100)");
+    addButton.onClick = [this] { addPedal(); };
+    addAndMakeVisible (addButton);
 
-    // --- levetta S/C
-    if (auto* mode = apvts.getParameter (ids::distMode))
-    {
-        modeToggle = std::make_unique<ModeToggle> (assets, *mode);
-        board.addAndMakeVisible (*modeToggle);
-    }
+    zoomOut.setTooltip ("Riduci (fino a 1280x760)");
+    zoomIn.setTooltip ("Ingrandisci (fino a 2560x1440)");
+    zoomOut.onClick = [this] { zoomStep (-1); };
+    zoomIn.onClick = [this] { zoomStep (1); };
+    addAndMakeVisible (zoomOut);
+    addAndMakeVisible (zoomIn);
+    zoomLabel.setJustificationType (juce::Justification::centred);
+    zoomLabel.setColour (juce::Label::textColourId, juce::Colour (0xffb9b6ac));
+    zoomLabel.setFont (juce::Font (13.0f));
+    addAndMakeVisible (zoomLabel);
 
-    // --- footswitch e LED
-    for (const auto& fs : pt::ui::footswitches)
-    {
-        auto* b = footswitches.add (new FootSwitch (fs));
-        board.addAndMakeVisible (b);
-        buttonAttachments.add (new juce::AudioProcessorValueTreeState::ButtonAttachment (apvts, pedalOnParam (fs.pedal), *b));
-    }
-    for (const auto& l : pt::ui::leds)
-    {
-        auto* led = leds.add (new LedGlow (l));
-        board.addAndMakeVisible (led);
-        ledParams.add (pedalOnParam (l.pedal));
-    }
-
+    infoButton.setTooltip ("Informazioni, licenza e guida");
     infoButton.onClick = [this] { showInfo (true); };
-    board.addAndMakeVisible (infoButton);
+    addAndMakeVisible (infoButton);
 
-    // --- dimensioni: proporzioni fisse, ridimensionabile dal 50% al 200%
-    setResizable (true, true);
-    if (auto* c = getConstrainer())
+    for (auto* s : { &inputGain, &outputGain })
     {
-        c->setFixedAspectRatio (uiWidth / uiHeight);
-        c->setSizeLimits ((int) (uiWidth * 0.5f), (int) (uiHeight * 0.5f), (int) (uiWidth * 2.0f), (int) (uiHeight * 2.0f));
+        s->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+        s->setTextBoxStyle (juce::Slider::NoTextBox, true, 0, 0);
+        s->setColour (juce::Slider::rotarySliderFillColourId, juce::Colour (0xffd9b464));
+        s->setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour (0xff3a3b40));
+        s->setColour (juce::Slider::thumbColourId, juce::Colour (0xffe9e6dc));
+        s->setPopupDisplayEnabled (true, false, this);
+        addAndMakeVisible (s);
     }
-    setSize ((int) uiWidth, (int) std::round (uiHeight));
+    inputGain.setTooltip ("Guadagno d'ingresso");
+    outputGain.setTooltip ("Volume d'uscita");
+    inAttach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (processor.apvts, "in_gain", inputGain);
+    outAttach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (processor.apvts, "out_gain", outputGain);
 
-    timerCallback();
-    startTimerHz (20);
+    // stato dell'interfaccia salvato nel progetto
+    view = (int) processor.uiState.getProperty ("view", 3);
+    if (std::find (std::begin (views), std::end (views), view) == std::end (views)) view = 3;
+    first = (int) processor.uiState.getProperty ("first", 0);
+    const int w = (int) processor.uiState.getProperty ("w", 1280), h = (int) processor.uiState.getProperty ("h", 760);
+
+    processor.chain.addChangeListener (this);
+
+    setResizable (true, true);
+    setResizeLimits (1280, 760, 2560, 1440);
+    setSize (juce::jlimit (1280, 2560, w), juce::jlimit (760, 1440, h));
+    refresh();
 }
 
 PedalTrinityEditor::~PedalTrinityEditor()
 {
-    stopTimer();
-    sliderAttachments.clear();
-    buttonAttachments.clear();
+    saveUiState();
+    processor.chain.removeChangeListener (this);
+    slots.clear();
+    zoomPanel.reset();
+    infoPanel.reset();
     setLookAndFeel (nullptr);
+}
+
+void PedalTrinityEditor::saveUiState()
+{
+    processor.uiState.setProperty ("view", view, nullptr);
+    processor.uiState.setProperty ("first", first, nullptr);
+    processor.uiState.setProperty ("w", getWidth(), nullptr);
+    processor.uiState.setProperty ("h", getHeight(), nullptr);
 }
 
 void PedalTrinityEditor::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colours::black);
+    // fondo: moquette scura della pedaliera
+    g.setGradientFill (juce::ColourGradient (juce::Colour (0xff1b1c1f), 0, 0, juce::Colour (0xff0d0d0f), 0, (float) getHeight(), false));
+    g.fillAll();
+    auto bar = getLocalBounds().removeFromTop (toolbarH).toFloat();
+    g.setGradientFill (juce::ColourGradient (juce::Colour (0xff2b2c30), bar.getTopLeft(), juce::Colour (0xff18191c), bar.getBottomLeft(), false));
+    g.fillRect (bar);
+    g.setColour (juce::Colour (0x66d9b464));
+    g.fillRect (bar.removeFromBottom (1.5f));
+    g.setColour (juce::Colour (0xffb9b6ac));
+    g.setFont (juce::Font (11.0f, juce::Font::bold));
+    g.drawText (juce::String ("by ") + pt::author + "  v" + pt::versionString, 18, 30, 220, 16, juce::Justification::left);
+    g.drawText ("IN", inputGain.getBounds().translated (0, 0).withY (32).withHeight (16), juce::Justification::centred);
+    g.drawText ("OUT", outputGain.getBounds().withY (32).withHeight (16), juce::Justification::centred);
+}
+
+juce::Rectangle<int> PedalTrinityEditor::rackArea() const
+{
+    return getLocalBounds().withTrimmedTop (toolbarH).reduced (8, 8);
 }
 
 void PedalTrinityEditor::resized()
 {
-    const float scale = (float) getWidth() / uiWidth;
-    board.setTransform (juce::AffineTransform::scale (scale));
+    auto bar = getLocalBounds().removeFromTop (toolbarH).reduced (10, 6);
+    // larghezze compatte: a 1280 px (minimo) tutti i tasti restano visibili
+    const bool wide = getWidth() >= 1500;
+    logo.setBounds (bar.getX() + 6, 2, 184, 30);
+    bar.removeFromLeft (192);
+    presetButton.setBounds (bar.removeFromLeft (wide ? 240 : 184).reduced (0, 3));
+    bar.removeFromLeft (10);
+
+    const int gap = wide ? 10 : 7;
+    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 330, wide ? 580 : 528));
+    infoButton.setBounds (right.removeFromRight (60).reduced (0, 3));
+    right.removeFromRight (gap);
+    outputGain.setBounds (right.removeFromRight (36).withHeight (30));
+    inputGain.setBounds (right.removeFromRight (36).withHeight (30));
+    right.removeFromRight (gap);
+    zoomIn.setBounds (right.removeFromRight (30).reduced (0, 3));
+    zoomLabel.setBounds (right.removeFromRight (wide ? 90 : 78));
+    zoomOut.setBounds (right.removeFromRight (30).reduced (0, 3));
+    right.removeFromRight (gap);
+    addButton.setBounds (right.removeFromRight (wide ? 96 : 86).reduced (0, 3));
+    right.removeFromRight (gap);
+    for (int i = 3; i >= 0; --i) viewButtons[i].setBounds (right.removeFromRight (34).reduced (1, 3));
+
+    bar.removeFromRight (6);
+    firstButton.setBounds (bar.removeFromLeft (36).reduced (0, 3));
+    prevButton.setBounds (bar.removeFromLeft (32).reduced (0, 3));
+    lastButton.setBounds (bar.removeFromRight (36).reduced (0, 3));
+    nextButton.setBounds (bar.removeFromRight (32).reduced (0, 3));
+    pageLabel.setBounds (bar);
+
+    zoomLabel.setText (juce::String (getWidth()) + " x " + juce::String (getHeight()), juce::dontSendNotification);
+    layoutSlots();
+    if (zoomPanel) zoomPanel->setBounds (getLocalBounds());
+    if (infoPanel) infoPanel->setBounds (getLocalBounds());
+    saveUiState();
 }
 
-void PedalTrinityEditor::timerCallback()
+//==============================================================================
+void PedalTrinityEditor::changeListenerCallback (juce::ChangeBroadcaster*) { refresh(); }
+
+void PedalTrinityEditor::refresh()
 {
-    for (int i = 0; i < leds.size(); ++i)
-        if (auto* v = processor.apvts.getRawParameterValue (ledParams[i]))
-            leds[i]->setOn (v->load() > 0.5f);
+    const int n = processor.chain.size();
+    first = juce::jlimit (0, juce::jmax (0, n - 1), first);
+    layoutSlots();
+
+    const int last = juce::jmin (n, first + view);
+    pageLabel.setText (n == 0 ? juce::String ("Nessun pedale: premi + Pedale")
+                              : "Slot " + juce::String (first + 1) + " - " + juce::String (last) + " di " + juce::String (n)
+                                    + "   (" + juce::String (n) + "/100)",
+                       juce::dontSendNotification);
+    prevButton.setEnabled (first > 0);
+    firstButton.setEnabled (first > 0);
+    nextButton.setEnabled (first + view < n);
+    lastButton.setEnabled (first + view < n);
+    addButton.setEnabled (processor.chain.canAdd());
+    for (int i = 0; i < 4; ++i) viewButtons[i].setToggleState (views[i] == view, juce::dontSendNotification);
+    presetButton.setButtonText ("Preset: " + processor.presets.currentName());
+    if (zoomPanel) zoomPanel->show (juce::jlimit (0, juce::jmax (0, n - 1), zoomPanel->currentIndex()));
+    saveUiState();
+}
+
+void PedalTrinityEditor::layoutSlots()
+{
+    const int n = processor.chain.size();
+    const int rows = view == 18 ? 2 : 1, cols = view == 18 ? 9 : view;
+    const int visible = juce::jmax (0, juce::jmin (view, n - first));
+
+    // riuso dei componenti: si ricollegano agli indici invece di ricrearli
+    while (slots.size() > visible) slots.removeLast();
+    for (int k = 0; k < visible; ++k)
+    {
+        if (k < slots.size()) slots[k]->bindTo (first + k);
+        else
+        {
+            SlotComponent::Callbacks cb;
+            cb.zoom = [this] (int i) { showZoom (i); };
+            cb.removed = [this] (int i) { processor.chain.remove (i); };
+            auto* s = slots.add (new SlotComponent (processor.chain, first + k, this, cb));
+            addAndMakeVisible (s);
+        }
+    }
+
+    auto area = rackArea();
+    const int cw = area.getWidth() / cols, ch = area.getHeight() / rows;
+    for (int k = 0; k < slots.size(); ++k)
+    {
+        const int r = k / cols, c = k % cols;
+        slots[k]->setBounds (area.getX() + c * cw, area.getY() + r * ch, cw - 4, ch - 4);
+    }
+    if (zoomPanel) zoomPanel->toFront (false);
+    if (infoPanel) infoPanel->toFront (false);
+}
+
+void PedalTrinityEditor::setView (int v)
+{
+    view = v;
+    const int n = processor.chain.size();
+    if (first + view > n) first = juce::jmax (0, n - view);
+    refresh();
+}
+
+void PedalTrinityEditor::scrollBy (int delta)
+{
+    const int n = processor.chain.size();
+    first = juce::jlimit (0, juce::jmax (0, n - 1), first + delta);
+    if (delta > 0 && first + view > n) first = juce::jmax (0, n - view);
+    refresh();
+}
+
+void PedalTrinityEditor::addPedal()
+{
+    const int idx = processor.chain.insert (-1, {});
+    if (idx < 0) return;
+    const int n = processor.chain.size();
+    if (idx >= first + view) first = juce::jmax (0, n - view);
+    refresh();
+}
+
+void PedalTrinityEditor::zoomStep (int dir)
+{
+    const auto& s = sizePresets();
+    const int w = getWidth();
+    juce::Point<int> target = dir > 0 ? s.getLast() : s.getFirst();
+    if (dir > 0) { for (auto& p : s) if (p.x > w + 4) { target = p; break; } }
+    else         { for (int i = s.size() - 1; i >= 0; --i) if (s[i].x < w - 4) { target = s[i]; break; } }
+    setSize (target.x, target.y);
+}
+
+//==============================================================================
+void PedalTrinityEditor::showPresetMenu()
+{
+    juce::PopupMenu m, factory, user;
+    const auto names = PresetManager::factoryNames();
+    for (int i = 0; i < names.size(); ++i) factory.addItem (1000 + i, names[i]);
+    const auto files = processor.presets.userPresets();
+    for (int i = 0; i < files.size(); ++i) user.addItem (2000 + i, files[i].getFileNameWithoutExtension());
+    if (files.isEmpty()) user.addItem (-1, "(nessun preset salvato)", false);
+
+    m.addSectionHeader ("Preset");
+    m.addSubMenu ("Fabbrica", factory);
+    m.addSubMenu ("I miei preset", user);
+    m.addSeparator();
+    m.addItem (1, "Salva...");
+    m.addItem (2, "Esporta su file...");
+    m.addItem (3, "Importa da file...");
+    m.addItem (4, "Elimina un preset...", ! files.isEmpty());
+    m.addSeparator();
+    m.addItem (5, "Nuova pedaliera vuota");
+    m.addItem (6, "Apri la cartella dei preset");
+
+    m.showMenuAsync (juce::PopupMenu::Options().withTargetComponent (&presetButton), [this, files] (int r)
+    {
+        auto& pm = processor.presets;
+        if (r >= 1000 && r < 2000) pm.loadFactory (r - 1000);
+        else if (r >= 2000) pm.load (files[r - 2000]);
+        else if (r == 1)
+        {
+            auto* w = new juce::AlertWindow ("Salva preset", "Nome del preset:", juce::MessageBoxIconType::NoIcon, this);
+            w->addTextEditor ("name", pm.currentName());
+            w->addButton ("Salva", 1, juce::KeyPress (juce::KeyPress::returnKey));
+            w->addButton ("Annulla", 0, juce::KeyPress (juce::KeyPress::escapeKey));
+            w->enterModalState (true, juce::ModalCallbackFunction::create ([this, w] (int res)
+            {
+                if (res == 1) processor.presets.save (w->getTextEditorContents ("name"));
+                refresh();
+            }), true);
+            return;
+        }
+        else if (r == 2 || r == 3)
+        {
+            const bool save = r == 2;
+            chooser = std::make_unique<juce::FileChooser> (save ? "Esporta preset" : "Importa preset",
+                                                           PresetManager::folder(), "*.ptpreset");
+            const auto flags = save ? (juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::warnAboutOverwriting)
+                                    : juce::FileBrowserComponent::openMode;
+            chooser->launchAsync (flags | juce::FileBrowserComponent::canSelectFiles, [this, save] (const juce::FileChooser& fc)
+            {
+                const auto f = fc.getResult();
+                if (f == juce::File()) return;
+                if (save) processor.presets.saveTo (f.withFileExtension ("ptpreset"));
+                else processor.presets.load (f);
+                refresh();
+            });
+            return;
+        }
+        else if (r == 4)
+        {
+            juce::PopupMenu del;
+            for (int i = 0; i < files.size(); ++i) del.addItem (i + 1, files[i].getFileNameWithoutExtension());
+            del.showMenuAsync (juce::PopupMenu::Options().withTargetComponent (&presetButton), [this, files] (int d)
+            {
+                if (d > 0) processor.presets.remove (files[d - 1]);
+                refresh();
+            });
+            return;
+        }
+        else if (r == 5) { pm.initialise(); first = 0; }
+        else if (r == 6) PresetManager::folder().startAsProcess();
+        refresh();
+    });
+}
+
+//==============================================================================
+void PedalTrinityEditor::showZoom (int slotIndex)
+{
+    zoomPanel = std::make_unique<ZoomPanel> (processor.chain, slotIndex, this);
+    const juce::Component::SafePointer<PedalTrinityEditor> safeThis (this);
+    zoomPanel->onClose = [safeThis]
+    {
+        juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->zoomPanel.reset(); });
+    };
+    zoomPanel->setBounds (getLocalBounds());
+    addAndMakeVisible (*zoomPanel);
+    zoomPanel->grabKeyboardFocus();
 }
 
 void PedalTrinityEditor::showInfo (bool shouldShow)
 {
-    if (shouldShow)
+    if (! shouldShow) { infoPanel.reset(); return; }
+    infoPanel = std::make_unique<InfoPanel>();
+    const juce::Component::SafePointer<PedalTrinityEditor> safeThis (this);
+    infoPanel->onClose = [safeThis]
     {
-        infoPanel = std::make_unique<InfoPanel>();
-        // chiusura asincrona: il pannello non puo' distruggersi dentro il proprio callback
-        const juce::Component::SafePointer<PedalTrinityEditor> safeThis (this);
-        infoPanel->onClose = [safeThis]
-        {
-            juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->showInfo (false); });
-        };
-        infoPanel->setBounds (board.getLocalBounds());
-        board.addAndMakeVisible (*infoPanel);
-        infoPanel->grabKeyboardFocus();
-    }
-    else
-    {
-        infoPanel.reset();
-    }
+        juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->showInfo (false); });
+    };
+    infoPanel->setBounds (getLocalBounds());
+    addAndMakeVisible (*infoPanel);
+    infoPanel->grabKeyboardFocus();
 }

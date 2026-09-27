@@ -1,7 +1,8 @@
 # Pedal Trinity
 
-**Overdrive · Distorsore · Equalizzatore grafico a 7 bande** in un unico plugin per chitarra,
-con interfaccia fotorealistica e pomelli 3D.
+**Pedaliera virtuale fino a 100 pedali** con un catalogo di **219 modelli** ispirati all'intero catalogo
+BOSS (compatti, Waza Craft, Twin, serie 200/500, amp e IR simulator, selettori A/B, tuner, looper) più
+l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D regolabili sull'immagine.
 
 ![Pedal Trinity](docs/images/screenshot.png)
 
@@ -14,17 +15,24 @@ con interfaccia fotorealistica e pomelli 3D.
 | **Sistemi** | Linux (pacchetto `.deb`) · Windows 10/11 x64 (installer, driver **ASIO**) |
 | **Framework** | C++17 · JUCE 7.0.12 |
 
-## I tre pedali
+## Funzioni
 
-| Pedale | Ispirato a | Controlli |
-|---|---|---|
-| **Emerald Drive ED-9** | Ibanez Tube Screamer (TS808/TS9) | DRIVE, TONE, LEVEL, footswitch |
-| **Metal Core MC-2W** | BOSS MT-2W Metal Zone Waza Craft | LEVEL, DIST, LOW/HIGH e MIDDLE/MID FREQ (pomelli concentrici), levetta S/C, footswitch |
-| **Graphic EQ GQ-7** | BOSS GE-7 | 100, 200, 400, 800, 1.6k, 3.2k, 6.4k Hz (±15 dB), LEVEL (±15 dB), footswitch |
+* **Fino a 100 slot** in catena; su **ogni slot** c'è il menu di scelta del pedale (per categorie).
+* Slot **spostabili** (tasti ◀ ▶ o trascinamento), eliminabili, duplicabili; accensione dal footswitch.
+* **Scorrimento** a 3 pedali alla volta o a pagine; **viste 3 / 6 / 9 / 18** pedali contemporaneamente.
+* **Zoom** della finestra da 1280×760 fino a 2560×1440 (2K) e **pannello di zoom** del singolo pedale.
+* **Preset**: di fabbrica e dell'utente, salva / esporta / importa (`.ptpreset`), stato salvato nel progetto DAW.
+* Tasto **INFO** con licenza, autore, versione e [guida illustrata in PDF](docs/PedalTrinity_Guida.pdf).
 
-Catena del segnale: `IN → ED-9 → MC-2W → GQ-7 → OUT`. Ogni pedale ha un bypass senza click.
-Il tasto **INFO** sulla targhetta mostra licenza, autore e versione, e apre la
-[guida illustrata in PDF](docs/PedalTrinity_Guida.pdf).
+## Emulazione
+
+* **Pedali analogici a guadagno** (overdrive, distorsori, fuzz, metal, ampli): netlist a stadi con i valori reali
+  dei componenti → funzioni di trasferimento esatte (bilineare), diodi risolti con Shockley + Newton-Raphson,
+  triodi 12AX7 (Koren), stack Fender/Marshall (Yeh), sovracampionamento 4×.
+* **BBD** (chorus, flanger, vibrato, Dimension, DM-2…): bucket-brigade con clock reale, filtri anti-alias, compander.
+* **Digitali** (DD, RV, PS, SY…): dalle specifiche dei manuali ufficiali.
+* Fonti e dati di ogni pedale: [`docs/research/`](docs/research) (schemi di fabbrica, service note, cloni, manuali).
+* Il catalogo completo con affidabilità dei dati è nella guida PDF.
 
 ## Installazione
 
@@ -72,27 +80,32 @@ si scarica separatamente; la CI lo scarica automaticamente.
 ## Struttura
 
 ```
-Source/               codice C++ (JUCE 7)
-  dsp/                Overdrive.h, Distortion.h, GraphicEQ.h, Filters.h
-  gui/                controlli fotorealistici, pannello Info, layout generato
+Source/
+  engine/             motore: catena lock-free (Chain), circuiti a stadi (Circuit), famiglie DSP (Fx*.cpp),
+                      catalogo generato (Catalog.inc)
+  gui/                slot, vista del pedale, comandi 3D, pannelli zoom e info
+  Presets.cpp         preset utente/fabbrica
   StandaloneApp.cpp   app standalone (ASIO, --selftest, --screenshot)
-Resources/            foto dei pedali, filmstrip 3D dei pomelli, licenza, guida PDF
-docs/                 guida illustrata (sorgente LaTeX + PDF)
+Resources/            render dei 219 pedali, filmstrip 3D dei comandi, licenza, guida PDF
+docs/research/        dossier tecnici con le fonti di ogni pedale
+docs/guide/           guida (LaTeX) generata da tools/build_guide.sh
 packaging/            .deb (Linux) e installer Inno Setup (Windows)
-tools/art/            strumenti usati una sola volta per generare le immagini
-                      (Blender + Python): non servono per compilare il plugin
+tools/art/            catalogo dei modelli (catalog_*.py, CATALOG_SPEC.md), serigrafie, render Blender,
+                      assemblaggio: servono solo per rigenerare immagini e catalogo, non per compilare
 ```
 
 ## Grafica
 
-La "foto" frontale dei pedali e i fotogrammi 3D dei pomelli sono **render originali** creati con
-Blender (`tools/art/`), non fotografie di prodotti commerciali. Il plugin le carica come immagini
-incorporate: la compilazione richiede solo un compilatore C++ e CMake.
+Le immagini dei pedali e i fotogrammi 3D dei comandi sono **render originali** creati con Blender
+(`tools/art/render_pedals.py`), non fotografie di prodotti commerciali; nomi e sigle sui pedali sono
+originali. Pipeline: `catalog.py` → `make_catalog_textures.py` → `render_pedals.py` → `assemble_catalog.py`.
+Il plugin incorpora le immagini: la compilazione richiede solo un compilatore C++ e CMake.
 
 ## Marchi
 
 Pedal Trinity è un progetto indipendente. *Ibanez* e *Tube Screamer* sono marchi di Hoshino Gakki Co.;
-*BOSS*, *MT-2*, *Metal Zone*, *Waza Craft* e *GE-7* sono marchi di Roland Corporation.
+*BOSS*, *Roland*, *Waza Craft* e le sigle dei pedali BOSS (DS-1, MT-2, GE-7, …) sono marchi di Roland
+Corporation; *Fender* di Fender Musical Instruments Corporation.
 I nomi sono citati solo per indicare il suono di riferimento: nessuna affiliazione o approvazione.
 VST è un marchio di Steinberg Media Technologies GmbH. ASIO è un marchio e software di Steinberg Media Technologies GmbH.
 

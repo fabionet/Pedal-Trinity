@@ -1,0 +1,4946 @@
+[
+ {
+  "code": "CE-1",
+  "name": "Chorus Ensemble",
+  "years": "1976-c.1984",
+  "category": "chorus",
+  "tech": "analogico",
+  "controls": [
+   "Switch INPUT (LOW/HIGH)",
+   "LEVEL",
+   "CHORUS INTENSITY",
+   "VIBRATO DEPTH",
+   "VIBRATO RATE",
+   "Switch POWER",
+   "Footswitch NORMAL/EFFECT",
+   "Footswitch CHORUS/VIBRATO"
+  ],
+  "io": "IN mono / OUT A + B (stereo)",
+  "color": "argento/grigio con pannello nero",
+  "series": "Early BOSS floor units (pre-compact)",
+  "notes": "Primo prodotto a marchio BOSS diffuso; circuito derivato dal Roland JC-120; alimentato a rete.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/ce1",
+   "https://www.tonehome.de/boss/ce-1-chorus-ens/"
+  ]
+ },
+ {
+  "code": "GE-10",
+  "name": "Graphic Equalizer",
+  "years": "1976-c.1981",
+  "category": "EQ",
+  "tech": "analogico",
+  "controls": [
+   "10 slider di banda (circa 31 Hz - 16 kHz)",
+   "LEVEL",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "argento/grigio",
+  "series": "Early BOSS floor units (pre-compact)",
+  "notes": "EQ grafico 10 bande da pavimento, alimentato a rete.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/ge10"
+  ]
+ },
+ {
+  "code": "BF-1",
+  "name": "Flanger",
+  "years": "1976-c.1980",
+  "category": "flanger",
+  "tech": "analogico",
+  "controls": [
+   "MANUAL",
+   "DEPTH",
+   "RATE",
+   "RESONANCE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "argento/grigio",
+  "series": "Early BOSS floor units (pre-compact)",
+  "notes": "Flanger da pavimento pre-compatto.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/bf1"
+  ]
+ },
+ {
+  "code": "DB-5",
+  "name": "Driver",
+  "years": "1976-c.1980",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "DRIVE (distorsione)",
+   "LEVEL",
+   "TONE?",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "argento/grigio",
+  "series": "Early BOSS floor units (pre-compact)",
+  "notes": "Distorsore/booster pre-compatto (comandi da verificare).",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/db5"
+  ]
+ },
+ {
+  "code": "DM-1",
+  "name": "Delay Machine",
+  "years": "1977-1979",
+  "category": "delay",
+  "tech": "analogico",
+  "controls": [
+   "DELAY TIME",
+   "INTENSITY",
+   "DELAY VOLUME",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT",
+  "color": "argento/grigio con pannello nero",
+  "series": "Early BOSS floor units (pre-compact)",
+  "notes": "Delay analogico BBD da pavimento (comandi da verificare).",
+  "sources": [
+   "https://www.effectsdatabase.com/model/boss/dm1",
+   "https://www.tonehome.de/boss/dm-1-delay-machine/"
+  ]
+ },
+ {
+  "code": "FA-1",
+  "name": "FET Amplifier",
+  "years": "c.1980-1984",
+  "category": "boost/preamp",
+  "tech": "analogico",
+  "controls": [
+   "GAIN/LEVEL",
+   "TONE (circa 2 comandi, da verificare)"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero/grigio",
+  "series": "Mini/micro series",
+  "notes": "Preamp/booster FET in piccolo contenitore; filtro low cut 200 Hz.",
+  "sources": [
+   "https://www.effectsdatabase.com/model/boss/fa1",
+   "https://www.tonehome.de/boss/fa-1-fet-amp/"
+  ]
+ },
+ {
+  "code": "PV-1",
+  "name": "Rocker Volume",
+  "years": "c.1978-c.1983",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume"
+  ],
+  "io": "IN / OUT",
+  "color": "nero/argento",
+  "series": "Rocker series (treadle)",
+  "notes": "Pedale volume a bilanciere della serie Rocker.",
+  "sources": [
+   "https://www.effectsdatabase.com/model/boss/pv1"
+  ]
+ },
+ {
+  "code": "PW-1",
+  "name": "Rocker Wah",
+  "years": "c.1978-c.1983",
+  "category": "wah/filter",
+  "tech": "analogico",
+  "controls": [
+   "Pedale wah",
+   "Footswitch ON/OFF (sotto il pedale)"
+  ],
+  "io": "IN / OUT",
+  "color": "nero/argento",
+  "series": "Rocker series (treadle)",
+  "notes": "Wah della serie Rocker.",
+  "sources": [
+   "https://www.effectsdatabase.com/model/boss/pw1"
+  ]
+ },
+ {
+  "code": "PD-1",
+  "name": "Rocker Distortion",
+  "years": "c.1978-c.1983",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "Pedale (volume/distorsione)",
+   "DISTORTION",
+   "On/off tramite pedale"
+  ],
+  "io": "IN / OUT",
+  "color": "nero/argento",
+  "series": "Rocker series (treadle)",
+  "notes": "Distorsione controllata dal pedale, serie Rocker.",
+  "sources": [
+   "https://www.effectsdatabase.com/model/boss/pd1"
+  ]
+ },
+ {
+  "code": "FW-3",
+  "name": "Foot Wah",
+  "years": "c.1997-c.2006",
+  "category": "wah/filter",
+  "tech": "analogico",
+  "controls": [
+   "Pedale wah (pressione in punta = on/off)",
+   "PEAK"
+  ],
+  "io": "IN / OUT + REMOTE ON/OFF (FS-5U)",
+  "color": "nero",
+  "series": "Rocker series (treadle)",
+  "notes": "Wah a pedale compatto.",
+  "sources": [
+   "https://www.effectsdatabase.com/model/boss/fw3"
+  ]
+ },
+ {
+  "code": "SP-1",
+  "name": "Spectrum",
+  "years": "1977-c.1981",
+  "category": "EQ",
+  "tech": "analogico",
+  "controls": [
+   "SPECTRUM (frequenza)",
+   "BALANCE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "rosso (?)",
+  "series": "Compact",
+  "notes": "Uno dei primi tre compatti (nov 1977); enhancer/EQ parametrico a banda singola. Ristampato nel BOX-40 (2017) e modellato nel PX-1.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.tonehome.de/boss/sp-1-spectrum/"
+  ]
+ },
+ {
+  "code": "OD-1",
+  "name": "OverDrive",
+  "years": "1977-c.1985",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "OVER DRIVE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "giallo",
+  "series": "Compact",
+  "notes": "Primo overdrive BOSS; clipping asimmetrico. Ristampato nel BOX-40 (2017).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.tonehome.de/boss/od-1-overdrive/"
+  ]
+ },
+ {
+  "code": "PH-1",
+  "name": "Phaser",
+  "years": "1977-c.1981",
+  "category": "phaser",
+  "tech": "analogico",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "verde",
+  "series": "Compact",
+  "notes": "Phaser a 4 stadi; sostituito dal PH-1R. Ristampato nel BOX-40.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.tonehome.de/boss/ph-1-phaser/"
+  ]
+ },
+ {
+  "code": "GE-6",
+  "name": "Graphic Equalizer",
+  "years": "1978-1981",
+  "category": "EQ",
+  "tech": "analogico",
+  "controls": [
+   "Slider 100 Hz",
+   "Slider 200 Hz",
+   "Slider 400 Hz",
+   "Slider 800 Hz",
+   "Slider 1.6 kHz",
+   "Slider 3.2 kHz",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "grigio chiaro/argento",
+  "series": "Compact",
+  "notes": "EQ grafico 6 bande, +/-15 dB; sostituito dal GE-7.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.tonehome.de/boss/ge-6-graphic-eq/"
+  ]
+ },
+ {
+  "code": "DS-1",
+  "name": "Distortion",
+  "years": "1978-present",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "TONE",
+   "LEVEL",
+   "DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "arancione",
+  "series": "Compact",
+  "notes": "Uno dei pedali piu' venduti di sempre; molte edizioni speciali (DS-1-4A, DS-1-B50A, DS-1 bianco, DS-1 nero, 6 milioni).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ds-1/specifications/"
+  ]
+ },
+ {
+  "code": "CS-1",
+  "name": "Compression Sustainer",
+  "years": "1978-c.1981",
+  "category": "compressor",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "SUSTAIN",
+   "Switch MODE (NORMAL/TREBLE)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "azzurro",
+  "series": "Compact",
+  "notes": "Uno dei pochi compatti con levetta (toggle).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.tonehome.de/boss/cs-1-compr-sust/"
+  ]
+ },
+ {
+  "code": "TW-1",
+  "name": "T Wah / Touch Wah",
+  "years": "1978-1987",
+  "category": "wah/filter",
+  "tech": "analogico",
+  "controls": [
+   "SENS",
+   "PEAK",
+   "Switch DRIVE (UP/DOWN)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "giallo pallido/crema (?)",
+  "series": "Compact",
+  "notes": "Auto-wah a inviluppo; modellato nel PX-1.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.tonehome.de/boss/tw-1-touch-wah/",
+   "https://www.effectsdatabase.com/model/boss/compact/tw1"
+  ]
+ },
+ {
+  "code": "NF-1",
+  "name": "Noise Gate",
+  "years": "1979-c.1988",
+  "category": "noise gate",
+  "tech": "analogico",
+  "controls": [
+   "SENS (threshold)",
+   "DECAY",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "grigio chiaro",
+  "series": "Compact",
+  "notes": "Noise gate; il suo circuito e' alla base dello SG-1.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.tonehome.de/boss/nf-1-noise-gate/"
+  ]
+ },
+ {
+  "code": "SG-1",
+  "name": "Slow Gear",
+  "years": "1979-c.1982",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "SENS",
+   "ATTACK",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero",
+  "series": "Compact",
+  "notes": "Auto-swell (effetto violino); modellato nel PX-1 e MD-500.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.tonehome.de/boss/sg-1-slow-gear/"
+  ]
+ },
+ {
+  "code": "CE-2",
+  "name": "Chorus",
+  "years": "1979-c.2004",
+  "category": "chorus",
+  "tech": "analogico",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "azzurro (acqua)",
+  "series": "Compact",
+  "notes": "Chorus BBD derivato dal CE-1; riedito come CE-2W (Waza).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.tonehome.de/boss/ce-2-chorus/"
+  ]
+ },
+ {
+  "code": "BF-2",
+  "name": "Flanger",
+  "years": "1980-c.2001",
+  "category": "flanger",
+  "tech": "analogico",
+  "controls": [
+   "MANUAL",
+   "DEPTH",
+   "RATE",
+   "RES",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "viola/magenta",
+  "series": "Compact",
+  "notes": "Flanger BBD; sostituito dal BF-3 (digitale).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "PH-1R",
+  "name": "Phaser (Resonance)",
+  "years": "1980-c.1985",
+  "category": "phaser",
+  "tech": "analogico",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "RESONANCE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "verde",
+  "series": "Compact",
+  "notes": "Evoluzione del PH-1 con controllo di risonanza.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "SD-1",
+  "name": "SUPER OverDrive",
+  "years": "1981-present",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "giallo",
+  "series": "Compact",
+  "notes": "Overdrive a clipping asimmetrico; edizioni SD-1W, SD-1-4A, SD-1-B50A.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/sd-1/specifications/",
+   "https://en.wikipedia.org/wiki/Boss_SD-1"
+  ]
+ },
+ {
+  "code": "DM-2",
+  "name": "Delay",
+  "years": "1981-c.1984",
+  "category": "delay",
+  "tech": "analogico",
+  "controls": [
+   "REPEAT RATE",
+   "ECHO",
+   "INTENSITY",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "rosso/rosa",
+  "series": "Compact",
+  "notes": "Delay analogico BBD (MN3005, poi MN3205), 20-300 ms; riedito come DM-2W.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "GE-7",
+  "name": "Equalizer",
+  "years": "1981-present",
+  "category": "EQ",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL (slider)",
+   "Slider 100 Hz",
+   "Slider 200 Hz",
+   "Slider 400 Hz",
+   "Slider 800 Hz",
+   "Slider 1.6 kHz",
+   "Slider 3.2 kHz",
+   "Slider 6.4 kHz",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "bianco",
+  "series": "Compact",
+  "notes": "EQ grafico 7 bande +/-15 dB.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ge-7/specifications/"
+  ]
+ },
+ {
+  "code": "CS-2",
+  "name": "Compression Sustainer",
+  "years": "1981-c.1988",
+  "category": "compressor",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "ATTACK",
+   "SUSTAIN",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "blu",
+  "series": "Compact",
+  "notes": "Compressore; modellato nel PX-1 (Model Pass).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "VB-2",
+  "name": "Vibrato",
+  "years": "1982-c.1986",
+  "category": "vibrato",
+  "tech": "analogico",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "RISE TIME",
+   "MODE (UNLATCH / BYPASS / LATCH)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "turchese/ciano",
+  "series": "Compact",
+  "notes": "Vibrato BBD (pitch), il MODE decide se il pedale agisce momentaneo o on/off; riedito come VB-2W.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/VB-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "OC-2",
+  "name": "Octave",
+  "years": "1982-c.2003",
+  "category": "pitch/octave/harmonizer",
+  "tech": "analogico",
+  "controls": [
+   "OCT 1",
+   "OCT 2",
+   "DIRECT LEVEL",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "marrone metallizzato",
+  "series": "Compact",
+  "notes": "Octaver monofonico analogico (-1 e -2 ottave); primi esemplari etichettati 'Octaver'.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.tonehome.de/boss/oc-2-octaver/"
+  ]
+ },
+ {
+  "code": "PSM-5",
+  "name": "Power Supply & Master Switch",
+  "years": "1982-c.1998",
+  "category": "utility/selector",
+  "tech": "analogico",
+  "controls": [
+   "Footswitch ON/OFF (master bypass del loop)"
+  ],
+  "io": "IN / OUT / SEND / RETURN (loop mono) + uscite alimentazione DC",
+  "color": "rosso (?)",
+  "series": "Compact",
+  "notes": "Alimenta altri compatti e fa da true-bypass master per una catena in loop.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "CE-3",
+  "name": "Chorus",
+  "years": "1982-c.1992",
+  "category": "chorus",
+  "tech": "analogico",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "Switch MODE (I/II)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT A (MONO) + B (stereo)",
+  "color": "azzurro metallizzato",
+  "series": "Compact",
+  "notes": "Primo chorus compatto stereo.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "HM-2",
+  "name": "Heavy Metal",
+  "years": "1983-c.1991",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "COLOR MIX LOW",
+   "COLOR MIX HIGH",
+   "DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero",
+  "series": "Compact",
+  "notes": "Suono 'Swedish chainsaw' (Entombed, Dismember); riedito come HM-2W.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.tonehome.de/boss/hm-2-heavy-metal/"
+  ]
+ },
+ {
+  "code": "DD-2",
+  "name": "Digital Delay",
+  "years": "1983-c.1986",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "F.BACK",
+   "D.TIME",
+   "MODE (S 50ms (12.5-50) / M 200ms / L 800ms / HOLD)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUTPUT + DIRECT OUT",
+  "color": "bianco",
+  "series": "Compact",
+  "notes": "Primo delay digitale in formato compatto (chip custom Roland dall'SDE-3000).",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "DM-3",
+  "name": "Delay",
+  "years": "1984-c.1988",
+  "category": "delay",
+  "tech": "analogico",
+  "controls": [
+   "REPEAT RATE",
+   "ECHO",
+   "INTENSITY",
+   "TONE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUTPUT + DIRECT OUT",
+  "color": "rosso scuro",
+  "series": "Compact",
+  "notes": "Delay analogico BBD con tono.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "DF-2",
+  "name": "SUPER Feedbacker & Distortion",
+  "years": "1984-1993",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DIST",
+   "OVER TONE",
+   "Footswitch ON/OFF (premi = distortion, tieni premuto = feedback)"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "arancione",
+  "series": "Compact",
+  "notes": "Distorsore con generatore di feedback armonico attivato tenendo premuto il pedale.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DF-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "PH-2",
+  "name": "Super Phaser",
+  "years": "1984-c.2001",
+  "category": "phaser",
+  "tech": "analogico",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "RES",
+   "MODE (I / II)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "verde",
+  "series": "Compact",
+  "notes": "Phaser a 12 stadi con due caratteri (modo I sweep profondo, modo II piu' marcato).",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PH-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "DSD-2",
+  "name": "Digital Sampler/Delay",
+  "years": "1985-1986",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "F.BACK",
+   "TIME",
+   "MODE (DELAY S 50-200ms / DELAY L 200-800ms / SAMPLER REC-PLAY / SAMPLER PLAY ONLY)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN + TRIG. IN / OUT",
+  "color": "bianco/grigio-azzurro chiaro",
+  "series": "Compact",
+  "notes": "Delay digitale con funzione sampler (fino a 800 ms).",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DSD-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "OD-2",
+  "name": "Turbo OverDrive",
+  "years": "1985-c.1994",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "TURBO (OFF/ON, selettore rotativo)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "giallo senape",
+  "series": "Compact",
+  "notes": "Overdrive con modalita' Turbo (piu' gain).",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/OD-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "HF-2",
+  "name": "Hi Band Flanger",
+  "years": "1985-c.1991",
+  "category": "flanger",
+  "tech": "analogico",
+  "controls": [
+   "MANUAL",
+   "DEPTH",
+   "RATE",
+   "RES",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "lilla/rosa chiaro",
+  "series": "Compact",
+  "notes": "Flanger con sweep esteso verso le alte frequenze.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "DC-2",
+  "name": "Dimension C",
+  "years": "1985-c.1989",
+  "category": "chorus",
+  "tech": "analogico",
+  "controls": [
+   "Pulsanti MODE 1 / 2 / 3 / 4",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT A (MONO) + B (stereo)",
+  "color": "lavanda/grigio-azzurro chiaro",
+  "series": "Compact",
+  "notes": "Chorus 'Dimension' derivato dal Roland SDD-320; riedito come DC-2W.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "DSD-3",
+  "name": "Digital Sampler/Delay",
+  "years": "1986-1989",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "F.BACK",
+   "TIME",
+   "MODE (DELAY S 200ms / DELAY L 800ms / SAMPLER REC-PLAY / PLAY ONLY)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN + TRIG. IN / OUT",
+  "color": "bianco/grigio-azzurro chiaro",
+  "series": "Compact",
+  "notes": "Evoluzione del DSD-2.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DSD-3_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "CS-3",
+  "name": "Compression Sustainer",
+  "years": "1986-present",
+  "category": "compressor",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "ATTACK",
+   "SUSTAIN",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "blu",
+  "series": "Compact",
+  "notes": "Compressore; varianti con chip dbx/THAT nel tempo.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/cs-3/specifications/"
+  ]
+ },
+ {
+  "code": "DD-3",
+  "name": "Digital Delay",
+  "years": "1986-c.2019",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "F.BACK",
+   "D.TIME",
+   "MODE (50ms S / 200ms M / 800ms L / HOLD)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUTPUT + DIRECT OUT",
+  "color": "bianco",
+  "series": "Compact",
+  "notes": "Delay digitale fino a 800 ms; sostituito dal DD-3T (2019).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/dd-3/specifications/"
+  ]
+ },
+ {
+  "code": "FT-2",
+  "name": "Dynamic Filter",
+  "years": "1986-c.1988",
+  "category": "wah/filter",
+  "tech": "analogico",
+  "controls": [
+   "SENS",
+   "CUTOFF FREQ",
+   "Q",
+   "MODE (UP/DOWN)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono + EXP",
+  "color": "crema/giallo pallido (?)",
+  "series": "Compact",
+  "notes": "Filtro a inviluppo con ingresso per pedale d'espressione.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "CE-2B",
+  "name": "Bass Chorus",
+  "years": "1987-c.1995",
+  "category": "chorus",
+  "tech": "analogico",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "E.LEVEL",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "marrone scuro con pannello crema/oro",
+  "series": "Compact (bass)",
+  "notes": "Versione per basso del CE-2.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/CE-2B_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "BF-2B",
+  "name": "Bass Flanger",
+  "years": "1987-c.1995",
+  "category": "flanger",
+  "tech": "analogico",
+  "controls": [
+   "MANUAL",
+   "DEPTH",
+   "RATE",
+   "RES",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "marrone scuro con pannello crema/oro",
+  "series": "Compact (bass)",
+  "notes": "Versione per basso del BF-2.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "GE-7B",
+  "name": "Bass Equalizer",
+  "years": "1987-1994",
+  "category": "EQ",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL (slider +/-15 dB)",
+   "Slider 62 Hz",
+   "Slider 125 Hz",
+   "Slider 250 Hz",
+   "Slider 500 Hz",
+   "Slider 1 kHz",
+   "Slider 2 kHz",
+   "Slider 4 kHz",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "marrone scuro con pannello crema/oro",
+  "series": "Compact (bass)",
+  "notes": "EQ 7 bande per basso; sostituito dal GEB-7.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/GE-7B_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "LM-2",
+  "name": "Limiter",
+  "years": "1987-1991",
+  "category": "limiter",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "RELEASE",
+   "THRESHOLD",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "turchese/ciano",
+  "series": "Compact",
+  "notes": "Limiter.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/LM-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "RV-2",
+  "name": "Digital Reverb",
+  "years": "1987-c.1990",
+  "category": "reverb",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "PRE-EQ",
+   "TIME",
+   "MODE (1 ROOM / 2 HALL 1 / 3 HALL 2 / 4 PLATE / 5 DELAY / 6 GATE)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT A (MONO) + B (stereo)",
+  "color": "grigio scuro",
+  "series": "Compact",
+  "notes": "Primo riverbero digitale compatto; solo alimentatore (no batteria).",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RV-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "NS-2",
+  "name": "Noise Suppressor",
+  "years": "1987-present",
+  "category": "noise gate",
+  "tech": "analogico",
+  "controls": [
+   "THRESHOLD",
+   "DECAY",
+   "MODE (REDUCTION/MUTE)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT / SEND / RETURN (loop) + DC OUT",
+  "color": "bianco",
+  "series": "Compact",
+  "notes": "Noise suppressor con loop send/return.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ns-2/specifications/"
+  ]
+ },
+ {
+  "code": "PS-2",
+  "name": "Digital Pitch Shifter/Delay",
+  "years": "1987-1993",
+  "category": "pitch/octave/harmonizer",
+  "tech": "digitale",
+  "controls": [
+   "BALANCE (D-E)",
+   "F.BACK",
+   "FINE/MANUAL (delay x0.25-x1 / pitch -/+)",
+   "MODE (1 DELAY 125ms / 2 DELAY 500ms / 3 DELAY 2s / 4 PITCH MANUAL +/-1 oct / 5 +1 OCT / 6 -1 OCT)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + TUNER OUT",
+  "color": "blu",
+  "series": "Compact",
+  "notes": "Pitch shifter o delay (fino a 800 ms); modellato nel PX-1.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PS-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "DS-2",
+  "name": "TURBO Distortion",
+  "years": "1987-present",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DIST",
+   "TURBO (I/II)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono + REMOTE (turbo)",
+  "color": "arancione",
+  "series": "Compact",
+  "notes": "Distorsore con modalita' Turbo II (mid boost).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ds-2/specifications/"
+  ]
+ },
+ {
+  "code": "MZ-2",
+  "name": "Digital Metalizer",
+  "years": "1987-1992",
+  "category": "distortion",
+  "tech": "ibrido",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "MODE (SGL / DOUB I / DOUB II / DOUB III / CHO I / CHO II)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT A + B",
+  "color": "nero (manopole rosse)",
+  "series": "Compact",
+  "notes": "Distorsione con elaborazione digitale (effetto ambiente/stereo).",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/MZ-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "DC-3",
+  "name": "Digital Space-D / Digital Dimension",
+  "years": "1988-c.1993",
+  "category": "chorus",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "EQ",
+   "RATE",
+   "DEPTH",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT A + B",
+  "color": "rosa/lilla (?)",
+  "series": "Compact",
+  "notes": "Nato come 'Digital Dimension', rinominato 'Digital Space-D' (1989). Nessun selettore di modo.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DC-3_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "CH-1",
+  "name": "SUPER Chorus",
+  "years": "1989-present",
+  "category": "chorus",
+  "tech": "analogico",
+  "controls": [
+   "E.LEVEL",
+   "EQ",
+   "RATE",
+   "DEPTH",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT A (MONO) + B",
+  "color": "azzurro",
+  "series": "Compact",
+  "notes": "Chorus stereo; versioni analogica e poi digitale.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ch-1/specifications/"
+  ]
+ },
+ {
+  "code": "EH-2",
+  "name": "Enhancer",
+  "years": "1990-c.1998",
+  "category": "EQ",
+  "tech": "analogico",
+  "controls": [
+   "MIX",
+   "FREQ",
+   "SENS",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "verde menta/ciano chiaro (?)",
+  "series": "Compact",
+  "notes": "Enhancer armonico.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "LM-2B",
+  "name": "Bass Limiter",
+  "years": "1990-1994",
+  "category": "limiter",
+  "tech": "analogico",
+  "controls": [
+   "ENHANCE",
+   "LEVEL",
+   "THRESHOLD",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "marrone oliva con pannello crema/oro",
+  "series": "Compact (bass)",
+  "notes": "Versione per basso del LM-2.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/LM-2B_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "PN-2",
+  "name": "Tremolo/Pan",
+  "years": "1990-1993",
+  "category": "tremolo/pan",
+  "tech": "analogico",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "MODE (PAN triangolare / PAN quadra / TREMOLO triangolare / TREMOLO quadra)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A + B",
+  "color": "verde acqua/turchese",
+  "series": "Compact",
+  "notes": "Tremolo/autopan stereo; sostituito dal TR-2. Modellato nel PX-1.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PN-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "OS-2",
+  "name": "OverDrive/Distortion",
+  "years": "1990-present",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "COLOR (OD <-> DS)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "giallo-arancio (?)",
+  "series": "Compact",
+  "notes": "Miscela continua tra overdrive e distortion.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/os-2/specifications/"
+  ]
+ },
+ {
+  "code": "MT-2",
+  "name": "Metal Zone",
+  "years": "1991-present",
+  "category": "metal",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "DIST",
+   "EQUALIZER HIGH / LOW (concentrico)",
+   "EQUALIZER MIDDLE / MID FREQ (concentrico)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero/grigio molto scuro",
+  "series": "Compact",
+  "notes": "EQ semi-parametrico a 3 bande; edizioni MT-2W, MT-2-3A.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/mt-2/specifications/"
+  ]
+ },
+ {
+  "code": "PQ-4",
+  "name": "Parametric Equalizer",
+  "years": "1991-1996",
+  "category": "EQ",
+  "tech": "analogico",
+  "controls": [
+   "PRESENCE / LOW (concentrico, +/-18 dB)",
+   "MIDDLE LEVEL / FREQUENCY 100 Hz-1.6 kHz (concentrico)",
+   "HIGH LEVEL / FREQUENCY 500 Hz-8 kHz (concentrico)",
+   "LEVEL (+/-18 dB)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "bianco sporco/grigio chiaro",
+  "series": "Compact",
+  "notes": "EQ parametrico 4 bande.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PQ-4_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "PQ-3B",
+  "name": "Bass Parametric Equalizer",
+  "years": "1991-1994",
+  "category": "EQ",
+  "tech": "analogico",
+  "controls": [
+   "LOW LEVEL / FREQUENCY 25-400 Hz (concentrico)",
+   "MIDDLE LEVEL / FREQUENCY 160 Hz-2.5 kHz (concentrico)",
+   "HIGH LEVEL / FREQUENCY 1-16 kHz (concentrico)",
+   "LEVEL (+/-18 dB)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "marrone scuro con pannello crema/oro",
+  "series": "Compact (bass)",
+  "notes": "EQ parametrico 3 bande per basso.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PQ-3B_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "AW-2",
+  "name": "Auto Wah",
+  "years": "1991-c.2000",
+  "category": "wah/filter",
+  "tech": "analogico",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "MANUAL",
+   "SENS",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "crema/giallo pallido (?)",
+  "series": "Compact",
+  "notes": "Auto-wah con LFO o inviluppo.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/AW-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "CE-5",
+  "name": "Chorus Ensemble",
+  "years": "1991-present",
+  "category": "chorus",
+  "tech": "analogico",
+  "controls": [
+   "E.LEVEL",
+   "RATE",
+   "DEPTH",
+   "FILTER HIGH / LOW (concentrico)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT A (MONO) + B",
+  "color": "azzurro",
+  "series": "Compact",
+  "notes": "Chorus stereo con filtri.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ce-5/specifications/"
+  ]
+ },
+ {
+  "code": "LS-2",
+  "name": "Line Selector",
+  "years": "1991-present",
+  "category": "utility/selector",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL A (-inf..+20 dB)",
+   "LEVEL B (-inf..+20 dB)",
+   "MODE (A<->B / A<->BYPASS / B<->BYPASS / (A->B)<->BYPASS / (A+B MIX)<->BYPASS / OUTPUT SELECT)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + SEND A/RETURN A + SEND B/RETURN B + DC IN/OUT",
+  "color": "bianco/grigio chiaro (?)",
+  "series": "Compact",
+  "notes": "Selettore/mixer di due loop, usabile come alimentatore.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/LS-2_OM.pdf",
+   "https://www.boss.info/us/products/ls-2/specifications/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "FZ-2",
+  "name": "Hyper Fuzz",
+  "years": "1993-c.1997",
+  "category": "fuzz",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE: TREBLE / BASS (concentrico, CUT/BOOST)",
+   "GAIN",
+   "MODE (FUZZ I / FUZZ II / GAIN BOOST)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "grigio-azzurro chiaro (?)",
+  "series": "Compact",
+  "notes": "Fuzz a tre modi (Fuzz I / Fuzz II / Gain Boost).",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/FZ-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "SD-2",
+  "name": "Dual OverDrive",
+  "years": "1993-c.1998",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL (CRUNCH interno / LEAD esterno, concentrico)",
+   "TONE (CRUNCH / LEAD, concentrico)",
+   "DRIVE (CRUNCH / LEAD, concentrico)",
+   "MODE (CRUNCH (REMOTE) / LEAD / CRUNCH-LEAD con footswitch)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + REMOTE (FS-5L)",
+  "color": "giallo",
+  "series": "Compact",
+  "notes": "Overdrive a due canali Crunch/Lead.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/SD-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "HM-3",
+  "name": "Hyper Metal",
+  "years": "1993-c.1998",
+  "category": "metal",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "COLOR MIX LOW (CUT/BOOST)",
+   "COLOR MIX HIGH (CUT/BOOST)",
+   "DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero (scritte arancioni)",
+  "series": "Compact",
+  "notes": "Distorsione metal.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/HM-3_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "RV-3",
+  "name": "Digital Reverb/Delay",
+  "years": "1994-c.2002",
+  "category": "reverb",
+  "tech": "digitale",
+  "controls": [
+   "BALANCE (DIR-EFX)",
+   "TONE / F.BACK (a doppia etichetta)",
+   "R.TIME / D.TIME (a doppia etichetta)",
+   "MODE 11 pos. (1-3 DELAY 32-125/125-500/500-2000ms; 4 DLY+ROOM1; 5 DLY+ROOM2; 6 DLY+HALL; 7 DLY+PLATE; 8 ROOM1; 9 ROOM2; 10 HALL; 11 PLATE)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT A (MONO) + B",
+  "color": "grigio scuro",
+  "series": "Compact",
+  "notes": "Riverbero + delay combinati.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RV-3_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "PS-3",
+  "name": "Digital Pitch Shifter/Delay",
+  "years": "1994-1999",
+  "category": "pitch/octave/harmonizer",
+  "tech": "digitale",
+  "controls": [
+   "BALANCE (DIR-EFX)",
+   "PITCH A / F.BACK (a doppia etichetta)",
+   "PITCH B / F.BACK-D.TIME (a doppia etichetta)",
+   "MODE 11 pos. (1-3 DELAY 32-125/125-500/500-2000 ms; 4 DETUNE; 5 +/-2oct FAST; 6 +/-2oct SLOW; 7 +/-2oct INVERSE; 8 DETUNE&DETUNE; 9 DETUNE&+/-2oct; 10 +/-2oct&+/-2oct; 11 EXP PITCH A-B)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN + EXP / OUT A (MONO) + B",
+  "color": "blu scuro",
+  "series": "Compact",
+  "notes": "Evoluzione del PS-2.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PS-3_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "ODB-3",
+  "name": "Bass OverDrive",
+  "years": "1994-present",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "BALANCE",
+   "GAIN",
+   "EQ HIGH / LOW (concentrico)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "giallo (?)",
+  "series": "Compact (bass)",
+  "notes": "Overdrive per basso con blend.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/odb-3/specifications/"
+  ]
+ },
+ {
+  "code": "OD-2R",
+  "name": "Turbo OverDrive (Remote)",
+  "years": "1994-c.1997",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "TURBO (OFF / ON (REMOTE))",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + REMOTE (FS-5L)",
+  "color": "giallo senape",
+  "series": "Compact",
+  "notes": "Versione dell'OD-2 con jack remoto per il Turbo.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/OD-2R_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "HR-2",
+  "name": "Harmonist",
+  "years": "1994-1999",
+  "category": "pitch/octave/harmonizer",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL A / E.LEVEL B (concentrico)",
+   "VOICE A (-OCT,-6,-5,-4,-3,+DT,+3,+4,+5,+6,+OCT)",
+   "VOICE B (idem, -DT al centro)",
+   "KEY (12 tonalita' maggiori/relative minori)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN + DETECTOR IN / OUT A (MONO) + B",
+  "color": "blu",
+  "series": "Compact",
+  "notes": "Armonizzatore intelligente a due voci.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/HR-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "CEB-3",
+  "name": "Bass Chorus",
+  "years": "1995-c.2023",
+  "category": "chorus",
+  "tech": "analogico",
+  "controls": [
+   "E.LEVEL",
+   "LOW FILTER",
+   "RATE",
+   "DEPTH",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT A (MONO) + B",
+  "color": "azzurro",
+  "series": "Compact (bass)",
+  "notes": "Chorus per basso con filtro basse.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ceb-3/specifications/"
+  ]
+ },
+ {
+  "code": "LMB-3",
+  "name": "Bass Limiter/Enhancer",
+  "years": "1995-present",
+  "category": "limiter",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "ENHANCE",
+   "RATIO",
+   "THRESHOLD",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "azzurro/ciano",
+  "series": "Compact (bass)",
+  "notes": "Limiter/enhancer per basso.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/lmb-3/specifications/"
+  ]
+ },
+ {
+  "code": "GEB-7",
+  "name": "Bass Equalizer",
+  "years": "1995-present",
+  "category": "EQ",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL (slider)",
+   "Slider 50 Hz",
+   "Slider 120 Hz",
+   "Slider 400 Hz",
+   "Slider 500 Hz",
+   "Slider 800 Hz",
+   "Slider 4.5 kHz",
+   "Slider 10 kHz",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "bianco (?)",
+  "series": "Compact (bass)",
+  "notes": "EQ grafico 7 bande per basso +/-15 dB.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/geb-7/specifications/"
+  ]
+ },
+ {
+  "code": "BD-2",
+  "name": "Blues Driver",
+  "years": "1995-present",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "GAIN",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "blu",
+  "series": "Compact",
+  "notes": "Overdrive a componenti discreti; edizioni BD-2W, BD-2-B50A, 10 milioni.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/bd-2/specifications/"
+  ]
+ },
+ {
+  "code": "DD-5",
+  "name": "Digital Delay",
+  "years": "1995-c.2002",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "F.BACK",
+   "D.TIME",
+   "MODE 11 pos. (1-50ms / 50-200 / 200-800 / 800-2000 / HOLD / REVERSE / E/D 1-400ms / TEMPO semiminima / croma puntata / croma / terzina)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT (MONO) + PANNING OUT + TEMPO (FS-5U)",
+  "color": "bianco",
+  "series": "Compact",
+  "notes": "Delay digitale fino a 2 s circa.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/DD-5_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "PW-2",
+  "name": "Power Driver",
+  "years": "1996-c.1998",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "FAT",
+   "MUSCLE",
+   "DRIVE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "ambra/giallo-arancio (?)",
+  "series": "Compact",
+  "notes": "Distorsione ad alto gain; produzione brevissima. Modellato nel PX-1 (Model Pass).",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PW-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "SYB-3",
+  "name": "Bass Synthesizer",
+  "years": "1996-c.2004",
+  "category": "synth",
+  "tech": "digitale",
+  "controls": [
+   "EFFECT / DIRECT (concentrico)",
+   "FREQ / RES (concentrico)",
+   "SENS / DECAY",
+   "MODE 1-11 (1-7 suoni interni saw/square/PWM/...; 8-9 W SHAPE; 10-11 T WAH)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT A (MONO) + B (dry)",
+  "color": "grigio lavanda/argento",
+  "series": "Compact (bass)",
+  "notes": "Synth per basso a inseguimento d'inviluppo.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/SYB-3_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "XT-2",
+  "name": "Xtortion",
+  "years": "1996-c.1998",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "CONTOUR",
+   "PUNCH",
+   "DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "rosso metallizzato",
+  "series": "Compact",
+  "notes": "Distorsione ad alto gain. Modellato nel PX-1 (Model Pass).",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/XT-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "FZ-3",
+  "name": "Fuzz",
+  "years": "1997-c.2007",
+  "category": "fuzz",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "FUZZ",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "grigio (?)",
+  "series": "Compact",
+  "notes": "Fuzz al silicio.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "AC-2",
+  "name": "Acoustic Simulator",
+  "years": "1997-c.2006",
+  "category": "acoustic sim",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "BODY",
+   "TOP",
+   "MODE (STANDARD / JUMBO / ENHANCE / PIEZO)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + E.G. OUT",
+  "color": "ambra/marrone chiaro",
+  "series": "Compact",
+  "notes": "Simulatore acustico; sostituito dall'AC-3.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/AC-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ac-2/specifications/"
+  ]
+ },
+ {
+  "code": "TR-2",
+  "name": "Tremolo",
+  "years": "1997-present",
+  "category": "tremolo/pan",
+  "tech": "analogico",
+  "controls": [
+   "WAVE",
+   "RATE",
+   "DEPTH",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "verde petrolio scuro",
+  "series": "Compact",
+  "notes": "Tremolo con forma d'onda variabile (triangolo->quadra).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/tr-2/specifications/"
+  ]
+ },
+ {
+  "code": "OD-3",
+  "name": "OverDrive",
+  "years": "1997-present",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "giallo",
+  "series": "Compact",
+  "notes": "Overdrive a componenti discreti.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/od-3/specifications/"
+  ]
+ },
+ {
+  "code": "TU-2",
+  "name": "Chromatic Tuner",
+  "years": "1998-c.2009",
+  "category": "tuner",
+  "tech": "digitale",
+  "controls": [
+   "Pulsante STREAM/CENT",
+   "Pulsante MODE (CHROMATIC / GUITAR / GUITAR b / GUITAR bb / BASS / BASS b / BASS bb)",
+   "PITCH 438-445 Hz (combinando i due pulsanti)",
+   "Footswitch ON/OFF (tuner/mute)"
+  ],
+  "io": "IN / OUT + BYPASS OUT + DC IN / DC OUT",
+  "color": "bianco/argento",
+  "series": "Compact",
+  "notes": "Accordatore con meter a LED; sostituito dal TU-3.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/TU-2_OM.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "PS-5",
+  "name": "Super Shifter",
+  "years": "1999-c.2010",
+  "category": "pitch/octave/harmonizer",
+  "tech": "digitale",
+  "controls": [
+   "BALANCE / D.TIME-SPEED (concentrico)",
+   "H.R KEY (12 tonalita' maggiori/relative minori)",
+   "PITCH (valori dipendenti dal modo)",
+   "MODE (PITCH SHIFTER / HARMONIST / DETUNE / T.ARM / FLUTTER)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN + EXP / OUT A (MONO) + B",
+  "color": "blu petrolio/turchese",
+  "series": "Compact",
+  "notes": "Pitch shifter/harmonizer/detune/bend; sostituito dal PS-6.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PS-5_OM2.pdf",
+   "https://www.boss.info/global/promos/40th_anniversary_compact_pedals/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ps-5/specifications/"
+  ]
+ },
+ {
+  "code": "PH-3",
+  "name": "Phase Shifter",
+  "years": "2000-present",
+  "category": "phaser",
+  "tech": "digitale",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "RES",
+   "Switch STAGE (4 / 8 / 10 / 12 / FALL / RISE / STEP)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono + EXP/CTL",
+  "color": "verde",
+  "series": "Compact",
+  "notes": "Phaser digitale multi-stadio con tap tempo via pedale.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PH-3_OM.pdf",
+   "https://www.boss.info/us/products/ph-3/specifications/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "AW-3",
+  "name": "Dynamic Wah",
+  "years": "2000-present",
+  "category": "wah/filter",
+  "tech": "digitale",
+  "controls": [
+   "DECAY",
+   "MANUAL (VOWEL 2 in modo Humanizer)",
+   "SENS (VOWEL 1 in modo Humanizer)",
+   "MODE (SHARP / DOWN / UP / HUMANIZER / TEMPO)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "GUITAR IN / BASS IN / OUT mono + EXP/CTL",
+  "color": "avorio/grigio crema",
+  "series": "Compact",
+  "notes": "Auto-wah, humanizer, wah a pedale via EXP.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/AW-3_OM.pdf",
+   "https://www.boss.info/us/products/aw-3/specifications/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "MD-2",
+  "name": "Mega Distortion",
+  "years": "2001-present",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE / BOTTOM (concentrico)",
+   "DIST / GAIN BOOST (concentrico)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "rosso",
+  "series": "Compact",
+  "notes": "Distorsione ad alto gain.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/md-2/specifications/"
+  ]
+ },
+ {
+  "code": "BF-3",
+  "name": "Flanger",
+  "years": "2002-present",
+  "category": "flanger",
+  "tech": "digitale",
+  "controls": [
+   "MANUAL / RES (concentrico)",
+   "DEPTH",
+   "RATE",
+   "MODE (STANDARD / ULTRA / GATE-PAN / MOMENTARY)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "GUITAR IN / BASS IN / OUT A (MONO) + B",
+  "color": "viola (?)",
+  "series": "Compact",
+  "notes": "Flanger digitale con tap tempo.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/BF-3_OM.pdf",
+   "https://www.boss.info/us/products/bf-3/specifications/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "DD-6",
+  "name": "Digital Delay",
+  "years": "2002-c.2008",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "F.BACK",
+   "D.TIME",
+   "MODE (80ms / 300ms / 800ms / 2600ms / REVERSE / HOLD 5.2s / WARP)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B",
+  "color": "bianco",
+  "series": "Compact",
+  "notes": "Delay fino a 5,2 s con modalita' Warp.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/dd-6/specifications/"
+  ]
+ },
+ {
+  "code": "RV-5",
+  "name": "Digital Reverb",
+  "years": "2002-c.2015",
+  "category": "reverb",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "TONE",
+   "TIME",
+   "MODE (SPRING/PLATE/HALL/ROOM/GATE/MODULATE)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B",
+  "color": "grigio scuro",
+  "series": "Compact",
+  "notes": "Riverbero stereo; sostituito dall'RV-6.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/rv-5/specifications/"
+  ]
+ },
+ {
+  "code": "OC-3",
+  "name": "Super Octave",
+  "years": "2003-c.2020",
+  "category": "pitch/octave/harmonizer",
+  "tech": "digitale",
+  "controls": [
+   "DIRECT LEVEL",
+   "OCT1 LEVEL",
+   "CONTROL (RANGE / OCT2 LEVEL / DRIVE secondo il modo)",
+   "MODE (POLY / OCT2 / DRIVE)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "GUITAR IN / BASS IN / OUT mono + DIRECT OUT",
+  "color": "marrone scuro/bordeaux",
+  "series": "Compact",
+  "notes": "Octaver polifonico; sostituito dall'OC-5.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/oc-3/specifications/"
+  ]
+ },
+ {
+  "code": "SYB-5",
+  "name": "Bass Synthesizer",
+  "years": "2004-c.2023",
+  "category": "synth",
+  "tech": "digitale",
+  "controls": [
+   "MODE (11 tipi)",
+   "FREQ / RES (concentrico)",
+   "DECAY / RATE (concentrico)",
+   "EFFECT / DIRECT (concentrico)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT A (MONO) + B + EXP",
+  "color": "grigio lavanda",
+  "series": "Compact (bass)",
+  "notes": "Synth per basso, 11 modi.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/syb-5/specifications/"
+  ]
+ },
+ {
+  "code": "AC-3",
+  "name": "Acoustic Simulator",
+  "years": "2006-present",
+  "category": "acoustic sim",
+  "tech": "digitale (COSM)",
+  "controls": [
+   "MODE (STANDARD/JUMBO/ENHANCE/PIEZO)",
+   "TOP",
+   "BODY",
+   "REVERB / LEVEL (concentrico)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / LINE OUT / G.AMP OUT",
+  "color": "marrone chiaro/oro",
+  "series": "Compact",
+  "notes": "Simulatore acustico COSM con riverbero.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ac-3/specifications/"
+  ]
+ },
+ {
+  "code": "RC-2",
+  "name": "Loop Station",
+  "years": "2006-c.2011",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "PHRASE LEVEL",
+   "GUIDE LEVEL",
+   "PHRASE SELECT",
+   "MODE",
+   "Pulsante TAP TEMPO (ENTER/SELECT)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + STOP/TEMPO + AUX IN",
+  "color": "rosso",
+  "series": "Compact",
+  "notes": "Primo looper compatto (16 min, 11 phrase, guide ritmiche).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/rc-2/specifications/"
+  ]
+ },
+ {
+  "code": "ML-2",
+  "name": "Metal Core",
+  "years": "2007-c.2020",
+  "category": "metal",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero/grigio scuro",
+  "series": "Compact",
+  "notes": "Distorsione metal ad altissimo gain.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ml-2/specifications/"
+  ]
+ },
+ {
+  "code": "FZ-5",
+  "name": "Fuzz",
+  "years": "2007-present",
+  "category": "fuzz",
+  "tech": "digitale (COSM)",
+  "controls": [
+   "LEVEL",
+   "FUZZ",
+   "MODE (F: Fuzz Face / M: Maestro FZ-1A / O: Octavia)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "grigio/argento",
+  "series": "Compact",
+  "notes": "Modellazione COSM di tre fuzz vintage.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/fz-5/specifications/"
+  ]
+ },
+ {
+  "code": "DN-2",
+  "name": "Dyna Drive",
+  "years": "2007-c.2013",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "arancione",
+  "series": "Compact",
+  "notes": "Overdrive che reagisce alla dinamica della plettrata.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/dn-2/specifications/"
+  ]
+ },
+ {
+  "code": "FBM-1",
+  "name": "Fender '59 Bassman",
+  "years": "2007-c.2014",
+  "category": "amp/IR sim",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "GAIN",
+   "TREBLE",
+   "BASS",
+   "MIDDLE",
+   "PRESENCE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "INPUT + BRIGHT IN / OUTPUT",
+  "color": "tweed (beige)",
+  "series": "Compact Legend Series (BOSS x Fender)",
+  "notes": "Emulazione (circuito analogico) del Fender '59 Bassman.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/fbm-1/specifications/"
+  ]
+ },
+ {
+  "code": "FDR-1",
+  "name": "Fender '65 Deluxe Reverb",
+  "years": "2007-c.2014",
+  "category": "amp/IR sim",
+  "tech": "ibrido",
+  "controls": [
+   "LEVEL",
+   "GAIN",
+   "TREBLE",
+   "BASS",
+   "VIBRATO",
+   "REVERB",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero",
+  "series": "Compact Legend Series (BOSS x Fender)",
+  "notes": "Emulazione del Fender '65 Deluxe Reverb con vibrato e riverbero.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/fdr-1/specifications/"
+  ]
+ },
+ {
+  "code": "DD-7",
+  "name": "Digital Delay",
+  "years": "2008-c.2019",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "F.BACK",
+   "D.TIME",
+   "MODE (50ms / 200ms / 800ms / 3200ms / HOLD 40s / MODULATE / ANALOG / REVERSE)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + TEMPO/EXP",
+  "color": "bianco",
+  "series": "Compact",
+  "notes": "Delay fino a 6,4 s; sostituito dal DD-8.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/dd-7/specifications/"
+  ]
+ },
+ {
+  "code": "TU-3",
+  "name": "Chromatic Tuner",
+  "years": "2009-present",
+  "category": "tuner",
+  "tech": "digitale",
+  "controls": [
+   "Pulsante MODE",
+   "Pulsante STREAM/CENT",
+   "Footswitch ON/OFF (tuner/mute)"
+  ],
+  "io": "IN / OUT + BYPASS OUT + DC IN/DC OUT",
+  "color": "nero (?)",
+  "series": "Compact",
+  "notes": "Accordatore cromatico standard da palco.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/tu-3/specifications/"
+  ]
+ },
+ {
+  "code": "FRV-1",
+  "name": "'63 Fender Reverb",
+  "years": "2009-c.2014",
+  "category": "reverb",
+  "tech": "digitale",
+  "controls": [
+   "DWELL",
+   "TONE",
+   "MIXER",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "marrone",
+  "series": "Compact Legend Series (BOSS x Fender)",
+  "notes": "Emulazione del Fender Reverb Unit a molla del 1963.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/FRV-1_OM.pdf",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/frv-1/specifications/"
+  ]
+ },
+ {
+  "code": "PS-6",
+  "name": "Harmonist",
+  "years": "2010-present",
+  "category": "pitch/octave/harmonizer",
+  "tech": "digitale",
+  "controls": [
+   "BALANCE / RISE TIME (a doppia etichetta)",
+   "SHIFT",
+   "KEY / FALL TIME (a doppia etichetta)",
+   "MODE (HARMONY Major / HARMONY minor / PITCH SHIFTER / DETUNE / S-BEND)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT A (MONO) + B + EXP",
+  "color": "blu petrolio",
+  "series": "Compact",
+  "notes": "Harmonizer/pitch shifter polifonico.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ps-6/specifications/"
+  ]
+ },
+ {
+  "code": "ST-2",
+  "name": "Power Stack",
+  "years": "2010-present",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "BASS",
+   "TREBLE",
+   "SOUND",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero/grigio scuro",
+  "series": "Compact",
+  "notes": "Distorsione stile stack valvolare.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/st-2/specifications/"
+  ]
+ },
+ {
+  "code": "RC-3",
+  "name": "Loop Station",
+  "years": "2011-c.2021",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "LOOP OUTPUT",
+   "RHYTHM OUTPUT",
+   "Pulsanti DOWN/UP",
+   "Pulsante WRITE",
+   "Pulsante RHYTHM ON/OFF",
+   "Pulsante TAP TEMPO",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A/B / OUT A/B stereo + AUX IN + STOP/MEMORY SHIFT + USB",
+  "color": "rosso",
+  "series": "Compact",
+  "notes": "Looper stereo compatto con ritmi e USB; sostituito dall'RC-5.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/rc-3/specifications/"
+  ]
+ },
+ {
+  "code": "BC-2",
+  "name": "Combo Drive",
+  "years": "2011-c.2015",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "BASS",
+   "TREBLE",
+   "SOUND (CLEAN -> CRUNCH -> DRIVE)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "rosso scuro/bordeaux",
+  "series": "Compact",
+  "notes": "Overdrive stile combo valvolare.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/BC-2_OM.pdf",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "FB-2",
+  "name": "Feedbacker/Booster",
+  "years": "2011-c.2015",
+  "category": "boost/preamp",
+  "tech": "digitale",
+  "controls": [
+   "BOOST LEVEL",
+   "FEEDBACK",
+   "TONE",
+   "CHARACTER (FLAT -> MID BOOST)",
+   "Footswitch ON/OFF (tieni premuto = feedback)"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "argento/grigio chiaro",
+  "series": "Compact",
+  "notes": "Booster con generatore di feedback.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/FB-2_OM.pdf",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact"
+  ]
+ },
+ {
+  "code": "TE-2",
+  "name": "Tera Echo",
+  "years": "2013-present",
+  "category": "delay",
+  "tech": "digitale (MDP)",
+  "controls": [
+   "E.LEVEL",
+   "TONE",
+   "FEEDBACK",
+   "S-TIME",
+   "Footswitch ON/OFF (tieni premuto = HOLD/freeze)"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B",
+  "color": "bianco/argento",
+  "series": "Compact",
+  "notes": "Echo/ambient MDP.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/te-2/specifications/"
+  ]
+ },
+ {
+  "code": "DA-2",
+  "name": "Adaptive Distortion",
+  "years": "2013-c.2017",
+  "category": "distortion",
+  "tech": "digitale (MDP)",
+  "controls": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "A-DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "arancione bruciato",
+  "series": "Compact",
+  "notes": "Distorsione adattiva MDP.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/da-2/specifications/"
+  ]
+ },
+ {
+  "code": "MO-2",
+  "name": "Multi Overtone",
+  "years": "2013-present",
+  "category": "pitch/octave/harmonizer",
+  "tech": "digitale (MDP)",
+  "controls": [
+   "BALANCE (DIR-EFX)",
+   "TONE",
+   "DETUNE",
+   "MODE (1: +1 oct / 2: +1 e -1 oct, rotary-like / 3: -1 oct)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT A (MONO) + B",
+  "color": "blu acciaio metallizzato",
+  "series": "Compact",
+  "notes": "Generatore di armonici/overtone MDP.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/mo-2/specifications/"
+  ]
+ },
+ {
+  "code": "OD-1X",
+  "name": "OverDrive",
+  "years": "2014-present",
+  "category": "overdrive",
+  "tech": "digitale (MDP)",
+  "controls": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "DRIVE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "giallo oro",
+  "series": "Compact X-series",
+  "notes": "Overdrive MDP (X-series).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/od-1x/specifications/"
+  ]
+ },
+ {
+  "code": "DS-1X",
+  "name": "Distortion",
+  "years": "2014-present",
+  "category": "distortion",
+  "tech": "digitale (MDP)",
+  "controls": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "rosso-arancio",
+  "series": "Compact X-series",
+  "notes": "Distorsione MDP (X-series).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ds-1x/specifications/"
+  ]
+ },
+ {
+  "code": "RC-1",
+  "name": "Loop Station",
+  "years": "2014-present",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "LEVEL",
+   "Footswitch ON/OFF (REC/PLAY/OVERDUB/STOP)"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + STOP/UNDO",
+  "color": "rosso",
+  "series": "Compact",
+  "notes": "Looper compatto con anello di LED; versione nera RC-1BK (2018).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/rc-1/specifications/"
+  ]
+ },
+ {
+  "code": "BB-1X",
+  "name": "Bass Driver",
+  "years": "2015-present",
+  "category": "overdrive",
+  "tech": "digitale (MDP)",
+  "controls": [
+   "LEVEL",
+   "BLEND",
+   "LOW",
+   "HIGH",
+   "DRIVE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + LINE OUT (TRS bilanciato)",
+  "color": "grigio antracite",
+  "series": "Compact X-series (bass)",
+  "notes": "Drive per basso MDP con uscita DI.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/bb-1x/specifications/"
+  ]
+ },
+ {
+  "code": "RV-6",
+  "name": "Reverb",
+  "years": "2015-present",
+  "category": "reverb",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "TONE",
+   "TIME",
+   "MODE (HALL / PLATE / ROOM / SPRING / MODULATE / +DELAY / SHIMMER / DYNAMIC)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + EXP",
+  "color": "grigio scuro/blu notte (?)",
+  "series": "Compact",
+  "notes": "Riverbero stereo 8 modi.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/rv-6/specifications/"
+  ]
+ },
+ {
+  "code": "VO-1",
+  "name": "Vocoder",
+  "years": "2016-present",
+  "category": "synth",
+  "tech": "digitale",
+  "controls": [
+   "LEVEL / BLEND (concentrico)",
+   "TONE",
+   "COLOR",
+   "MODE (TALK BOX / ADVANCED / VINTAGE / CHOIR)",
+   "Switch MIC SENS",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + MIC (XLR) + SEND / RETURN",
+  "color": "rosa/magenta",
+  "series": "Compact",
+  "notes": "Vocoder per chitarra con ingresso microfonico.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/vo-1/specifications/"
+  ]
+ },
+ {
+  "code": "BC-1X",
+  "name": "Bass Comp",
+  "years": "2016-present",
+  "category": "compressor",
+  "tech": "digitale (MDP)",
+  "controls": [
+   "LEVEL",
+   "RATIO",
+   "RELEASE",
+   "THRESHOLD",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "verde petrolio",
+  "series": "Compact X-series (bass)",
+  "notes": "Compressore multibanda per basso MDP.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/bc-1x/specifications/"
+  ]
+ },
+ {
+  "code": "TU-3S",
+  "name": "Chromatic Tuner (switchless)",
+  "years": "2016-present",
+  "category": "tuner",
+  "tech": "digitale",
+  "controls": [
+   "Pulsante MODE",
+   "Pulsante STREAM/CENT"
+  ],
+  "io": "IN / OUT + DC IN/DC OUT",
+  "color": "nero",
+  "series": "Compact",
+  "notes": "Versione senza footswitch per pedaliere con switcher.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/tu-3s/specifications/"
+  ]
+ },
+ {
+  "code": "AD-2",
+  "name": "Acoustic Preamp",
+  "years": "2016-present",
+  "category": "acoustic sim",
+  "tech": "digitale",
+  "controls": [
+   "ACOUSTIC RESONANCE",
+   "AMBIENCE",
+   "NOTCH",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + LINE OUT (TRS)",
+  "color": "marrone chiaro",
+  "series": "Compact",
+  "notes": "Preamp per chitarra acustica con pickup piezo.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ad-2/specifications/"
+  ]
+ },
+ {
+  "code": "CP-1X",
+  "name": "Compressor",
+  "years": "2016-present",
+  "category": "compressor",
+  "tech": "digitale (MDP)",
+  "controls": [
+   "LEVEL",
+   "ATTACK",
+   "RATIO",
+   "COMP",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "blu",
+  "series": "Compact X-series",
+  "notes": "Compressore multibanda MDP.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/cp-1x/specifications/"
+  ]
+ },
+ {
+  "code": "JB-2",
+  "name": "Angry Driver",
+  "years": "2017-present",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "DRIVE (canale BD e JHS, concentrici)",
+   "TONE (concentrici)",
+   "LEVEL (concentrici)",
+   "MODE (BD/JHS/series/parallel, 6 posizioni)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono + REMOTE",
+  "color": "bianco (?)",
+  "series": "Compact collaboration (BOSS x JHS)",
+  "notes": "Collaborazione con JHS: Blues Driver + Angry Charlie.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/jb-2/specifications/"
+  ]
+ },
+ {
+  "code": "SY-1",
+  "name": "Synthesizer",
+  "years": "2019-present",
+  "category": "synth",
+  "tech": "digitale",
+  "controls": [
+   "TYPE (LEAD1 / LEAD2 / PAD / BASS / STR / ORGAN / BELL / SFX1 / SFX2 / SEQ1 / SEQ2)",
+   "VARIATION (1-11)",
+   "TONE-RATE / DEPTH (concentrico)",
+   "EFFECT / DIRECT (concentrico)",
+   "Switch GUITAR/BASS",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + SEND / RETURN + EXP/CTL",
+  "color": "blu (pervinca)",
+  "series": "Compact",
+  "notes": "Synth polifonico per chitarra/basso senza pickup divisi.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/sy-1/specifications/"
+  ]
+ },
+ {
+  "code": "DD-8",
+  "name": "Digital Delay",
+  "years": "2019-present",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "FEEDBACK",
+   "TIME",
+   "MODE (STANDARD / ANALOG / TAPE / WARM / REVERSE / +RV / SHIM / MOD / WARP / GLT / LOOP)",
+   "Switch CARRYOVER",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + TEMPO/EXP",
+  "color": "bianco",
+  "series": "Compact",
+  "notes": "Delay fino a 10 s con looper.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/dd-8/specifications/"
+  ]
+ },
+ {
+  "code": "DD-3T",
+  "name": "Digital Delay",
+  "years": "2019-present",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "E.LEVEL",
+   "FEEDBACK",
+   "TIME",
+   "MODE (S 50ms / M 200ms / L 800ms / SHORT LOOP)",
+   "Footswitch ON/OFF (tieni premuto 2 s = tap)"
+  ],
+  "io": "IN / OUTPUT + DIRECT OUT + TEMPO",
+  "color": "bianco",
+  "series": "Compact",
+  "notes": "DD-3 con tap tempo via footswitch esterno.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/dd-3t/specifications/"
+  ]
+ },
+ {
+  "code": "OC-5",
+  "name": "Octave",
+  "years": "2020-present",
+  "category": "pitch/octave/harmonizer",
+  "tech": "digitale",
+  "controls": [
+   "DIRECT LEVEL",
+   "+1 OCT",
+   "-1 OCT",
+   "-2 OCT / RANGE (concentrico)",
+   "Switch VINTAGE/POLY",
+   "Switch GUITAR/BASS",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + DIRECT OUT",
+  "color": "marrone scuro",
+  "series": "Compact",
+  "notes": "Octaver polifonico con modo Vintage (OC-2).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/oc-5/specifications/"
+  ]
+ },
+ {
+  "code": "RC-5",
+  "name": "Loop Station",
+  "years": "2021-present",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "MEMORY / LOOP LEVEL (concentrico)",
+   "Pulsante MEMORY",
+   "Pulsante SETUP",
+   "Pulsante RHYTHM ON/OFF",
+   "Pulsante RHYTHM TEMPO",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + STOP/MEMORY + MIDI IN/OUT + USB",
+  "color": "rosso (?)",
+  "series": "Compact",
+  "notes": "Looper compatto con display e MIDI.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/rc-5/specifications/"
+  ]
+ },
+ {
+  "code": "RE-2",
+  "name": "Space Echo",
+  "years": "2022-present",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "MODE 11 pos. (H1 / H2 / H3 / H2+H3 / H1+R / H2+R / H3+R / H1+H2+R / H2+H3+R / H1+H3+R / H1+H2+H3+R)",
+   "REPEAT RATE / WOW & FLUTTER (concentrico)",
+   "INTENSITY / TONE (concentrico)",
+   "ECHO / REVERB (concentrico)",
+   "Switch CARRYOVER",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL/EXP",
+  "color": "nero/grigio scuro con pannello verde scuro",
+  "series": "Compact",
+  "notes": "Emulazione del Roland RE-201 Space Echo.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/re-2/specifications/"
+  ]
+ },
+ {
+  "code": "SL-2",
+  "name": "Slicer",
+  "years": "2022-present",
+  "category": "tremolo/pan",
+  "tech": "digitale",
+  "controls": [
+   "TYPE (SINGLE 1 / SINGLE 2 / DUAL 1 / DUAL 2 / TREMOLO / HARMONIC / SFX 1 / SFX 2)",
+   "VARIATION (1-11)",
+   "ATTACK / DUTY (concentrico)",
+   "BALANCE / TEMPO (concentrico)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL/EXP + MIDI IN + USB",
+  "color": "verde petrolio",
+  "series": "Compact",
+  "notes": "Slicer ritmico (successore compatto dello SL-20).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/sl-2/specifications/"
+  ]
+ },
+ {
+  "code": "NS-1X",
+  "name": "Noise Suppressor",
+  "years": "2023-present",
+  "category": "noise gate",
+  "tech": "digitale (MDP)",
+  "controls": [
+   "THRESHOLD",
+   "DECAY",
+   "DAMP",
+   "MODE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + SEND / RETURN + DC IN/DC OUT",
+  "color": "argento/grigio chiaro",
+  "series": "Compact X-series",
+  "notes": "Noise suppressor MDP.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ns-1x/specifications/"
+  ]
+ },
+ {
+  "code": "IR-2",
+  "name": "Amp & Cabinet",
+  "years": "2023-present",
+  "category": "amp/IR sim",
+  "tech": "digitale",
+  "controls": [
+   "TYPE (CLEAN / TWN / TWEED / DIAMOND / CRUNCH / BRIT / HI-GAIN / SLDN / BROWN / MODDED / RFIER)",
+   "GAIN / TREBLE (concentrico)",
+   "LEVEL / MIDDLE (concentrico)",
+   "AMBIENCE / BASS (concentrico)",
+   "Footswitch ON/OFF (commuta tra 2 impostazioni)"
+  ],
+  "io": "IN / OUT A (MONO)/B + SEND/RETURN + CH SEL + PHONES + USB-C",
+  "color": "nero/grigio scuro",
+  "series": "Compact",
+  "notes": "Ampli + IR di cabinet in formato compatto; IR caricabili via USB.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ir-2/specifications/"
+  ]
+ },
+ {
+  "code": "SDE-3",
+  "name": "Dual Digital Delay",
+  "years": "2024-present",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "TIME",
+   "FEEDBACK",
+   "LEVEL",
+   "DEPTH",
+   "RATE",
+   "HI CUT",
+   "OFFSET",
+   "Switch CARRYOVER",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL/EXP + MIDI IN",
+  "color": "blu-grigio/petrolio scuro (?)",
+  "series": "Compact",
+  "notes": "Delay doppio ispirato al Roland SDE-3000.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/sde-3/specifications/"
+  ]
+ },
+ {
+  "code": "RT-2",
+  "name": "Rotary Ensemble",
+  "years": "2025-present",
+  "category": "tremolo/pan",
+  "tech": "digitale",
+  "controls": [
+   "FAST / SLOW (concentrico)",
+   "LEVEL / DRIVE (concentrico)",
+   "Switch MODE (I / II / III)",
+   "Switch RISE/FALL TIME",
+   "Switch DRIVE KNOB (DRIVE / BALANCE)",
+   "Footswitch ON/OFF (slow/fast)"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL/EXP",
+  "color": "crema/argento (?)",
+  "series": "Compact",
+  "notes": "Simulatore di altoparlante rotante (Leslie).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/rt-2/specifications/"
+  ]
+ },
+ {
+  "code": "PX-1",
+  "name": "Plugout FX",
+  "years": "2025-present",
+  "category": "multi-model (compact)",
+  "tech": "digitale",
+  "controls": [
+   "LEFT",
+   "CENTER",
+   "RIGHT",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL1,2/EXP + MIDI IN + USB-C + Bluetooth",
+  "color": "grigio chiaro/argento",
+  "series": "Compact",
+  "notes": "Piattaforma che carica modelli di compatti storici (16 inclusi: OD-1, SP-1, PH-1, SG-1, CS-1, TW-1, SD-1, DS-1, CE-2, BF-2, PN-2, OC-2, PS-2, VB-2, DD-2, DF-2; altri via Model Pass). Display LCD.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/px-1/specifications/",
+   "https://www.premierguitar.com/news/boss-introduces-px-1-plugout-fx"
+  ]
+ },
+ {
+  "code": "XS-1",
+  "name": "Poly Shifter",
+  "years": "2025-present",
+  "category": "pitch/octave/harmonizer",
+  "tech": "digitale",
+  "controls": [
+   "BALANCE",
+   "SHIFT",
+   "Switch PEDAL MODE",
+   "Switch SHIFT DIRECTION",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono + CTL/EXP",
+  "color": "azzurro",
+  "series": "Compact",
+  "notes": "Pitch shifter polifonico (drop tuning, capo, ottave).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/xs-1/specifications/"
+  ]
+ },
+ {
+  "code": "BD-2W",
+  "name": "Blues Driver (Waza Craft)",
+  "years": "2014-present",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "GAIN",
+   "Switch MODE (S standard / C custom)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "blu",
+  "series": "Compact Waza Craft",
+  "notes": "Made in Japan.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/bd-2w/specifications/"
+  ]
+ },
+ {
+  "code": "SD-1W",
+  "name": "SUPER OverDrive (Waza Craft)",
+  "years": "2014-present",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "Switch MODE (S standard / C custom)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "giallo",
+  "series": "Compact Waza Craft",
+  "notes": "Made in Japan.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/sd-1w/specifications/"
+  ]
+ },
+ {
+  "code": "DM-2W",
+  "name": "Delay (Waza Craft)",
+  "years": "2014-present",
+  "category": "delay",
+  "tech": "analogico",
+  "controls": [
+   "REPEAT RATE",
+   "ECHO",
+   "INTENSITY",
+   "Switch MODE (S standard / C custom)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUTPUT + DIRECT OUT + RATE (EXP)",
+  "color": "rosso/rosa",
+  "series": "Compact Waza Craft",
+  "notes": "Delay BBD; modo Custom fino a 800 ms.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/dm-2w/specifications/"
+  ]
+ },
+ {
+  "code": "VB-2W",
+  "name": "Vibrato (Waza Craft)",
+  "years": "2016-present",
+  "category": "vibrato",
+  "tech": "analogico",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "RISE TIME",
+   "MODE (UNLATCH / BYPASS / LATCH)",
+   "Switch S/C (STANDARD/CUSTOM)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + DEPTH (EXP)",
+  "color": "turchese/ciano",
+  "series": "Compact Waza Craft",
+  "notes": "Riedizione del VB-2.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/vb-2w/specifications/"
+  ]
+ },
+ {
+  "code": "TU-3W",
+  "name": "Chromatic Tuner (Waza Craft)",
+  "years": "2016-present",
+  "category": "tuner",
+  "tech": "digitale",
+  "controls": [
+   "Pulsante MODE",
+   "Pulsante STREAM/CENT",
+   "Switch OUTPUT (BUF/THRU)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT + BYPASS OUT + DC IN/DC OUT",
+  "color": "nero",
+  "series": "Compact Waza Craft",
+  "notes": "TU-3 con buffer selezionabile/true bypass, Made in Japan.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/tu-3w/specifications/"
+  ]
+ },
+ {
+  "code": "CE-2W",
+  "name": "Chorus (Waza Craft)",
+  "years": "2016-present",
+  "category": "chorus",
+  "tech": "analogico",
+  "controls": [
+   "RATE",
+   "DEPTH",
+   "Switch MODE (S standard CE-2 / CE-1 chorus / CE-1 vibrato)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN / OUT A (MONO) + B",
+  "color": "azzurro (acqua)",
+  "series": "Compact Waza Craft",
+  "notes": "Include i suoni del CE-1.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ce-2w/specifications/"
+  ]
+ },
+ {
+  "code": "DC-2W",
+  "name": "Dimension C (Waza Craft)",
+  "years": "2018-present",
+  "category": "chorus",
+  "tech": "analogico",
+  "controls": [
+   "Pulsanti MODE 1/2/3/4 (combinabili)",
+   "Switch S / SDD-320",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B",
+  "color": "lavanda/grigio-azzurro chiaro",
+  "series": "Compact Waza Craft",
+  "notes": "Include modo SDD-320.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/dc-2w/specifications/"
+  ]
+ },
+ {
+  "code": "MT-2W",
+  "name": "Metal Zone (Waza Craft)",
+  "years": "2018-present",
+  "category": "metal",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "DIST",
+   "EQUALIZER HIGH / LOW (concentrico)",
+   "EQUALIZER MIDDLE / MID FREQ (concentrico)",
+   "Switch MODE (S standard / C custom)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero",
+  "series": "Compact Waza Craft",
+  "notes": "",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/mt-2w/specifications/"
+  ]
+ },
+ {
+  "code": "TB-2W",
+  "name": "Tone Bender (Waza Craft)",
+  "years": "2021-2022 (edizione limitata)",
+  "category": "fuzz",
+  "tech": "analogico",
+  "controls": [
+   "ATTACK",
+   "LEVEL",
+   "Switch OUTPUT (BUF/THRU)",
+   "Switch batteria (interno)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "grigio metallizzato",
+  "series": "Compact Waza Craft",
+  "notes": "Collaborazione con Sola Sound; transistor al germanio; produzione limitata.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/tb-2w/specifications/"
+  ]
+ },
+ {
+  "code": "HM-2W",
+  "name": "Heavy Metal (Waza Craft)",
+  "years": "2021-present",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "COLOR MIX LOW",
+   "COLOR MIX HIGH",
+   "DIST",
+   "Switch MODE (S standard / C custom)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero",
+  "series": "Compact Waza Craft",
+  "notes": "",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/hm-2w/specifications/"
+  ]
+ },
+ {
+  "code": "FZ-1W",
+  "name": "Fuzz (Waza Craft)",
+  "years": "2021-present",
+  "category": "fuzz",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "FUZZ",
+   "Switch MODE (V vintage / M modern)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "grigio",
+  "series": "Compact Waza Craft",
+  "notes": "Modo Vintage ispirato al Maestro FZ-1.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/fz-1w/specifications/"
+  ]
+ },
+ {
+  "code": "DS-1W",
+  "name": "Distortion (Waza Craft)",
+  "years": "2022-present",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DIST",
+   "Switch MODE (S standard / C custom)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "arancione",
+  "series": "Compact Waza Craft",
+  "notes": "",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/ds-1w/specifications/"
+  ]
+ },
+ {
+  "code": "BP-1W",
+  "name": "Booster/Preamp (Waza Craft)",
+  "years": "2023-present",
+  "category": "boost/preamp",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "GAIN",
+   "Switch MODE (NAT / RE / CE)",
+   "Switch BUFFER (STD / VTG, posteriore)",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "argento/grigio chiaro",
+  "series": "Compact Waza Craft",
+  "notes": "Booster/preamp; modi ispirati a preamp vintage (RE = Echoplex EP-3, CE = CE-1).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact",
+   "https://www.boss.info/us/products/bp-1w/specifications/"
+  ]
+ },
+ {
+  "code": "BOX-40",
+  "name": "40th Anniversary Box Set (OD-1, SP-1, PH-1 reissue)",
+  "years": "2017 (limitato)",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "OD-1: LEVEL, OVER DRIVE",
+   "SP-1: SPECTRUM, BALANCE",
+   "PH-1: RATE, DEPTH"
+  ],
+  "io": "IN mono / OUT mono (ciascun pedale)",
+  "color": "come originali (OD-1 giallo, SP-1, PH-1)",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Cofanetto limitato con riedizioni dei primi tre compatti del 1977.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.boss.info/us/promos/40th_anniversary_compact_pedals/"
+  ]
+ },
+ {
+  "code": "DS-1-4A",
+  "name": "Distortion 40th Anniversary",
+  "years": "2017 (limitato)",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "TONE",
+   "LEVEL",
+   "DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero (grafica commemorativa)",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Edizione limitata 40 anni del compatto; circuito DS-1.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact/ds1/4a"
+  ]
+ },
+ {
+  "code": "SD-1-4A",
+  "name": "SUPER OverDrive 40th Anniversary",
+  "years": "2021 (limitato)",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero (?)",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Edizione limitata 40 anni dell'SD-1.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact/sd1/4a"
+  ]
+ },
+ {
+  "code": "MT-2-3A",
+  "name": "Metal Zone 30th Anniversary",
+  "years": "2021 (limitato)",
+  "category": "metal",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "DIST",
+   "EQUALIZER HIGH / LOW",
+   "EQUALIZER MIDDLE / MID FREQ",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "da verificare (grafica commemorativa)",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Edizione limitata 30 anni dell'MT-2.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact/mt2/3a"
+  ]
+ },
+ {
+  "code": "DS-1-B50A",
+  "name": "Distortion BOSS 50th Anniversary",
+  "years": "2023 (limitato)",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "TONE",
+   "LEVEL",
+   "DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "da verificare (grafica 50th anniversary)",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Edizione 50 anni BOSS.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "SD-1-B50A",
+  "name": "SUPER OverDrive BOSS 50th Anniversary",
+  "years": "2023 (limitato)",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "da verificare (grafica 50th anniversary)",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Edizione 50 anni BOSS.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "BD-2-B50A",
+  "name": "Blues Driver BOSS 50th Anniversary",
+  "years": "2023 (limitato)",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "GAIN",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "da verificare (grafica 50th anniversary)",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Edizione 50 anni BOSS.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "DS-1-WH",
+  "name": "Distortion (White edition)",
+  "years": "2024 (limitato)",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "TONE",
+   "LEVEL",
+   "DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "bianco",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Edizione limitata bianca.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact/ds1"
+  ]
+ },
+ {
+  "code": "DS-1-BK",
+  "name": "Distortion (Black edition)",
+  "years": "2016 (limitato)",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "TONE",
+   "LEVEL",
+   "DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "nero",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Edizione limitata nera (anno da verificare).",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact/ds1"
+  ]
+ },
+ {
+  "code": "RC-1BK",
+  "name": "Loop Station (Black)",
+  "years": "2018 (limitato)",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "LEVEL",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + STOP/UNDO",
+  "color": "nero",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Versione nera dell'RC-1.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact/rc1/bk"
+  ]
+ },
+ {
+  "code": "DS-1-6M",
+  "name": "Distortion 6 million commemorative",
+  "years": "limitato (non in vendita)",
+  "category": "distortion",
+  "tech": "analogico",
+  "controls": [
+   "TONE",
+   "LEVEL",
+   "DIST",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "speciale commemorativo",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Commemorativo 6 milioni di pedali; non commercializzato.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "MT-2-8M",
+  "name": "Metal Zone 8 million commemorative",
+  "years": "limitato (non in vendita)",
+  "category": "metal",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "DIST",
+   "EQUALIZER HIGH / LOW",
+   "EQUALIZER MIDDLE / MID FREQ",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "speciale commemorativo",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Commemorativo 8 milioni; non commercializzato.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "BD-2-10M",
+  "name": "Blues Driver 10 million commemorative",
+  "years": "limitato (non in vendita)",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "GAIN",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "speciale commemorativo",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Commemorativo 10 milioni; non commercializzato.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463",
+   "https://www.effectsdatabase.com/model/boss/compact/ds1"
+  ]
+ },
+ {
+  "code": "SD-1-BE",
+  "name": "SUPER OverDrive 'bull's eye' (Ishibashi Music)",
+  "years": "limitato (esclusiva Ishibashi, Giappone)",
+  "category": "overdrive",
+  "tech": "analogico",
+  "controls": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT mono",
+  "color": "grafica speciale 'bull's eye'",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Edizione esclusiva per il negozio Ishibashi Music.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "CH-1-BE",
+  "name": "SUPER Chorus 'bull's eye' (Ishibashi Music)",
+  "years": "limitato (esclusiva Ishibashi, Giappone)",
+  "category": "chorus",
+  "tech": "analogico",
+  "controls": [
+   "E.LEVEL",
+   "EQ",
+   "RATE",
+   "DEPTH",
+   "Footswitch ON/OFF"
+  ],
+  "io": "IN mono / OUT A (MONO) + B",
+  "color": "grafica speciale 'bull's eye'",
+  "series": "Compact limited/anniversary edition",
+  "notes": "Edizione esclusiva per il negozio Ishibashi Music.",
+  "sources": [
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "RC-20",
+  "name": "Loop Station",
+  "years": "2001-c.2005",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "PHRASE SELECT",
+   "LEVEL",
+   "Pulsanti TAP/REVERSE/UNDO",
+   "Pedale REC/PLAY/OVERDUB",
+   "Pedale STOP"
+  ],
+  "io": "INST IN / MIC IN / AUX IN / OUTPUT + PHRASE SHIFT + REVERSE (footswitch)",
+  "color": "rosso",
+  "series": "Twin pedal (-20)",
+  "notes": "Primo Loop Station BOSS (twin).",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/rc-20/specifications/"
+  ]
+ },
+ {
+  "code": "RC-20XL",
+  "name": "Loop Station",
+  "years": "2005-2009",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "INST",
+   "MIC",
+   "PHRASE SELECT",
+   "GUIDE",
+   "LEVEL",
+   "Pulsanti REVERSE / TAP TEMPO / WRITE / EXIT / AUTO START",
+   "Pulsante MODE (NORMAL / CENTER CANCEL / FLAT AMP SIMULATE)",
+   "Pedale REC/PLAY/OVERDUB",
+   "Pedale STOP/TAP TEMPO"
+  ],
+  "io": "INST IN / MIC IN / AUX IN / OUTPUT + PHRASE SHIFT + REVERSE",
+  "color": "rosso",
+  "series": "Twin pedal (-20)",
+  "notes": "RC-20 con memoria estesa (16 min).",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/rc-20xl/specifications/"
+  ]
+ },
+ {
+  "code": "DD-20",
+  "name": "Giga Delay",
+  "years": "2003-c.2017",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "MODE (SMOOTH / STANDARD / ANALOG / TAPE / MODULATE / DUAL / REVERSE / PAN / WARP / TWIST / SOS)",
+   "DELAY TIME",
+   "E.LEVEL",
+   "F.BACK",
+   "TONE",
+   "Pulsante TAP",
+   "Pulsante TEMPO",
+   "Pulsanti MEMORY WRITE / MEMORY SELECT",
+   "Pedale ON/OFF",
+   "Pedale MEMORY/TAP"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL PEDAL + PHONES",
+  "color": "grigio scuro",
+  "series": "Twin pedal (-20)",
+  "notes": "Delay fino a 23 s con display.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/dd-20/specifications/"
+  ]
+ },
+ {
+  "code": "OD-20",
+  "name": "Drive Zone",
+  "years": "2004-c.2012",
+  "category": "overdrive",
+  "tech": "digitale (COSM)",
+  "controls": [
+   "TYPE (22 tipi: OD-1/OD-2, DS-1/BD-2, MT-2/HM-2, LEAD/BOOST, STACK/CRUNCH, LOUD/METAL, T-SCREAM/FULL-D, DST+/CENTA OD, GUV DS/P-RAT, R-MAN/MUFF FUZZ, FACE/OCT FUZZ)",
+   "DRIVE",
+   "BOTTOM",
+   "TONE",
+   "LEVEL",
+   "ATTACK SHAPE",
+   "HEAVY OCTAVE",
+   "Pulsante VARIATION",
+   "Pulsante AMP CTRL",
+   "Pulsanti MEMORY WRITE/SELECT",
+   "Pedale EFFECT ON/OFF",
+   "Pedale MANUAL/MEMORY"
+  ],
+  "io": "IN / OUT + LINE OUT/PHONES + AMP CTRL",
+  "color": "giallo/oro",
+  "series": "Twin pedal (-20)",
+  "notes": "Overdrive/distorsione COSM multimodello.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/od-20/specifications/"
+  ]
+ },
+ {
+  "code": "RT-20",
+  "name": "Rotary Sound Processor",
+  "years": "2003-c.2012",
+  "category": "tremolo/pan",
+  "tech": "digitale (COSM)",
+  "controls": [
+   "MODE (I Leslie 122+OD / II 122 on-mic / III 122 + Marshall 1959 / IV UNI-V)",
+   "RISE TIME",
+   "EFFECT LEVEL",
+   "DIRECT LEVEL",
+   "BALANCE",
+   "OVERDRIVE",
+   "SLOW SPEED",
+   "FAST SPEED",
+   "Switch DRIVE TYPE (GUITAR/KEYBOARD)",
+   "Pedale EFFECT ON/OFF",
+   "Pedale SLOW/FAST"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + SPEED (EXP) + PHONES",
+  "color": "rosso scuro/bordeaux",
+  "series": "Twin pedal (-20)",
+  "notes": "Simulazione Leslie con rotore animato.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/rt-20/specifications/"
+  ]
+ },
+ {
+  "code": "RE-20",
+  "name": "Space Echo",
+  "years": "2007-c.2019",
+  "category": "delay",
+  "tech": "digitale (COSM)",
+  "controls": [
+   "MODE SELECTOR (12 pos.: 1-4 REPEAT solo eco, 5-11 REVERB+ECHO, REVERB ONLY)",
+   "REPEAT RATE",
+   "INTENSITY",
+   "ECHO VOLUME",
+   "REVERB VOLUME",
+   "BASS",
+   "TREBLE",
+   "INPUT VOLUME",
+   "Switch DIRECT",
+   "Pedale EFFECT ON/OFF",
+   "Pedale TAP"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + EXP",
+  "color": "verde/nero (look RE-201)",
+  "series": "Twin pedal (-20)",
+  "notes": "Emulazione COSM del Roland RE-201 Space Echo.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://static.roland.com/assets/media/pdf/RE-20_OM.pdf"
+  ]
+ },
+ {
+  "code": "SL-20",
+  "name": "Slicer",
+  "years": "2008-c.2016",
+  "category": "tremolo/pan",
+  "tech": "digitale",
+  "controls": [
+   "EFFECT LEVEL",
+   "DIRECT LEVEL",
+   "BANK",
+   "PATTERN (50 pattern)",
+   "ATTACK",
+   "DUTY",
+   "TEMPO",
+   "Pulsante OUTPUT MODE (MONO / FIXED / RANDOM / PING-PONG / AUTO / 3D PANNER / 3D CROSS)",
+   "Pulsante PEDAL MODE (LATCH / MOMENTARY)",
+   "Pedale START/STOP",
+   "Pedale TAP"
+  ],
+  "io": "IN R (MONO)/L / OUT R (MONO)/L + EXP + MIDI IN",
+  "color": "nero (?)",
+  "series": "Twin pedal (-20)",
+  "notes": "Audio pattern processor (slicer ritmico).",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/sl-20/specifications/"
+  ]
+ },
+ {
+  "code": "RC-30",
+  "name": "Loop Station",
+  "years": "2011-c.2020",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "TRACK 1 slider",
+   "TRACK 2 slider",
+   "RHYTHM LEVEL",
+   "MIC INPUT LEVEL",
+   "Pulsanti MEMORY/RHYTHM/LOOP FX",
+   "Switch PHANTOM",
+   "Pedale REC/PLAY/OVERDUB",
+   "Pedale STOP/TAP TEMPO"
+  ],
+  "io": "INST IN L(MONO)/R + MIC IN (XLR) + AUX IN / OUT L(MONO)/R + FOOT SW + USB",
+  "color": "rosso",
+  "series": "Twin pedal (-20)",
+  "notes": "Looper doppia traccia twin.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/rc-30/specifications/"
+  ]
+ },
+ {
+  "code": "DD-200",
+  "name": "Digital Delay",
+  "years": "2019-present",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "MODE (STANDARD / ANALOG / TAPE / DRUM / SHIMMER / TERA ECHO / PAD ECHO / PATTERN / LO-FI / DUAL / REVERSE / DUCKING)",
+   "TIME",
+   "FEEDBACK",
+   "E.LEVEL",
+   "PARAM",
+   "TONE",
+   "MOD DEPTH",
+   "Pulsante TAP DIVISION",
+   "Pulsante MEMORY",
+   "Switch ON/OFF",
+   "Switch MEMORY/TAP"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL1,2/EXP + MIDI IN/OUT + USB",
+  "color": "bianco",
+  "series": "200 series",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/dd-200/specifications/"
+  ]
+ },
+ {
+  "code": "MD-200",
+  "name": "Modulation",
+  "years": "2019-present",
+  "category": "chorus",
+  "tech": "digitale",
+  "controls": [
+   "MODE (CHORUS / CE-1 CHORUS / FLANGER / PHASER / VINTAGE PHASER / CLASSIC VIBE / VIBRATO / TREMOLO / ROTARY / AUTO WAH / SLICER / OVERTONE)",
+   "RATE",
+   "DEPTH",
+   "E.LEVEL",
+   "PARAM 1",
+   "PARAM 2",
+   "PARAM 3",
+   "Pulsante TAP DIVISION",
+   "Pulsante MEMORY",
+   "Switch ON/OFF",
+   "Switch MEMORY/TAP"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL1,2/EXP + MIDI IN/OUT + USB",
+  "color": "blu",
+  "series": "200 series",
+  "notes": "Multimodulazione (12 modi); categoria indicata = chorus per convenzione.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/md-200/specifications/"
+  ]
+ },
+ {
+  "code": "OD-200",
+  "name": "Hybrid Drive",
+  "years": "2019-present",
+  "category": "overdrive",
+  "tech": "ibrido",
+  "controls": [
+   "MODE (OVERDRIVE / BLUES / SCREAM / CNTR OD / X-DRIVE / DIST / X-DIST / STACK DRIVE / FAT DIST / BROWN / X-METAL / FUZZ)",
+   "DRIVE",
+   "LEVEL",
+   "PARAM",
+   "LOW",
+   "MIDDLE",
+   "HIGH",
+   "Pulsante PARAM",
+   "Pulsante MEMORY",
+   "Switch ON/OFF",
+   "Switch MEMORY/BOOST (15 tipi di boost)"
+  ],
+  "io": "IN / OUT + CTL1,2/EXP + MIDI IN/OUT + USB",
+  "color": "arancione/nero (?)",
+  "series": "200 series",
+  "notes": "Drive ibrido analogico/digitale.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/od-200/specifications/"
+  ]
+ },
+ {
+  "code": "EQ-200",
+  "name": "Graphic Equalizer",
+  "years": "2019-present",
+  "category": "EQ",
+  "tech": "digitale",
+  "controls": [
+   "10 slider di banda (30 Hz - 12.8 kHz)",
+   "LEVEL slider",
+   "Pulsante A/B",
+   "Pulsante MEMORY",
+   "Switch ON/OFF",
+   "Switch MEMORY"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL1,2/EXP + MIDI IN/OUT + USB",
+  "color": "argento/nero (?)",
+  "series": "200 series",
+  "notes": "Due canali EQ (stereo, parallelo, serie).",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/eq-200/specifications/"
+  ]
+ },
+ {
+  "code": "IR-200",
+  "name": "Amp & IR Cabinet",
+  "years": "2021-present",
+  "category": "amp/IR sim",
+  "tech": "digitale",
+  "controls": [
+   "MEMORY",
+   "AMP (NATURAL / JC-120 / TWIN COMBO / DIAMOND AMP / TWEED COMBO / X-HI GAIN / BRITISH STACK / BGR UB METAL / NATURAL BASS / X-DRIVE BASS / CONCERT)",
+   "CABINET (IR BOSS + Celestion)",
+   "AMBIENCE",
+   "GAIN",
+   "BASS",
+   "MIDDLE",
+   "TREBLE",
+   "LEVEL",
+   "Pulsante MENU",
+   "Pulsante EXIT",
+   "Switch DOWN",
+   "Switch UP"
+  ],
+  "io": "IN / OUT A (MONO)/B + SEND/RETURN + AUX IN + CTL1,2/EXP + MIDI IN/OUT + USB",
+  "color": "nero/grigio scuro",
+  "series": "200 series",
+  "notes": "IR BOSS e Celestion; caricamento IR utente.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/ir-200/specifications/"
+  ]
+ },
+ {
+  "code": "SY-200",
+  "name": "Synthesizer",
+  "years": "2021-present",
+  "category": "synth",
+  "tech": "digitale",
+  "controls": [
+   "TYPE (LEAD / PAD / STRING / BELL / ORGAN / BASS / DUAL / SWEEP / NOISE / SFX / SEQ / ARPEGGIO)",
+   "MEMORY",
+   "Knob 1",
+   "Knob 2",
+   "Knob 3",
+   "D.LEVEL",
+   "E.LEVEL",
+   "VARIATION",
+   "Pulsante MENU",
+   "Pulsante EXIT",
+   "Switch ON/OFF",
+   "Switch MEMORY/CTL1"
+  ],
+  "io": "IN / OUT + SEND/RETURN + CTL2,3/EXP + MIDI IN/OUT + USB",
+  "color": "grigio scuro/nero",
+  "series": "200 series",
+  "notes": "Evoluzione dell'SY-1 con 128 memorie.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/sy-200/specifications/"
+  ]
+ },
+ {
+  "code": "RV-200",
+  "name": "Reverb",
+  "years": "2023-present",
+  "category": "reverb",
+  "tech": "digitale",
+  "controls": [
+   "MODE (ROOM/HALL/PLATE/SPRING/SHIMMER/ARPVERB/SLOWVERB/MODULATE/+DELAY/LO-FI/GATE/REVERSE)",
+   "TIME",
+   "PRE-DELAY",
+   "E.LEVEL",
+   "PARAM",
+   "LOW",
+   "HIGH",
+   "Pulsante DENSITY",
+   "Pulsante MEMORY",
+   "Switch ON/OFF",
+   "Switch MEMORY/HOLD"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL1,2/EXP + MIDI IN/OUT + USB",
+  "color": "blu scuro",
+  "series": "200 series",
+  "notes": "Annunciato nov 2023.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/rv-200/specifications/",
+   "https://www.boss.info/us/whats_new/press_releases/2023/BOSS-Introduces-RV-200-Reverb/"
+  ]
+ },
+ {
+  "code": "DD-500",
+  "name": "Digital Delay",
+  "years": "2015-present",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "MODE (STANDARD / ANALOG / TAPE / VINTAGE DIGITAL / DUAL / PATTERN / REVERSE / SFX / SHIMMER / FILTER / SLOW ATTACK / TERA ECHO)",
+   "TIME/VALUE",
+   "FEEDBACK",
+   "E.LEVEL",
+   "TONE",
+   "MOD DEPTH",
+   "Pulsanti EDIT/EXIT/UP/DOWN + LCD",
+   "Switch A",
+   "Switch B",
+   "Switch TAP/CTL"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL1,2/EXP + MIDI IN/OUT (DIN) + USB",
+  "color": "bianco",
+  "series": "500 series",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/dd-500/specifications/"
+  ]
+ },
+ {
+  "code": "RV-500",
+  "name": "Reverb",
+  "years": "2017-present",
+  "category": "reverb",
+  "tech": "digitale",
+  "controls": [
+   "MODE (ROOM / HALL / PLATE / SPRING / SHIMMER / FAST DECAY / EARLY REFLECTION / NON-LINEAR / SFX / DUAL / SRV / SPACE ECHO)",
+   "TIME/VALUE",
+   "PRE-DELAY",
+   "E.LEVEL",
+   "LOW",
+   "HIGH",
+   "Pulsanti EDIT/EXIT/UP/DOWN + LCD",
+   "Switch A",
+   "Switch B",
+   "Switch TAP/CTL"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL1,2/EXP + MIDI IN/OUT (DIN) + USB",
+  "color": "blu scuro",
+  "series": "500 series",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/rv-500/specifications/"
+  ]
+ },
+ {
+  "code": "MD-500",
+  "name": "Modulation",
+  "years": "2017-present",
+  "category": "chorus",
+  "tech": "digitale",
+  "controls": [
+   "MODE (CHORUS / FLANGER / PHASER / CLASSIC VIBE / VIBRATO / TREMOLO / DIMENSION / RING MOD / ROTARY / FILTER / SLICER / OVERTONE; 28 algoritmi)",
+   "RATE/VALUE",
+   "DEPTH",
+   "E.LEVEL",
+   "PARAM 1",
+   "PARAM 2",
+   "Pulsanti EDIT/EXIT/UP/DOWN + LCD",
+   "Switch A",
+   "Switch B",
+   "Switch TAP/CTL"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL1,2/EXP + MIDI IN/OUT (DIN) + USB",
+  "color": "blu/viola (?)",
+  "series": "500 series",
+  "notes": "Multimodulazione (12 modi, 28 algoritmi); categoria indicata = chorus per convenzione.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/md-500/specifications/"
+  ]
+ },
+ {
+  "code": "RC-500",
+  "name": "Loop Station",
+  "years": "2020-present",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "MEMORY/VALUE",
+   "MIC LEVEL",
+   "TRACK 1 slider",
+   "TRACK 2 slider",
+   "Pulsanti TRACK EDIT/RHYTHM/MEMORY/MENU/EXIT/ENTER/INPUT",
+   "Switch REC/PLAY",
+   "Switch STOP",
+   "Switch TRACK SELECT"
+  ],
+  "io": "INST IN A (MONO)/B + MIC IN (XLR, phantom) / OUT A (MONO)/B + CTL1,2/EXP + MIDI + USB",
+  "color": "nero",
+  "series": "Loop Station (floor/tabletop)",
+  "notes": "Looper doppia traccia formato 500.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/rc-500/specifications/"
+  ]
+ },
+ {
+  "code": "RC-50",
+  "name": "Loop Station",
+  "years": "2005-2011",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "Pedali REC/PLAY/OVERDUB, STOP, PHRASE 1/2/3, UNDO/REDO, TAP TEMPO, BANK",
+   "Controlli di livello e display"
+  ],
+  "io": "INST L/R + MIC (XLR) + AUX / MAIN OUT L/R + SUB OUT + PHONES + CTL/EXP + MIDI + USB",
+  "color": "argento/nero",
+  "series": "Loop Station (floor/tabletop)",
+  "notes": "Looper floor a 3 tracce.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/rc-50/specifications/"
+  ]
+ },
+ {
+  "code": "RC-300",
+  "name": "Loop Station",
+  "years": "2011-c.2020",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "Slider TRACK 1-3",
+   "MASTER LEVEL",
+   "RHYTHM LEVEL",
+   "AUX",
+   "INST",
+   "MIC",
+   "Pedali REC/DUB/PLAY x3, STOP x3, ALL START/STOP, LOOP FX",
+   "Pedale d'espressione integrato"
+  ],
+  "io": "INST L/R + MIC (XLR) + AUX / MAIN OUT L/R + SUB OUT L/R + PHONES + CTL/EXP + MIDI + USB",
+  "color": "nero/argento",
+  "series": "Loop Station (floor/tabletop)",
+  "notes": "Looper floor a 3 tracce con effetti.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/rc-300/specifications/"
+  ]
+ },
+ {
+  "code": "RC-10R",
+  "name": "Rhythm Loop Station",
+  "years": "2019-present",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "VALUE",
+   "RHYTHM LEVEL",
+   "LOOP LEVEL",
+   "Pulsante MENU",
+   "Pulsante EXIT",
+   "Switch RHYTHM",
+   "Switch LOOP"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL1,2/EXP + MIDI + USB",
+  "color": "nero",
+  "series": "Loop Station (floor/tabletop)",
+  "notes": "Looper + batteria ritmica.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/rc-10r/specifications/"
+  ]
+ },
+ {
+  "code": "RC-600",
+  "name": "Loop Station",
+  "years": "2020-present",
+  "category": "looper",
+  "tech": "digitale",
+  "controls": [
+   "6 tracce con footswitch REC/PLAY/STOP",
+   "UNDO/REDO",
+   "ALL START/STOP",
+   "OUTPUT LEVEL",
+   "Pulsanti e display"
+  ],
+  "io": "INST IN 1,2 + MIC IN 1,2 (XLR) / MAIN OUT + SUB OUT 1,2 + PHONES + CTL/EXP + MIDI + USB",
+  "color": "nero",
+  "series": "Loop Station (floor/tabletop)",
+  "notes": "Looper floor a 6 tracce.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/rc-600/specifications/"
+  ]
+ },
+ {
+  "code": "SY-300",
+  "name": "Guitar Synthesizer",
+  "years": "2015-c.2021",
+  "category": "synth",
+  "tech": "digitale",
+  "controls": [
+   "Display LCD + knob di parametro e pulsanti di edit",
+   "3 oscillatori (SIN / SAW / TRI / SQR / PWM / DETUNE SAW / NOISE / INPUT)",
+   "4 footswitch (ON/OFF + 3 assegnabili)"
+  ],
+  "io": "IN / THRU / RETURN / MAIN OUT R(MONO), L/PHONES / SUB OUT R(MONO), L + EXP/CTL 4,5 + MIDI IN, OUT/THRU (DIN) + USB",
+  "color": "grigio argento",
+  "series": "Floor / big-box pedal",
+  "notes": "Synth polifonico per chitarra senza pickup esafonico.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/sy-300/specifications/"
+  ]
+ },
+ {
+  "code": "RE-202",
+  "name": "Space Echo",
+  "years": "2022-present",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "MODE SELECTOR (12 pos.: combinazioni di 3 testine + riverbero e testina virtuale)",
+   "REPEAT RATE",
+   "INTENSITY",
+   "ECHO VOL",
+   "REVERB VOL",
+   "BASS",
+   "TREBLE",
+   "SATURATION",
+   "WOW & FLUTTER",
+   "Pulsante MEMORY",
+   "Pulsante INPUT",
+   "Pulsante TAPE (new/aged)",
+   "Switch ON/OFF",
+   "Switch MEMORY",
+   "Switch TAP"
+  ],
+  "io": "IN A (MONO)/B / OUT A (MONO)/B + CTL1,2/EXP + MIDI + USB",
+  "color": "verde scuro/nero",
+  "series": "Floor / big-box pedal",
+  "notes": "Emulazione RE-201 in formato big-box.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/re-202/specifications/"
+  ]
+ },
+ {
+  "code": "SDE-3000D",
+  "name": "Dual Digital Delay",
+  "years": "2022-present",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "Pulsanti TIME/FEEDBACK/OUT/RATE/DEPTH/FILTER/TIME x2/DELAY PHASE/FEEDBACK PHASE/MOD",
+   "Pulsanti 1-4, BANK A/B, LEFT/RIGHT, SETUP",
+   "Switch DDL1",
+   "Switch DDL2",
+   "Switch TAP/CTL1"
+  ],
+  "io": "IN L (MONO)/R / OUT L (MONO)/R + CTL/EXP x2 + MIDI + USB-C",
+  "color": "nero/grigio",
+  "series": "Floor / big-box pedal",
+  "notes": "Doppio SDE-3000 in pedale.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/sde-3000d/specifications/"
+  ]
+ },
+ {
+  "code": "SDE-3000EVH",
+  "name": "Dual Digital Delay (Eddie Van Halen)",
+  "years": "2022-present",
+  "category": "delay",
+  "tech": "digitale",
+  "controls": [
+   "Come SDE-3000D + pulsante EVH",
+   "Switch GND LIFT",
+   "Switch RETURN IMPEDANCE"
+  ],
+  "io": "INPUT MONO + L/MONO / OUT DIRECT + EFX L/R + L(MONO)/R + SEND/RETURN + CTL/EXP x2 + MIDI + USB-C",
+  "color": "nero con grafica a strisce EVH rosso/bianco/nero",
+  "series": "Floor / big-box pedal",
+  "notes": "Versione con preset e routing EVH.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/sde-3000evh/specifications/"
+  ]
+ },
+ {
+  "code": "DM-101",
+  "name": "Delay Machine",
+  "years": "2023-present",
+  "category": "delay",
+  "tech": "analogico",
+  "controls": [
+   "MODE (CLASSIC / VINTAGE / MODERN / MULTI-HEAD / NON-LINEAR / AMBIENCE / REFLECT / DOUBLING+DELAY / WIDE / DUAL MOD / PAN / PATTERN)",
+   "VARIATION",
+   "DELAY TIME",
+   "INTENSITY",
+   "DELAY VOLUME",
+   "MOD RATE",
+   "MOD DEPTH",
+   "Pulsante MEMORY",
+   "Pulsante TAP DIVISION",
+   "Switch ON/OFF",
+   "Switch MEMORY",
+   "Switch TAP"
+  ],
+  "io": "IN / OUT A (MONO)/B + CTL1,2/EXP + MIDI + USB",
+  "color": "argento/grigio",
+  "series": "Floor / big-box pedal",
+  "notes": "Delay analogico BBD con controllo digitale e memorie.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/dm-101/specifications/"
+  ]
+ },
+ {
+  "code": "XS-100",
+  "name": "Poly Shifter",
+  "years": "2025-present",
+  "category": "pitch/octave/harmonizer",
+  "tech": "digitale",
+  "controls": [
+   "Pedale EXP1 integrato con toe switch",
+   "SELECT",
+   "Pulsante EFFECT",
+   "Pulsante MEMORY",
+   "Switch EFFECT",
+   "Switch TUNE DOWN"
+  ],
+  "io": "IN / THRU / OUT + CTL1,2/EXP2 + MIDI + USB-C",
+  "color": "nero",
+  "series": "Floor / big-box pedal",
+  "notes": "Pitch shifter polifonico con pedale integrato (stile whammy).",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/xs-100/specifications/"
+  ]
+ },
+ {
+  "code": "PW-10",
+  "name": "V-Wah",
+  "years": "2004-c.2012",
+  "category": "wah/filter",
+  "tech": "digitale (COSM)",
+  "controls": [
+   "Pedale wah con toe switch (on/off)",
+   "Heel switch (MANUAL / MEMORY 1-3)",
+   "TYPE (CUSTOM / ADVANCED / BASS MIX / CBY-WAH / VO-WAH / MO-WAH / VOICE / UNI-V)",
+   "WAH RANGE",
+   "DRIVE",
+   "Pulsante MANUAL/MEMORY"
+  ],
+  "io": "IN / OUT",
+  "color": "nero/argento",
+  "series": "Floor / big-box pedal",
+  "notes": "Wah COSM multimodello.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation"
+  ]
+ },
+ {
+  "code": "PW-3",
+  "name": "Wah Pedal",
+  "years": "2012-present",
+  "category": "wah/filter",
+  "tech": "analogico",
+  "controls": [
+   "Pedale wah (toe switch on/off)",
+   "Switch TONE (RICH / VINTAGE)"
+  ],
+  "io": "IN / OUT",
+  "color": "nero",
+  "series": "Floor / big-box pedal",
+  "notes": "Wah analogico con due timbriche.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/pw-3/specifications/"
+  ]
+ },
+ {
+  "code": "AD-3",
+  "name": "Acoustic Instrument Processor",
+  "years": "1998-c.2007",
+  "category": "acoustic sim",
+  "tech": "digitale",
+  "controls": [
+   "ANTI-FEEDBACK",
+   "BOTTOM",
+   "TOP",
+   "2x2 CHORUS",
+   "REVERB",
+   "INPUT LEVEL (posteriore)",
+   "Switch OUTPUT SELECT",
+   "Pedale ANTI-FEEDBACK AUTO",
+   "Pedale CHORUS"
+  ],
+  "io": "IN / OUT L, R",
+  "color": "nero",
+  "series": "Acoustic processor",
+  "notes": "Processore acustico a pedale.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/ad-3/specifications/"
+  ]
+ },
+ {
+  "code": "AD-5",
+  "name": "Acoustic Instrument Processor",
+  "years": "1997-c.2006",
+  "category": "acoustic sim",
+  "tech": "digitale",
+  "controls": [
+   "INPUT LEVEL MAGNETIC / PIEZO + switch fase NOR/INV",
+   "PREAMP LEVEL",
+   "BASS",
+   "MIDDLE",
+   "TREBLE",
+   "PRESENCE",
+   "ANTI-FEEDBACK DEPTH / FREQ",
+   "ACOUSTIC BODY",
+   "MIC DISTANCE",
+   "2x2 CHORUS",
+   "REVERB",
+   "Pulsante EFFECTS BYPASS"
+  ],
+  "io": "IN PIEZO + MAGNETIC / INSERT / OUT L(MONO), R + XLR L, R + REMOTE",
+  "color": "nero",
+  "series": "Acoustic processor",
+  "notes": "Unita' da tavolo (senza footswitch).",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/ad-5/specifications/"
+  ]
+ },
+ {
+  "code": "AD-8",
+  "name": "Acoustic Guitar Processor",
+  "years": "2007-c.2015",
+  "category": "acoustic sim",
+  "tech": "digitale (COSM)",
+  "controls": [
+   "BODY TYPE",
+   "BODY",
+   "STRING ENHANCE",
+   "BASS",
+   "MIDDLE GAIN",
+   "MIDDLE FREQ",
+   "TREBLE",
+   "PRESENCE",
+   "REVERB",
+   "OUTPUT LEVEL",
+   "Pulsanti SELECT / WRITE / PITCH / BYPASS-MUTE",
+   "Switch STEREO/MONO",
+   "Switch GROUND NOR/LIFT",
+   "Pedali ON/OFF, MEMORY giu', MEMORY su"
+  ],
+  "io": "IN / ELECTRIC GUITAR AMP OUT / OUT A (MONO), B + XLR A, B + PHONES",
+  "color": "argento/nero",
+  "series": "Acoustic processor",
+  "notes": "Processore acustico COSM.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/ad-8/specifications/"
+  ]
+ },
+ {
+  "code": "AD-10",
+  "name": "Acoustic Preamp",
+  "years": "2015-present",
+  "category": "acoustic sim",
+  "tech": "digitale",
+  "controls": [
+   "2 canali con EQ 4 bande (mid parametrico), low-cut, compressore, BOOST, anti-feedback, ambience/reverb, chorus, delay",
+   "Tuner",
+   "Looper 80 s",
+   "Footswitch soft-touch (memorie/effetti/tuner)"
+  ],
+  "io": "GUITAR IN 1,2 / SEND/RETURN / XLR OUT L,R / LINE OUT L/PHONES,R/MONO + EXP/CTL + USB",
+  "color": "nero",
+  "series": "Acoustic processor",
+  "notes": "Preamp/DI a due canali (da verificare comandi).",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/ad-10/specifications/"
+  ]
+ },
+ {
+  "code": "AB-2",
+  "name": "2-Way Selector",
+  "years": "1990s-present",
+  "category": "utility/selector",
+  "tech": "analogico",
+  "controls": [
+   "Footswitch A/B (con LED)"
+  ],
+  "io": "IN / OUT A + OUT B (o viceversa A/B -> OUT)",
+  "color": "nero",
+  "series": "Switching/utility",
+  "notes": "Selettore A/B passivo.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/ab2"
+  ]
+ },
+ {
+  "code": "ES-5",
+  "name": "Effects Switching System",
+  "years": "2017-present",
+  "category": "utility/selector",
+  "tech": "digitale",
+  "controls": [
+   "Switch NUMBER 1-5",
+   "Switch BANK",
+   "Switch MUTE",
+   "Pulsanti EDIT/WRITE/-/+/DISPLAY-EXIT/ENTER/cursori"
+  ],
+  "io": "IN + SEND/RETURN 1-5 + OUT + TUNER + CTL/EXP + MIDI",
+  "color": "nero",
+  "series": "Switching/utility",
+  "notes": "Switcher programmabile 5 loop.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/es-5/specifications/"
+  ]
+ },
+ {
+  "code": "ES-8",
+  "name": "Effects Switching System",
+  "years": "2016-present",
+  "category": "utility/selector",
+  "tech": "digitale",
+  "controls": [
+   "Switch NUMBER 1-8",
+   "Switch MEMORY/MANUAL",
+   "Switch MUTE",
+   "Switch BANK DOWN/UP",
+   "Pulsanti EDIT/WRITE/-/+/DISPLAY-EXIT/ENTER/cursori"
+  ],
+  "io": "IN 1-2 + 8 loop (2 stereo) + VOL loop + OUT 1/L, 2/R + TUNER + CTL/EXP + MIDI",
+  "color": "nero",
+  "series": "Switching/utility",
+  "notes": "Switcher programmabile 8 loop.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/es-8/specifications/"
+  ]
+ },
+ {
+  "code": "FV-50H",
+  "name": "Foot Volume (High impedance)",
+  "years": "1990s-2019",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume",
+   "MINIMUM VOLUME"
+  ],
+  "io": "IN / OUT (stereo in linea: 2 in/2 out)",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "Per chitarra.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/fv50h"
+  ]
+ },
+ {
+  "code": "FV-50L",
+  "name": "Foot Volume (Low impedance)",
+  "years": "1990s-2019",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume/espressione",
+   "MINIMUM VOLUME"
+  ],
+  "io": "IN / OUT stereo + EXP",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "Per tastiere/linea.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/fv50l"
+  ]
+ },
+ {
+  "code": "FV-300H",
+  "name": "Foot Volume (High impedance)",
+  "years": "1990s-2008",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume",
+   "MINIMUM VOLUME"
+  ],
+  "io": "IN / OUT + TUNER OUT",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/fv300h"
+  ]
+ },
+ {
+  "code": "FV-300L",
+  "name": "Foot Volume/Expression (Low impedance)",
+  "years": "1990s-2008",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume/espressione",
+   "MINIMUM VOLUME"
+  ],
+  "io": "IN x2 / OUT x2 + TUNER OUT + EXP",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/fv-300l/specifications/"
+  ]
+ },
+ {
+  "code": "FV-500H",
+  "name": "Foot Volume (High impedance)",
+  "years": "2004-present",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume",
+   "MINIMUM VOLUME"
+  ],
+  "io": "IN / OUT + TUNER OUT",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/fv500h"
+  ]
+ },
+ {
+  "code": "FV-500L",
+  "name": "Foot Volume/Expression (Low impedance)",
+  "years": "2004-present",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume/espressione",
+   "MINIMUM VOLUME"
+  ],
+  "io": "IN 1/2 / OUT 1/2 (stereo) + TUNER OUT + EXP",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/fv500l"
+  ]
+ },
+ {
+  "code": "FV-30H",
+  "name": "Foot Volume (High impedance, compact)",
+  "years": "2019-present",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume",
+   "MINIMUM VOLUME"
+  ],
+  "io": "IN / OUT + TUNER OUT",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/fv30h"
+  ]
+ },
+ {
+  "code": "FV-30L",
+  "name": "Foot Volume (Low impedance, compact)",
+  "years": "2019-present",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume/espressione",
+   "MINIMUM VOLUME"
+  ],
+  "io": "IN / OUT stereo + EXP",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/fv30l"
+  ]
+ },
+ {
+  "code": "FV-60",
+  "name": "Stereo Volume Pedal",
+  "years": "1980s",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume"
+  ],
+  "io": "IN / OUT stereo",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/fv60"
+  ]
+ },
+ {
+  "code": "FV-100",
+  "name": "Guitar Volume",
+  "years": "1980s",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume"
+  ],
+  "io": "IN / OUT",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/fv100"
+  ]
+ },
+ {
+  "code": "FV-200",
+  "name": "Keyboard Volume",
+  "years": "1980s",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale volume"
+  ],
+  "io": "IN / OUT",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.effectsdatabase.com/model/boss/fv200"
+  ]
+ },
+ {
+  "code": "EV-30",
+  "name": "Dual Expression Pedal",
+  "years": "2019-present",
+  "category": "volume",
+  "tech": "analogico",
+  "controls": [
+   "Pedale espressione",
+   "MIN EXP 1",
+   "MIN EXP 2",
+   "Switch POLARITY (EXP 2)"
+  ],
+  "io": "EXP 1 OUT + EXP 2 OUT (TRS)",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "Pedale d'espressione a doppia uscita.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/ev-30/specifications/"
+  ]
+ },
+ {
+  "code": "EV-1-WL",
+  "name": "Wireless MIDI Expression Pedal",
+  "years": "2021-present",
+  "category": "volume",
+  "tech": "digitale",
+  "controls": [
+   "Pedale espressione",
+   "Switch POWER",
+   "Pulsante Bluetooth"
+  ],
+  "io": "MIDI OUT (mini TRS) + CTL 1,2 + USB + Bluetooth MIDI",
+  "color": "nero",
+  "series": "Volume/Expression pedal",
+  "notes": "Espressione MIDI wireless.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/Boss_Corporation",
+   "https://www.boss.info/us/products/ev-1-wl/specifications/"
+  ]
+ },
+ {
+  "code": "TU-1000",
+  "name": "Stage Tuner",
+  "years": "2014-c.2020",
+  "category": "tuner",
+  "tech": "digitale",
+  "controls": [
+   "Footswitch TUNER ON/OFF",
+   "Pulsante FLAT TUNING",
+   "Pulsante MODE",
+   "Pulsante PITCH",
+   "Pulsante DISPLAY (CENT/STREAM)"
+  ],
+  "io": "IN / OUT + PARALLEL OUT + TUNER ON/OFF (FS-5U) + DC IN / DC OUT",
+  "color": "nero",
+  "series": "Floor / big-box pedal",
+  "notes": "Accordatore da palco con meter LED grande, formato pedaliera/rack.",
+  "sources": [
+   "https://www.boss.info/us/products/tu-1000/specifications/",
+   "https://static.roland.com/assets/media/pdf/TU-1000_OM.pdf"
+  ]
+ }
+]

@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
-Prepara le illustrazioni della guida PDF a partire dagli screenshot reali
-del plugin (generati con: "Pedal Trinity" --screenshot ... --scale 2).
+Illustrazioni della guida PDF dagli screenshot reali del plugin
+(generati da tools/build_guide.sh con "Pedal Trinity" --screenshot).
 
-Uso: python3 tools/art/guide_images.py shot2x.png shot_info2x.png
+Uso: python3 tools/art/guide_images.py <cartella screenshot>
 """
-import json
 import os
 import sys
 
@@ -15,92 +14,60 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 OUT = os.path.join(ROOT, "docs", "images")
 os.makedirs(OUT, exist_ok=True)
-pos = json.load(open(os.path.join(HERE, "build", "positions.json")))
-S = 2  # gli screenshot sono a scala 2
+SRC = sys.argv[1]
+S = 2   # gli screenshot principali sono a scala 2
 F = ImageFont.truetype("/usr/share/fonts/truetype/lato/Lato-Black.ttf", 26)
 GOLD = (217, 180, 100)
 
-shot = Image.open(sys.argv[1]).convert("RGB")
-info = Image.open(sys.argv[2]).convert("RGB")
+
+def load(name):
+    return Image.open(os.path.join(SRC, name)).convert("RGB")
 
 
-def knob(pid):
-    k = next(k for k in pos["knobs"] if k["id"] == pid)
-    return ((k["anchor"][0] + k["top"][0]) / 2, (k["anchor"][1] + k["top"][1]) / 2)
-
-
-def slider(i):
-    s = pos["sliders"][i]
-    return (s["a_min"][0], (s["a_min"][1] + s["a_max"][1]) / 2)
-
-
-def led(pid):
-    l = next(l for l in pos["leds"] if l["id"] == pid)
-    return tuple(l["c"])
-
-
-def foot(pid):
-    q = next(q for q in pos["footswitches"] if q["id"] == pid)["quad"]
-    return (sum(p[0] for p in q) / 4, sum(p[1] for p in q) / 4)
-
-
-def annotate(img, marks, origin=(0, 0)):
+def annotate(img, marks, scale=S):
     img = img.copy()
     d = ImageDraw.Draw(img)
-    for label, (tx, ty), (dx, dy) in marks:
-        x, y = (tx - origin[0]) * S, (ty - origin[1]) * S
-        mx, my = x + dx * S, y + dy * S
-        if dx or dy:
-            d.line([(x, y), (mx, my)], fill=(0, 0, 0), width=7)
-            d.line([(x, y), (mx, my)], fill=GOLD, width=3)
+    for label, (tx, ty), (mx, my) in marks:
+        x, y, px, py = tx * scale, ty * scale, mx * scale, my * scale
+        if (x, y) != (px, py):
+            d.line([(x, y), (px, py)], fill=(0, 0, 0), width=7)
+            d.line([(x, y), (px, py)], fill=GOLD, width=3)
             d.ellipse([x - 6, y - 6, x + 6, y + 6], fill=GOLD, outline=(0, 0, 0), width=2)
-        r = 21 if len(label) < 2 else 24
-        d.ellipse([mx - r - 3, my - r - 3, mx + r + 3, my + r + 3], fill=(0, 0, 0))
-        d.ellipse([mx - r, my - r, mx + r, my + r], fill=GOLD, outline=(255, 255, 255), width=2)
-        d.text((mx, my + 1), label, font=F, fill=(0, 0, 0), anchor="mm")
+        r = 21
+        d.ellipse([px - r - 3, py - r - 3, px + r + 3, py + r + 3], fill=(0, 0, 0))
+        d.ellipse([px - r, py - r, px + r, py + r], fill=GOLD, outline=(255, 255, 255), width=2)
+        d.text((px, py + 1), label, font=F, fill=(0, 0, 0), anchor="mm")
     return img
 
 
-def crop(img, box):
-    return img.crop(tuple(v * S for v in box))
+def save(img, name, q=88):
+    img.save(os.path.join(OUT, name), quality=q, optimize=True, progressive=True)
 
 
-# copertina e screenshot del README
-shot.save(os.path.join(OUT, "cover.jpg"), quality=88)
-shot.resize((shot.width // 2, shot.height // 2), Image.LANCZOS).save(os.path.join(OUT, "screenshot.png"))
+# ---- copertina e README
+main = load("main.png")           # 1280x760 a scala 2, vista 3
+save(main, "cover.jpg", 86)
+main.resize((main.width // 2, main.height // 2), Image.LANCZOS).save(os.path.join(OUT, "screenshot.png"), optimize=True)
 
-# panoramica
-pl = pos["info"]["c"]
-ov = annotate(shot, [("A", (175, 72), (0, 30)), ("B", tuple(pl), (-60, 0)),
-                     ("C", (1188, 613), (-28, -24))])
-ov.save(os.path.join(OUT, "guide_overview.jpg"), quality=88)
+# ---- panoramica: tasti della barra (coordinate logiche a 1280x760)
+ov = annotate(main, [
+    ("A", (294, 25), (294, 72)), ("B", (432, 25), (432, 72)), ("C", (566, 25), (566, 72)),
+    ("D", (818, 25), (818, 72)), ("E", (936, 25), (936, 72)), ("F", (1055, 25), (1055, 72)),
+    ("G", (1167, 20), (1167, 72)), ("H", (1240, 25), (1240, 72))])
+save(ov, "guide_overview.jpg")
 
-# ED-9
-box = (70, 92, 390, 600)
-ed = annotate(shot, [
-    ("1", knob("od_drive"), (-52, -46)), ("2", knob("od_tone"), (-62, 30)), ("3", knob("od_level"), (52, -46)),
-    ("4", led("ed9"), (40, -18)), ("5", foot("ed9"), (0, 0))])
-crop(ed, box).save(os.path.join(OUT, "guide_ed9.jpg"), quality=90)
+# ---- dettaglio di uno slot (primo slot, vista 3 a 1280x760)
+slot = annotate(main, [
+    ("1", (20, 73), (20, 73)), ("2", (220, 73), (300, 140)), ("3", (54, 103), (54, 150)),
+    ("4", (219, 103), (170, 160)), ("5", (302, 103), (302, 160)), ("6", (385, 103), (385, 160)),
+    ("7", (140, 245), (60, 300)), ("8", (216, 211), (300, 230)), ("9", (216, 523), (330, 560))])
+save(slot.crop((0, 56 * S, 430 * S, 752 * S)), "guide_slot.jpg")
 
-# MC-2W
-box = (440, 92, 760, 600)
-mc = annotate(shot, [
-    ("1", knob("dist_level"), (-20, -60)), ("2", knob("dist_low"), (-22, 62)), ("3", knob("dist_high"), (8, -62)),
-    ("4", knob("dist_mid"), (22, 62)), ("5", knob("dist_midfreq"), (30, -58)), ("6", knob("dist_gain"), (20, -60)),
-    ("7", (pos["toggles"][0]["anchor"][0], pos["toggles"][0]["anchor"][1] - 8), (54, -16)),
-    ("8", led("mc2"), (-50, -10)), ("9", foot("mc2"), (0, 40))])
-crop(mc, box).save(os.path.join(OUT, "guide_mc2.jpg"), quality=90)
-
-# GQ-7
-box = (812, 92, 1132, 600)
-marks = []
-for i in range(7):
-    marks.append((str(i + 1), slider(i), (0, -62 - (i % 2) * 34)))
-marks.append(("8", slider(7), (32, -60)))
-marks.append(("9", led("gq7"), (-10, 40)))
-marks.append(("10", foot("gq7"), (0, 40)))
-crop(annotate(shot, marks), box).save(os.path.join(OUT, "guide_gq7.jpg"), quality=90)
-
-# pannello info
-info.crop((200 * S, 28 * S, 1000 * S, 597 * S)).save(os.path.join(OUT, "guide_info.jpg"), quality=90)
+# ---- viste e zoom (scala 1)
+save(load("view6.png"), "guide_view6.jpg", 84)
+save(load("view18.png"), "guide_view18.jpg", 84)
+save(load("zoom.png"), "guide_zoom.jpg", 86)
+info = load("info.png")
+w, h = info.size
+save(info.crop((int(w * 0.18), int(h * 0.03), int(w * 0.82), int(h * 0.97))), "guide_info.jpg", 88)
 print("immagini della guida in", OUT)

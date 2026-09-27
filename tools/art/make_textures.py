@@ -219,7 +219,7 @@ def tex_mt_tread():
     c.text(-0.0300, top - 0.0055, "FabioNET", 0.0030, F_BOLDIT, CREAM, anchor="lm")
     c.text(0.0300, top - 0.0055, "CUSTOM CRAFT", 0.0024, F_BOLD, GOLD, anchor="rm", spacing=0.0002)
     c.line(-0.0300, top - 0.0085, 0.0300, top - 0.0085, GOLD, 0.00030)
-    c.text(0.0, top - 0.0165, "Metal Core", 0.0092, F_BLACKIT, ORANGE)
+    c.text(0.0, top - 0.0165, "Metal Forge", 0.0092, F_BLACKIT, ORANGE)
     c.text(-0.0300, top - 0.0270, "DISTORTION", 0.0026, F_BOLD, CREAM, anchor="lm", spacing=0.0003)
     c.text(0.0300, top - 0.0272, "MC-2W", 0.0052, F_BLACK, CREAM, anchor="rm")
     c.save("tex_mc2_tread.png")

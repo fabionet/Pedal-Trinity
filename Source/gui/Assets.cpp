@@ -12,7 +12,6 @@ namespace pt::ui
         int size = 0;
         if (auto* data = BinaryData::getNamedResource (name, size))
             return juce::ImageCache::getFromMemory (data, size);
-        jassertfalse;
         return {};
     }
 
@@ -32,37 +31,45 @@ namespace pt::ui
         return {};
     }
 
+    juce::Image Assets::pedalImage (const char* resource)
+    {
+        return resource != nullptr ? loadResource (resource) : juce::Image();
+    }
+
     Assets::Assets()
     {
-        bg = loadResource ("background_jpg");
         for (int i = 0; i < numStrips; ++i)
             images[i] = loadResource (strips[i].resource);
     }
 
-    juce::Rectangle<float> Assets::frameBounds (StripId id, float x, float y)
+    juce::Rectangle<float> Assets::frameBounds (int id, float x, float y)
     {
+        if (! juce::isPositiveAndBelow (id, (int) numStrips)) return { x - 10, y - 10, 20, 20 };
         const auto& s = strips[id];
         return { x - s.anchorX / renderScale, y - s.anchorY / renderScale,
                  (float) s.frameW / renderScale, (float) s.frameH / renderScale };
     }
 
-    int Assets::frameForProportion (StripId id, double proportion)
+    int Assets::frameCount (int id)
     {
-        const int n = strips[id].frames;
+        return juce::isPositiveAndBelow (id, (int) numStrips) ? strips[id].frames : 1;
+    }
+
+    int Assets::frameForProportion (int id, double proportion)
+    {
+        const int n = frameCount (id);
         return juce::jlimit (0, n - 1, juce::roundToInt (proportion * (n - 1)));
     }
 
-    void Assets::drawFrame (juce::Graphics& g, StripId id, int index, float x, float y) const
+    void Assets::drawFrame (juce::Graphics& g, int id, int index, float x, float y) const
     {
+        if (! juce::isPositiveAndBelow (id, (int) numStrips)) return;
         const auto& s = strips[id];
         const auto& img = images[id];
-        if (! img.isValid())
-            return;
+        if (! img.isValid()) return;
         index = juce::jlimit (0, s.frames - 1, index);
-        const int sx = (index % s.cols) * s.frameW;
-        const int sy = (index / s.cols) * s.frameH;
-        const auto dst = frameBounds (id, x, y);
-        // posizionamento sub-pixel: evita "saltelli" del pomello quando l'interfaccia e' scalata
-        g.drawImage (img.getClippedImage ({ sx, sy, s.frameW, s.frameH }), dst, juce::RectanglePlacement::stretchToFit);
+        const int sx = (index % s.cols) * s.frameW, sy = (index / s.cols) * s.frameH;
+        g.drawImage (img.getClippedImage ({ sx, sy, s.frameW, s.frameH }), frameBounds (id, x, y),
+                     juce::RectanglePlacement::stretchToFit);
     }
 }

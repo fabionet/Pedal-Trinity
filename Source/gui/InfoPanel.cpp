@@ -5,6 +5,7 @@
 #include "InfoPanel.h"
 #include "Assets.h"
 #include "../Version.h"
+#include "../engine/Model.h"
 
 namespace pt::ui
 {
@@ -51,9 +52,11 @@ namespace pt::ui
         addAndMakeVisible (subtitle);
 
         styleEditor (body, 14.5f);
-        body.setText (juce::CharPointer_UTF8 (
-            "Overdrive \xe2\x80\xa2 Distorsore \xe2\x80\xa2 Equalizzatore grafico a 7 bande in un'unica catena.\n"
-            "Formati: VST3, LV2 e Standalone (Linux e Windows, driver ASIO su Windows).\n\n"
+        body.setText (juce::String (juce::CharPointer_UTF8 (
+            "Pedaliera virtuale: fino a 100 pedali in catena, scelti da un catalogo di ")) + juce::String (pt::engine::numModels())
+            + juce::String (juce::CharPointer_UTF8 (" modelli ispirati al catalogo BOSS (e al Tube Screamer), "
+            "con emulazione dei circuiti reali stadio per stadio, BBD a clock e modelli digitali dalle specifiche.\n"
+            "Formati: VST3, LV2 e Standalone (Linux e Windows, driver ASIO su Windows). Preset salvabili ed esportabili.\n\n"
             "LICENZA: GNU General Public License versione 3 (GPL-3.0-or-later).\n"
             "Copyright \xc2\xa9 2026 FabioNET.\n"
             "Questo programma \xc3\xa8 software libero: puoi ridistribuirlo e/o modificarlo secondo i termini "
@@ -64,10 +67,10 @@ namespace pt::ui
             "CREDITI: realizzato in C++ con JUCE 7 (GPLv3). VST\xc2\xae \xc3\xa8 un marchio di Steinberg Media "
             "Technologies GmbH. ASIO \xc3\xa8 un marchio e software di Steinberg Media Technologies GmbH. "
             "LV2 \xc2\xa9 lv2plug.in (licenza ISC).\n\n"
-            "MARCHI: i pedali di Pedal Trinity sono ispirati a Ibanez Tube Screamer, BOSS MT-2 Metal Zone Waza Craft "
-            "e BOSS GE-7. Tube Screamer e Ibanez sono marchi di Hoshino Gakki; BOSS, MT-2 e GE-7 sono marchi di "
-            "Roland Corporation. Pedal Trinity non \xc3\xa8 affiliato, approvato o sponsorizzato da tali aziende: "
-            "i nomi sono citati solo per descrivere il suono di riferimento. Le immagini dei pedali sono render 3D originali."));
+            "MARCHI: BOSS, Roland e le sigle dei pedali BOSS sono marchi di Roland Corporation; Ibanez e Tube Screamer "
+            "di Hoshino Gakki; Fender di Fender Musical Instruments. Pedal Trinity \xc3\xa8 un progetto indipendente, "
+            "non affiliato n\xc3\xa9 approvato: i modelli hanno nomi e sigle originali, i riferimenti indicano solo il "
+            "suono di riferimento. Le immagini dei pedali sono render 3D originali.")));
         addAndMakeVisible (body);
 
         styleEditor (license, 12.5f);

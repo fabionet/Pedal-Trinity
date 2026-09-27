@@ -1,0 +1,3273 @@
+[
+ {
+  "code": "DS-1",
+  "name": "Distortion",
+  "years": "1978-present (variants DS-1-4A 2017, DS-1-B50A 2023, same circuit)",
+  "tech": "analog",
+  "supply_v": 9.0,
+  "bias_v": 4.5,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "100k",
+    "taper": "B (lin)",
+    "role": "op-amp non-inverting gain: rheostat in feedback, R13 4.7k + C8 to ground"
+   },
+   {
+    "name": "TONE",
+    "pot": "20k",
+    "taper": "B (lin)",
+    "role": "Big-Muff-style blend between fixed LPF (234 Hz) and fixed HPF (804-1064 Hz)"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "100k",
+    "taper": "B (lin)",
+    "role": "passive volume divider before output buffer"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (BJT emitter follower)",
+    "components": {
+     "Q1": "2SC2240GR (later 2SC2240/2SC3378-class)",
+     "R1": "1k series",
+     "C1": "47n",
+     "R2": "470k bias to 4.5V",
+     "R3": "10k emitter"
+    },
+    "derived": {
+     "zin_ohm": 470000,
+     "fc_hz": 7.2,
+     "gain": 1.0
+    },
+    "notes": "HPF C1/R2 ~7.2 Hz. Buffer adds some BJT nonlinearity (Yeh DAFx-07)."
+   },
+   {
+    "order": 2,
+    "type": "electronic bypass switch",
+    "components": {
+     "Q6": "2SK30A/2SK118 JFET",
+     "C2": "0.47u",
+     "R4": "100k",
+     "R5": "1M"
+    },
+    "derived": {},
+    "notes": "JFET switch, not audio-relevant when ON except tiny series R."
+   },
+   {
+    "order": 3,
+    "type": "transistor booster (common emitter, collector-base shunt feedback)",
+    "components": {
+     "Q2": "2SC2240GR",
+     "C3": "47n input (series)",
+     "R6": "100k base-ground",
+     "R7": "470k collector-base feedback",
+     "C4": "250p across R7",
+     "R8": "10k collector",
+     "R9": "22 ohm emitter (unbypassed)",
+     "C5": "0.47u out",
+     "R10": "100k load/bias"
+    },
+    "derived": {
+     "bias_ic_ma_est": 0.47,
+     "vc_v_est": 4.1,
+     "gain_db_hf_est": 36.8,
+     "gain_db_1khz_est": 35.6,
+     "gain_db_100hz_est": 21.0,
+     "gain_open_loop_note": "Rc/(re+Re)~130 (42 dB) at Ic~0.47 mA",
+     "fc_hz": {
+      "C4*R7": 1354.5,
+      "C3*R6": 33.9,
+      "C5*R10": 3.4
+     },
+     "electrosmash_quote": "35 dB (x56) above ~3.3 kHz"
+    },
+    "notes": "Gain ~ Zf/Zin: rises +6 dB/oct up to ~1-2 kHz (C3 in series with virtual-ground base), then flattens at open-loop limit ~36-37 dB (own small-signal sim, beta 250-450). Output swing supply-limited (up to ~9 Vpp) -> soft asymmetric clipping of BJT; ElectroSmash R9 22->1k mod lowers to ~17 dB."
+   },
+   {
+    "order": 4,
+    "type": "op-amp non-inverting gain stage (hard clipping at rails)",
+    "components": {
+     "IC": "TA7136AP (1978, single) -> BA728N (1994) -> M5223AL (2000, +1k pull-up R40) -> NJM2904L/NJM3404A (2006, dual)",
+     "R10": "100k bias to 4.5V",
+     "VR1": "100kB DIST (feedback)",
+     "R13": "4.7k",
+     "C8": "1u/50 (1994 SN) or 0.47u (ElectroSmash, later)",
+     "C7": "100p feedback (later) / C6 150p + C7 250p + C24 150p compensation on TA7136 version"
+    },
+    "derived": {
+     "gain_min": 1.0,
+     "gain_max": 22.28,
+     "gain_max_db": 26.9,
+     "fc_hz": {
+      "HPF C8=1u & R13": 33.9,
+      "HPF C8=0.47u & R13": 72.0,
+      "HPF min (C8 0.47u, R13+VR1)": 3.0,
+      "LPF C7 100p & 100k": 15915.5
+     }
+    },
+    "notes": "Yeh (DAFx-07): op-amp clipping at ~Vdd/2 (+-4.5 V swing about bias) is the main nonlinearity; slew/recovery matter. Gain-dependent HPF: at low DIST only >72 Hz is amplified."
+   },
+   {
+    "order": 5,
+    "type": "diode clipper to ground (hard) with RC low-pass",
+    "components": {
+     "R14": "2.2k series",
+     "C9": "0.47u NP (1994 SN, series coupling)",
+     "D4,D5": "1N4148 (1SS133) antiparallel to 4.5V/AC ground",
+     "C10": "10n (0.01u) across diodes"
+    },
+    "derived": {
+     "fc_hz": 7234.3,
+     "clip_v": 0.65
+    },
+    "notes": "Yeh DAFx-07: nonlinear ODE C dV/dt = (Vin-V)/R - 2 Is sinh(V/Vt); tanh-like. LPF 7.2 kHz active while diodes off."
+   },
+   {
+    "order": 6,
+    "type": "passive tone (Big Muff style LPF/HPF blend)",
+    "components": {
+     "R16": "6.8k series (LPF)",
+     "C12": "0.1u to ground",
+     "C11": "22n series (HPF)",
+     "R15": "2.2k series with C11",
+     "R17": "6.8k to ground",
+     "VR3": "20kB"
+    },
+    "derived": {
+     "fc_lpf_hz": 234.1,
+     "fc_hpf_hz_with_R15": 803.8,
+     "fc_hpf_hz_electrosmash": 1063.9,
+     "response_mid_position_db": {
+      "100": -7.3,
+      "500": -13.7,
+      "700": -14.5,
+      "1000": -13.5,
+      "3000": -10.2
+     },
+     "notch_hz_est": 700
+    },
+    "notes": "Own nodal calc (ideal source, 100k level load): midpoint scoop ~700 Hz, ~5 dB below HF, ~7 dB below LF shelf; ElectroSmash quotes ~500 Hz, -20 dB relative. Overall stage loss ~-7..-15 dB."
+   },
+   {
+    "order": 7,
+    "type": "level + JFET switch + output buffer (emitter follower)",
+    "components": {
+     "VR2": "100kB LEVEL",
+     "Q7": "JFET switch",
+     "Q3": "2SC2240 EF",
+     "R19,R20": "1M bias",
+     "R21": "10k emitter",
+     "C13": "47n",
+     "R22": "1k",
+     "C14": "1u",
+     "R23": "100k"
+    },
+    "derived": {
+     "gain": 1.0,
+     "fc_hz": {
+      "C13*R20": 3.4,
+      "C14*R23": 1.6
+     }
+    },
+    "notes": ""
+   }
+  ],
+  "clipping": {
+   "topology": "op-amp rail clipping (primary, Yeh) followed by shunt diodes to AC ground after 2.2k (hard); BJT booster soft-clips first",
+   "diodes": "2x 1N4148/1SS133 antiparallel",
+   "vf_v": 0.65,
+   "asymmetry": "diodes symmetric; booster + op-amp rails give mild asymmetry",
+   "model": "1N4148-class Si: Vf~0.6-0.7 V @1 mA; typical SPICE Is=2.52e-9 A, N=1.752, Rs=0.568 ohm"
+  },
+  "tone_stack": {
+   "topology": "passive LPF/HPF crossfade (Big Muff-like)",
+   "components": {
+    "R16": "6.8k",
+    "C12": "100n",
+    "C11": "22n",
+    "R15": "2.2k",
+    "R17": "6.8k",
+    "VR3": "20kB"
+   },
+   "behaviour": "CCW: LPF (234 Hz, -6 dB/oct), CW: HPF (~0.8-1.06 kHz), centre: mid scoop ~500-700 Hz"
+  },
+  "modes": [
+   {
+    "name": "op-amp variants",
+    "detail": "TA7136AP / BA728N / M5223AL / NJM2904L: different slew & clipping recovery; C8 1u (early) vs 0.47u (later)"
+   }
+  ],
+  "confidence": "high",
+  "sources": [
+   "https://electrosmash.mas-effects.com/boss-ds1-analysis.html",
+   "https://www.electrosmash.com/boss-ds1-analysis",
+   "https://archive.org/details/boss_DS-1_SERVICE_NOTES",
+   "https://schematicheaven.net/effects/boss_ds1_dist.pdf",
+   "https://ccrma.stanford.edu/~dtyeh/papers/yeh07_dafx_distortion.pdf",
+   "https://ccrma.stanford.edu/~dtyeh/papers/yeh07_dafx_clipode.pdf",
+   "https://napulen.github.io/reports/mcgill/mumt618/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "DS-1W",
+  "name": "Distortion Waza Craft",
+  "years": "2022-",
+  "tech": "analog",
+  "supply_v": 9.0,
+  "bias_v": null,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "?",
+    "taper": "?",
+    "role": "gain"
+   },
+   {
+    "name": "TONE",
+    "pot": "?",
+    "taper": "?",
+    "role": "LPF/HPF blend, capacitors changed in Custom"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "?",
+    "taper": "?",
+    "role": "level (tapered differently in Custom)"
+   },
+   {
+    "name": "MODE",
+    "pot": "switch S/C",
+    "taper": "-",
+    "role": "Standard/Custom"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (JFET, CCS-loaded)",
+    "components": {},
+    "derived": {},
+    "notes": "FSB trace: CCS loads (NPN biased by 2 diodes + emitter degeneration)."
+   },
+   {
+    "order": 2,
+    "type": "transistor booster",
+    "components": {},
+    "derived": {},
+    "notes": "Same topology as DS-1 per FSB (only differences described)."
+   },
+   {
+    "order": 3,
+    "type": "discrete op-amp gain stage",
+    "components": {
+     "input": "N-JFET differential pair, CCS tail, current-mirror load",
+     "VAS": "CCS-loaded PNP CE",
+     "output": "CCS-loaded NPN EF"
+    },
+    "derived": {},
+    "notes": "Custom: R43+C30 switched across top of feedback divider (extra HF/mid gain); R36+C26 switched across grounded leg (shifts gain/HPF)."
+   },
+   {
+    "order": 4,
+    "type": "diode clipper to ground",
+    "components": {
+     "Standard": "1 antiparallel Si pair",
+     "Custom": "2 antiparallel pairs in series + series resistor"
+    },
+    "derived": {
+     "clip_v_standard": 0.65,
+     "clip_v_custom": 1.3
+    },
+    "notes": "Custom has ~2x clip threshold -> more headroom/level (+6 dB per BOSS)."
+   },
+   {
+    "order": 5,
+    "type": "passive tone (DS-1 type)",
+    "components": {},
+    "derived": {},
+    "notes": "Custom: larger HPF cap (lower HPF corner), smaller LPF cap (higher LPF corner) -> less scoop, more mids."
+   },
+   {
+    "order": 6,
+    "type": "output buffer",
+    "components": {},
+    "derived": {},
+    "notes": "Buffered bypass; supply: discrete regulator, zener 9.1 V -> 8.45 V rail measured; 5 V logic rail (Schmitt + D-FF bypass logic)."
+   }
+  ],
+  "clipping": {
+   "topology": "op-amp (discrete) + shunt diodes to ground",
+   "diodes": "Si switching (SMD)",
+   "vf_v": 0.65,
+   "asymmetry": "symmetric; Custom = series pairs (~1.3 V)",
+   "model": "1N4148-class Si: Vf~0.6-0.7 V @1 mA; typical SPICE Is=2.52e-9 A, N=1.752, Rs=0.568 ohm"
+  },
+  "tone_stack": {
+   "topology": "DS-1 passive blend",
+   "components": {},
+   "behaviour": "Standard = DS-1; Custom re-tuned for richness/presence (exact cap values in FSB trace image, not transcribed)"
+  },
+  "modes": [
+   {
+    "name": "Standard",
+    "detail": "replicates DS-1 two-stage gain"
+   },
+   {
+    "name": "Custom",
+    "detail": "+6 dB level, thicker mids, higher input sensitivity, 2x diode threshold, re-tuned tone"
+   }
+  ],
+  "confidence": "medium",
+  "notes": "Current draw 15 mA; Zin 1M, Zout 1k. Component values exist in the FSB traced schematic (image attachment not machine-read here).",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1w/",
+   "https://www.freestompboxes.org/viewtopic.php?t=32664"
+  ]
+ },
+ {
+  "code": "DS-1X",
+  "name": "Distortion (X series)",
+  "years": "2014-",
+  "tech": "digital",
+  "supply_v": 9.0,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "digital",
+    "taper": "-",
+    "role": "drive, multi-parameter"
+   },
+   {
+    "name": "LOW",
+    "pot": "digital",
+    "taper": "-",
+    "role": "bass shaping"
+   },
+   {
+    "name": "HIGH",
+    "pot": "digital",
+    "taper": "-",
+    "role": "treble shaping"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "digital",
+    "taper": "-",
+    "role": "output"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "DSP (MDP: Multi-Dimensional Processing)",
+    "components": {},
+    "derived": {},
+    "notes": "Analyzes frequency, overtones, dynamics, pickup response, register, single note vs chord, bends/vibrato; register-dependent distortion (tight lows, fat highs). No AD/DA specs published."
+   }
+  ],
+  "clipping": {
+   "topology": "DSP, multi-band adaptive",
+   "diodes": null,
+   "vf_v": null,
+   "asymmetry": null
+  },
+  "tone_stack": {
+   "topology": "DSP LOW/HIGH",
+   "components": {},
+   "behaviour": "each knob moves several internal parameters"
+  },
+  "modes": [],
+  "confidence": "medium",
+  "notes": "60 mA, Zin 1M, Zout 1k. Emulate as multiband (e.g., 2-3 band) waveshaper with register-dependent drive + envelope-dependent gain; not circuit-derivable.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1x/"
+  ]
+ },
+ {
+  "code": "DS-2",
+  "name": "Turbo Distortion",
+  "years": "1987-",
+  "tech": "analog",
+  "supply_v": 8.0,
+  "bias_v": 4.0,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "250k",
+    "taper": "D",
+    "role": "gain of discrete op-amp stage"
+   },
+   {
+    "name": "TONE",
+    "pot": "100k",
+    "taper": "G",
+    "role": "active LO/HI tone around Q13"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "50k",
+    "taper": "A",
+    "role": "output level"
+   },
+   {
+    "name": "TURBO",
+    "pot": "rotary I/II + remote jack",
+    "taper": "-",
+    "role": "selects pre-filter path via JFET switches Q14/Q15 (+Q20)"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (JFET source follower)",
+    "components": {
+     "Q6": "2SK184GR",
+     "R13": "10k",
+     "C12": "47n",
+     "R16": "1M to 4V",
+     "R17": "4.7k source"
+    },
+    "derived": {
+     "fc_hz": 3.4
+    },
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "input limiter (shunt low-Vf diodes)",
+    "components": {
+     "C38": "1u",
+     "R62": "4.7k series",
+     "D14,D15": "1SS188FM antiparallel to ground (low-Vf, ~0.25-0.35 V)"
+    },
+    "derived": {
+     "clip_v": 0.3
+    },
+    "notes": "Soft pre-limiting before the transistor stage (diode type interpretation medium confidence)."
+   },
+   {
+    "order": 3,
+    "type": "BJT common-emitter pre-gain",
+    "components": {
+     "Q22": "2SC3378GR",
+     "C40": "47n",
+     "R63": "100k bias",
+     "R65": "2.2k collector (+8V)",
+     "R66": "1.5k emitter",
+     "R67": "220",
+     "C42": "10u (R67+C42 bypass)"
+    },
+    "derived": {
+     "gain_dc_approx": 1.47,
+     "gain_mid_approx": 9.1,
+     "fc_hz": {
+      "C40*R63": 33.9,
+      "C42 bypass": 58.9
+     }
+    },
+    "notes": "Gain ~x9 (19 dB) above ~60 Hz, x1.5 below (estimate re~50 ohm)."
+   },
+   {
+    "order": 4,
+    "type": "mode filters (Turbo I/II) selected by JFET switches",
+    "components": {
+     "Mode I path": "C39 47n direct via Q14 (+R61 100k)",
+     "Mode II path": "C41 2.2n + R64 10k (treble) summed with Q23 Sallen-Key LPF (R69 22k, R70 22k, C43 47n fb, C44 1n gnd, R72 4.7k, C45 22n out, R71 100k), via Q15",
+     "Q23": "2SC3378GR follower"
+    },
+    "derived": {
+     "Q23_sallen_key_f0_hz": 1055.2,
+     "Q23_sallen_key_q": 3.43,
+     "fc_mode_I_hpf_hz": 33.9
+    },
+    "notes": "Mode II adds a resonant (Q~3.4) peak near 1 kHz = the mid-forward 'Turbo' voice. Topology interpretation from low-res factory schematic: medium-low confidence."
+   },
+   {
+    "order": 5,
+    "type": "discrete op-amp gain stage (JFET diff pair Q16/Q19 + Q17 PNP + Q18 EF)",
+    "components": {
+     "Q16,Q19": "2SK184GR",
+     "Q17": "2SA1335GR",
+     "Q18": "2SC3378GR",
+     "R49": "100k + input bias",
+     "R50": "2.2k",
+     "R51": "2.2k",
+     "R52": "4.7k",
+     "R53": "4.7k tail",
+     "R56": "1M feedback",
+     "C32": "100p across feedback",
+     "R54": "1k",
+     "C33": "0.22u",
+     "R55": "1k",
+     "VR1": "250kD DIST",
+     "D8,D9 + C34 2.2n": "diodes in feedback branch switched by Q20 (2SK118)"
+    },
+    "derived": {
+     "gain_max_est": 1001,
+     "fc_hz": {
+      "C33*R54": 723.4,
+      "C32*R56": 1591.5
+     }
+    },
+    "notes": "Very high gain (up to ~60 dB) band-limited 723 Hz..1.6 kHz by feedback R/C -> strongly mid-focused drive. Exact DIST pot wiring and Q20 function (feedback diodes on/off per mode) uncertain."
+   },
+   {
+    "order": 6,
+    "type": "diode clipper to ground (hard)",
+    "components": {
+     "C35": "10u",
+     "R57": "4.7k",
+     "D11,D12": "1SS133 antiparallel to ground"
+    },
+    "derived": {
+     "clip_v": 0.65
+    },
+    "notes": ""
+   },
+   {
+    "order": 7,
+    "type": "active tone (Q13 CE stage with RC network)",
+    "components": {
+     "Q13": "2SC3378GR",
+     "C36": "10u",
+     "R58": "15k",
+     "R59": "1k",
+     "R45": "4.7k",
+     "R46": "33k",
+     "C37": "6.8n",
+     "VR2": "100kG",
+     "R47": "4.7k",
+     "R48,R35": "150k",
+     "C29": "470p",
+     "C30": "10u"
+    },
+    "derived": {
+     "fc_hz": {
+      "R45*C37": 4979.8,
+      "R46*C37": 709.2
+     }
+    },
+    "notes": "LO/HI tilt control; low confidence on exact topology."
+   },
+   {
+    "order": 8,
+    "type": "post filter (Q12 2-pole LPF) + Q10 JFET switch",
+    "components": {
+     "Q12": "2SC3378GR",
+     "R44": "22k",
+     "R33": "22k",
+     "C28": "4.7n",
+     "C26": "1n",
+     "R42": "10k",
+     "R41": "10k",
+     "C25": "6.8n",
+     "Q10": "2SK118",
+     "R32": "1M",
+     "C21": "10n"
+    },
+    "derived": {
+     "sallen_key_f0_hz_est": 3336.9,
+     "q_est": 1.08
+    },
+    "notes": "Cabinet-like HF rolloff ~3.3 kHz (estimate). Q10 may alter the filter per mode."
+   },
+   {
+    "order": 9,
+    "type": "level + output buffers",
+    "components": {
+     "VR3": "50kA",
+     "Q5,Q11": "2SC3378 EF",
+     "Q3": "JFET switch",
+     "R40": "1k",
+     "R39": "100k"
+    },
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "clipping": {
+   "topology": "Ge/low-Vf input limiter -> BJT -> discrete op-amp (rail + optional feedback diodes) -> Si shunt pair",
+   "diodes": "1SS188FM x2, 1SS133 x2 (+D8/D9 in feedback)",
+   "vf_v": 0.65,
+   "asymmetry": "mostly symmetric; transistor stages add asymmetry",
+   "model": "1N4148-class Si: Vf~0.6-0.7 V @1 mA; typical SPICE Is=2.52e-9 A, N=1.752, Rs=0.568 ohm"
+  },
+  "tone_stack": {
+   "topology": "active single-knob LO/HI (Q13)",
+   "components": {
+    "VR2": "100kG",
+    "C37": "6.8n",
+    "R45": "4.7k",
+    "R46": "33k"
+   },
+   "behaviour": "tilt: CCW darker, CW brighter"
+  },
+  "modes": [
+   {
+    "name": "Turbo I",
+    "detail": "flat pre-emphasis path (C39 47n)"
+   },
+   {
+    "name": "Turbo II",
+    "detail": "resonant ~1.05 kHz (Q~3.4) Sallen-Key + 2.2n treble path -> mid boost & more gain; remote jack toggles"
+   }
+  ],
+  "confidence": "medium",
+  "sources": [
+   "https://schematicheaven.net/effects/boss_ds2_turbodist.pdf",
+   "https://www.hobby-hour.com/electronics/s/boss-ds2-turbo-distortion.php",
+   "https://www.guitarscanada.com/threads/boss-ds-2-turbo-distortion-mods.43397/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "MT-2",
+  "name": "Metal Zone",
+  "years": "1991-",
+  "tech": "analog",
+  "supply_v": 9.0,
+  "bias_v": 4.5,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "250k",
+    "taper": "A",
+    "role": "IC3a non-inverting gain"
+   },
+   {
+    "name": "HIGH",
+    "pot": "100k (VR03b)",
+    "taper": "G",
+    "role": "+-~15-20 dB high shelf (IC1a)"
+   },
+   {
+    "name": "LOW",
+    "pot": "100k (VR03a)",
+    "taper": "G",
+    "role": "+-~15-20 dB peaking 105 Hz, Q~3.1 (gyrator IC1b)"
+   },
+   {
+    "name": "MIDDLE",
+    "pot": "100k (VR02b)",
+    "taper": "G",
+    "role": "+-15 dB peaking (IC2a) with Wien-bridge resonator"
+   },
+   {
+    "name": "MID FREQ",
+    "pot": "50k x2 (VR02a)",
+    "taper": "dual (reverse-log suggested by Electric Druid)",
+    "role": "Wien bridge sweep ~230 Hz - 5.4 kHz"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "50k",
+    "taper": "A",
+    "role": "output"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (JFET SF)",
+    "components": {
+     "Q011": "2SK184GR",
+     "R059": "10k",
+     "C042": "47n",
+     "R058": "1M",
+     "R060": "10k"
+    },
+    "derived": {
+     "zin_ohm": 1000000.0
+    },
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "pre-EQ gain stage with gyrator (IC3b, mid hump)",
+    "components": {
+     "IC3": "M5218AL",
+     "C033": "15n",
+     "R043": "100k",
+     "R044": "220k fb",
+     "C032": "100p fb",
+     "gyrator Q010": "2SC3378GR",
+     "R046": "2.2k",
+     "C034": "27n (series)",
+     "C035": "10n",
+     "R053": "47k",
+     "R054": "10k emitter"
+    },
+    "derived": {
+     "fc_hpf_hz": 106.1,
+     "fc_lpf_hz": 7234.3,
+     "gyr_f0_hz": 952.5,
+     "gyr_q_unloaded": 2.81,
+     "gyr_L_equiv_h": 1.034,
+     "gain_peak": 101,
+     "gain_peak_db_ideal": 40.1,
+     "gain_peak_db_electricdruid": 36
+    },
+    "notes": "Gyrator at inverting input: gain 1+R044/Zgyr, peak ~950 Hz (ED: ~1 kHz, 36 dB)."
+   },
+   {
+    "order": 3,
+    "type": "passive divider/LPF",
+    "components": {
+     "R045": "10k",
+     "R042": "10k",
+     "C031": "47n"
+    },
+    "derived": {
+     "attenuation_db": -6.0,
+     "fc_hz": 677.3,
+     "fc_hz_ED": 338.6
+    },
+    "notes": "Thevenin 5k with C031 -> 677 Hz (ED quotes ~340 Hz using 10k)."
+   },
+   {
+    "order": 4,
+    "type": "op-amp non-inverting gain (IC3a)",
+    "components": {
+     "C029": "33n",
+     "R040": "100k",
+     "R041": "1k",
+     "C030": "10u",
+     "VR01": "250kA",
+     "R051": "1k",
+     "C028": "47p"
+    },
+    "derived": {
+     "gain_min": 2,
+     "gain_max": 252,
+     "gain_max_db": 48.0,
+     "fc_hz": {
+      "C029*R040": 48.2,
+      "C030*R041": 15.9,
+      "C028 LPF at max": 13491.1
+     }
+    },
+    "notes": "Gain = 1+(VR01+R051)/R041 (Electric Druid). Output also clips on rails (~8 Vpp)."
+   },
+   {
+    "order": 5,
+    "type": "diode clipper to ground + shelf LPF",
+    "components": {
+     "C027": "10u",
+     "R033": "2.2k",
+     "D003,D004": "1SS133 antiparallel to ground",
+     "R032": "10k",
+     "R031": "4.7k",
+     "C023": "15n"
+    },
+    "derived": {
+     "clip_v": 0.65,
+     "shelf_pole_hz": 721.8,
+     "shelf_zero_hz": 2257.5,
+     "shelf_hf_db": -9.9
+    },
+    "notes": ""
+   },
+   {
+    "order": 6,
+    "type": "post-dist dual gyrator stage (IC4b, non-inverting)",
+    "components": {
+     "C021": "1u",
+     "R029": "100k",
+     "R030": "3.3k fb",
+     "C022": "47p",
+     "gyr Q008": "R034 1k, C024 15n (series), C025 1.5n, R036 47k, R037 10k",
+     "gyr Q007": "R027 470, C020 0.22u (series), C017 47n, R025 470k, R024 10k"
+    },
+    "derived": {
+     "gyrA": {
+      "f0_hz": 4894.2,
+      "q_unloaded": 2.17,
+      "L_equiv_h": 0.0705
+     },
+     "gyrA_gain_peak_db": 12.7,
+     "gyrB": {
+      "f0_hz": 105.3,
+      "q_unloaded": 14.62,
+      "L_equiv_h": 10.3823
+     },
+     "gyrB_gain_peak_db": 18.1
+    },
+    "notes": "Fixed peaks at ~4.9 kHz (Q~2.2) and ~105 Hz (Q~14.6) -> scooped 'metal' voicing."
+   },
+   {
+    "order": 7,
+    "type": "inverting unity buffer (IC4a)",
+    "components": {
+     "R028": "22k",
+     "R026": "22k",
+     "C018": "10p",
+     "R014": "22k"
+    },
+    "derived": {
+     "gain": -1
+    },
+    "notes": ""
+   },
+   {
+    "order": 8,
+    "type": "HIGH shelf (IC1a) + LOW gyrator (IC1b)",
+    "components": {
+     "R015": "22k fb",
+     "C010": "10p",
+     "VR03b": "100kG HIGH",
+     "R061": "2.2k",
+     "C044": "10n",
+     "VR03a": "100kG LOW",
+     "gyr IC1b": "R012 2.2k, C008 0.22u (series), C009 47n, R013 100k"
+    },
+    "derived": {
+     "high_shelf_corner_hz": 7234.3,
+     "low_gyr": {
+      "f0_hz": 105.5,
+      "q_unloaded": 3.12,
+      "L_equiv_h": 10.34
+     },
+     "range_db": "+-15..20"
+    },
+    "notes": "Boss boost/cut topology: pot ends to +/- inputs, wiper to frequency-selective network."
+   },
+   {
+    "order": 9,
+    "type": "MIDDLE semi-parametric (IC2a + Wien bridge IC2b)",
+    "components": {
+     "R038": "47k",
+     "R035": "47k fb",
+     "C026": "100p",
+     "C011": "1u",
+     "R050": "330",
+     "R049": "330",
+     "R039": "1M",
+     "C038": "0.1u",
+     "C037": "1u",
+     "VR02b": "100kG MIDDLE",
+     "C036": "22n",
+     "C043": "8.2n",
+     "R048": "2.2k",
+     "R062": "2.2k",
+     "VR02a": "50k x2 MID FREQ"
+    },
+    "derived": {
+     "f0_min_hz": 227.0,
+     "f0_max_hz": 5386.2,
+     "range_db": 15,
+     "electricdruid_range": "240 Hz-4.7 kHz (boost), 240 Hz-6.3 kHz (cut)",
+     "q_note": "Wien bridge keeps Q ~constant across sweep"
+    },
+    "notes": "f0 = 1/(2*pi*sqrt(Ra*Rb*C036*C043)), Ra=Rb=2.2k+VR02a."
+   },
+   {
+    "order": 10,
+    "type": "level + output (EF -> JFET switch -> EF)",
+    "components": {
+     "VR04": "50kA",
+     "C005": "10u",
+     "Q004": "2SC3378GR",
+     "Q003": "2SK118Y",
+     "Q001": "2SC3378GR",
+     "R001": "1k",
+     "C001": "10u",
+     "R003": "100k"
+    },
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "clipping": {
+   "topology": "op-amp rails (IC3a) + shunt Si diodes to ground after 2.2k",
+   "diodes": "2x 1SS133",
+   "vf_v": 0.65,
+   "asymmetry": "symmetric",
+   "model": "1N4148-class Si: Vf~0.6-0.7 V @1 mA; typical SPICE Is=2.52e-9 A, N=1.752, Rs=0.568 ohm"
+  },
+  "tone_stack": {
+   "topology": "active 3-band (HIGH shelf, LOW gyrator 105 Hz, semi-parametric MID with Wien bridge) + fixed post-dist gyrators",
+   "components": {},
+   "behaviour": "see stages 6,8,9"
+  },
+  "modes": [
+   {
+    "name": "MT-2-3A (2021)",
+    "detail": "30th-anniversary cosmetic, same circuit"
+   }
+  ],
+  "confidence": "high",
+  "sources": [
+   "https://electricdruid.net/wp-content/uploads/2016/01/Boss-MT-2-Metal-Zone-Schematic.pdf",
+   "https://electricdruid.net/boss-mt-2-metal-zone-pedal-analysis/",
+   "https://schematicheaven.net/effects/boss_mt2_metalzone_eqdist.pdf",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "MT-2W",
+  "name": "Metal Zone Waza Craft",
+  "years": "2018-",
+  "tech": "analog",
+  "supply_v": 9.0,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "?",
+    "taper": "?",
+    "role": "gain"
+   },
+   {
+    "name": "HIGH/LOW (concentric)",
+    "pot": "?",
+    "taper": "?",
+    "role": "EQ"
+   },
+   {
+    "name": "MIDDLE/MID FREQ (concentric)",
+    "pot": "?",
+    "taper": "?",
+    "role": "semi-parametric mid"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "?",
+    "taper": "?",
+    "role": "output"
+   },
+   {
+    "name": "MODE",
+    "pot": "switch S/C",
+    "taper": "-",
+    "role": "Standard/Custom"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "MT-2 topology with discrete dual-stage gain",
+    "components": {},
+    "derived": {},
+    "notes": "BOSS: 'discrete design', dual-stage gain, 3-band EQ with Q values tuned per mode. Standard = MT-2 voice with lower noise and tighter attack; Custom = wider/rounder lower mids, tight low end, cleans up with guitar volume."
+   }
+  ],
+  "clipping": {
+   "topology": "as MT-2 (assumed)",
+   "diodes": "?",
+   "vf_v": null,
+   "asymmetry": null
+  },
+  "tone_stack": {
+   "topology": "as MT-2 with mode-dependent Q",
+   "components": {},
+   "behaviour": "Custom: rounder lower mids, tighter lows"
+  },
+  "modes": [
+   {
+    "name": "Standard",
+    "detail": "MT-2 voice, less noise"
+   },
+   {
+    "name": "Custom",
+    "detail": "modern wide-range, rounder lower mids, different EQ Q"
+   }
+  ],
+  "confidence": "low",
+  "notes": "No public schematic/trace found; 35 mA draw. Suggested emulation: MT-2 model + per-mode gyrator Q/centre tweaks (unknown values).",
+  "sources": [
+   "https://www.boss.info/global/products/mt-2w/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "HM-2",
+  "name": "Heavy Metal",
+  "years": "1983-1991 (MIJ then MIT)",
+  "tech": "analog",
+  "supply_v": 9.0,
+  "bias_v": 4.5,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "250k",
+    "taper": "D",
+    "role": "dual-function: pin1 shunts Q6 collector via 150R+10u (min), pin3 is IC1b ground leg via 47k+47n (max); wiper grounded"
+   },
+   {
+    "name": "COLOR MIX LOW",
+    "pot": "10k (VR2)",
+    "taper": "G",
+    "role": "boost/cut ~87 Hz gyrator"
+   },
+   {
+    "name": "COLOR MIX HIGH",
+    "pot": "10k (VR3)",
+    "taper": "G",
+    "role": "boost/cut two gyrators ~958 Hz + ~1.28 kHz"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "10k",
+    "taper": "A",
+    "role": "output"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (JFET SF)",
+    "components": {
+     "Q1": "2SK30A-Y",
+     "R1": "10k",
+     "C1": "47n",
+     "R8": "1M to 4.5V",
+     "R7": "10k"
+    },
+    "derived": {
+     "zin_ohm": 1000000.0
+    },
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "BJT booster 1 (CE, shunt feedback)",
+    "components": {
+     "C6": "47n",
+     "R19": "22k series",
+     "R21": "100k",
+     "Q6": "2SC2240GR",
+     "R16": "470k fb",
+     "C10": "100p fb",
+     "R17": "10k collector (from R10 1k/C5 47u filtered rail)",
+     "R18": "22 emitter",
+     "R49+C31": "150R + 10u to DIST pin1"
+    },
+    "derived": {
+     "gain_mid_db_est": 22.5,
+     "gain_ideal": 21.4,
+     "fc_hz": {
+      "LPF C10*R16": 3386.3,
+      "HPF C6 w/ 22k": 153.9
+     }
+    },
+    "notes": "Own sim: ~22-23 dB 500 Hz-2 kHz, -1 dB @3.3 kHz, -6 dB @10 kHz; at DIST min, 150R shunt collapses Q6 gain."
+   },
+   {
+    "order": 3,
+    "type": "BJT booster 2 (PNP CE, shunt feedback)",
+    "components": {
+     "C11": "47n",
+     "R22": "22k",
+     "R26": "100k",
+     "Q7": "2SA970GR",
+     "R28": "120 emitter",
+     "R29": "470k fb",
+     "C14": "100p",
+     "R27": "10k"
+    },
+    "derived": {
+     "gain_mid_db_est": 21.5,
+     "fc_lpf_hz": 3386.3
+    },
+    "notes": "Second 3.4 kHz feedback LPF -> dark pre-clip spectrum."
+   },
+   {
+    "order": 4,
+    "type": "op-amp non-inverting with feedback clipping (IC1b)",
+    "components": {
+     "IC1": "M5218L or NJM4558S",
+     "R25": "68k bias",
+     "R20": "220k fb",
+     "C9": "100p fb",
+     "D3": "1S2473 (one polarity)",
+     "D4+D5": "2x 1S2473 series (other polarity)",
+     "R42": "47k",
+     "C22": "47n"
+    },
+    "derived": {
+     "gain_min": 1.74,
+     "gain_max": 5.68,
+     "fc_hz": {
+      "LPF C9*R20": 7234.3,
+      "HPF C22*R42": 72.0
+     },
+     "clip_v_pos_neg": "0.65 / 1.3 (asymmetric)"
+    },
+    "notes": "Asymmetric soft clip in feedback (1 vs 2 diodes)."
+   },
+   {
+    "order": 5,
+    "type": "germanium series 'dead-zone' pair + Si shunt clipper",
+    "components": {
+     "C12": "1u",
+     "R23": "10k",
+     "D6,D7": "1S188FM Ge antiparallel IN SERIES with signal",
+     "R30": "10k",
+     "D8,D9": "1S2473 Si antiparallel to ground",
+     "C16": "1n"
+    },
+    "derived": {
+     "deadzone_v": 0.25,
+     "clip_v": 0.65,
+     "fc_lpf_hz": 15915.5
+    },
+    "notes": "Series Ge pair removes low-level signal (crossover gating / gritty decay); Si pair hard-clips."
+   },
+   {
+    "order": 6,
+    "type": "buffer (IC1a)",
+    "components": {
+     "C15": "1u",
+     "R24": "68k to 4.5V"
+    },
+    "derived": {
+     "fc_hz": 2.3
+    },
+    "notes": ""
+   },
+   {
+    "order": 7,
+    "type": "COLOR MIX active EQ (IC3a) with 3 op-amp gyrators (IC2a, IC2b, IC3b)",
+    "components": {
+     "R54": "3.3k in",
+     "R52": "3.3k fb",
+     "C33": "470p",
+     "VR2 L": "10kG",
+     "VR3 H": "10kG",
+     "gyr LOW (IC3b)": "C35 1.5u series, C30 68n, R47 330, R51 100k",
+     "gyr MID (IC2a)": "C28 0.15u series, C27 6.8n, R41 330, R43 82k",
+     "gyr HIGH (IC2b)": "C29 0.1u series, C26 4.7n, R45 330, R44 100k"
+    },
+    "derived": {
+     "low": {
+      "f0_hz": 86.7,
+      "q_unloaded": 3.71,
+      "L_equiv_h": 2.244
+     },
+     "mid": {
+      "f0_hz": 958.0,
+      "q_unloaded": 3.36,
+      "L_equiv_h": 0.184
+     },
+     "high": {
+      "f0_hz": 1278.0,
+      "q_unloaded": 3.77,
+      "L_equiv_h": 0.1551
+     },
+     "max_boost_db_est": 20.8
+    },
+    "notes": "Boss GE-style boost/cut. HIGH knob drives both 958 Hz and 1.28 kHz gyrators -> broad upper-mid 'chainsaw' peak (D. Ross: lows ~80 Hz, mids ~0.9-1.3 kHz); ringing near 1 kHz when HIGH max."
+   },
+   {
+    "order": 8,
+    "type": "level + output",
+    "components": {
+     "C34": "10u",
+     "R53": "10k",
+     "VR1": "10kA",
+     "C32": "1u",
+     "Q10": "JFET switch",
+     "Q3": "2SC732TM-GR EF",
+     "R4": "1k",
+     "C3": "1u",
+     "R3": "100k"
+    },
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "clipping": {
+   "topology": "two BJT stages (soft) -> op-amp with asymmetric feedback diodes -> series Ge pair (dead zone) -> shunt Si pair",
+   "diodes": "D3,D4,D5,D8,D9 1S2473 (Si); D6,D7 1S188FM (Ge)",
+   "vf_v": 0.65,
+   "asymmetry": "IC1b 1 vs 2 diodes (0.65/1.3 V)",
+   "model": "1N4148-class Si: Vf~0.6-0.7 V @1 mA; typical SPICE Is=2.52e-9 A, N=1.752, Rs=0.568 ohm | Ge point-contact (1S188FM): Vf~0.2-0.3 V @1 mA (model params not published; estimate Is~1e-6..5e-6 A, N~1.2-1.5)"
+  },
+  "tone_stack": {
+   "topology": "active boost/cut with 3 gyrators",
+   "components": {
+    "see": "stage 7"
+   },
+   "behaviour": "LOW: 87 Hz peak; HIGH: combined ~0.96-1.28 kHz peak; both max = 'Swedish chainsaw' tone"
+  },
+  "modes": [
+   {
+    "name": "supply",
+    "detail": "Service schematic shows 9 V; original ACA adaptor unregulated; users report fuller response at 12 V (D. Ross)"
+   }
+  ],
+  "confidence": "high",
+  "sources": [
+   "https://archive.org/details/lost_manuals_Boss--HM-2--service--ID10976",
+   "https://schematicheaven.net/effects/boss_hm2_heavymetal_dist.pdf",
+   "https://www.hobby-hour.com/electronics/s/hm2-heavy-metal.php",
+   "https://davidrossmusicalinstruments.com/boss-hm-2-circuit-analysis/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "HM-2W",
+  "name": "Heavy Metal Waza Craft",
+  "years": "2021-",
+  "tech": "analog",
+  "supply_v": 9.0,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "?",
+    "taper": "?",
+    "role": "gain"
+   },
+   {
+    "name": "COLOR MIX L",
+    "pot": "?",
+    "taper": "?",
+    "role": "low gyrator"
+   },
+   {
+    "name": "COLOR MIX H",
+    "pot": "?",
+    "taper": "?",
+    "role": "high-mid gyrators"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "?",
+    "taper": "?",
+    "role": "output"
+   },
+   {
+    "name": "MODE",
+    "pot": "switch S/C",
+    "taper": "-",
+    "role": "Standard/Custom"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "HM-2 circuit",
+    "components": {},
+    "derived": {},
+    "notes": "BOSS: Standard reproduces HM-2 '100%', lower noise, +3 dB max level, Waza buffer. Custom: more gain with more fundamental/attack, adjusted low and high-mid for fullness/definition."
+   }
+  ],
+  "clipping": {
+   "topology": "as HM-2",
+   "diodes": "as HM-2 (assumed)",
+   "vf_v": null,
+   "asymmetry": null
+  },
+  "tone_stack": {
+   "topology": "as HM-2",
+   "components": {},
+   "behaviour": "Custom: adjusted low/high-mid"
+  },
+  "modes": [
+   {
+    "name": "Standard",
+    "detail": "= HM-2"
+   },
+   {
+    "name": "Custom",
+    "detail": "more gain, tweaked low & high-mid"
+   }
+  ],
+  "confidence": "medium",
+  "notes": "Standard mode can use the HM-2 model. Custom values unknown (no trace found). 30 mA.",
+  "sources": [
+   "https://www.boss.info/global/products/hm-2w/"
+  ]
+ },
+ {
+  "code": "HM-3",
+  "name": "Hyper Metal",
+  "years": "1993-1998",
+  "tech": "analog",
+  "supply_v": 8.0,
+  "bias_v": 4.0,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "50k",
+    "taper": "A",
+    "role": "IC1a feedback (R9 220 + VR4) over R8 220 + C5 10u"
+   },
+   {
+    "name": "HIGH",
+    "pot": "10k",
+    "taper": "W",
+    "role": "boost/cut ~890 Hz and ~5.4 kHz gyrators"
+   },
+   {
+    "name": "LOW",
+    "pot": "10k",
+    "taper": "W",
+    "role": "boost/cut ~87 Hz gyrator"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "50k",
+    "taper": "A",
+    "role": "output"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (JFET SF)",
+    "components": {
+     "Q1": "2SK184GR",
+     "R1": "10k",
+     "C1": "47n",
+     "R2": "1M",
+     "R3": "10k"
+    },
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "switch + RC pre-filter",
+    "components": {
+     "Q2": "2SK118Y",
+     "C2": "1u",
+     "R4": "220k",
+     "R5": "220k",
+     "R6": "4.7k",
+     "C3": "6.8n",
+     "C4": "47n",
+     "R7": "47k"
+    },
+    "derived": {
+     "fc_lpf_hz": 4979.8,
+     "fc_hpf_hz": 72.0
+    },
+    "notes": ""
+   },
+   {
+    "order": 3,
+    "type": "op-amp gain 1 (IC1a non-inverting)",
+    "components": {
+     "IC1": "M5218AL",
+     "R8": "220",
+     "C5": "10u",
+     "R9": "220",
+     "VR4": "50kA",
+     "C6": "47p"
+    },
+    "derived": {
+     "gain_min": 2.0,
+     "gain_max": 229.3,
+     "gain_max_db": 47.2,
+     "fc_hz": {
+      "C5*R8": 72.3,
+      "C6 at max": 67455.7
+     }
+    },
+    "notes": ""
+   },
+   {
+    "order": 4,
+    "type": "RC LPF",
+    "components": {
+     "R10": "10k",
+     "C7": "10n"
+    },
+    "derived": {
+     "fc_hz": 1591.5
+    },
+    "notes": "Strong 1.6 kHz pre-clip LPF."
+   },
+   {
+    "order": 5,
+    "type": "op-amp gain 2 with asymmetric feedback diodes (IC1b)",
+    "components": {
+     "R11": "22k",
+     "C8": "47n",
+     "R12": "220k",
+     "C9": "100p",
+     "D2+D3": "2x 1SS133 series",
+     "D4": "1SS133 single (opposite)"
+    },
+    "derived": {
+     "gain": 11.0,
+     "gain_db": 20.8,
+     "fc_hz": {
+      "HPF C8*R11": 153.9,
+      "LPF C9*R12": 7234.3
+     },
+     "clip_v_pos_neg": "0.65 / 1.3"
+    },
+    "notes": ""
+   },
+   {
+    "order": 6,
+    "type": "shunt diode clipper + shelving network",
+    "components": {
+     "C10": "1u",
+     "R13": "2.2k",
+     "D5,D6": "1SS133 antiparallel to ground",
+     "R14": "10k",
+     "C11": "10n (across R14)",
+     "R15": "5.6k",
+     "C12": "47n"
+    },
+    "derived": {
+     "clip_v": 0.65,
+     "fc_hz": {
+      "R14||C11 zero": 1591.5,
+      "R15*C12": 604.7
+     }
+    },
+    "notes": "R14||C11 passes treble; R15+C12 shunt dips mids ~600 Hz (approx)."
+   },
+   {
+    "order": 7,
+    "type": "buffer (IC2a) + EQ amp (IC2b) with 3 transistor gyrators",
+    "components": {
+     "C13": "1u",
+     "R16": "1M",
+     "R17": "3.3k",
+     "R18": "3.3k",
+     "C14": "10n",
+     "IC2": "M5218AL",
+     "gyr LOW Q11": "C33 1.5u series, C34 68n, R47 330, R48 100k, R49 10k",
+     "gyr MID Q9": "C29 39n series, C30 8.2n, R42 1k, R43 100k, R41 10k",
+     "gyr HIGH Q10": "C31 22n series, C32 1.2n, R44 330, R45 100k, R46 10k"
+    },
+    "derived": {
+     "low": {
+      "f0_hz": 86.7,
+      "q_unloaded": 3.71,
+      "L_equiv_h": 2.244
+     },
+     "mid": {
+      "f0_hz": 890.0,
+      "q_unloaded": 4.59,
+      "L_equiv_h": 0.82
+     },
+     "high": {
+      "f0_hz": 5392.1,
+      "q_unloaded": 4.07,
+      "L_equiv_h": 0.0396
+     },
+     "fc_lpf_hz": 4822.9
+    },
+    "notes": "HIGH pot feeds MID and HIGH gyrators together; LOW pot feeds LOW gyrator."
+   },
+   {
+    "order": 8,
+    "type": "level + output",
+    "components": {
+     "C15": "10u",
+     "VR1": "50kA",
+     "C16": "1u",
+     "Q3": "2SK118Y",
+     "Q4": "2SK118Y switch",
+     "C17": "10u",
+     "R23": "100k"
+    },
+    "derived": {},
+    "notes": "Regulated +8 V (Q6 2SC2458 pass), +4 V bias (R28/R29 10k)."
+   }
+  ],
+  "clipping": {
+   "topology": "op-amp gain -> feedback asymmetric diodes -> shunt Si pair",
+   "diodes": "1SS133 x5",
+   "vf_v": 0.65,
+   "asymmetry": "IC1b: 2 diodes one side, 1 the other",
+   "model": "1N4148-class Si: Vf~0.6-0.7 V @1 mA; typical SPICE Is=2.52e-9 A, N=1.752, Rs=0.568 ohm"
+  },
+  "tone_stack": {
+   "topology": "active 2-knob with 3 gyrators (Boss GE style)",
+   "components": {},
+   "behaviour": "LOW 87 Hz; HIGH = 890 Hz (Q~4.6) + 5.4 kHz (Q~4.1)"
+  },
+  "modes": [],
+  "confidence": "high",
+  "sources": [
+   "https://archive.org/details/lost_manuals_Boss--HM-3--service--ID10967",
+   "https://schematicheaven.net/effects/boss_hm3_hypermetal_dist.pdf",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "ML-2",
+  "name": "Metal Core",
+  "years": "2007-",
+  "tech": "digital",
+  "tech_verified": false,
+  "tech_note": "UNVERIFIED: inferred only from 60-65 mA current draw; no schematic/teardown found",
+  "supply_v": 9.0,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "?",
+    "taper": "?",
+    "role": "gain"
+   },
+   {
+    "name": "LOW",
+    "pot": "?",
+    "taper": "?",
+    "role": "'7-string' heavy low boost"
+   },
+   {
+    "name": "HIGH",
+    "pot": "?",
+    "taper": "?",
+    "role": "'metallic' high"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "?",
+    "taper": "?",
+    "role": "output"
+   }
+  ],
+  "stages": [],
+  "clipping": {
+   "topology": "unknown",
+   "diodes": null,
+   "vf_v": null,
+   "asymmetry": null
+  },
+  "tone_stack": {
+   "topology": "LOW/HIGH (unknown)",
+   "components": {},
+   "behaviour": "LOW for downtuned/7-string lows, HIGH for edge"
+  },
+  "modes": [],
+  "confidence": "low",
+  "notes": "No public schematic or trace found. 60 mA current draw (same as COSM FZ-5 / DSP pedals, vs 10-15 mA for analog Boss distortions) suggests DSP content - NOT verified. Zin 1M, Zout 1k.",
+  "sources": [
+   "https://www.boss.info/global/products/ml-2/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "MD-2",
+  "name": "Mega Distortion",
+  "years": "2001-",
+  "tech": "analog",
+  "supply_v": 9.0,
+  "bias_v": 4.5,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "100k",
+    "taper": "? (rheostat)",
+    "role": "TL072 stage gain 1+(1k+VR)/1k"
+   },
+   {
+    "name": "GAIN BOOST",
+    "pot": "100k",
+    "taper": "? (rheostat)",
+    "role": "first discrete JFET op-amp stage feedback T-network"
+   },
+   {
+    "name": "TONE",
+    "pot": "100k",
+    "taper": "?",
+    "role": "treble (10k+2n2 branch)"
+   },
+   {
+    "name": "BOTTOM",
+    "pot": "100k",
+    "taper": "?",
+    "role": "low boost/cut via op-amp gyrator ~117 Hz"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "50k",
+    "taper": "?",
+    "role": "output"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (JFET SF) + JFET switch",
+    "components": {
+     "2SK184": "SF",
+     "R": "10k series",
+     "C": "47n",
+     "Rbias": "1M",
+     "2SK118": "switch"
+    },
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "discrete JFET op-amp (2x 2SK184 diff pair, 2SA1048 out)",
+    "components": {
+     "Cin": "39n",
+     "Rbias+": "100k (to 4k7/4k7 divider)",
+     "tail": "4.7k",
+     "drain": "2.2k",
+     "out load": "2.2k",
+     "Rf": "1M",
+     "Cf": "1.5n",
+     "ground leg": "15k -> 2.2k + 22u tant",
+     "Gain Boost": "100k rheostat + 22k + 1u from output (T-network)"
+    },
+    "derived": {
+     "gain_lf_est": 59.1,
+     "fc_hz": {
+      "Cin*100k": 40.8,
+      "Rf*Cf": 106.1
+     }
+    },
+    "notes": "Gain topology is a T-network; derived gain range uncertain - simulate. No diodes anywhere (mirosol)."
+   },
+   {
+    "order": 3,
+    "type": "op-amp non-inverting gain (TL072)",
+    "components": {
+     "Rin": "10k",
+     "Rbias": "56k to VCC/2",
+     "Rg": "1k + 33u tant",
+     "Rf": "1k + DIST 100k",
+     "Cf": "470p"
+    },
+    "derived": {
+     "gain_min": 2.0,
+     "gain_max": 102.0,
+     "fc_hz": {
+      "Rg*C": 4.8,
+      "LPF at max": 3352.7
+     }
+    },
+    "notes": "Rail clipping (TL072 at 9 V)."
+   },
+   {
+    "order": 4,
+    "type": "op-amp inverting (TL072)",
+    "components": {
+     "Rin": "10k",
+     "Rf": "22k"
+    },
+    "derived": {
+     "gain": -2.2
+    },
+    "notes": "Further rail clipping."
+   },
+   {
+    "order": 5,
+    "type": "complementary 'differential' push-pull clipper (2SA1048 + 2SC2458)",
+    "components": {
+     "coupling": "33k + 47u",
+     "bias": "56k/56k each",
+     "Rc": "3.9k",
+     "Re": "5.6k // (100R + 47u)",
+     "mix": "56k + 56k to 1u"
+    },
+    "derived": {
+     "gain_each_est": 31.6
+    },
+    "notes": "Each device conducts one half-wave -> cutoff/saturation clipping; source of saw-like asymmetric distortion."
+   },
+   {
+    "order": 6,
+    "type": "EF + shelving LPF",
+    "components": {
+     "2SC2458": "EF, 330k base bias from VCC/2, 10k emitter",
+     "R": "22k",
+     "Rsh": "10k to ground",
+     "RC": "10k + 27n"
+    },
+    "derived": {
+     "shelf_pole_hz_est": 349.0,
+     "shelf_zero_hz": 589.5
+    },
+    "notes": ""
+   },
+   {
+    "order": 7,
+    "type": "active tone (TL072) with BOTTOM gyrator",
+    "components": {
+     "Rin": "56k (+330k bias)",
+     "Rf": "56k",
+     "Cf": "220p",
+     "TONE": "100k + 10k + 2n2",
+     "BOTTOM": "100k + 47k",
+     "gyrator": "TL072 follower, 3.3k, 100n series, 56n, 100k"
+    },
+    "derived": {
+     "bottom": {
+      "f0_hz": 117.1,
+      "q_unloaded": 4.12,
+      "L_equiv_h": 18.48
+     },
+     "treble_corner_hz": 7234.3,
+     "lpf_hz": 12918.4
+    },
+    "notes": ""
+   },
+   {
+    "order": 8,
+    "type": "level + output (JFET switch + 2SC2458 EF)",
+    "components": {
+     "LEVEL": "50k",
+     "Cout": "10u",
+     "Rout": "1k"
+    },
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "clipping": {
+   "topology": "no diodes: JFET discrete op-amp + TL072 rails + complementary BJT push-pull stage",
+   "diodes": null,
+   "vf_v": null,
+   "asymmetry": "asymmetric (complementary stage)"
+  },
+  "tone_stack": {
+   "topology": "active TONE + BOTTOM (gyrator 117 Hz, Q~4.1)",
+   "components": {},
+   "behaviour": "BOTTOM boosts/cuts lows ~117 Hz; TONE treble shelf ~7 kHz"
+  },
+  "modes": [],
+  "confidence": "medium",
+  "notes": "Source is a community trace (redrawn, no reference designators); values legible but topology of Gain Boost/Tone networks not fully certain.",
+  "sources": [
+   "https://schematicheaven.net/effects/boss_md2_megadist.pdf",
+   "https://mirosol.kapsi.fi/2014/01/boss-md-2-mega-distortion/"
+  ]
+ },
+ {
+  "code": "XT-2",
+  "name": "Xtortion",
+  "years": "1996-2002",
+  "tech": "analog",
+  "supply_v": 8.0,
+  "bias_v": 4.0,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "50k",
+    "taper": "A",
+    "role": "IC1.1 gain 1+(100+VR)/270"
+   },
+   {
+    "name": "PUNCH",
+    "pot": "10k",
+    "taper": "C",
+    "role": "pre-dist boost/cut across 3 gyrators (~0.6, 1.04, 3.0 kHz) - CCW slight treble, CW strong mid boost"
+   },
+   {
+    "name": "CONTOUR",
+    "pot": "100k",
+    "taper": "?",
+    "role": "post-dist mid scoop<->hump centred ~900 Hz"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "100k",
+    "taper": "?",
+    "role": "output"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (JFET) + switch",
+    "components": {
+     "R3": "10k",
+     "C8": "47n",
+     "R13": "1M",
+     "R18": "10k",
+     "Q2": "JFET SF",
+     "Q1": "JFET switch",
+     "C10": "1u",
+     "R17": "10k",
+     "R16": "220k"
+    },
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "PUNCH boost/cut EQ (IC1.2) with 2 op-amp gyrators + 1 BJT gyrator",
+    "components": {
+     "R20": "18k",
+     "R22": "18k fb",
+     "C12": "470p",
+     "R24": "33k",
+     "VR2": "10kC",
+     "gyr a (IC2.2)": "C23 56n series, C24 3.3n, R34 470, R37 ~820k (unlabelled)",
+     "gyr b (IC2.1)": "C14 5.6n series, C22 330p, R33 3.3k, R35 470k",
+     "gyr c (Q8)": "C27 22n series, C28 1.2n, R39 2.7k, R38 330k, R36 10k"
+    },
+    "derived": {
+     "gyr_a": {
+      "f0_hz": 596.4,
+      "q_unloaded": 10.14,
+      "L_equiv_h": 1.2718
+     },
+     "gyr_b": {
+      "f0_hz": 2972.8,
+      "q_unloaded": 2.9,
+      "L_equiv_h": 0.5118
+     },
+     "gyr_c": {
+      "f0_hz": 1037.7,
+      "q_unloaded": 2.58,
+      "L_equiv_h": 1.0692
+     }
+    },
+    "notes": "R37 value missing on trace (forum estimate 820k) -> gyr_a low confidence."
+   },
+   {
+    "order": 3,
+    "type": "op-amp non-inverting gain (IC1.1)",
+    "components": {
+     "R21": "10k",
+     "R19": "270",
+     "C11": "4.7u",
+     "R23": "100",
+     "VR1": "50kA",
+     "C13": "22p"
+    },
+    "derived": {
+     "gain_min": 1.37,
+     "gain_max": 186.6,
+     "gain_max_db": 45.4,
+     "fc_hz": {
+      "C11*R19": 125.4
+     }
+    },
+    "notes": ""
+   },
+   {
+    "order": 4,
+    "type": "shunt diode clipper + LPF",
+    "components": {
+     "C15": "1u",
+     "R30": "2k",
+     "diodes": "Si antiparallel to ground",
+     "C21": "33n"
+    },
+    "derived": {
+     "clip_v": 0.65,
+     "fc_hz": 2411.4
+    },
+    "notes": "2.4 kHz LPF across diodes."
+   },
+   {
+    "order": 5,
+    "type": "post-EQ amp (IC3) with fixed gyrators",
+    "components": {
+     "C25": "1u",
+     "R31": "100k",
+     "R40": "7.9k",
+     "R32": "7.9k fb",
+     "C26": "47p",
+     "gyr hi (op-amp)": "C29 3.9n series, C30 220p, R43 3.9k, R41 470k",
+     "gyr lo (Q11)": "C38 0.68u series, C37 68n, R53 3.9k, R42 100k, R52 10k"
+    },
+    "derived": {
+     "gyr_hi": {
+      "f0_hz": 4013.2,
+      "q_unloaded": 2.61,
+      "L_equiv_h": 0.4033
+     },
+     "gyr_lo": {
+      "f0_hz": 37.5,
+      "q_unloaded": 1.6,
+      "L_equiv_h": 26.52
+     }
+    },
+    "notes": "Fixed post-dist emphasis ~37 Hz and ~4 kHz (like MT-2's 105 Hz/4.9 kHz)."
+   },
+   {
+    "order": 6,
+    "type": "CONTOUR network",
+    "components": {
+     "C18": "0.1u",
+     "R26": "33k",
+     "R28": "47k",
+     "C20": "1n",
+     "C19": "22n",
+     "VR3": "100k",
+     "R25": "1k",
+     "C16": "0.1u",
+     "C17": "10n"
+    },
+    "derived": {
+     "centre_hz_reported": 900
+    },
+    "notes": "Bridged-T-like variable mid notch/peak (Thermionic Studios: ~900 Hz). Topology from trace; medium-low confidence."
+   },
+   {
+    "order": 7,
+    "type": "level + output",
+    "components": {
+     "VR4": "100k",
+     "C7": "1u",
+     "Q4": "JFET switch",
+     "Q5": "EF",
+     "C6": "?",
+     "R9": "?"
+    },
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "clipping": {
+   "topology": "op-amp gain -> shunt Si pair with 33n",
+   "diodes": "2x Si",
+   "vf_v": 0.65,
+   "asymmetry": "symmetric",
+   "model": "1N4148-class Si: Vf~0.6-0.7 V @1 mA; typical SPICE Is=2.52e-9 A, N=1.752, Rs=0.568 ohm"
+  },
+  "tone_stack": {
+   "topology": "PUNCH (pre, 3 gyrators) + CONTOUR (post) + fixed post gyrators",
+   "components": {},
+   "behaviour": "see stages"
+  },
+  "modes": [],
+  "confidence": "medium",
+  "sources": [
+   "https://schematicheaven.net/effects/boss_xt2_xtortion_dist.pdf",
+   "https://thermionic-studios.com/wiki/index.php?title=XT-2",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "DF-2",
+  "name": "Super Distortion & Feedbacker",
+  "years": "1984-1994",
+  "tech": "hybrid",
+  "tech_note": "analog audio path + CMOS PLL/logic feedback-tone generator",
+  "supply_v": 9.0,
+  "bias_v": 4.5,
+  "controls": [
+   {
+    "name": "DIST",
+    "pot": "250k",
+    "taper": "A",
+    "role": "IC1a gain 1+(1k+VR)/4.7k"
+   },
+   {
+    "name": "TONE",
+    "pot": "20k",
+    "taper": "B",
+    "role": "DS-1-style blend"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "10k (later 20k, SN513600+)",
+    "taper": "B",
+    "role": "output"
+   },
+   {
+    "name": "OVER TONE",
+    "pot": "10k",
+    "taper": "G",
+    "role": "mix of PLL-generated sustain tone (fundamental / octave)"
+   },
+   {
+    "name": "FOOT SW",
+    "pot": "momentary",
+    "taper": "-",
+    "role": "hold = feedback (sustain) engaged"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (JFET SF)",
+    "components": {
+     "Q1": "2SK30A-Y",
+     "R2": "10k",
+     "C1": "22n",
+     "R8": "1M",
+     "R1": "10k"
+    },
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "BJT booster (DS-1 type)",
+    "components": {
+     "R3": "10k series",
+     "R4": "150k (feedback-tone injection)",
+     "C3": "47n",
+     "R6": "100k",
+     "Q2": "2SC732TM-GR",
+     "R7": "470k fb",
+     "C2": "47p fb",
+     "R10": "10k",
+     "R14": "22",
+     "C7": "0.1u",
+     "R16": "68k",
+     "R15": "100k"
+    },
+    "derived": {
+     "gain_mid_db_est": 29.0,
+     "fc_hz": {
+      "C2*R7": 7204.8
+     }
+    },
+    "notes": "Own sim ~28-29 dB 1-3 kHz (R3 10k series limits vs DS-1)."
+   },
+   {
+    "order": 3,
+    "type": "op-amp gain (IC1a M5218L)",
+    "components": {
+     "R17": "4.7k",
+     "C6": "1u",
+     "R18": "1k",
+     "VR2": "250kA",
+     "Q3": "2SK30A (switch, C17 0.1u)"
+    },
+    "derived": {
+     "gain_min": 1.21,
+     "gain_max": 54.4,
+     "gain_max_db": 34.7,
+     "fc_hz": 33.9
+    },
+    "notes": ""
+   },
+   {
+    "order": 4,
+    "type": "shunt diode clipper",
+    "components": {
+     "C10": "0.47u",
+     "R22": "2.2k",
+     "D2,D3": "1SS133",
+     "C11": "10n"
+    },
+    "derived": {
+     "clip_v": 0.65,
+     "fc_hz": 7234.3
+    },
+    "notes": "Identical to DS-1."
+   },
+   {
+    "order": 5,
+    "type": "passive tone (DS-1 identical)",
+    "components": {
+     "R21": "6.8k",
+     "C12": "0.1u",
+     "C13": "22n",
+     "R23": "2.2k",
+     "R24": "6.8k",
+     "VR3": "20kB"
+    },
+    "derived": {
+     "fc_lpf_hz": 234.1,
+     "fc_hpf_hz": 803.8
+    },
+    "notes": ""
+   },
+   {
+    "order": 6,
+    "type": "recovery amp + level + output",
+    "components": {
+     "C8": "1u",
+     "Q6": "2SC732TM-GR",
+     "R20": "470k",
+     "R26": "10k",
+     "C9": "10u",
+     "R19": "4.7k (10k later)",
+     "VR4": "10kB/20kB",
+     "Q5": "switch",
+     "Q7": "2SC732 EF"
+    },
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 7,
+    "type": "Feedbacker: fundamental detector + PLL + envelope",
+    "components": {
+     "IC2-4": "IR9022/TL022 op-amps (filters, Schmitt)",
+     "IC5": "HD14013 D-FF",
+     "IC7": "HD14046 PLL (CD4046)",
+     "IC8": "HD14066 switches",
+     "IC9": "HD14001 NOR",
+     "LFO": "IC2a",
+     "LPF/envelope": "Q8-Q12, R63-R93"
+    },
+    "derived": {},
+    "notes": "Detects the played fundamental, locks a VCO (x2 via divider for octave 'OVER TONE'), shapes it with LPF + envelope generator and re-injects it into the distortion input (R4 150k) while the switch is held -> synthetic controlled feedback."
+   }
+  ],
+  "clipping": {
+   "topology": "DS-1 style: BJT booster -> op-amp -> shunt Si pair",
+   "diodes": "1SS133 x2",
+   "vf_v": 0.65,
+   "asymmetry": "symmetric",
+   "model": "1N4148-class Si: Vf~0.6-0.7 V @1 mA; typical SPICE Is=2.52e-9 A, N=1.752, Rs=0.568 ohm"
+  },
+  "tone_stack": {
+   "topology": "DS-1 passive blend",
+   "components": {
+    "R21": "6.8k",
+    "C12": "0.1u",
+    "C13": "22n",
+    "R23": "2.2k",
+    "R24": "6.8k"
+   },
+   "behaviour": "as DS-1"
+  },
+  "modes": [
+   {
+    "name": "Distortion",
+    "detail": "DS-1-like"
+   },
+   {
+    "name": "Feedback (switch held)",
+    "detail": "PLL-generated fundamental/octave square -> LPF/envelope -> mixed pre-distortion, OVER TONE sets octave content"
+   }
+  ],
+  "confidence": "high",
+  "sources": [
+   "https://archive.org/details/boss_DF-2_SERVICE_NOTES",
+   "https://schematicheaven.net/effects/boss_df2_distortion_feedbacker.pdf",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "FZ-2",
+  "name": "Hyper Fuzz",
+  "years": "1993-1997",
+  "tech": "analog",
+  "supply_v": 9.0,
+  "bias_v": 4.5,
+  "controls": [
+   {
+    "name": "GAIN",
+    "pot": "50k",
+    "taper": "A",
+    "role": "discrete op-amp boost 1+(2.2k+VR)/1.5k"
+   },
+   {
+    "name": "BASS",
+    "pot": "50k",
+    "taper": "B",
+    "role": "boost/cut ~104 Hz (gyrator Q~3.1)"
+   },
+   {
+    "name": "TREBLE",
+    "pot": "50k",
+    "taper": "B",
+    "role": "boost/cut shelf ~3.2 kHz"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "50k",
+    "taper": "A",
+    "role": "output (disabled in BOOST mode on original)"
+   },
+   {
+    "name": "MODE",
+    "pot": "rotary 3-pos",
+    "taper": "-",
+    "role": "BOOST / FUZZ I (flat) / FUZZ II (scooped)"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (JFET SF)",
+    "components": {
+     "Q1": "2SK184GR",
+     "R1": "10k",
+     "C1": "47n",
+     "R2": "1M",
+     "R3": "10k"
+    },
+    "derived": {},
+    "notes": "Original uses shielded input wire (high gain)."
+   },
+   {
+    "order": 2,
+    "type": "discrete op-amp boost (Q2/Q3 2SK184 diff pair + Q4 2SA1335 PNP)",
+    "components": {
+     "C2": "1u",
+     "R4": "22k",
+     "R5": "4.7k tail",
+     "R6": "2.2k",
+     "R9": "1k",
+     "R7": "1.5k",
+     "C3": "2.2u",
+     "R8": "2.2k",
+     "GAIN": "50kA",
+     "C4": "47p fb"
+    },
+    "derived": {
+     "gain_min": 2.47,
+     "gain_max": 35.8,
+     "gain_max_db": 31.1,
+     "fc_hz": 48.2
+    },
+    "notes": "BOSS 'Blues Driver-style' discrete op-amp. BOOST mode output taken here."
+   },
+   {
+    "order": 3,
+    "type": "RC LPF + phase splitter",
+    "components": {
+     "R10": "10k",
+     "C5": "33n",
+     "C6": "1u",
+     "Q5": "2SC3378GR",
+     "R11": "220k",
+     "R12": "100k",
+     "R13": "4.7k collector",
+     "R14": "10k emitter"
+    },
+    "derived": {
+     "fc_lpf_hz": 482.3,
+     "gain_collector": -0.47,
+     "gain_emitter": 1.0
+    },
+    "notes": "Unequal splitter outputs (-0.47/+1)."
+   },
+   {
+    "order": 4,
+    "type": "Superfuzz octave: long-tailed pair full-wave rectifier + diode clip",
+    "components": {
+     "R15,R18": "1k",
+     "C7,C8": "1u",
+     "R16,R19": "100k",
+     "R17,R20": "27k",
+     "Q6,Q7": "2SC3378GR (hFE 231/289 unmatched)",
+     "R22": "10k common collector",
+     "R21": "1.8k + C9 47u common emitter",
+     "C10": "1u",
+     "D2,D3": "1N914/1SS133 antiparallel to ground"
+    },
+    "derived": {
+     "clip_v": 0.65
+    },
+    "notes": "Univox Super-Fuzz core; octave-up from full-wave rectification; mismatch weakens octave."
+   },
+   {
+    "order": 5,
+    "type": "FUZZ I filter/amp (IC1B inverting)",
+    "components": {
+     "R29": "10k",
+     "C16": "15n",
+     "C17": "1u",
+     "R30": "10k",
+     "R31": "27k",
+     "C18": "47p",
+     "IC1": "JRC4558D"
+    },
+    "derived": {
+     "gain": -2.7,
+     "fc_lpf_hz": 1061.0,
+     "response_db": {
+      "100": 2.5,
+      "1000": 1.7,
+      "3000": -2.2,
+      "8000": -9.2
+     }
+    },
+    "notes": "Flat voice."
+   },
+   {
+    "order": 6,
+    "type": "FUZZ II scoop (IC1A inverting with passive twin-path notch)",
+    "components": {
+     "R24": "47k",
+     "C12": "47n",
+     "R25": "10k",
+     "C13": "4.7n",
+     "C11": "1n",
+     "R23": "10k",
+     "C14": "1u",
+     "R26": "10k",
+     "R27": "120k",
+     "C15": "47p"
+    },
+    "derived": {
+     "gain": -12,
+     "notch_hz_est": 1000,
+     "response_db": {
+      "50": 4.6,
+      "300": 0.1,
+      "700": -8.9,
+      "1000": -15.1,
+      "2000": -5.9,
+      "5000": 1.9
+     }
+    },
+    "notes": "Own nodal calc: ~19 dB deep scoop at ~1 kHz."
+   },
+   {
+    "order": 7,
+    "type": "active BASS/TREBLE (IC2A) + bass gyrator (IC2B)",
+    "components": {
+     "R28/R32": "1k mode resistors",
+     "R33": "100k",
+     "R34": "10k",
+     "R38": "10k",
+     "C22": "47p",
+     "TREBLE": "50kB + C19 15n + R35 3.3k",
+     "BASS": "50kB + C20 150n series, C21 47n, R36 3.3k, R37 100k"
+    },
+    "derived": {
+     "bass": {
+      "f0_hz": 104.3,
+      "q_unloaded": 3.08,
+      "L_equiv_h": 15.51
+     },
+     "treble_corner_hz": 3215.3
+    },
+    "notes": ""
+   },
+   {
+    "order": 8,
+    "type": "level + output EF",
+    "components": {
+     "C23": "1u",
+     "LEVEL": "50kA",
+     "C24": "1u",
+     "Q8": "2SC3378 EF",
+     "R39": "100k",
+     "R40": "10k",
+     "C25": "10u",
+     "R42": "1k"
+    },
+    "derived": {},
+    "notes": "Capacitance-multiplier supply filter (Q9)."
+   }
+  ],
+  "clipping": {
+   "topology": "Superfuzz: rectifying LTP + shunt Si diodes",
+   "diodes": "2x 1N914-class",
+   "vf_v": 0.65,
+   "asymmetry": "full-wave rectification (octave)",
+   "model": "1N4148-class Si: Vf~0.6-0.7 V @1 mA; typical SPICE Is=2.52e-9 A, N=1.752, Rs=0.568 ohm"
+  },
+  "tone_stack": {
+   "topology": "mode filter (flat LPF / scoop notch) + active bass gyrator & treble shelf",
+   "components": {},
+   "behaviour": "FUZZ II ~1 kHz scoop; BASS 104 Hz; TREBLE 3.2 kHz"
+  },
+  "modes": [
+   {
+    "name": "BOOST",
+    "detail": "discrete op-amp boost only -> tone section"
+   },
+   {
+    "name": "FUZZ I",
+    "detail": "flat, LPF 1.06 kHz, x2.7"
+   },
+   {
+    "name": "FUZZ II",
+    "detail": "scooped ~1 kHz, x12"
+   }
+  ],
+  "confidence": "high",
+  "sources": [
+   "https://aionfx.com/project/hypercube-fuzz-distortion/",
+   "https://aionfx.com/app/files/docs/hypercube_documentation.pdf",
+   "https://www.coda-effects.com/2015/08/boss-hyper-fuzz-boss-fz2-wall-of-fuzz.html",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "FZ-3",
+  "name": "Fuzz",
+  "years": "1997-~1999",
+  "tech": "analog",
+  "supply_v": 9.0,
+  "bias_v": 4.5,
+  "controls": [
+   {
+    "name": "FUZZ",
+    "pot": "1k",
+    "taper": "C",
+    "role": "Fuzz-Face-style emitter bypass (with 10u) of Q5"
+   },
+   {
+    "name": "TONE",
+    "pot": "100k",
+    "taper": "W",
+    "role": "Big-Muff-style balance, 339 Hz LPF vs 339 Hz HPF"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "100k",
+    "taper": "A",
+    "role": "output"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (JFET SF)",
+    "components": {
+     "Q1": "2SK184GR",
+     "R1": "10k",
+     "C1": "47n",
+     "R2": "1M",
+     "R3": "10k"
+    },
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "BJT CE pre-gain + EF",
+    "components": {
+     "C2+C3": "1u+330n series = 248n",
+     "R4": "12k",
+     "R5": "47k",
+     "R6": "220 series base",
+     "Q2": "2SC2458LG",
+     "R8": "33k collector",
+     "R7": "10k emitter",
+     "C4": "10n",
+     "R9": "2.2k",
+     "Q3": "2SC2458LG EF",
+     "R10": "15k"
+    },
+    "derived": {
+     "gain_q2": -3.3,
+     "shelf_hz": 7234.3
+    },
+    "notes": "Low gain CE; C4+R9 shunt at collector gives HF shelf (~7.2 kHz)."
+   },
+   {
+    "order": 3,
+    "type": "Fuzz-Face-like 2-transistor feedback pair",
+    "components": {
+     "R11": "6.8k",
+     "C5": "1u",
+     "R12": "100k fb",
+     "C6": "1n",
+     "Q4": "2SC2458LG",
+     "R13": "22k",
+     "Q5": "2SC2458LG",
+     "R14": "3.3k",
+     "R15": "3.3k",
+     "FUZZ": "1kC + C7 10u"
+    },
+    "derived": {
+     "fc_hz": {
+      "R12*C6": 1591.5
+     }
+    },
+    "notes": "Output taken at R14/R15 junction (half collector load)."
+   },
+   {
+    "order": 4,
+    "type": "BJT CE ~unity + LPF",
+    "components": {
+     "C8": "18n",
+     "R17": "330k",
+     "R16": "150k",
+     "Q6": "2SC2458GR",
+     "R19": "10k",
+     "R18": "10k",
+     "C9": "8.2n to supply"
+    },
+    "derived": {
+     "gain": -1.0,
+     "fc_lpf_hz": 1940.9,
+     "fc_hpf_hz_est": 85.8
+    },
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "Big-Muff-style tone",
+    "components": {
+     "C10": "47n",
+     "C11": "10n",
+     "R20": "47k",
+     "R21": "47k",
+     "C12": "10n",
+     "R22": "47k",
+     "TONE": "100kW"
+    },
+    "derived": {
+     "fc_lpf_hz": 338.6,
+     "fc_hpf_hz": 338.6,
+     "response_centre_db": {
+      "100": -11.6,
+      "1000": -7.0,
+      "5000": -6.1
+     }
+    },
+    "notes": "Centre roughly flat (Aion)."
+   },
+   {
+    "order": 6,
+    "type": "level + output EF",
+    "components": {
+     "LEVEL": "100kA",
+     "C13": "1u",
+     "Q7": "2SC2458GR",
+     "R23": "100k",
+     "R24": "10k",
+     "C14": "10u",
+     "R25": "100k"
+    },
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "clipping": {
+   "topology": "transistor clipping only (no diodes)",
+   "diodes": null,
+   "vf_v": null,
+   "asymmetry": "asymmetric (Fuzz-Face-like)"
+  },
+  "tone_stack": {
+   "topology": "Big Muff style",
+   "components": {
+    "R21": "47k",
+    "C12": "10n",
+    "C11": "10n",
+    "R20": "47k",
+    "R22": "47k",
+    "TONE": "100kW"
+   },
+   "behaviour": "bass <-> treble tilt, flat-ish centre"
+  },
+  "modes": [],
+  "confidence": "high",
+  "notes": "Aion states earlier community traces had wrong values; use Aion 2021 trace.",
+  "sources": [
+   "https://aionfx.com/project/argent-silicon-fuzz/",
+   "https://aionfx.com/app/files/docs/argent_documentation.pdf",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "FZ-5",
+  "name": "Fuzz (COSM)",
+  "years": "2007-",
+  "tech": "digital",
+  "supply_v": 9.0,
+  "controls": [
+   {
+    "name": "FUZZ",
+    "pot": "digital",
+    "taper": "-",
+    "role": "drive"
+   },
+   {
+    "name": "MODE",
+    "pot": "3-pos",
+    "taper": "-",
+    "role": "S / F / O model select"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "digital",
+    "taper": "-",
+    "role": "output"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "COSM DSP model",
+    "components": {},
+    "derived": {},
+    "notes": "Models Maestro FZ-1A, Dallas Arbiter Fuzz Face and Roger Mayer/Hendrix Octavia (BOSS). Letter mapping S=Maestro, F=Fuzz Face, O=Octavia (common usage, medium confidence)."
+   }
+  ],
+  "clipping": {
+   "topology": "DSP",
+   "diodes": null,
+   "vf_v": null,
+   "asymmetry": null
+  },
+  "tone_stack": {
+   "topology": "none",
+   "components": {},
+   "behaviour": "-"
+  },
+  "modes": [
+   {
+    "name": "S",
+    "detail": "Maestro FZ-1A"
+   },
+   {
+    "name": "F",
+    "detail": "Fuzz Face"
+   },
+   {
+    "name": "O",
+    "detail": "Octavia (octave-up)"
+   }
+  ],
+  "confidence": "medium",
+  "notes": "60 mA; buffered bypass. Emulate with circuit models of the three originals.",
+  "sources": [
+   "https://www.boss.info/global/products/fz-5/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "FZ-1W",
+  "name": "Fuzz Waza Craft",
+  "years": "2021-",
+  "tech": "analog",
+  "supply_v": 9.0,
+  "controls": [
+   {
+    "name": "FUZZ",
+    "pot": "?",
+    "taper": "?",
+    "role": "gain"
+   },
+   {
+    "name": "TONE",
+    "pot": "?",
+    "taper": "?",
+    "role": "brightness; Modern: without altering mids"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "?",
+    "taper": "?",
+    "role": "output"
+   },
+   {
+    "name": "MODE",
+    "pot": "switch V/M",
+    "taper": "-",
+    "role": "Vintage/Modern"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "silicon transistor fuzz (topology unpublished)",
+    "components": {},
+    "derived": {
+     "zin_on_ohm": 22000
+    },
+    "notes": "BOSS: all-analog, silicon transistors, temperature-stable. Input impedance 22k when ON (low, Fuzz-Face-like interaction with pickups/volume knob)."
+   }
+  ],
+  "clipping": {
+   "topology": "transistor (Si)",
+   "diodes": null,
+   "vf_v": null,
+   "asymmetry": "likely asymmetric (vintage-style)"
+  },
+  "tone_stack": {
+   "topology": "unknown",
+   "components": {},
+   "behaviour": "Vintage: raspy, very volume-knob sensitive; Modern: wider gain, focused mids, fatter"
+  },
+  "modes": [
+   {
+    "name": "Vintage",
+    "detail": "raspy, aggressive, cleans up with guitar volume"
+   },
+   {
+    "name": "Modern",
+    "detail": "wider gain range, focused mids, tone knob only brightness"
+   }
+  ],
+  "confidence": "low",
+  "notes": "No trace found. 16 mA. For emulation: 22k input load is essential.",
+  "sources": [
+   "https://www.boss.info/global/products/fz-1w/"
+  ]
+ },
+ {
+  "code": "DA-2",
+  "name": "Adaptive Distortion",
+  "years": "2013-",
+  "tech": "digital",
+  "supply_v": 9.0,
+  "controls": [
+   {
+    "name": "A-DIST",
+    "pot": "digital",
+    "taper": "-",
+    "role": "adaptive drive"
+   },
+   {
+    "name": "LOW",
+    "pot": "digital",
+    "taper": "-",
+    "role": "lows"
+   },
+   {
+    "name": "HIGH",
+    "pot": "digital",
+    "taper": "-",
+    "role": "highs"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "digital",
+    "taper": "-",
+    "role": "output"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "DSP (MDP)",
+    "components": {},
+    "derived": {},
+    "notes": "Multiple distortion processors in parallel adapting in real time across the spectrum/register; tight lows, smooth highs, clarity on chords."
+   }
+  ],
+  "clipping": {
+   "topology": "DSP multiband adaptive",
+   "diodes": null,
+   "vf_v": null,
+   "asymmetry": null
+  },
+  "tone_stack": {
+   "topology": "DSP",
+   "components": {},
+   "behaviour": "LOW/HIGH"
+  },
+  "modes": [],
+  "confidence": "medium",
+  "notes": "45 mA. Suggested emulation: 3-4 band crossover, per-band waveshaper with envelope-following drive, recombine.",
+  "sources": [
+   "https://www.boss.info/global/products/da-2/"
+  ]
+ },
+ {
+  "code": "ST-2",
+  "name": "Power Stack",
+  "years": "2010-",
+  "tech": "digital",
+  "tech_verified": false,
+  "tech_note": "UNVERIFIED: inferred only from 60-65 mA current draw; no schematic/teardown found",
+  "supply_v": 9.0,
+  "controls": [
+   {
+    "name": "SOUND",
+    "pot": "?",
+    "taper": "?",
+    "role": "gain + character simultaneously"
+   },
+   {
+    "name": "BASS",
+    "pot": "?",
+    "taper": "?",
+    "role": "2-band EQ"
+   },
+   {
+    "name": "TREBLE",
+    "pot": "?",
+    "taper": "?",
+    "role": "2-band EQ"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "?",
+    "taper": "?",
+    "role": "output"
+   }
+  ],
+  "stages": [],
+  "clipping": {
+   "topology": "unknown",
+   "diodes": null,
+   "vf_v": null,
+   "asymmetry": null
+  },
+  "tone_stack": {
+   "topology": "BASS/TREBLE",
+   "components": {},
+   "behaviour": "stack-amp style"
+  },
+  "modes": [],
+  "confidence": "low",
+  "notes": "No schematic/trace found. 65 mA draw (DSP-like). Emulate as tube-stack preamp (multi-stage asymmetric) + stack tone.",
+  "sources": [
+   "https://www.boss.info/global/products/st-2/",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "MZ-2",
+  "name": "Digital Metalizer",
+  "years": "1987-~1990",
+  "tech": "hybrid",
+  "supply_v": 9.0,
+  "controls": [
+   {
+    "name": "DRIVE",
+    "pot": "250k",
+    "taper": "A",
+    "role": "distortion gain (analog board)"
+   },
+   {
+    "name": "TONE",
+    "pot": "10k x2",
+    "taper": "B",
+    "role": "tone"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "100k",
+    "taper": "A",
+    "role": "output"
+   },
+   {
+    "name": "MODE",
+    "pot": "rotary",
+    "taper": "-",
+    "role": "SGL / DOUB I / DOUB II / DOUB III / CH I / CH II"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input JFET buffer",
+    "components": {
+     "Q1": "2SK117GR",
+     "C2": "0.1u",
+     "R3": "4.7k",
+     "R4": "100k"
+    },
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "discrete JFET op-amp stage 1 (Q2/Q3 2SK117 + Q13 2SA970)",
+    "components": {
+     "C3": "3.9n",
+     "R5": "100k",
+     "R6": "470k",
+     "R7": "2.2k",
+     "R8": "4.7k",
+     "R10": "270k fb",
+     "C5": "100p",
+     "R9": "4.7k",
+     "C4": "0.1u",
+     "R11": "2.2k",
+     "supply": "+5 V (5Vb)"
+    },
+    "derived": {
+     "gain": 58.4,
+     "gain_db": 35.3,
+     "fc_hz": {
+      "HPF C3*R5": 408.1,
+      "HPF C4*R9": 338.6,
+      "LPF C5*R10": 5894.6
+     }
+    },
+    "notes": "Low (5 V) rail -> early rail clipping; strong pre-emphasis (408 Hz HPF)."
+   },
+   {
+    "order": 3,
+    "type": "Sallen-Key LPF (Q4 JFET follower) + parallel HPF path (Q15)",
+    "components": {
+     "C6": "10n",
+     "R12": "470k",
+     "R13": "33k",
+     "R14": "33k",
+     "C7": "22n",
+     "C8": "1n",
+     "C14": "4.7n",
+     "R26": "470k",
+     "Q15": "2SC2240 EF",
+     "R28": "6.8k",
+     "C26": "1u",
+     "C9": "18n",
+     "C10": "68n",
+     "R15": "4.7k",
+     "R16": "470k",
+     "R17": "4.7k"
+    },
+    "derived": {
+     "sk_f0_hz": 1028.2,
+     "sk_q": 2.35
+    },
+    "notes": "Resonant ~1 kHz LPF mixed with treble path (medium confidence)."
+   },
+   {
+    "order": 4,
+    "type": "discrete JFET op-amp stage 2 (Q5/Q6 + Q14) with DRIVE",
+    "components": {
+     "R18": "2.2k",
+     "R19": "4.7k",
+     "R20": "10k",
+     "R21": "2.2k",
+     "C11": "100p",
+     "DRIVE": "250kA"
+    },
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "post LPF + EF",
+    "components": {
+     "R22": "47k",
+     "C12": "10n",
+     "R23": "15k",
+     "C13": "47n",
+     "R24": "470k",
+     "Q16": "2SC2240 EF",
+     "R25": "4.7k"
+    },
+    "derived": {
+     "fc_hz": 338.6
+    },
+    "notes": ""
+   },
+   {
+    "order": 6,
+    "type": "digital doubler/chorus",
+    "components": {
+     "IC3": "MN5010RBA controller",
+     "IC2": "4416 DRAM (16k x4)",
+     "ADC": "RKM14L472 R-ladder + NJM311 comparator",
+     "IC5": "4066"
+    },
+    "derived": {
+     "bits": 12,
+     "fs_hz": 70000
+    },
+    "notes": "12-bit linear, 70 kHz (service notes). Modes: single, doubling I-III, chorus I-II; stereo out A/B."
+   }
+  ],
+  "clipping": {
+   "topology": "rail clipping of 5 V discrete op-amps (no diodes seen in audio path)",
+   "diodes": null,
+   "vf_v": null,
+   "asymmetry": "likely asymmetric"
+  },
+  "tone_stack": {
+   "topology": "TONE 10kB dual",
+   "components": {},
+   "behaviour": "not fully traced"
+  },
+  "modes": [
+   {
+    "name": "SGL",
+    "detail": "distortion only"
+   },
+   {
+    "name": "DOUB I-III",
+    "detail": "short-delay doubling"
+   },
+   {
+    "name": "CH I-II",
+    "detail": "chorus"
+   }
+  ],
+  "confidence": "medium",
+  "notes": "70 mA draw. Analog board schematic legible but small; stage roles partly inferred.",
+  "sources": [
+   "https://archive.org/details/boss_MZ-2_SERVICE_NOTES",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "PW-2",
+  "name": "Power Driver",
+  "years": "1996-~2000",
+  "tech": "analog",
+  "supply_v": 8.0,
+  "controls": [
+   {
+    "name": "DRIVE",
+    "pot": "50k",
+    "taper": "A",
+    "role": "discrete op-amp gain 1+(VR+100)/470"
+   },
+   {
+    "name": "FAT",
+    "pot": "100k",
+    "taper": "W",
+    "role": "boost/cut ~41 Hz (gyrator Q~1.8)"
+   },
+   {
+    "name": "MUSCLE",
+    "pot": "100k",
+    "taper": "W",
+    "role": "boost/cut ~1.07 kHz (gyrator Q~6.7)"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "50k",
+    "taper": "A",
+    "role": "output"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input JFET buffer + switch",
+    "components": {
+     "2SK118": "SF",
+     "R": "10k + 47n",
+     "Rbias": "1M"
+    },
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "BJT CE pre-gain (2SC2458)",
+    "components": {
+     "Rbias": "12k to 2.2V",
+     "Rin": "2.2k",
+     "Rc": "1.8k (4.5V rail)",
+     "Re": "1.8k // (33R + 100u)"
+    },
+    "derived": {
+     "gain_est": 21.7
+    },
+    "notes": "Supply rails 8 V / 4.5 V / 2.2 V -> low headroom."
+   },
+   {
+    "order": 3,
+    "type": "discrete JFET op-amp (2SK184 pair, 2SA1048 out) DRIVE",
+    "components": {
+     "bias": "180k/220k",
+     "tail": "4.7k",
+     "drain": "2.2k",
+     "Rg": "470 + 10u",
+     "Rf": "50kA + 100",
+     "Rload": "1k",
+     "supply": "4.5 V"
+    },
+    "derived": {
+     "gain_min": 1.21,
+     "gain_max": 107.6,
+     "fc_hz": 33.9
+    },
+    "notes": "Rail clipping at 4.5 V supply (no diodes)."
+   },
+   {
+    "order": 4,
+    "type": "inverting amp (M5218A)",
+    "components": {
+     "Rin": "4.7k",
+     "Rf": "15k",
+     "Cin": "10u"
+    },
+    "derived": {
+     "gain": -3.19
+    },
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "FAT/MUSCLE boost/cut (op-amp) with 2 BJT gyrators",
+    "components": {
+     "R": "1.5k in, 3.3k fb, 330p",
+     "FAT gyr": "1u series, 68n, 2.2k, 100k",
+     "MUSCLE gyr": "0.1u series, 10n, 220, 100k"
+    },
+    "derived": {
+     "fat": {
+      "f0_hz": 41.1,
+      "q_unloaded": 1.76,
+      "L_equiv_h": 14.96
+     },
+     "muscle": {
+      "f0_hz": 1073.0,
+      "q_unloaded": 6.74,
+      "L_equiv_h": 0.22
+     }
+    },
+    "notes": ""
+   },
+   {
+    "order": 6,
+    "type": "level + output",
+    "components": {
+     "LEVEL": "50kA",
+     "2SK118": "switch",
+     "2SC2458": "EF",
+     "Rout": "1k"
+    },
+    "derived": {},
+    "notes": ""
+   }
+  ],
+  "clipping": {
+   "topology": "rail clipping of low-voltage discrete op-amp + BJT",
+   "diodes": null,
+   "vf_v": null,
+   "asymmetry": "asymmetric"
+  },
+  "tone_stack": {
+   "topology": "2 gyrator boost/cut",
+   "components": {},
+   "behaviour": "FAT 41 Hz, MUSCLE 1.07 kHz"
+  },
+  "modes": [],
+  "confidence": "medium",
+  "notes": "Community trace without designators.",
+  "sources": [
+   "https://schematicheaven.net/effects/boss_pw2_powerdriver_overdrive.pdf",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ },
+ {
+  "code": "OS-2",
+  "name": "OverDrive/Distortion",
+  "years": "1990-",
+  "tech": "analog",
+  "supply_v": 9.0,
+  "bias_v": 4.5,
+  "controls": [
+   {
+    "name": "DRIVE",
+    "pot": "270k dual (VR3a/b)",
+    "taper": "?",
+    "role": "gain of both OD (IC2b) and DIST (IC2a) paths"
+   },
+   {
+    "name": "COLOR",
+    "pot": "20k",
+    "taper": "A (log)",
+    "role": "crossfade OD path <-> DIST path"
+   },
+   {
+    "name": "TONE",
+    "pot": "20k",
+    "taper": "?",
+    "role": "IC1b active treble"
+   },
+   {
+    "name": "LEVEL",
+    "pot": "50k",
+    "taper": "B",
+    "role": "output"
+   }
+  ],
+  "stages": [
+   {
+    "order": 1,
+    "type": "input buffer (JFET)",
+    "components": {
+     "R28": "10k",
+     "C22": "47n",
+     "R33": "1M"
+    },
+    "derived": {},
+    "notes": ""
+   },
+   {
+    "order": 2,
+    "type": "OD path: IC2b non-inverting with feedback diodes",
+    "components": {
+     "C27": "47n",
+     "R35": "100k",
+     "R37": "1k",
+     "VR3a": "270k",
+     "R39": "100",
+     "C23": "4.7u",
+     "D7": "1 diode",
+     "D8+D9": "2 diodes series",
+     "C26": "100p"
+    },
+    "derived": {
+     "gain_max": 2711,
+     "clip_v_pos_neg": "0.65 / 1.3"
+    },
+    "notes": "Tube-Screamer-like asymmetric soft clip."
+   },
+   {
+    "order": 3,
+    "type": "DIST path: IC2a non-inverting -> shunt diodes -> BJT recovery",
+    "components": {
+     "C28": "22n",
+     "R36": "220k",
+     "R29": "4.7M (trace '4M1')",
+     "C17": "100p",
+     "R22": "12k",
+     "VR3b": "270k",
+     "C15": "10u",
+     "R30": "100",
+     "C18": "0.47u",
+     "R31": "1.2k",
+     "C19": "2.2u",
+     "C15b": "10u",
+     "R23": "1k",
+     "D3,D4": "shunt Si",
+     "C16": "18n",
+     "R24": "2.2k",
+     "R25": "12k",
+     "R27": "6.8k",
+     "C20": "100n",
+     "R26": "8.2k",
+     "R32": "6.8k",
+     "Q2": "EF"
+    },
+    "derived": {},
+    "notes": "Hard clipping (DS-style) path; values from trace, topology medium confidence."
+   },
+   {
+    "order": 4,
+    "type": "COLOR mix + IC1a gain",
+    "components": {
+     "VR4": "20k log",
+     "C35": "47u",
+     "C5": "10u",
+     "R2": "20k",
+     "C4": "10n",
+     "R5": "100k",
+     "R4": "33k",
+     "R3": "150k",
+     "R14": "22k"
+    },
+    "derived": {
+     "gain": 7.82
+    },
+    "notes": ""
+   },
+   {
+    "order": 5,
+    "type": "tone IC1b",
+    "components": {
+     "R6": "10k",
+     "VR2": "20k",
+     "R1": "4.7k",
+     "C1": "10n",
+     "C6": "1n",
+     "R7": "10k"
+    },
+    "derived": {
+     "treble_corner_hz": 3386.3
+    },
+    "notes": ""
+   }
+  ],
+  "clipping": {
+   "topology": "parallel: OD feedback diodes (asym) + DIST shunt diodes, crossfaded",
+   "diodes": "Si",
+   "vf_v": 0.65,
+   "asymmetry": "OD path asymmetric",
+   "model": "1N4148-class Si: Vf~0.6-0.7 V @1 mA; typical SPICE Is=2.52e-9 A, N=1.752, Rs=0.568 ohm"
+  },
+  "tone_stack": {
+   "topology": "active treble (SD-1 like)",
+   "components": {},
+   "behaviour": "-"
+  },
+  "modes": [],
+  "confidence": "medium",
+  "notes": "Overlaps with overdrive family; included for completeness.",
+  "sources": [
+   "https://schematicheaven.net/effects/boss_os2_overdrive_dist.pdf",
+   "http://www.bossareaforum.com/Forum/viewtopic.php?t=463"
+  ]
+ }
+]
