@@ -49,6 +49,8 @@ namespace pt::engine
         //======================== thread dei messaggi
         int size() const;
         Slot* slot (int index) const;
+        /** Riferimento condiviso: mantiene vivo lo slot anche se viene rimosso dalla catena. */
+        std::shared_ptr<Slot> slotRef (int index) const;
         bool canAdd() const { return size() < maxSlots; }
         /** Inserisce uno slot (vuoto se modelId e' vuoto) nella posizione indicata (-1 = in fondo). */
         int insert (int index, const juce::String& modelId);

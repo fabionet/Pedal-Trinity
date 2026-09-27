@@ -140,6 +140,12 @@ namespace pt::engine
         return juce::isPositiveAndBelow (index, (int) model.size()) ? model[(size_t) index].get() : nullptr;
     }
 
+    std::shared_ptr<Slot> Chain::slotRef (int index) const
+    {
+        const juce::ScopedLock sl (modelLock);
+        return juce::isPositiveAndBelow (index, (int) model.size()) ? model[(size_t) index] : nullptr;
+    }
+
     int Chain::insert (int index, const juce::String& modelId)
     {
         auto s = makeSlot (modelId);

@@ -93,10 +93,11 @@ namespace pt::ui
     void PedalView::bindTo (int slotIndex)
     {
         index = slotIndex;
-        auto* s = chain.slot (index);
-        const auto* d = s != nullptr ? s->def : nullptr;
-        if (s == slot && d == def && canvas != nullptr) return;
-        slot = s;
+        auto ref = chain.slotRef (index);
+        const auto* d = ref != nullptr ? ref->def : nullptr;
+        if (ref.get() == slot && d == def && (canvas != nullptr || d == nullptr)) return;
+        slotRef = ref;
+        slot = ref.get();
         def = d;
         rebuild();
     }
@@ -204,6 +205,21 @@ namespace pt::ui
 
     void PedalView::paint (juce::Graphics& g)
     {
+        if (def != nullptr && ! source.isValid())
+        {
+            // modello senza immagine: segnaposto nel colore del pedale
+            const auto a = imageArea().reduced (4.0f);
+            const auto body = juce::Colour (def->colour).withAlpha (1.0f);
+            g.setGradientFill (juce::ColourGradient (body.brighter (0.25f), a.getTopLeft(), body.darker (0.45f), a.getBottomLeft(), false));
+            g.fillRoundedRectangle (a, a.getWidth() * 0.05f);
+            g.setColour (juce::Colours::black.withAlpha (0.55f));
+            g.drawRoundedRectangle (a, a.getWidth() * 0.05f, 2.0f);
+            g.setColour (body.getPerceivedBrightness() > 0.55f ? juce::Colour (0xff161618) : juce::Colour (0xffeeecde));
+            const auto t = a.withTrimmedTop (a.getHeight() * 0.72f).reduced (a.getWidth() * 0.06f, 0.0f);
+            g.setFont (juce::Font (juce::jlimit (10.0f, 22.0f, a.getWidth() * 0.075f), juce::Font::bold | juce::Font::italic));
+            g.drawFittedText (juce::String (def->name) + "\n" + def->code, t.toNearestInt(), juce::Justification::centredTop, 2);
+            return;
+        }
         if (def == nullptr || ! source.isValid())
         {
             // slot vuoto

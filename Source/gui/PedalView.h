@@ -37,6 +37,7 @@ namespace pt::ui
         engine::Chain& chain;
         juce::Component* popupParent;
         int index = -1;
+        std::shared_ptr<engine::Slot> slotRef;   // mantiene vivo lo slot finche' la vista lo usa
         engine::Slot* slot = nullptr;
         const engine::ModelDef* def = nullptr;
         juce::SharedResourcePointer<Assets> assets;

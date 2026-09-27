@@ -67,6 +67,7 @@ def main():
     out = [r"\begin{xltabular}{\linewidth}{@{}l l X l l@{}}",
            r"\toprule \textbf{Sigla} & \textbf{Nome} & \textbf{Suono di riferimento} & \textbf{Emulazione} & \textbf{Dati}\\ \midrule",
            r"\endhead", r"\bottomrule \endfoot"] + rows + [r"\end{xltabular}"]
+    open(os.path.join(ROOT, "docs", "guide", "modelcount.tex"), "w").write("\\newcommand{\\modelcount}{%d}\n" % len(models))
     path = os.path.join(ROOT, "docs", "guide", "catalogo.tex")
     open(path, "w").write("% generato da tools/art/guide_catalog.py\n" + "\n".join(out) + "\n")
     print("scritto", path, len(models), "modelli")

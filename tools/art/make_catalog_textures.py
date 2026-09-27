@@ -30,6 +30,8 @@ def colours(m):
     body = tuple(m["colour"])
     text = tuple(m["text"]) if m.get("text") else ((22, 22, 24) if lum(body) > 118 else (238, 236, 222))
     accent = tuple(m["accent"]) if m.get("accent") else text
+    if m.get("style") != "ts" and abs(lum(accent) - lum(body)) < 55 and max(abs(a - b) for a, b in zip(accent, body)) < 110:
+        accent = text   # accento illeggibile sul corpo: titolo nel colore del testo
     minor = (240, 120, 30) if lum(body) < 110 else ((190, 30, 30) if lum(body) > 170 else (250, 250, 245))
     return body, text, accent, minor
 
