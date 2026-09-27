@@ -12,13 +12,13 @@ namespace pt::ui
     struct Strip { const char* resource; int frameW, frameH, cols, frames; float anchorX, anchorY; };
     inline constexpr Strip strips[numStrips] =
     {
-        { "strip_ts_big_png", 291, 290, 8, 64, 154.676f, 113.500f },
-        { "strip_ts_small_png", 247, 274, 8, 64, 129.618f, 97.500f },
-        { "strip_boss_png", 246, 275, 8, 64, 127.559f, 98.500f },
-        { "strip_boss_outer_png", 219, 231, 8, 64, 115.500f, 89.500f },
-        { "strip_boss_inner_png", 163, 179, 8, 64, 50.441f, 63.057f },
+        { "strip_ts_big_png", 271, 230, 8, 64, 135.676f, 113.500f },
+        { "strip_ts_small_png", 232, 197, 8, 64, 114.618f, 97.500f },
+        { "strip_boss_png", 234, 198, 8, 64, 116.559f, 98.500f },
+        { "strip_boss_outer_png", 208, 180, 8, 64, 104.500f, 89.500f },
+        { "strip_boss_inner_png", 162, 179, 8, 64, 50.441f, 63.057f },
         { "strip_slider_png", 108, 114, 1, 1, 54.382f, 56.500f },
-        { "strip_toggle_png", 159, 157, 2, 2, 58.324f, 65.500f },
+        { "strip_toggle_png", 177, 128, 2, 2, 58.324f, 65.500f },
     };
 
     /** Pomello: ancoraggio (base), centro della sommita', raggio di presa (px @1x). */
