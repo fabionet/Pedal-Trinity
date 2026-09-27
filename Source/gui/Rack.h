@@ -68,6 +68,7 @@ namespace pt::ui
         PedalView view;
         bool dropHover = false;
         juce::String laneLabel;
+        juce::SharedResourcePointer<ThemeManager> themes;
         std::unique_ptr<juce::FileChooser> chooser;
         void showContextMenu();
     };
@@ -93,5 +94,6 @@ namespace pt::ui
         PedalView view;
         juce::TextButton prev { "<" }, next { ">" }, close { "Chiudi" };
         juce::Label title, info;
+        juce::SharedResourcePointer<ThemeManager> themes;
     };
 }

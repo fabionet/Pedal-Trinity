@@ -33,7 +33,29 @@ namespace pt::ui
 
     juce::Image Assets::pedalImage (const char* resource)
     {
-        return resource != nullptr ? loadResource (resource) : juce::Image();
+        // colore in JPEG ("<id>_jpg") + trasparenza e ombra in una maschera PNG ("<id>_a_png"):
+        // il pedale si appoggia sulla pedana del tema scelto
+        if (resource == nullptr) return {};
+        const auto key = juce::String ("pedal:") + resource;
+        auto cached = juce::ImageCache::getFromHashCode (key.hashCode64());
+        if (cached.isValid()) return cached;
+
+        auto colour = loadResource (resource);
+        const auto maskName = juce::String (resource).upToLastOccurrenceOf ("_jpg", false, false) + "_a_png";
+        const auto mask = loadResource (maskName.toRawUTF8());
+        if (colour.isValid() && mask.isValid() && mask.getBounds() == colour.getBounds())
+        {
+            juce::Image out (juce::Image::ARGB, colour.getWidth(), colour.getHeight(), false);
+            const juce::Image::BitmapData src (colour, juce::Image::BitmapData::readOnly);
+            const juce::Image::BitmapData m (mask, juce::Image::BitmapData::readOnly);
+            juce::Image::BitmapData dst (out, juce::Image::BitmapData::writeOnly);
+            for (int y = 0; y < out.getHeight(); ++y)
+                for (int x = 0; x < out.getWidth(); ++x)
+                    dst.setPixelColour (x, y, src.getPixelColour (x, y).withAlpha (m.getPixelColour (x, y).getRed()));
+            colour = out;
+        }
+        juce::ImageCache::addImageToCache (colour, key.hashCode64());
+        return colour;
     }
 
     Assets::Assets()

@@ -53,11 +53,12 @@ namespace pt::ui
         }
         void paintButton (juce::Graphics& g, bool over, bool down) override
         {
+            const auto& t = themes->current();
             auto r = getLocalBounds().toFloat().reduced (1.0f);
-            g.setColour (down ? juce::Colour (0xff3a3b40) : over ? juce::Colour (0xff303136) : juce::Colour (0xff25262a));
+            g.setColour (down ? t.button.brighter (0.3f) : over ? t.button.brighter (0.15f) : t.button);
             g.fillRoundedRectangle (r, 3.0f);
             auto ic = r.withSizeKeepingCentre (juce::jmin (r.getWidth(), r.getHeight()) * 0.62f, juce::jmin (r.getWidth(), r.getHeight()) * 0.62f);
-            juce::Colour col = kind == Delete ? juce::Colour (0xffe06a5a) : juce::Colour (0xffe8e6df);
+            juce::Colour col = kind == Delete ? juce::Colour (0xffe06a5a) : t.text;
             if (kind == Power) col = getToggleState() ? juce::Colour (0xffff4a30) : juce::Colour (0xff77787c);
             if (! isEnabled()) col = col.withAlpha (0.3f);
             g.setColour (col);
@@ -83,6 +84,7 @@ namespace pt::ui
             }
         }
         Kind kind;
+        juce::SharedResourcePointer<ThemeManager> themes;
     };
 
     //==============================================================================
@@ -246,16 +248,18 @@ namespace pt::ui
 
     void SlotComponent::paint (juce::Graphics& g)
     {
+        // lo slot lascia vedere la pedana del tema: solo un velo leggero e l'intestazione scura
+        const auto& t = themes->current();
         auto r = getLocalBounds().toFloat().reduced (1.0f);
-        g.setColour (juce::Colour (0xff17181b));
-        g.fillRoundedRectangle (r, 6.0f);
-        g.setColour (juce::Colour (0x18ffffff));
+        g.setColour (t.ink.withAlpha (0.10f));
         g.drawRoundedRectangle (r, 6.0f, 1.0f);
         auto h = headerArea().toFloat().reduced (1.0f);
-        g.setColour (juce::Colour (0xff1f2024));
-        g.fillRoundedRectangle (h.withHeight (h.getHeight()), 5.0f);
+        g.setColour (juce::Colours::black.withAlpha (0.35f));
+        g.fillRoundedRectangle (h.translated (0.0f, 2.0f), 5.0f);
+        g.setColour (t.header);
+        g.fillRoundedRectangle (h, 5.0f);
         const int row = juce::jlimit (18, 28, getWidth() / 8);
-        g.setColour (juce::Colour (0xffd9b464));
+        g.setColour (t.accent);
         g.setFont (juce::Font ((float) row * 0.62f, juce::Font::bold));
         const int nw = numberWidth();
         if (laneLabel.isNotEmpty())
@@ -278,7 +282,7 @@ namespace pt::ui
     {
         if (dropHover)
         {
-            g.setColour (juce::Colour (0xffd9b464));
+            g.setColour (themes->current().accent);
             g.drawRoundedRectangle (getLocalBounds().toFloat().reduced (2.0f), 6.0f, 3.0f);
         }
     }
@@ -412,11 +416,14 @@ namespace pt::ui
 
     void ZoomPanel::paint (juce::Graphics& g)
     {
+        const auto& t = themes->current();
+        if (title.findColour (juce::Label::textColourId) != t.text) title.setColour (juce::Label::textColourId, t.text);
+        if (info.findColour (juce::Label::textColourId) != t.textDim) info.setColour (juce::Label::textColourId, t.textDim);
         g.fillAll (juce::Colours::black.withAlpha (0.7f));
         auto c = card().toFloat();
-        g.setGradientFill (juce::ColourGradient (juce::Colour (0xff232428), c.getTopLeft(), juce::Colour (0xff111214), c.getBottomLeft(), false));
+        g.setGradientFill (juce::ColourGradient (t.panelTop.brighter (0.05f), c.getTopLeft(), t.panelBottom, c.getBottomLeft(), false));
         g.fillRoundedRectangle (c, 12.0f);
-        g.setColour (juce::Colour (0x88d9b464));
+        g.setColour (t.accent.withAlpha (0.55f));
         g.drawRoundedRectangle (c.reduced (1.0f), 12.0f, 1.4f);
     }
 

@@ -134,6 +134,7 @@ e l'LV2 in \texttt{...\textbackslash Common Files\textbackslash LV2}.
 \num{G} & \textbf{INPUT}: meter d'ingresso e fader del guadagno (da $-18$ a $+18$ dB); la presa jack porta il segnale al primo pedale. \\
 \num{H} & \textbf{OUTPUT}: meter d'uscita (mono, oppure L/R con lo splitter attivo) e fader del volume; con lo splitter in DUAL o STEREO anche i pomelli BALANCE, LEFT e RIGHT. Tutti automatizzabili nella DAW. \\
 \num{I} & \textbf{INFO}: licenza, autore, versione, crediti e apertura di questa guida. \\
+\num{J} & \textbf{Opzioni} (ingranaggio): tema della pedaliera, cavi jack visibili e colore dei cavi (vedi sezione \ref{sec:opzioni}). \\
 \end{tabularx}
 
 \subsection*{Il segnale e i cavi}
@@ -217,6 +218,34 @@ mandate A/B quando lo splitter è nel primo slot. Le due catene rientrano nel li
 \includegraphics[width=\linewidth]{../images/guide_stereo.jpg}\\[0.2em]
 \small Splitter in STEREO: chorus e delay stereo con i cavi A e B; il distorsore mono usa solo la presa A.
 \end{center}
+
+% ------------------------------------------------------------------
+\clearpage
+\section{Opzioni e temi}\label{sec:opzioni}
+Il tasto con l'\textbf{ingranaggio} apre il pannello delle opzioni. Le scelte valgono subito, sono
+ricordate per le volte successive e sono comuni a tutte le istanze del plugin e allo Standalone
+(file \texttt{Options.settings} nella cartella \texttt{PedalTrinity} delle impostazioni).
+\begin{center}\includegraphics[width=0.8\linewidth]{../images/guide_options.jpg}\end{center}
+\begin{itemize}
+  \item \textbf{Tema della pedaliera}: la superficie su cui poggiano i pedali e la tavolozza coordinata
+        di barra, pannelli e pulsanti. I pedali sono renderizzati senza sfondo, con la loro ombra, e si
+        appoggiano davvero sulla pedana scelta:
+        \begin{itemize}
+          \item \textbf{Pedana Pro} (predefinito): guide in alluminio anodizzato nero a lamelle rivestite di
+                tessuto a strappo, con viti a vista;
+          \item \textbf{Tolex e cromo}: tolex nero goffrato, profilo crema e angolari cromati;
+          \item \textbf{Noce e ottone}: tavole di noce venato con finitura a olio e viti in ottone;
+          \item \textbf{British Green}: tolex verde in tinta con gli amplificatori d'epoca, profilo oro;
+          \item \textbf{Alluminio spazzolato}: lamelle in alluminio naturale, accento azzurro acciaio;
+          \item \textbf{Studio notte}: moquette scura, l'aspetto originale ad alto contrasto.
+        \end{itemize}
+  \item \textbf{Cavi jack}: mostra o nasconde i cavi e ne sceglie il colore (nero, grafite, rosso
+        vintage, blu notte, tweed crema).
+\end{itemize}
+Barra, pannelli e intestazioni degli slot restano scuri in ogni tema, così i testi sono sempre
+leggibili: l'autotest verifica per ogni tema il contrasto secondo le linee guida WCAG 2.1
+(testo almeno 4,5:1, accenti e segni sulla pedana almeno 3:1).
+\begin{center}\includegraphics[width=\linewidth]{../images/guide_themes.jpg}\end{center}
 
 % ------------------------------------------------------------------
 \section{Preset}

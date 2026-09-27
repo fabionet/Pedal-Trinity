@@ -57,8 +57,9 @@ except Exception:
     pass
 scene.view_settings.exposure = -0.75      # vernici vive senza bruciare i piani illuminati
 scene.render.image_settings.file_format = "PNG"
-scene.render.image_settings.color_mode = "RGB"
-scene.render.film_transparent = False
+scene.render.image_settings.color_mode = "RGBA"
+# sfondo trasparente: il pedale (con la sua ombra) si appoggia su qualsiasi pedana del tema scelto
+scene.render.film_transparent = True
 
 STATIC = bpy.data.collections.new("static")
 PEDAL = bpy.data.collections.new("pedal")
@@ -256,7 +257,8 @@ def build_ts(m, lay):
 
 # board e luci (come nella scena originale)
 bm = bmesh.new(); bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=0.3)
-mesh_obj("board", bm, STATIC, [MAT_BOARD], smooth=False)
+_board = mesh_obj("board", bm, STATIC, [MAT_BOARD], smooth=False)
+_board.is_shadow_catcher = True          # invisibile, ma raccoglie l'ombra del pedale (canale alfa)
 
 
 def add_sun(name, direction, strength, angle_deg):

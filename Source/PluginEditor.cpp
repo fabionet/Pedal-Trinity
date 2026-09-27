@@ -10,6 +10,39 @@ using namespace pt::ui;
 
 namespace
 {
+    /** Tasto OPZIONI: ingranaggio disegnato. */
+    class GearButton : public juce::Button
+    {
+    public:
+        GearButton() : juce::Button ("Opzioni")
+        {
+            setTooltip ("Opzioni: tema della pedaliera e cavi");
+            setMouseCursor (juce::MouseCursor::PointingHandCursor);
+        }
+        void paintButton (juce::Graphics& g, bool over, bool down) override
+        {
+            getLookAndFeel().drawButtonBackground (g, *this, findColour (juce::TextButton::buttonColourId), over, down);
+            const auto r = getLocalBounds().toFloat().withSizeKeepingCentre (18.0f, 18.0f);
+            const auto c = r.getCentre();
+            juce::Path gear;
+            const int teeth = 8;
+            for (int i = 0; i < teeth * 2; ++i)
+            {
+                const float a = juce::MathConstants<float>::twoPi * (float) i / (float) (teeth * 2);
+                const float rad = (i % 2 == 0 ? 9.0f : 7.0f);
+                const float a0 = a - 0.18f, a1 = a + 0.18f;
+                const juce::Point<float> p0 (c.x + rad * std::sin (a0), c.y - rad * std::cos (a0)), p1 (c.x + rad * std::sin (a1), c.y - rad * std::cos (a1));
+                if (i == 0) gear.startNewSubPath (p0); else gear.lineTo (p0);
+                gear.lineTo (p1);
+            }
+            gear.closeSubPath();
+            gear.addEllipse (r.withSizeKeepingCentre (7.0f, 7.0f));
+            gear.setUsingNonZeroWinding (false);
+            g.setColour (findColour (juce::TextButton::textColourOffId));
+            g.fillPath (gear);
+        }
+    };
+
     constexpr int toolbarH = 50;
     constexpr int views[4] = { 3, 6, 9, 18 };
 }
@@ -83,6 +116,9 @@ PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcess
     infoButton.setTooltip ("Informazioni, licenza e guida");
     infoButton.onClick = [this] { showInfo (true); };
     addAndMakeVisible (infoButton);
+    optionsButton = std::make_unique<GearButton>();
+    optionsButton->onClick = [this] { showOptions (true); };
+    addAndMakeVisible (*optionsButton);
 
     pt::ui::Pedalboard::Callbacks bcb;
     bcb.zoom = [this] (int i) { showZoom (i); };
@@ -97,6 +133,8 @@ PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcess
     const int w = (int) processor.uiState.getProperty ("w", 1280), h = (int) processor.uiState.getProperty ("h", 760);
 
     processor.chain.addChangeListener (this);
+    themes->addChangeListener (this);
+    applyTheme();
 
     setResizable (true, true);
     setResizeLimits (1280, 760, 2560, 1440);
@@ -108,6 +146,8 @@ PedalTrinityEditor::~PedalTrinityEditor()
 {
     saveUiState();
     processor.chain.removeChangeListener (this);
+    themes->removeChangeListener (this);
+    optionsPanel.reset();
     board.reset();
     zoomPanel.reset();
     infoPanel.reset();
@@ -124,17 +164,28 @@ void PedalTrinityEditor::saveUiState()
 
 void PedalTrinityEditor::paint (juce::Graphics& g)
 {
-    // fondo: moquette scura della pedaliera
-    g.setGradientFill (juce::ColourGradient (juce::Colour (0xff1b1c1f), 0, 0, juce::Colour (0xff0d0d0f), 0, (float) getHeight(), false));
-    g.fillAll();
+    const auto& t = themes->current();
+    g.fillAll (t.window);
     auto bar = getLocalBounds().removeFromTop (toolbarH).toFloat();
-    g.setGradientFill (juce::ColourGradient (juce::Colour (0xff2b2c30), bar.getTopLeft(), juce::Colour (0xff18191c), bar.getBottomLeft(), false));
+    g.setGradientFill (juce::ColourGradient (t.barTop, bar.getTopLeft(), t.barBottom, bar.getBottomLeft(), false));
     g.fillRect (bar);
-    g.setColour (juce::Colour (0x66d9b464));
+    g.setColour (t.accent.withAlpha (0.4f));
     g.fillRect (bar.removeFromBottom (1.5f));
-    g.setColour (juce::Colour (0xffb9b6ac));
+    g.setColour (t.textDim);
     g.setFont (juce::Font (11.0f, juce::Font::bold));
     g.drawText (juce::String ("by ") + pt::author + "  v" + pt::versionString, 18, 30, 220, 16, juce::Justification::left);
+}
+
+void PedalTrinityEditor::applyTheme()
+{
+    const auto& t = themes->current();
+    lookAndFeel.applyTheme (t);
+    logo.setColour (juce::Label::textColourId, t.accent);
+    pageLabel.setColour (juce::Label::textColourId, t.accent);
+    zoomLabel.setColour (juce::Label::textColourId, t.textDim);
+    sendLookAndFeelChange();
+    if (board) board->themeChanged();
+    repaint();
 }
 
 juce::Rectangle<int> PedalTrinityEditor::rackArea() const
@@ -153,8 +204,10 @@ void PedalTrinityEditor::resized()
     bar.removeFromLeft (10);
 
     const int gap = wide ? 10 : 7;
-    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 330, wide ? 500 : 448));
+    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 330, wide ? 546 : 490));
     infoButton.setBounds (right.removeFromRight (60).reduced (0, 3));
+    right.removeFromRight (6);
+    optionsButton->setBounds (right.removeFromRight (36).reduced (0, 3));
     right.removeFromRight (gap);
     zoomIn.setBounds (right.removeFromRight (30).reduced (0, 3));
     zoomLabel.setBounds (right.removeFromRight (wide ? 90 : 78));
@@ -176,11 +229,16 @@ void PedalTrinityEditor::resized()
     board->setPage (first, view);
     if (zoomPanel) zoomPanel->setBounds (getLocalBounds());
     if (infoPanel) infoPanel->setBounds (getLocalBounds());
+    if (optionsPanel) optionsPanel->setBounds (getLocalBounds());
     saveUiState();
 }
 
 //==============================================================================
-void PedalTrinityEditor::changeListenerCallback (juce::ChangeBroadcaster*) { refresh(); }
+void PedalTrinityEditor::changeListenerCallback (juce::ChangeBroadcaster* source)
+{
+    if (source == &themes.getObject()) applyTheme();
+    else refresh();
+}
 
 void PedalTrinityEditor::refresh()
 {
@@ -347,4 +405,18 @@ void PedalTrinityEditor::showInfo (bool shouldShow)
     infoPanel->setBounds (getLocalBounds());
     addAndMakeVisible (*infoPanel);
     infoPanel->grabKeyboardFocus();
+}
+
+void PedalTrinityEditor::showOptions (bool shouldShow)
+{
+    if (! shouldShow) { optionsPanel.reset(); return; }
+    optionsPanel = std::make_unique<pt::ui::OptionsPanel>();
+    const juce::Component::SafePointer<PedalTrinityEditor> safeThis (this);
+    optionsPanel->onClose = [safeThis]
+    {
+        juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->showOptions (false); });
+    };
+    optionsPanel->setBounds (getLocalBounds());
+    addAndMakeVisible (*optionsPanel);
+    optionsPanel->grabKeyboardFocus();
 }

@@ -47,6 +47,7 @@ namespace pt::ui
         engine::Slot* slot = nullptr;
         const engine::ModelDef* def = nullptr;
         juce::SharedResourcePointer<Assets> assets;
+        juce::SharedResourcePointer<ThemeManager> themes;
         std::unique_ptr<Canvas> canvas;
         juce::Image source, scaled;
         juce::Rectangle<int> scaledFor;

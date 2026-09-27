@@ -13,7 +13,6 @@ namespace pt::ui
     {
         constexpr float logicalW = 120.0f;       // larghezza logica del pannello (px dei filmstrip @1x)
         constexpr float minDb = -60.0f, maxDb = 6.0f;
-        const juce::Colour gold (0xffd9b464), text (0xffb9b6ac);
 
         float dbToProp (float db) { return juce::jlimit (0.0f, 1.0f, (db - minDb) / (maxDb - minDb)); }
     }
@@ -31,7 +30,6 @@ namespace pt::ui
         canvas = std::make_unique<Canvas>();
         addAndMakeVisible (*canvas);
         value.setJustificationType (juce::Justification::centred);
-        value.setColour (juce::Label::textColourId, gold);
         value.setFont (juce::Font (12.0f, juce::Font::bold));
         value.setInterceptsMouseClicks (false, false);
         addAndMakeVisible (value);
@@ -109,7 +107,7 @@ namespace pt::ui
                 d.label = labels[i];
                 d.units = i == 0 ? Units::Percent : Units::Db;
                 d.x = logicalW * 0.5f;
-                d.y = (float) knobArea.getY() / s + step * ((float) i + 0.5f) + 4.0f;
+                d.y = (float) knobArea.getY() / s + step * ((float) i + 0.5f) + 14.0f;
                 d.tx = d.x + (rk.tx - rk.x);
                 d.ty = d.y + (rk.ty - rk.y);
                 knobs[i] = std::make_unique<KnobControl> (*assets, d);
@@ -169,8 +167,11 @@ namespace pt::ui
 
     void MeterPanel::paint (juce::Graphics& g)
     {
+        const auto& t = themes->current();
+        const auto gold = t.accent, text = t.textDim;
+        if (value.findColour (juce::Label::textColourId) != gold) value.setColour (juce::Label::textColourId, gold);
         auto r = getLocalBounds().toFloat();
-        g.setGradientFill (juce::ColourGradient (juce::Colour (0xff202125), 0, 0, juce::Colour (0xff141517), 0, r.getBottom(), false));
+        g.setGradientFill (juce::ColourGradient (t.panelTop, 0, 0, t.panelBottom, 0, r.getBottom(), false));
         g.fillRoundedRectangle (r.reduced (1.0f), 6.0f);
         g.setColour (juce::Colour (0x22ffffff));
         g.drawRoundedRectangle (r.reduced (1.0f), 6.0f, 1.0f);

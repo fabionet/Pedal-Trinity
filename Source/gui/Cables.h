@@ -28,7 +28,8 @@ namespace pt::ui
         /** Lunghezza della spina (dalla bocca della presa all'attacco del cavo), px logici. */
         inline constexpr float plugLength = 46.0f;
 
-        void drawCable (juce::Graphics&, const Cable&);
+        void drawCable (juce::Graphics&, const Cable&, juce::Colour body = juce::Colour (0xff141416),
+                        juce::Colour sheen = juce::Colour (0xff2a2b30));
         void drawPlug (juce::Graphics&, juce::Point<float> jack, float dir, float scale, int line);
         /** Presa a pannello (dado esagonale e bocca) centrata in p. */
         void drawSocket (juce::Graphics&, juce::Point<float> p, float scale);
@@ -40,10 +41,14 @@ namespace pt::ui
     public:
         CableOverlay() { setInterceptsMouseClicks (false, false); }
         void setCables (std::vector<Cable> c) { list = std::move (c); repaint(); }
+        /** Colore della gomma e visibilita' dei cavi (opzioni). */
+        void setStyle (juce::Colour b, juce::Colour s, bool show) { body = b; sheen = s; visible = show; repaint(); }
         const std::vector<Cable>& getCables() const { return list; }
         void paint (juce::Graphics&) override;
 
     private:
         std::vector<Cable> list;
+        juce::Colour body { 0xff141416 }, sheen { 0xff2a2b30 };
+        bool visible = true;
     };
 }

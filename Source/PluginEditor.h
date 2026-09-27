@@ -8,6 +8,7 @@
 #include "PluginProcessor.h"
 #include "gui/Pedalboard.h"
 #include "gui/InfoPanel.h"
+#include "gui/OptionsPanel.h"
 
 class PedalTrinityEditor : public juce::AudioProcessorEditor,
                            public juce::DragAndDropContainer,
@@ -21,6 +22,7 @@ public:
     void resized() override;
 
     void showInfo (bool shouldShow);
+    void showOptions (bool shouldShow);
     void showZoom (int slotIndex);
     void setView (int pedalsVisible);
     void scrollBy (int delta);
@@ -30,6 +32,7 @@ public:
 
 private:
     void changeListenerCallback (juce::ChangeBroadcaster*) override;
+    void applyTheme();
     void refresh();
     void zoomStep (int dir);
     void showPresetMenu();
@@ -48,6 +51,9 @@ private:
     std::unique_ptr<pt::ui::Pedalboard> board;
     std::unique_ptr<pt::ui::ZoomPanel> zoomPanel;
     std::unique_ptr<pt::ui::InfoPanel> infoPanel;
+    std::unique_ptr<pt::ui::OptionsPanel> optionsPanel;
+    std::unique_ptr<juce::Button> optionsButton;
+    juce::SharedResourcePointer<pt::ui::ThemeManager> themes;
     juce::TooltipWindow tooltips { this, 500 };
     std::unique_ptr<juce::FileChooser> chooser;
 

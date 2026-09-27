@@ -19,6 +19,7 @@
 #include "Rack.h"
 #include "Meters.h"
 #include "Cables.h"
+#include "Theme.h"
 
 class PedalTrinityProcessor;
 
@@ -40,6 +41,8 @@ namespace pt::ui
         void setPage (int first, int view);
         /** Da chiamare quando la catena cambia. */
         void refresh();
+        /** Tema o opzioni dei cavi cambiati. */
+        void themeChanged();
 
         bool isDual() const;
         /** Lunghezza della catena e di una pagina, nelle unita' della pagina (celle o colonne). */
@@ -86,6 +89,11 @@ namespace pt::ui
         CableOverlay overlay;
         std::vector<Cable> underCables;
         juce::TextButton pageLeft { "<" }, pageRight { ">" }, addA { "+" }, addB { "+" };
+
+        juce::SharedResourcePointer<ThemeManager> themes;
+        juce::Image boardCache;
+        juce::String boardKey;
+        juce::Rectangle<int> boardRect;
 
         int first = 0, view = 3, dropCell = -1;
         int rows = 1, cols = 3;

@@ -25,6 +25,10 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
 * **Splitter SPL-3** in qualsiasi punto della catena: MONO, **DUAL** (due catene mono, A = L e B = R, su due file)
   o **STEREO** (i pedali a doppio jack elaborano A e B, un pedale mono riporta il segnale in mono come
   con i cavi veri). BALANCE e LEVEL A/B in ingresso, BALANCE / LEFT / RIGHT in uscita.
+* **Opzioni** (tasto con l'ingranaggio): **6 temi** della pedaliera — Pedana Pro (alluminio a lamelle con
+  tessuto a strappo, predefinito), Tolex e cromo, Noce e ottone, British Green, Alluminio spazzolato,
+  Studio notte — con pedali renderizzati senza sfondo e con la propria ombra; cavi visibili e colore dei cavi.
+  Il contrasto di testi e segni è verificato per ogni tema (WCAG 2.1).
 * **Meter INPUT e OUTPUT** laterali (mono o stereo secondo lo splitter) con fader del volume d'ingresso e d'uscita.
 * **Scorrimento** a 3 pedali alla volta o a pagine (i tasti compaiono quando la catena supera la vista);
   **viste 3 / 6 / 9 / 18** pedali contemporaneamente.

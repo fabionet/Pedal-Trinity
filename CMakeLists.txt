@@ -82,12 +82,15 @@ target_sources(PedalTrinity PRIVATE
     Source/gui/Meters.cpp
     Source/gui/PedalView.cpp
     Source/gui/Pedalboard.cpp
-    Source/gui/Rack.cpp)
+    Source/gui/Rack.cpp
+    Source/gui/Theme.cpp
+    Source/gui/OptionsPanel.cpp)
 
 target_include_directories(PedalTrinity PRIVATE Source Source/gui Source/engine)
 
 # immagini renderizzate dei pedali (una per modello del catalogo)
-file(GLOB PT_PEDAL_IMAGES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Resources/pedals/*.jpg")
+file(GLOB PT_PEDAL_IMAGES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Resources/pedals/*.jpg"
+                                            "${CMAKE_CURRENT_SOURCE_DIR}/Resources/pedals/*_a.png")
 
 juce_add_binary_data(PedalTrinityData
     HEADER_NAME BinaryData.h

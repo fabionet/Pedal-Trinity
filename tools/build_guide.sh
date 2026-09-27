@@ -13,16 +13,20 @@ APP="${1:-$ROOT/build/PedalTrinity_artefacts/Release/Standalone/Pedal Trinity}"
 TMP="$ROOT/tools/art/build/guide"
 mkdir -p "$TMP"
 
-"$APP" --screenshot "$TMP/main.png" --scale 2 --size 1280x760 --view 3 --chain ed9,ds1,mc2w,gq7,ce2,dd3 \
+"$APP" --screenshot "$TMP/main.png" --theme pro --scale 2 --size 1280x760 --view 3 --chain ed9,ds1,mc2w,gq7,ce2,dd3 \
     --set 0:0=0.62 --set 1:2=0.7 --set 2:5=0.75
-"$APP" --screenshot "$TMP/view6.png" --size 1920x1080 --view 6 \
+"$APP" --screenshot "$TMP/view6.png" --theme pro --size 1920x1080 --view 6 \
     --chain cs3,bd2,ds1,ce2,dd3,rv6,sd1,mc2w,gq7,ph3,tr2,re2
-"$APP" --screenshot "$TMP/view18.png" --size 1920x1080 --view 18 \
+"$APP" --screenshot "$TMP/view18.png" --theme pro --size 1920x1080 --view 18 \
     --chain ns2,cs3,ed9,sd1,bd2,ds1,mc2w,hm2,fz2,gq7,aw3,ce2,dc2,bf2,ph1,dm2,dd3,rv6,re2,tu3
-"$APP" --screenshot "$TMP/dual.png" --size 1920x1080 --view 6 --chain ns2,split=0.5,bd2,ir2,ds1@B,ir200@B
-"$APP" --screenshot "$TMP/stereo.png" --size 1920x1080 --view 6 --chain cs3,split=1,ce5,ds1,dd8,rv6
-"$APP" --screenshot "$TMP/zoom.png" --size 1600x900 --view 3 --chain ed9,mc2w,gq7 --zoom 1
-"$APP" --screenshot "$TMP/info.png" --size 1280x760 --info
+"$APP" --screenshot "$TMP/dual.png" --theme pro --size 1920x1080 --view 6 --chain ns2,split=0.5,bd2,ir2,ds1@B,ir200@B
+"$APP" --screenshot "$TMP/stereo.png" --theme pro --size 1920x1080 --view 6 --chain cs3,split=1,ce5,ds1,dd8,rv6
+for t in pro tolex walnut green alu night; do
+    "$APP" --screenshot "$TMP/theme_$t.png" --theme $t --size 1600x900 --view 6 --chain ed9,ds1,split=1,ce5,dd8,rv6
+done
+"$APP" --screenshot "$TMP/options.png" --theme pro --size 1600x900 --view 6 --options --chain ed9,ds1,ce5
+"$APP" --screenshot "$TMP/zoom.png" --theme pro --size 1600x900 --view 3 --chain ed9,mc2w,gq7 --zoom 1
+"$APP" --screenshot "$TMP/info.png" --theme pro --size 1280x760 --info
 python3 "$ROOT/tools/art/guide_images.py" "$TMP"
 python3 "$ROOT/tools/art/guide_catalog.py"
 
