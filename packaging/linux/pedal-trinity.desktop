@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Pedal Trinity
+GenericName=Guitar Effects
+GenericName[it]=Effetti per chitarra
+Comment=Overdrive, distortion and 7-band graphic EQ
+Comment[it]=Overdrive, distorsore ed equalizzatore grafico a 7 bande
+Exec=pedal-trinity
+Icon=pedal-trinity
+Terminal=false
+Categories=AudioVideo;Audio;Music;
+Keywords=guitar;overdrive;distortion;equalizer;pedal;chitarra;
+StartupWMClass=Pedal Trinity

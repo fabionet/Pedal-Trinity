@@ -1,0 +1,64 @@
+# Pedal Trinity - build Linux (VST3 + LV2 + Standalone) e pacchetto .deb
+name: Linux build
+
+on:
+  push:
+    branches: [main-linux]
+    tags: ["v*-linux"]
+  pull_request:
+    branches: [main-linux]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    # Ubuntu 22.04: glibc 2.35 -> il .deb funziona su Ubuntu 22.04+, Debian 12+, Mint 21+
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dipendenze
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build pkg-config \
+            libasound2-dev libjack-jackd2-dev libfreetype6-dev libfontconfig1-dev \
+            libx11-dev libxext-dev libxrandr-dev libxinerama-dev libxcursor-dev libgl1-mesa-dev \
+            xvfb imagemagick lintian dpkg-dev
+
+      - name: Configura (JUCE 7.0.12)
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Compila
+        run: cmake --build build --parallel
+
+      - name: Autotest DSP
+        run: xvfb-run -a "build/PedalTrinity_artefacts/Release/Standalone/Pedal Trinity" --selftest
+
+      - name: Pacchetto .deb
+        run: |
+          bash packaging/linux/build_deb.sh build dist
+          lintian --no-tag-display-limit dist/*.deb || true
+
+      - name: Archivio portabile
+        run: |
+          mkdir -p "portable/Pedal Trinity"
+          cp -r "build/PedalTrinity_artefacts/Release/VST3/Pedal Trinity.vst3" \
+                "build/PedalTrinity_artefacts/Release/LV2/Pedal Trinity.lv2" \
+                "build/PedalTrinity_artefacts/Release/Standalone/Pedal Trinity" \
+                docs/PedalTrinity_Guida.pdf LICENSE README.md "portable/Pedal Trinity/"
+          tar -C portable -cJf dist/PedalTrinity-1.0.0-beta-Linux-x86_64.tar.xz "Pedal Trinity"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PedalTrinity-Linux
+          path: dist/*
+
+      - name: Pubblica release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: true
+          files: dist/*

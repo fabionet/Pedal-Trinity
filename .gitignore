@@ -1,0 +1,13 @@
+build/
+build-*/
+dist/
+portable/
+tools/art/build/
+docs/guide/*.aux
+docs/guide/*.log
+docs/guide/*.out
+docs/guide/*.toc
+*.swp
+.vscode/
+.idea/
+__pycache__/

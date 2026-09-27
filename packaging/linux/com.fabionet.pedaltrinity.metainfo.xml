@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.fabionet.pedaltrinity</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Pedal Trinity</name>
+  <summary>Overdrive, distortion and 7-band graphic EQ</summary>
+  <summary xml:lang="it">Overdrive, distorsore ed equalizzatore grafico a 7 bande</summary>
+  <developer id="com.fabionet">
+    <name>FabioNET</name>
+  </developer>
+  <description>
+    <p>Three guitar pedals in one plugin with a photorealistic interface: an overdrive, a high-gain distortion with 3-band EQ and S/C mode, and a 7-band graphic equalizer. VST3, LV2 and standalone.</p>
+  </description>
+  <launchable type="desktop-id">pedal-trinity.desktop</launchable>
+  <url type="homepage">https://github.com/fabionet/Pedal-Trinity</url>
+  <categories>
+    <category>Audio</category>
+  </categories>
+  <releases>
+    <release version="1.0.0~beta" date="2026-09-27"/>
+  </releases>
+</component>

@@ -1,0 +1,172 @@
+/*
+    Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
+*/
+
+#include "InfoPanel.h"
+#include "Assets.h"
+#include "../Version.h"
+
+namespace pt::ui
+{
+    namespace
+    {
+        const juce::Colour gold (0xffd9b464), text (0xffe9e6dc), dim (0xffa9a69c), cardTop (0xff26272b),
+                           cardBottom (0xff131416);
+
+        void styleEditor (juce::TextEditor& e, float size)
+        {
+            e.setMultiLine (true, true);
+            e.setReadOnly (true);
+            e.setCaretVisible (false);
+            e.setScrollbarsShown (true);
+            e.setFont (juce::Font (size));
+            e.setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x44000000));
+            e.setColour (juce::TextEditor::outlineColourId, juce::Colour (0x22ffffff));
+            e.setColour (juce::TextEditor::focusedOutlineColourId, juce::Colour (0x44ffffff));
+            e.setColour (juce::TextEditor::textColourId, text);
+        }
+
+        void styleButton (juce::TextButton& b, bool primary)
+        {
+            b.setColour (juce::TextButton::buttonColourId, primary ? juce::Colour (0xff3d6b45) : juce::Colour (0xff34353a));
+            b.setColour (juce::TextButton::buttonOnColourId, juce::Colour (0xff4f8a59));
+            b.setColour (juce::TextButton::textColourOffId, juce::Colours::white);
+            b.setMouseCursor (juce::MouseCursor::PointingHandCursor);
+        }
+    }
+
+    InfoPanel::InfoPanel()
+    {
+        setWantsKeyboardFocus (true);
+
+        title.setText (pt::productName, juce::dontSendNotification);
+        title.setFont (juce::Font (34.0f, juce::Font::bold));
+        title.setColour (juce::Label::textColourId, text);
+        addAndMakeVisible (title);
+
+        subtitle.setText (juce::String ("Versione ") + pt::versionString + juce::String::fromUTF8 ("   \xe2\x80\xa2   by ")
+                              + pt::author, juce::dontSendNotification);
+        subtitle.setFont (juce::Font (16.0f, juce::Font::bold));
+        subtitle.setColour (juce::Label::textColourId, gold);
+        addAndMakeVisible (subtitle);
+
+        styleEditor (body, 14.5f);
+        body.setText (juce::CharPointer_UTF8 (
+            "Overdrive \xe2\x80\xa2 Distorsore \xe2\x80\xa2 Equalizzatore grafico a 7 bande in un'unica catena.\n"
+            "Formati: VST3, LV2 e Standalone (Linux e Windows, driver ASIO su Windows).\n\n"
+            "LICENZA: GNU General Public License versione 3 (GPL-3.0-or-later).\n"
+            "Copyright \xc2\xa9 2026 FabioNET.\n"
+            "Questo programma \xc3\xa8 software libero: puoi ridistribuirlo e/o modificarlo secondo i termini "
+            "della GNU GPL pubblicata dalla Free Software Foundation, versione 3 o (a tua scelta) successiva. "
+            "\xc3\x88 distribuito nella speranza che sia utile, ma SENZA ALCUNA GARANZIA; senza neppure la garanzia "
+            "implicita di COMMERCIABILIT\xc3\x80 o IDONEIT\xc3\x80 PER UNO SCOPO PARTICOLARE. "
+            "Il testo completo della licenza \xc3\xa8 riportato qui sotto.\n\n"
+            "CREDITI: realizzato in C++ con JUCE 7 (GPLv3). VST\xc2\xae \xc3\xa8 un marchio di Steinberg Media "
+            "Technologies GmbH. ASIO \xc3\xa8 un marchio e software di Steinberg Media Technologies GmbH. "
+            "LV2 \xc2\xa9 lv2plug.in (licenza ISC).\n\n"
+            "MARCHI: i pedali di Pedal Trinity sono ispirati a Ibanez Tube Screamer, BOSS MT-2 Metal Zone Waza Craft "
+            "e BOSS GE-7. Tube Screamer e Ibanez sono marchi di Hoshino Gakki; BOSS, MT-2 e GE-7 sono marchi di "
+            "Roland Corporation. Pedal Trinity non \xc3\xa8 affiliato, approvato o sponsorizzato da tali aziende: "
+            "i nomi sono citati solo per descrivere il suono di riferimento. Le immagini dei pedali sono render 3D originali."));
+        addAndMakeVisible (body);
+
+        styleEditor (license, 12.5f);
+        license.setFont (juce::Font (juce::Font::getDefaultMonospacedFontName(), 12.0f, juce::Font::plain));
+        license.setText (Assets::resourceAsString ("license_gpl3_txt"));
+        addAndMakeVisible (license);
+
+        styleButton (guideButton, true);
+        styleButton (webButton, false);
+        styleButton (closeButton, false);
+        guideButton.onClick = [] { openGuide(); };
+        webButton.onClick = [] { juce::URL (pt::homepage).launchInDefaultBrowser(); };
+        closeButton.onClick = [this] { if (onClose) onClose(); };
+        addAndMakeVisible (guideButton);
+        addAndMakeVisible (webButton);
+        addAndMakeVisible (closeButton);
+    }
+
+    juce::Rectangle<int> InfoPanel::card() const
+    {
+        return getLocalBounds().withSizeKeepingCentre (juce::jmin (780, getWidth() - 40),
+                                                        juce::jmin (560, getHeight() - 30));
+    }
+
+    void InfoPanel::paint (juce::Graphics& g)
+    {
+        g.fillAll (juce::Colours::black.withAlpha (0.62f));
+        const auto c = card().toFloat();
+
+        g.setColour (juce::Colours::black.withAlpha (0.5f));
+        g.fillRoundedRectangle (c.translated (0, 6).expanded (4), 14.0f);
+        g.setGradientFill (juce::ColourGradient (cardTop, c.getTopLeft(), cardBottom, c.getBottomLeft(), false));
+        g.fillRoundedRectangle (c, 12.0f);
+        g.setColour (gold.withAlpha (0.55f));
+        g.drawRoundedRectangle (c.reduced (1.0f), 12.0f, 1.4f);
+
+        // tre "LED" colorati come i pedali
+        const juce::Colour pedalColours[] = { juce::Colour (0xff2f8a44), juce::Colour (0xff222226), juce::Colour (0xffc7cad0) };
+        for (int i = 0; i < 3; ++i)
+        {
+            auto r = juce::Rectangle<float> (14.0f, 14.0f).withCentre ({ c.getRight() - 90.0f + (float) i * 24.0f, c.getY() + 40.0f });
+            g.setColour (pedalColours[i]);
+            g.fillEllipse (r);
+            g.setColour (juce::Colours::white.withAlpha (0.35f));
+            g.drawEllipse (r, 1.0f);
+        }
+
+        g.setColour (dim);
+        g.setFont (juce::Font (12.0f));
+        g.drawText ("Licenza completa (GNU GPL v3)", license.getBounds().translated (0, -18).withHeight (16),
+                    juce::Justification::centredLeft);
+    }
+
+    void InfoPanel::resized()
+    {
+        auto c = card().reduced (26, 20);
+        auto top = c.removeFromTop (72);
+        title.setBounds (top.removeFromTop (42));
+        subtitle.setBounds (top);
+
+        auto buttons = c.removeFromBottom (36);
+        closeButton.setBounds (buttons.removeFromRight (120));
+        buttons.removeFromRight (10);
+        webButton.setBounds (buttons.removeFromRight (170));
+        guideButton.setBounds (buttons.removeFromLeft (200));
+        c.removeFromBottom (14);
+
+        body.setBounds (c.removeFromTop (juce::roundToInt (c.getHeight() * 0.52f)));
+        c.removeFromTop (24);
+        license.setBounds (c);
+    }
+
+    void InfoPanel::mouseUp (const juce::MouseEvent& e)
+    {
+        if (! card().contains (e.getPosition()) && onClose)
+            onClose();
+    }
+
+    bool InfoPanel::keyPressed (const juce::KeyPress& k)
+    {
+        if (k == juce::KeyPress::escapeKey && onClose)
+        {
+            onClose();
+            return true;
+        }
+        return false;
+    }
+
+    bool InfoPanel::openGuide()
+    {
+        const auto data = Assets::resourceAsBlock ("PedalTrinity_Guida_pdf");
+        if (data.getSize() == 0)
+            return false;
+
+        auto dir = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("PedalTrinity");
+        dir.createDirectory();
+        auto pdf = dir.getChildFile ("PedalTrinity_Guida_v1.0.0-beta.pdf");
+        if (pdf.getSize() != (juce::int64) data.getSize())
+            pdf.replaceWithData (data.getData(), data.getSize());
+        return pdf.startAsProcess();
+    }
+}
