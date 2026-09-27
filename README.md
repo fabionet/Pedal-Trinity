@@ -30,7 +30,7 @@ Il tasto **INFO** sulla targhetta mostra licenza, autore e versione, e apre la
 
 ### Linux (Ubuntu 22.04+, Debian 12+, Mint 21+)
 ```bash
-sudo apt install ./pedal-trinity_1.0.0~beta-1_amd64.deb
+sudo apt install ./pedal-trinity_1.0.0-beta_amd64.deb
 ```
 Installa `/usr/lib/vst3/Pedal Trinity.vst3`, `/usr/lib/lv2/Pedal Trinity.lv2` e l'app `pedal-trinity`
 (nel menu *Audio*). La guida si trova in `/usr/share/doc/pedal-trinity/`.

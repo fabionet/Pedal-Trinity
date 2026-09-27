@@ -117,7 +117,7 @@ Description: Overdrive, distorsore ed equalizzatore grafico (VST3/LV2/Standalone
 EOF
 
 mkdir -p "$OUT"
-DEB="$OUT/${PKG}_${VERSION}_${ARCH}.deb"
+DEB="$OUT/${PKG}_1.0.0-beta_${ARCH}.deb"   # niente "~": GitHub lo rinomina negli allegati
 dpkg-deb --root-owner-group -Zxz --build "$D" "$DEB"
 echo "Creato: $DEB"
 dpkg-deb --info "$DEB" | sed -n '1,20p'
