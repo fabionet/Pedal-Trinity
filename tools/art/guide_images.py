@@ -69,6 +69,7 @@ save(slot.crop((0, 56 * S, 470 * S, 752 * S)), "guide_slot.jpg")
 save(load("view6.png"), "guide_view6.jpg", 84)
 save(load("view18.png"), "guide_view18.jpg", 84)
 save(load("zoom.png"), "guide_zoom.jpg", 86)
+save(load("nam.png"), "guide_nam.jpg", 86)
 save(load("dual.png"), "guide_dual.jpg", 84)
 save(load("options.png").crop((290, 110, 1310, 790)), "guide_options.jpg", 86)
 # mosaico dei sei temi (2 x 3), con il nome sotto ciascuno

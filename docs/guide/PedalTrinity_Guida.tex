@@ -278,6 +278,61 @@ lo stato completo viene salvato anche nel progetto.
 \end{itemize}
 
 % ------------------------------------------------------------------
+\section{NAM-A1A2 Model: modelli Neural Amp Modeler}\label{sec:nam}
+Il \textbf{NAM-A1A2 Model} (rosso sangue, contenitore più grande dei compatti) suona i modelli di
+ampli e pedali catturati con \textbf{Neural Amp Modeler} di Steven Atkinson, usando il suo motore
+ufficiale \emph{NeuralAmpModelerCore}: architetture \textbf{A1} (WaveNet standard), \textbf{A2} con le
+due reti \textbf{A2-Lite} e \textbf{A2-Full}, LSTM e lineari; file \texttt{.nam} e \texttt{.namb}
+(formato binario di TONE3000). Ha due canali indipendenti, \textbf{A} e \textbf{B}, ciascuno con il
+proprio modello e la propria risposta all'impulso (IR).
+\begin{center}\includegraphics[width=\linewidth]{../images/guide_nam.jpg}\end{center}
+\begin{itemize}
+  \item \textbf{Sul pedale}: \ctl{INPUT} (da $-20$ a $+20$ dB), \ctl{BASS}, \ctl{MIDDLE}, \ctl{TREBLE}
+        (il tonestack del plugin NAM: 150 Hz, 425 Hz, 1{,}8 kHz), \ctl{OUTPUT} (da $-40$ a $+40$ dB),
+        i volumi \ctl{NAM A}, \ctl{IR A}, \ctl{NAM B}, \ctl{IR B} e i due footswitch \textbf{A} e \textbf{B}
+        che accendono i canali. Il display mostra per ogni canale tre meter a tacche LED: ingresso,
+        uscita del modello e uscita dell'IR.
+  \item \textbf{Nel pannello di zoom} (lente dello slot) si caricano i file: \emph{Carica NAM\dots} e
+        \emph{Carica IR\dots} (\texttt{.wav}, \texttt{.aiff}) per ciascun canale, \textbf{X} per toglierli.
+        Sotto il nome compare l'esito della verifica, con il tipo di modello e il carico sul processore.
+  \item \textbf{SLIM}: il pomello a destra di ogni canale sceglie la rete di un modello A2 slimmable,
+        da \emph{A2-Lite} (tutto a sinistra, più leggera) ad \emph{A2-Full} (tutto a destra). È attivo
+        solo se il file caricato è davvero slimmable; con A1, LSTM e \texttt{.namb} resta spento.
+  \item \textbf{Calibrazione}, come nel plugin NAM: \emph{Calibra ingresso} porta il segnale al livello
+        d'ingresso con cui è stato catturato il modello, dato il \emph{Livello d'ingresso} della tua
+        scheda audio in dBu (quanti dBu corrispondono a 0 dBFS, predefinito 12 dBu). Il \emph{Modo
+        d'uscita} è \textbf{Raw} (livello del modello), \textbf{Normalized} (loudness portata a $-18$ dB,
+        predefinito) o \textbf{Calibrated} (livello d'uscita reale dell'ampli catturato).
+  \item \textbf{Noise gate} (soglia, predefinita $-80$ dB), \textbf{Tonestack} e \textbf{IR} si possono
+        escludere. Catena di ogni canale: ingresso $\rightarrow$ gate $\rightarrow$ modello $\rightarrow$
+        volume NAM $\rightarrow$ tonestack $\rightarrow$ IR $\rightarrow$ volume IR $\rightarrow$ filtro
+        anti-DC $\rightarrow$ uscita.
+  \item \textbf{Instradamento}: dopo uno splitter STEREO il canale A elabora la linea A e il B la
+        linea B (due ampli in stereo); in un tratto mono i canali con un file caricato ricevono lo
+        stesso segnale e le uscite si sommano. Un canale senza file lascia passare il segnale inalterato.
+\end{itemize}
+\begin{avviso}[Sicurezza dei file NAM]
+Un modello NAM è un insieme di pesi di una rete neurale: un file alterato o danneggiato potrebbe
+produrre suoni esplosivi o far lavorare il motore fuori dai limiti. Per questo ogni file viene
+verificato \emph{prima} di essere usato e, se qualcosa non torna, viene rifiutato con il motivo:
+\begin{itemize}
+  \item sono accettati solo \texttt{.nam} e \texttt{.namb}, e il contenuto deve corrispondere
+        all'estensione (JSON per \texttt{.nam}, firma \texttt{NAMB} e checksum per \texttt{.namb});
+        dimensioni e annidamento del JSON sono limitati;
+  \item versione del formato, architettura (solo WaveNet, LSTM, Linear e contenitore A2) e metadati
+        devono essere validi; i pesi devono essere numeri finiti e di scala plausibile;
+  \item il \textbf{numero dei pesi} deve essere \emph{esattamente} quello richiesto dalla rete descritta
+        nel file, anche per ogni sotto-modello A2: un peso in più o in meno basta per il rifiuto;
+  \item il modello viene provato a vuoto per mezzo secondo: l'uscita deve essere finita, senza picchi
+        esplosivi e calcolabile in tempo reale;
+  \item nei preset viene salvata l'\textbf{impronta SHA-256} di ogni file: se il file cambia dopo il
+        salvataggio non viene ricaricato e il display del pedale lo segnala. Per usare comunque la
+        nuova versione ricaricala dal pannello di zoom.
+\end{itemize}
+Le IR devono essere \texttt{.wav} o \texttt{.aiff} di dimensione e durata ragionevoli, con campioni finiti.
+\end{avviso}
+
+% ------------------------------------------------------------------
 \section{Applicazione Standalone e driver audio}
 Avvia \textbf{Pedal Trinity}, apri \textbf{Options\dots} → \emph{Audio/MIDI Settings} e scegli:
 \textbf{ASIO} su Windows (selezionato automaticamente al primo avvio se presente) oppure WASAPI;
@@ -293,18 +348,25 @@ Lo Standalone ascolta l'ingresso: con microfono e altoparlanti del portatile usa
 \end{tabularx}
 
 % ------------------------------------------------------------------
+\clearpage
 \section{Informazioni e licenza}
 \begin{minipage}[t]{0.5\linewidth}\vspace{0pt}
 \includegraphics[width=\linewidth]{../images/guide_info.jpg}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.46\linewidth}\vspace{0pt}
 Il tasto \textbf{INFO} mostra versione (\textbf{1.0.0 beta}), autore (\textbf{FabioNET}), il testo
-completo della \textbf{GNU GPL v3}, i crediti e apre questa guida.
+completo della \textbf{GNU GPL v3} seguito dalle licenze dei componenti del NAM-A1A2 (MIT ed
+Eigen MPL 2.0), i crediti e apre questa guida.
 \end{minipage}
 
 \textbf{Licenza.} Pedal Trinity è software libero: puoi usarlo, studiarlo, modificarlo e
 ridistribuirlo secondo la \textbf{GNU General Public License versione 3} (o successiva), senza alcuna
 garanzia. Codice sorgente: \url{https://github.com/fabionet/Pedal-Trinity}.
+
+\textbf{Componenti di terze parti.} Il NAM-A1A2 Model usa NeuralAmpModelerCore, AudioDSPTools e parti
+di NeuralAmpModelerPlugin di Steven Atkinson, il lettore \texttt{.namb} di TONE3000 e nlohmann/json
+(licenza MIT) ed Eigen (MPL 2.0); i testi completi sono nel pannello INFO e nel file
+\texttt{THIRD-PARTY-NAM.txt} installato con il programma.
 
 \textbf{Marchi.} BOSS, Roland e tutte le sigle dei pedali BOSS (DS-1, MT-2, GE-7, \dots) sono marchi
 di Roland Corporation; Ibanez e Tube Screamer di Hoshino Gakki; Fender di Fender Musical Instruments.
@@ -329,6 +391,7 @@ Il plugin non compare nella DAW & Ripeti la scansione; su Linux controlla \textt
 Nessun suono nello Standalone & Controlla ingresso/uscita in \emph{Options} e che \emph{Mute audio input} sia disattivato. \\
 Suono in ritardo & Riduci il buffer; su Windows usa ASIO. \\
 Carico CPU alto & Molti pedali a guadagno (sovracampionamento 4×) e riverberi pesano: spegni gli slot che non usi. \\
+File NAM rifiutato & Il messaggio nel pannello di zoom indica il motivo: scarica di nuovo il modello dalla fonte originale (per esempio TONE3000). Il \texttt{.namb} contiene un solo modello: per lo SLIM usa il \texttt{.nam} A2. \\
 Volume troppo alto/basso & Usa \ctl{OUT} e i \ctl{LEVEL} dei pedali; i livelli seguono quelli dei pedali reali. \\ \bottomrule
 \end{tabularx}
 \vfill

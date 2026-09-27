@@ -3,10 +3,49 @@
 */
 
 #include "PedalView.h"
+#include "../engine/FxNam.h"
 
 namespace pt::ui
 {
     using namespace pt::engine;
+
+    /** Footswitch metallico renderizzato (NAM-A1A2): zona circolare che accende/spegne un canale. */
+    class FootToggle : public juce::Component, public BoundControl, public juce::SettableTooltipClient
+    {
+    public:
+        explicit FootToggle (const ControlDef& cd) : c (cd)
+        {
+            const float r = c.radius * 1.15f;
+            setBounds (juce::Rectangle<float> (c.x - r, c.y - r, r * 2.0f, r * 2.0f).getSmallestIntegerContainer());
+            setMouseCursor (juce::MouseCursor::PointingHandCursor);
+            setTooltip (juce::String ("Canale ") + c.label + ": acceso / spento");
+        }
+        bool hitTest (int x, int y) override
+        {
+            return getLocalBounds().toFloat().getCentre().getDistanceFrom ({ (float) x, (float) y }) <= c.radius * 1.15f;
+        }
+        void mouseDown (const juce::MouseEvent&) override { pressed = true; repaint(); }
+        void mouseUp (const juce::MouseEvent& e) override
+        {
+            pressed = false;
+            if (hitTest (e.x, e.y)) { state = ! state; if (onChange) onChange (state ? 1.0f : 0.0f); }
+            repaint();
+        }
+        void paint (juce::Graphics& g) override
+        {
+            if (! pressed) return;
+            g.setColour (juce::Colours::black.withAlpha (0.25f));
+            g.fillEllipse (getLocalBounds().toFloat().reduced (getWidth() * 0.12f));
+        }
+        void syncFromModel() override
+        {
+            const bool v = readModel && readModel() > 0.5f;
+            if (v != state) { state = v; repaint(); }
+        }
+    private:
+        const ControlDef& c;
+        bool state = true, pressed = false;
+    };
 
     /** Superficie in coordinate logiche dell'immagine: contiene i comandi. */
     class PedalView::Canvas : public juce::Component
@@ -21,6 +60,7 @@ namespace pt::ui
             auto* s = owner.slot;
             if (d == nullptr || s == nullptr) return;
             const bool on = s->enabled.load();
+            if (d->family == Family::Nam) { paintNam (g, *d, *s, on); return; }
             // LED
             if (on && d->ledR > 0)
             {
@@ -78,6 +118,75 @@ namespace pt::ui
                 g.drawText (juce::String (st[state]) + "  " + juce::String (len, 1) + " s", area, juce::Justification::centred);
             }
         }
+        /** NAM-A1A2: LED dei due canali e display con i meter a tacche LED (IN, NAM, IR per A e B). */
+        void paintNam (juce::Graphics& g, const ModelDef& d, Slot& s, bool on)
+        {
+            for (int k = 0; k < d.numControls; ++k)
+            {
+                const auto& c = d.controls[k];
+                if (c.kind != ControlKind::Toggle || c.strip != 255 || s.fx == nullptr) continue;
+                if (! on || s.fx->p (k) < 0.5f) continue;
+                const juce::Point<float> p (c.tx, c.ty);
+                const float r = d.ledR > 0 ? d.ledR : 8.0f;
+                juce::ColourGradient halo (juce::Colour (0x88ff2a14), p, juce::Colour (0x00ff2a14), p.translated (r * 6.0f, 0), true);
+                g.setGradientFill (halo);
+                g.fillEllipse (juce::Rectangle<float> (r * 12.0f, r * 12.0f).withCentre (p));
+                juce::ColourGradient core (juce::Colour (0xfffff0e0), p.translated (-r * 0.25f, -r * 0.3f), juce::Colour (0xffff2a10), p.translated (r, 0), true);
+                g.setGradientFill (core);
+                g.fillEllipse (juce::Rectangle<float> (r * 2.1f, r * 1.9f).withCentre (p));
+            }
+            if (d.dispW <= 0) return;
+            auto area = juce::Rectangle<float> (d.dispX, d.dispY, d.dispW, d.dispH).reduced (d.dispW * 0.035f, d.dispH * 0.08f);
+            auto* nam = dynamic_cast<NamEffect*> (s.fx.get());
+            const char* names[3] = { "IN", "NAM", "IR" };
+            const float rowH = area.getHeight() / 2.0f;
+            for (int ch = 0; ch < 2; ++ch)
+            {
+                auto row = area.withHeight (rowH).translated (0, rowH * (float) ch);
+                const bool active = on && s.fx->p (ch == 0 ? NamEffect::ChanA : NamEffect::ChanB) > 0.5f;
+                const auto st = nam != nullptr ? nam->status (ch) : NamEffect::ChannelStatus();
+                g.setColour (active ? juce::Colour (0xffff5a3a) : juce::Colour (0x55ff5a3a));
+                g.setFont (juce::Font (rowH * 0.55f, juce::Font::bold));
+                g.drawText (ch == 0 ? "A" : "B", row.removeFromLeft (row.getWidth() * 0.07f), juce::Justification::centred);
+                const float mw = row.getWidth() / 3.0f;
+                const bool empty = nam != nullptr && ! st.hasNam && ! st.hasIr;
+                for (int m = 0; m < (empty ? 1 : 3); ++m)
+                {
+                    auto cell = row.withWidth (mw).translated (mw * (float) m, 0).reduced (mw * 0.05f, rowH * 0.12f);
+                    g.setColour (juce::Colour (0xff9a8a80));
+                    g.setFont (juce::Font (cell.getHeight() * 0.32f, juce::Font::bold));
+                    g.drawText (names[m], cell.removeFromTop (cell.getHeight() * 0.36f), juce::Justification::centredLeft);
+                    // tacche LED orizzontali: -48 .. +6 dB
+                    const int seg = 14;
+                    const float lvl = owner.namLevels[(size_t) (ch * 3 + m)];
+                    const float db = juce::Decibels::gainToDecibels (lvl, -100.0f);
+                    const int lit = juce::jlimit (0, seg, (int) std::floor ((db + 48.0f) / 54.0f * (float) seg + 0.5f));
+                    const float sw = cell.getWidth() / (float) seg;
+                    for (int i = 0; i < seg; ++i)
+                    {
+                        const float segDb = -48.0f + 54.0f * (float) (i + 1) / (float) seg;
+                        const auto col = segDb > -3.0f ? juce::Colour (0xffff3020) : segDb > -12.0f ? juce::Colour (0xffffc030) : juce::Colour (0xff40e070);
+                        g.setColour (i < lit && active ? col : col.withAlpha (0.13f));
+                        g.fillRoundedRectangle (cell.getX() + sw * (float) i + sw * 0.12f, cell.getY(), sw * 0.76f, cell.getHeight() * 0.8f, sw * 0.15f);
+                    }
+                }
+                // al posto dei meter NAM/IR: canale vuoto o file rifiutato dalla verifica di sicurezza
+                if (empty)
+                {
+                    const auto msgArea = row.withTrimmedLeft (mw).reduced (mw * 0.05f, rowH * 0.12f);
+                    g.setColour (st.warning ? juce::Colour (0xffff6a4a) : juce::Colour (0x77ffffff));
+                    g.setFont (juce::Font (rowH * 0.32f, st.warning ? juce::Font::bold : juce::Font::plain));
+                    g.drawFittedText (st.warning ? "! file rifiutato: vedi lo zoom" : "vuoto: carica i file dallo zoom",
+                                      msgArea.toNearestInt(), juce::Justification::centredLeft, 1, 0.8f);
+                }
+                else if (st.warning)
+                {
+                    g.setColour (juce::Colour (0xffff6a4a));
+                    g.fillEllipse (juce::Rectangle<float> (rowH * 0.18f, rowH * 0.18f).withCentre (row.getTopRight().translated (-rowH * 0.12f, rowH * 0.14f)));
+                }
+            }
+        }
+
         PedalView& owner;
     };
 
@@ -126,8 +235,9 @@ namespace pt::ui
             b.syncFromModel();
         };
 
-        // pedale / footswitch
-        auto* foot = new FootZone (def->footX, def->footY);
+        // pedale / footswitch (il NAM-A1A2 ha due footswitch di canale al posto del pedale)
+        auto* foot = def->family == Family::Nam ? nullptr : new FootZone (def->footX, def->footY);
+        if (foot != nullptr) {
         if (def->family == Family::Looper)
         {
             foot->setTooltip ("REC / PLAY / DUB");
@@ -136,6 +246,7 @@ namespace pt::ui
         else
             foot->onClick = [this, idx] { if (slot != nullptr) chain.setEnabled (idx, ! slot->enabled.load()); };
         canvas->addAndMakeVisible (foot);
+        }
 
         // prima gli anelli esterni, poi i pomelli interni (sopra)
         for (int pass = 0; pass < 2; ++pass)
@@ -169,6 +280,13 @@ namespace pt::ui
                     }
                     case ControlKind::Toggle:
                     {
+                        if (c.strip == 255)          // footswitch renderizzato (NAM-A1A2)
+                        {
+                            auto* f = new FootToggle (c);
+                            bind (*f, k);
+                            comp = f;
+                            break;
+                        }
                         auto* t = new ToggleControl (*assets, c);
                         bind (*t, k);
                         comp = t;
@@ -280,7 +398,14 @@ namespace pt::ui
         for (auto* c : canvas->getChildren())
             if (auto* b = dynamic_cast<BoundControl*> (c))
                 b->syncFromModel();
-        if (def != nullptr && (def->family == Family::Tuner || def->family == Family::Looper))
+        if (def != nullptr && def->family == Family::Nam && slot != nullptr && slot->fx != nullptr)
+            for (int k = 0; k < NamEffect::numMeters; ++k)
+            {
+                // picco con discesa morbida (circa 20 dB al secondo)
+                const float v = slot->fx->readout (k);
+                namLevels[(size_t) k] = juce::jmax (v, namLevels[(size_t) k] * 0.72f);
+            }
+        if (def != nullptr && (def->family == Family::Tuner || def->family == Family::Looper || def->family == Family::Nam))
             canvas->repaint();
         const bool on = slot != nullptr && slot->enabled.load();
         if (on != lastOn) { lastOn = on; repaint(); canvas->repaint(); }

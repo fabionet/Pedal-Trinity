@@ -22,7 +22,7 @@ sys.path.insert(0, HERE)
 
 FAMILIES = ["Circuit", "Compressor", "NoiseGate", "GraphicEQ", "ParametricEQ", "Wah", "BBDChorus", "BBDFlanger",
             "Phaser", "Tremolo", "AnalogDelay", "DigitalDelay", "TapeEcho", "Reverb", "Pitch", "Synth", "Acoustic",
-            "AmpSim", "CabIR", "Router", "Volume", "Tuner", "Looper", "SlowGear", "Splitter"]
+            "AmpSim", "CabIR", "Router", "Volume", "Tuner", "Looper", "SlowGear", "Splitter", "Nam"]
 
 CATEGORIES = ["Overdrive / Boost", "Distorsione", "Fuzz", "Metal", "Basso", "Dinamica", "Equalizzatori",
               "Wah / Filtri", "Chorus / Dimension", "Flanger", "Phaser", "Tremolo / Pan / Slicer",
@@ -88,7 +88,7 @@ def model(id, code, name, inspired, category, family, colour, controls, config, 
     controls  lista di comandi (knob/outer/inner/selector/toggle/slider/button)
     config    netlist a stadi (Circuit/AmpSim) oppure "chiave=valore ..." (altre famiglie)
     notes     descrizione breve in italiano (1-3 frasi, include le fonti principali)
-    style     "boss" (enclosure compatta) oppure "ts" (tipo Tube Screamer)
+    style     "boss" (enclosure compatta), "ts" (tipo Tube Screamer) o "nam" (contenitore grande NAM-A1A2)
     text      colore delle scritte (default automatico chiaro/scuro)
     accent    colore del nome sul pedale (default automatico)
     subtitle  sottotitolo sul pedale (default: categoria in maiuscolo)
@@ -144,11 +144,13 @@ def validate(m):
         if c["units"] not in UNITS: e.append("unita' %s" % c["units"])
         if len(c["label"]) > 10: e.append("etichetta troppo lunga: %s" % c["label"])
     rot = [c for c in m["controls"] if c["kind"] in ("knob", "selector", "outer")]
-    if len(rot) > 8: e.append("troppi pomelli (max 8 posizioni)")
+    if len(rot) > (9 if m["style"] == "nam" else 8): e.append("troppi pomelli (max 8 posizioni, 9 sul contenitore grande)")
     sl = [c for c in m["controls"] if c["kind"] == "slider"]
     if sl and rot: e.append("cursori e pomelli insieme non supportati")
     if len(sl) > 11: e.append("troppi cursori")
     if m["style"] == "ts" and len(rot) != 3: e.append("stile ts richiede 3 pomelli")
+    if m["style"] == "nam" and (len(rot) != 9 or len([c for c in m["controls"] if c["kind"] == "toggle"]) != 2):
+        e.append("stile nam: 9 pomelli e 2 footswitch")
     return e
 
 

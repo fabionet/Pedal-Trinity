@@ -50,6 +50,7 @@ gzip -9n -c "$ROOT/packaging/linux/pedal-trinity.1" > "$D/usr/share/man/man1/ped
 printf '%s: embedded-library libpng *\n%s: initial-upload-closes-no-bugs *\n' "$PKG" "$PKG" \
     > "$D/usr/share/lintian/overrides/$PKG"
 install -m 0644 "$ROOT/README.md" "$D/usr/share/doc/$PKG/"
+install -m 0644 "$ROOT/Source/third_party/LICENSE-NAM.txt" "$D/usr/share/doc/$PKG/THIRD-PARTY-NAM.txt"
 cat > "$D/usr/share/doc/$PKG/copyright" <<EOF
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Pedal Trinity
@@ -64,6 +65,16 @@ Files: JUCE/*
 Copyright: Raw Material Software Limited
 License: GPL-3+
 
+Files: NeuralAmpModelerCore/* AudioDSPTools/* NeuralAmpModelerPlugin/* nam-binary-loader/* nlohmann-json/*
+Copyright: 2023-2025 Steven Atkinson, TONE3000, Niels Lohmann
+License: MIT
+ Testo completo in /usr/share/doc/pedal-trinity/THIRD-PARTY-NAM.txt
+
+Files: Eigen/*
+Copyright: Eigen authors
+License: MPL-2.0
+ Testo completo in /usr/share/doc/pedal-trinity/THIRD-PARTY-NAM.txt
+
 License: GPL-3+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -73,7 +84,7 @@ License: GPL-3+
  On Debian systems, the complete text of the GNU General Public License
  version 3 can be found in "/usr/share/common-licenses/GPL-3".
 EOF
-printf '%s (%s) unstable; urgency=medium\n\n  * Prima release beta: pedaliera fino a 100 slot, catalogo di 219 pedali.\n  * Splitter SPL-3 (mono / dual mono / stereo), cavi jack, meter INPUT/OUTPUT.\n  * Emulazione dei circuiti analogici, preset di fabbrica e utente.\n  * Viste 3/6/9/18, zoom del pedale, finestra da 1280x760 a 2560x1440.\n  * Formati VST3, LV2 e Standalone.\n\n -- %s  %s\n' \
+printf '%s (%s) unstable; urgency=medium\n\n  * Prima release beta: pedaliera fino a 100 slot, catalogo di 220 pedali.\n  * Splitter SPL-3 (mono / dual mono / stereo), cavi jack, meter INPUT/OUTPUT.\n  * NAM-A1A2 Model: lettore Neural Amp Modeler (A1, A2, .nam/.namb)\n    con verifica di sicurezza dei file.\n  * Emulazione dei circuiti analogici, preset di fabbrica e utente.\n  * Viste 3/6/9/18, zoom del pedale, finestra da 1280x760 a 2560x1440.\n  * Formati VST3, LV2 e Standalone.\n\n -- %s  %s\n' \
     "$PKG" "$VERSION" "$MAINTAINER" "$(date -R)" | gzip -9n > "$D/usr/share/doc/$PKG/changelog.Debian.gz"
 
 # --- dipendenze: librerie collegate (dpkg-shlibdeps) + librerie X11 caricate a runtime da JUCE
@@ -106,9 +117,9 @@ Recommends: libjack-jackd2-0 | libjack0
 Suggests: carla, ardour
 Maintainer: $MAINTAINER
 Homepage: https://github.com/fabionet/Pedal-Trinity
-Description: pedaliera per chitarra con 219 pedali emulati (VST3/LV2/Standalone)
+Description: pedaliera per chitarra con 220 pedali emulati (VST3/LV2/Standalone)
  Pedal Trinity e' una pedaliera virtuale fino a 100 slot con un catalogo di
- 219 modelli originali ispirati ai pedali compatti per chitarra: overdrive,
+ 220 modelli originali ispirati ai pedali compatti per chitarra: overdrive,
  distorsori, fuzz, modulazioni BBD, delay, riverberi, pitch, dinamica, EQ,
  simulatori di amplificatore, cabinet IR, splitter A/B e utilita'.
  Gli stadi analogici sono emulati dalla circuitazione (clipper a diodi,

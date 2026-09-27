@@ -10,6 +10,7 @@
           --screenshot file.png [opzioni]    salva un'immagine dell'interfaccia
               --scale s  --size WxH  --view n  --first i  --factory numero|nome
               --zoom slot  --info  --options  --theme pro|tolex|walnut|green|alu|night  --chain id,id@B,split=0.5,...  --set slot:comando=valore (ripetibile)
+              --nam slot:A|B=file.nam  --ir slot:A|B=file.wav   (NAM-A1A2)
 */
 
 #include <juce_audio_devices/juce_audio_devices.h>
@@ -25,6 +26,8 @@
 #include "gui/Theme.h"
 #include "Version.h"
 #include "engine/Circuit.h"
+#include "engine/FxNam.h"
+#include "engine/NamSecurity.h"
 
 namespace
 {
@@ -124,6 +127,153 @@ namespace
         float d = 0;
         for (int i = b.getNumSamples() / 2; i < b.getNumSamples(); ++i) d = std::max (d, std::abs (b.getSample (0, i) - b.getSample (1, i)));
         return d;
+    }
+
+    /** Cartella dei modelli di esempio di NeuralAmpModelerCore (PT_NAM_EXAMPLES o _deps della build). */
+    juce::File namExamples()
+    {
+        const auto env = juce::SystemStats::getEnvironmentVariable ("PT_NAM_EXAMPLES", {});
+        if (env.isNotEmpty()) return juce::File (env);
+        auto dir = juce::File::getSpecialLocation (juce::File::currentExecutableFile).getParentDirectory();
+        for (int up = 0; up < 8 && dir != dir.getParentDirectory(); ++up, dir = dir.getParentDirectory())
+            for (auto rel : { "_deps/nam_core-src/example_models", "build/_deps/nam_core-src/example_models" })
+                if (dir.getChildFile (rel).isDirectory()) return dir.getChildFile (rel);
+        return {};
+    }
+
+    /** Test del NAM-A1A2: modelli ufficiali, file alterati rifiutati, impronta SHA-256, elaborazione. */
+    void runNamTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        const auto* def = findModel ("nama1a2");
+        if (def == nullptr) { report ("NAM-A1A2 nel catalogo", false, "modello assente"); return; }
+        auto makeNam = [def] { auto fx = createEffect (*def); return std::unique_ptr<NamEffect> (dynamic_cast<NamEffect*> (fx.release())); };
+        const auto examples = namExamples();
+        if (! examples.isDirectory())
+        {
+            std::cout << "  [--]      NAM: modelli di esempio non trovati (PT_NAM_EXAMPLES), test dei file saltati\n";
+            return;
+        }
+        const auto tmp = juce::File::getSpecialLocation (juce::File::tempDirectory)
+                             .getChildFile ("pt-nam-selftest-" + juce::String::toHexString (juce::Random::getSystemRandom().nextInt64()));
+        tmp.createDirectory();
+
+        // 1. modelli ufficiali: tutti accettati; SLIM solo per i modelli A2 slimmable
+        for (auto name : { "wavenet_a1_standard.nam", "A2.nam", "wavenet_a2_max.nam", "lstm.nam", "wavenet.nam",
+                           "slimmable_container.nam", "slimmable_wavenet.nam", "wavenet_condition_dsp.nam" })
+        {
+            const auto f = examples.getChildFile (name);
+            if (! f.existsAsFile()) continue;
+            auto fx = makeNam();
+            const bool ok = fx->loadNam (0, f);
+            const auto st = fx->status (0);
+            report (juce::String ("NAM ufficiale ") + name + ": accettato", ok,
+                    juce::String (st.namKind) + (st.slimmable ? ", SLIM attivo" : ", SLIM spento") + " - " + juce::String (st.message).upToFirstOccurrenceOf (",", false, false));
+        }
+        {
+            auto fx = makeNam();
+            fx->loadNam (0, examples.getChildFile ("A2.nam"));
+            fx->loadNam (1, examples.getChildFile ("wavenet_a1_standard.nam"));
+            report ("SLIM attivo solo per A2 slimmable", fx->status (0).slimmable && ! fx->status (1).slimmable, "A2 si', A1 no");
+        }
+
+        // 2. file alterati: devono essere tutti rifiutati
+        const auto a1 = examples.getChildFile ("wavenet_a1_standard.nam");
+        const auto base = juce::JSON::parse (a1);
+        auto tampered = [&] (const juce::String& label, const juce::String& file, std::function<void (juce::var&)> edit)
+        {
+            auto v = juce::JSON::parse (juce::JSON::toString (base, true));
+            edit (v);
+            const auto f = tmp.getChildFile (file);
+            f.replaceWithText (juce::JSON::toString (v, true));
+            auto fx = makeNam();
+            const bool loaded = fx->loadNam (0, f);
+            report ("NAM alterato rifiutato: " + label, ! loaded && fx->status (0).warning && ! fx->status (0).hasNam,
+                    juce::String (fx->status (0).message).fromFirstOccurrenceOf ("File rifiutato: ", false, false).substring (0, 90));
+        };
+        auto weights = [] (juce::var& v) -> juce::Array<juce::var>& { return *v.getProperty ("weights", {}).getArray(); };
+        tampered ("un peso in meno", "meno.nam", [&] (juce::var& v) { weights (v).removeLast(); });
+        tampered ("un peso in piu'", "piu.nam", [&] (juce::var& v) { weights (v).add (0.0); });
+        tampered ("peso fuori scala", "scala.nam", [&] (juce::var& v) { weights (v).set (7, 1.0e9); });
+        tampered ("peso non numerico", "testo.nam", [&] (juce::var& v) { weights (v).set (3, "x"); });
+        tampered ("versione inventata", "versione.nam", [] (juce::var& v) { v.getDynamicObject()->setProperty ("version", "9.9.9"); });
+        tampered ("architettura non ammessa", "arch.nam", [] (juce::var& v) { v.getDynamicObject()->setProperty ("architecture", "ConvNet"); });
+        tampered ("metadati fuori scala", "meta.nam", [] (juce::var& v)
+        {
+            auto* m = v.getProperty ("metadata", {}).getDynamicObject();
+            if (m == nullptr) { m = new juce::DynamicObject(); v.getDynamicObject()->setProperty ("metadata", juce::var (m)); }
+            m->setProperty ("loudness", 1.0e6);
+        });
+        tampered ("canali della rete alterati", "canali.nam", [] (juce::var& v)
+        {
+            auto layers = v.getProperty ("config", {}).getProperty ("layers", {});
+            if (auto* first = layers[0].getDynamicObject()) first->setProperty ("channels", (int) first->getProperty ("channels") + 1);
+        });
+        auto rejectRaw = [&] (const juce::String& label, const juce::String& file, const juce::MemoryBlock& data)
+        {
+            const auto f = tmp.getChildFile (file);
+            f.replaceWithData (data.getData(), data.getSize());
+            auto fx = makeNam();
+            const bool loaded = fx->loadNam (0, f);
+            report ("NAM alterato rifiutato: " + label, ! loaded && ! fx->status (0).hasNam,
+                    juce::String (fx->status (0).message).fromFirstOccurrenceOf ("File rifiutato: ", false, false).substring (0, 90));
+        };
+        {
+            juce::MemoryBlock orig;
+            a1.loadFileAsData (orig);
+            rejectRaw ("estensione .json", "modello.json", orig);
+            rejectRaw ("estensione doppia .nam.txt", "modello.nam.txt", orig);
+            juce::MemoryBlock cut (orig.getData(), orig.getSize() * 2 / 3);
+            rejectRaw ("file troncato", "troncato.nam", cut);
+            juce::MemoryBlock deep;
+            for (int i = 0; i < 200; ++i) deep.append ("{\"a\":", 5);
+            rejectRaw ("JSON annidato all'eccesso", "profondo.nam", deep);
+            rejectRaw ("contenuto .nam in un .namb", "falso.namb", orig);
+            juce::MemoryBlock fake (256, true);
+            const uint8_t magic[4] = { 'B', 'M', 'A', 'N' };      // 0x4E414D42 little-endian
+            fake.copyFrom (magic, 0, 4);
+            fake[4] = 1;
+            rejectRaw (".namb con intestazione inventata", "inventato.namb", fake);
+            rejectRaw ("contenuto binario in un .nam", "binario.nam", fake);
+        }
+
+        // 3. regola dell'impronta: un file cambiato dopo il salvataggio del preset non viene caricato
+        {
+            const auto copy = tmp.getChildFile ("preset_a1.nam");
+            a1.copyFileTo (copy);
+            auto fx = makeNam();
+            fx->loadNam (0, copy);
+            const auto saved = fx->saveState();
+            auto same = makeNam();
+            same->restoreState (saved);
+            auto v = juce::JSON::parse (juce::JSON::toString (base, true));
+            weights (v).set (0, (double) weights (v)[0] + 1.0e-3);          // ancora un modello valido, ma diverso
+            copy.replaceWithText (juce::JSON::toString (v, true));
+            auto changed = makeNam();
+            changed->restoreState (saved);
+            report ("Preset: modello identico ricaricato, modello modificato bloccato (SHA-256)",
+                    same->status (0).hasNam && ! changed->status (0).hasNam && changed->status (0).warning,
+                    juce::String (changed->status (0).message).substring (0, 80));
+        }
+
+        // 4. elaborazione: A1 sul canale A, A2 sul B; stereo (A->L, B->R) e mono
+        {
+            auto fx = makeNam();
+            fx->loadNam (0, a1);
+            fx->loadNam (1, examples.getChildFile ("A2.nam"));
+            auto out = runEffect (*fx, 48000.0, 256, 0.25f);
+            const float l = rmsDb (out, 24000, out.getNumSamples() - 24000);
+            const bool fin = allFinite (out);
+            report ("NAM A/B stereo: uscita finita e canali indipendenti", fin && l > -60.0f && l < 24.0f && channelDiff (out) > 1.0e-4f,
+                    "L " + juce::String (l, 1) + " dB, diff " + juce::String (channelDiff (out), 4));
+            report ("NAM A/B mono: uscita finita", runEffectMono (*fx, 48000.0, 256), "somma dei canali attivi");
+            auto opt = fx->options();
+            opt.calibrateInput = true; opt.outputMode = 2; opt.slim[1] = 0.0;
+            fx->setOptions (opt);
+            auto cal = runEffect (*fx, 44100.0, 128, 0.25f);
+            report ("NAM calibrato, SLIM Lite, 44.1 kHz: uscita finita", allFinite (cal), "ricampionamento al modello");
+        }
+        tmp.deleteRecursively();
     }
 
     int runSelfTest()
@@ -231,7 +381,10 @@ namespace
                         + juce::String (ink, 1) + ":1");
         }
 
-        // 5. processore completo e bypass
+        // 5. NAM-A1A2: sicurezza dei file ed elaborazione
+        runNamTests (report);
+
+        // 6. processore completo e bypass
         {
             PedalTrinityProcessor p;
             p.chain.fromValueTree (juce::ValueTree ("CHAIN"));
@@ -323,6 +476,21 @@ namespace
                     t.appendChild (s, nullptr);
                 }
                 p.chain.fromValueTree (t);
+            }
+            else if (args[i] == "--nam" || args[i] == "--ir")
+            {
+                // "slot:A=file" / "slot:B=file": modello o IR nel NAM-A1A2 (stessa verifica di sicurezza del pannello)
+                const int slot = next.upToFirstOccurrenceOf (":", false, false).getIntValue();
+                const auto rest = next.fromFirstOccurrenceOf (":", false, false);
+                const int ch = rest.startsWithIgnoreCase ("B") ? 1 : 0;
+                const auto file = juce::File::getCurrentWorkingDirectory().getChildFile (rest.fromFirstOccurrenceOf ("=", false, false).unquoted());
+                auto* s = p.chain.slot (slot);
+                if (auto* nam = s != nullptr ? dynamic_cast<pt::engine::NamEffect*> (s->fx.get()) : nullptr)
+                {
+                    const bool ok = args[i] == "--nam" ? nam->loadNam (ch, file) : nam->loadIr (ch, file);
+                    std::cout << nam->status (ch).message << std::endl;
+                    if (! ok) std::cerr << "File non caricato: " << file.getFullPathName() << std::endl;
+                }
             }
             else if (args[i] == "--set")
             {

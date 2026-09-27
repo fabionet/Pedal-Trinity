@@ -9,6 +9,7 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "PedalView.h"
+#include "NamPanel.h"
 
 namespace pt::ui
 {
@@ -94,6 +95,7 @@ namespace pt::ui
         PedalView view;
         juce::TextButton prev { "<" }, next { ">" }, close { "Chiudi" };
         juce::Label title, info;
+        std::unique_ptr<NamPanel> nam;          // solo per il NAM-A1A2 Model
         juce::SharedResourcePointer<ThemeManager> themes;
     };
 }

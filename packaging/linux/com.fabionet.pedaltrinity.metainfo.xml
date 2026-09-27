@@ -4,13 +4,13 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <name>Pedal Trinity</name>
-  <summary>Guitar pedalboard with 219 emulated stompboxes</summary>
-  <summary xml:lang="it">Pedaliera per chitarra con 219 pedali emulati</summary>
+  <summary>Guitar pedalboard with 220 emulated stompboxes</summary>
+  <summary xml:lang="it">Pedaliera per chitarra con 220 pedali emulati</summary>
   <developer id="com.fabionet">
     <name>FabioNET</name>
   </developer>
   <description>
-    <p>A virtual pedalboard of up to 100 slots with a catalogue of 219 original models inspired by compact guitar pedals: overdrive, distortion, fuzz, BBD modulation, delay, reverb, pitch, dynamics, EQ, amp simulators, cabinet IRs and A/B splitters. Analog stages are emulated from their circuits. Factory and user presets, views of 3, 6, 9 or 18 pedals. VST3, LV2 and standalone.</p>
+    <p>A virtual pedalboard of up to 100 slots with a catalogue of 220 original models inspired by compact guitar pedals: overdrive, distortion, fuzz, BBD modulation, delay, reverb, pitch, dynamics, EQ, amp simulators, cabinet IRs, a Neural Amp Modeler player (A1, A2-Lite/Full, .nam and .namb) and A/B splitters. Analog stages are emulated from their circuits. Factory and user presets, views of 3, 6, 9 or 18 pedals. VST3, LV2 and standalone.</p>
   </description>
   <launchable type="desktop-id">pedal-trinity.desktop</launchable>
   <url type="homepage">https://github.com/fabionet/Pedal-Trinity</url>
