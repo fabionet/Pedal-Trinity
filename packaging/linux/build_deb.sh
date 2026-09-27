@@ -44,6 +44,11 @@ else
 fi
 
 install -m 0644 "$ROOT/docs/PedalTrinity_Guida.pdf" "$D/usr/share/doc/$PKG/"
+install -d "$D/usr/share/man/man1" "$D/usr/share/lintian/overrides"
+gzip -9n -c "$ROOT/packaging/linux/pedal-trinity.1" > "$D/usr/share/man/man1/pedal-trinity.1.gz"
+# JUCE incorpora libpng/zlib per decodificare le immagini: e' il comportamento standard dei plugin JUCE
+printf '%s: embedded-library libpng *\n%s: initial-upload-closes-no-bugs *\n' "$PKG" "$PKG" \
+    > "$D/usr/share/lintian/overrides/$PKG"
 install -m 0644 "$ROOT/README.md" "$D/usr/share/doc/$PKG/"
 cat > "$D/usr/share/doc/$PKG/copyright" <<EOF
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -68,7 +73,7 @@ License: GPL-3+
  On Debian systems, the complete text of the GNU General Public License
  version 3 can be found in "/usr/share/common-licenses/GPL-3".
 EOF
-printf '%s (%s) unstable; urgency=medium\n\n  * Prima release beta: overdrive, distorsore, EQ grafico (VST3, LV2, Standalone).\n\n -- %s  %s\n' \
+printf '%s (%s) unstable; urgency=medium\n\n  * Prima release beta: overdrive, distorsore, EQ grafico.\n  * Formati VST3, LV2 e Standalone.\n\n -- %s  %s\n' \
     "$PKG" "$VERSION" "$MAINTAINER" "$(date -R)" | gzip -9n > "$D/usr/share/doc/$PKG/changelog.Debian.gz"
 
 # --- dipendenze: librerie collegate (dpkg-shlibdeps) + librerie X11 caricate a runtime da JUCE
@@ -84,6 +89,10 @@ fi
 [[ -n "$SHLIBS" ]] || SHLIBS="libc6 (>= 2.34), libstdc++6 (>= 12), libgcc-s1, libfreetype6, libasound2t64 | libasound2"
 DEPENDS="$SHLIBS, libx11-6, libxext6, libxrandr2, libxinerama1, libxcursor1"
 
+# permessi standard Debian
+find "$D/usr" -type d -exec chmod 0755 {} +
+find "$D/usr" -type f -exec chmod 0644 {} +
+chmod 0755 "$D/usr/bin/pedal-trinity"
 SIZE="$(du -sk "$D/usr" | cut -f1)"
 cat > "$D/DEBIAN/control" <<EOF
 Package: $PKG
