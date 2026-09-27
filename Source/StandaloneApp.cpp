@@ -9,7 +9,7 @@
           --selftest                         verifica automatica del DSP
           --screenshot file.png [opzioni]    salva un'immagine dell'interfaccia
               --scale s  --size WxH  --view n  --first i  --factory numero|nome
-              --zoom slot  --info  --chain id,id@B,split=0.5,...  --set slot:comando=valore (ripetibile)
+              --zoom slot  --info  --options  --theme pro|tolex|walnut|green|alu|night  --chain id,id@B,split=0.5,...  --set slot:comando=valore (ripetibile)
 */
 
 #include <juce_audio_devices/juce_audio_devices.h>
@@ -22,6 +22,7 @@
 #include <juce_audio_plugin_client/Standalone/juce_StandaloneFilterWindow.h>
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "gui/Theme.h"
 #include "Version.h"
 #include "engine/Circuit.h"
 
@@ -213,7 +214,24 @@ namespace
             report ("Splitter MONO: segnale non diviso", allFinite (mono) && channelDiff (mono) < 1.0e-6f, "L = R");
         }
 
-        // 4. processore completo e bypass
+        // 4. temi: leggibilita' (contrasto WCAG 2.1: testo >= 4.5:1, testo grande/accento >= 3:1)
+        for (const auto& t : pt::ui::allThemes())
+        {
+            using pt::ui::contrastRatio;
+            const double pairs[] = {
+                contrastRatio (t.text, t.barBottom), contrastRatio (t.text, t.header), contrastRatio (t.text, t.panelTop),
+                contrastRatio (t.text, t.button), contrastRatio (t.textDim, t.panelBottom), contrastRatio (juce::Colours::white, t.selected) };
+            const double accent[] = { contrastRatio (t.accent, t.barBottom), contrastRatio (t.accent, t.header), contrastRatio (t.accent, t.panelTop) };
+            const double ink = contrastRatio (t.ink, t.boardBase);
+            double minText = 99, minAccent = 99;
+            for (double v : pairs) minText = std::min (minText, v);
+            for (double v : accent) minAccent = std::min (minAccent, v);
+            report ("Tema " + t.name + ": contrasto", minText >= 4.5 && minAccent >= 3.0 && ink >= 3.0,
+                    "testo " + juce::String (minText, 1) + ":1, accento " + juce::String (minAccent, 1) + ":1, segni pedana "
+                        + juce::String (ink, 1) + ":1");
+        }
+
+        // 5. processore completo e bypass
         {
             PedalTrinityProcessor p;
             p.chain.fromValueTree (juce::ValueTree ("CHAIN"));
@@ -262,7 +280,8 @@ namespace
         PedalTrinityProcessor p;
         float scale = 1.0f;
         int w = 1280, h = 760, zoomSlot = -1;
-        bool info = false;
+        bool info = false, options = false;
+        juce::SharedResourcePointer<pt::ui::ThemeManager> themes;
         for (int i = 0; i < args.size(); ++i)
         {
             const auto next = i + 1 < args.size() ? args[i + 1] : juce::String();
@@ -283,6 +302,13 @@ namespace
             }
             else if (args[i] == "--zoom") zoomSlot = next.getIntValue();
             else if (args[i] == "--info") info = true;
+            else if (args[i] == "--options") options = true;
+            else if (args[i] == "--theme")
+            {
+                const auto& all = pt::ui::allThemes();
+                for (int t = 0; t < (int) all.size(); ++t)
+                    if (all[(size_t) t].id == next) themes->preview (t);      // anteprima: non tocca le preferenze
+            }
             else if (args[i] == "--chain")
             {
                 // "id" pedale, "id@B" nella corsia B, "split=0.5" splitter con MODE (0 mono, 0.5 dual, 1 stereo)
@@ -315,6 +341,7 @@ namespace
         editor->setSize (w, h);
         if (zoomSlot >= 0) editor->showZoom (zoomSlot);
         if (info) editor->showInfo (true);
+        if (options) editor->showOptions (true);
         auto img = editor->createComponentSnapshot (editor->getLocalBounds(), true, scale);
         outFile.deleteFile();
         juce::FileOutputStream os (outFile);

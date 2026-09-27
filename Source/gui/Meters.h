@@ -45,6 +45,7 @@ namespace pt::ui
         juce::AudioProcessorValueTreeState& apvts;
         engine::LevelMeter& meter;
         juce::SharedResourcePointer<Assets> assets;
+        juce::SharedResourcePointer<ThemeManager> themes;
         engine::ControlDef faderDef {}, knobDefs[3] {};
         std::unique_ptr<Canvas> canvas;
         std::unique_ptr<FaderControl> fader;

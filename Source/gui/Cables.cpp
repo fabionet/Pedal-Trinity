@@ -45,7 +45,7 @@ namespace pt::ui
             juce::Colour ringColour (int line) { return line == 1 ? juce::Colour (0xffc8322a) : juce::Colour (0xffd9b464); }
         }
 
-        void drawCable (juce::Graphics& g, const Cable& c)
+        void drawCable (juce::Graphics& g, const Cable& c, juce::Colour body, juce::Colour sheen)
         {
             const float w = juce::jmax (3.0f, 11.0f * c.scale);
             const auto path = cablePath (c);
@@ -54,9 +54,9 @@ namespace pt::ui
             g.strokePath (path, juce::PathStrokeType (w * 1.15f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded),
                           juce::AffineTransform::translation (w * 0.25f, w * 0.55f));
             // gomma
-            g.setColour (juce::Colour (0xff141416));
+            g.setColour (body);
             g.strokePath (path, juce::PathStrokeType (w, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-            g.setColour (juce::Colour (0xff2a2b30));
+            g.setColour (sheen);
             g.strokePath (path, juce::PathStrokeType (w * 0.62f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
             // riflesso lungo il cavo
             g.setColour (juce::Colours::white.withAlpha (0.13f));
@@ -129,8 +129,9 @@ namespace pt::ui
 
     void CableOverlay::paint (juce::Graphics& g)
     {
+        if (! visible) return;
         for (const auto& c : list)
-            if (! c.under) cables::drawCable (g, c);
+            if (! c.under) cables::drawCable (g, c, body, sheen);
         for (const auto& c : list)
         {
             cables::drawPlug (g, c.a, c.dirA, c.scale, c.line);

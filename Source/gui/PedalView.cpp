@@ -242,14 +242,17 @@ namespace pt::ui
         {
             // slot vuoto
             auto r = getLocalBounds().toFloat().reduced (juce::jmin (getWidth(), getHeight()) * 0.08f);
-            g.setColour (juce::Colour (0x10ffffff));
+            const auto& t = themes->current();
+            g.setColour (t.ink.withAlpha (0.07f));
             g.fillRoundedRectangle (r, 10.0f);
-            g.setColour (juce::Colour (0x40ffffff));
+            g.setColour (t.ink.withAlpha (0.55f));
             const float dash[] = { 6.0f, 5.0f };
             juce::Path p; p.addRoundedRectangle (r, 10.0f);
             juce::Path dashed; juce::PathStrokeType (1.5f).createDashedStroke (dashed, p, dash, 2);
             g.fillPath (dashed);
-            g.setColour (juce::Colour (0x90ffffff));
+            g.setColour (t.header.withAlpha (0.85f));
+            g.fillRoundedRectangle (r.withSizeKeepingCentre (juce::jmin (r.getWidth() - 12.0f, 190.0f), 70.0f), 8.0f);
+            g.setColour (t.text);
             g.setFont (juce::Font (juce::jlimit (11.0f, 18.0f, r.getWidth() * 0.09f), juce::Font::bold));
             g.drawFittedText ("Slot vuoto\nscegli un pedale\ndal menu", r.toNearestInt(), juce::Justification::centred, 3);
             return;

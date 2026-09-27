@@ -10,6 +10,7 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "Assets.h"
+#include "Theme.h"
 #include "../engine/Model.h"
 
 namespace pt::ui
@@ -21,6 +22,8 @@ namespace pt::ui
     {
     public:
         PedalLookAndFeel();
+        /** Colori di pulsanti, menu, combobox e fumetti dal tema. */
+        void applyTheme (const Theme&);
         void drawBubble (juce::Graphics&, juce::BubbleComponent&, const juce::Point<float>& tip,
                          const juce::Rectangle<float>& body) override;
         juce::Font getSliderPopupFont (juce::Slider&) override;

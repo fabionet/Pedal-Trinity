@@ -58,10 +58,38 @@ namespace pt::ui
         setColour (juce::TextEditor::textColourId, juce::Colour (0xffe8e6df));
     }
 
+    void PedalLookAndFeel::applyTheme (const Theme& t)
+    {
+        setColour (juce::BubbleComponent::backgroundColourId, t.panelBottom.withAlpha (0.94f));
+        setColour (juce::PopupMenu::backgroundColourId, t.panelTop);
+        setColour (juce::PopupMenu::textColourId, t.text);
+        setColour (juce::PopupMenu::highlightedBackgroundColourId, t.selected);
+        setColour (juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
+        setColour (juce::PopupMenu::headerTextColourId, t.accent);
+        setColour (juce::ComboBox::backgroundColourId, t.button);
+        setColour (juce::ComboBox::textColourId, t.text);
+        setColour (juce::ComboBox::outlineColourId, t.text.withAlpha (0.2f));
+        setColour (juce::ComboBox::arrowColourId, t.accent);
+        setColour (juce::TextButton::buttonColourId, t.button);
+        setColour (juce::TextButton::buttonOnColourId, t.selected);
+        setColour (juce::TextButton::textColourOffId, t.text);
+        setColour (juce::TextButton::textColourOnId, juce::Colours::white);
+        setColour (juce::ToggleButton::textColourId, t.text);
+        setColour (juce::ToggleButton::tickColourId, t.accent);
+        setColour (juce::ToggleButton::tickDisabledColourId, t.textDim);
+        setColour (juce::TooltipWindow::backgroundColourId, t.panelBottom.withAlpha (0.96f));
+        setColour (juce::TooltipWindow::textColourId, t.text);
+        setColour (juce::AlertWindow::backgroundColourId, t.panelTop);
+        setColour (juce::AlertWindow::textColourId, t.text);
+        setColour (juce::TextEditor::backgroundColourId, t.panelBottom);
+        setColour (juce::TextEditor::textColourId, t.text);
+        setColour (juce::Label::textColourId, t.text);
+    }
+
     void PedalLookAndFeel::drawBubble (juce::Graphics& g, juce::BubbleComponent&, const juce::Point<float>&,
                                        const juce::Rectangle<float>& body)
     {
-        g.setColour (juce::Colour (0xee141416));
+        g.setColour (findColour (juce::BubbleComponent::backgroundColourId));
         g.fillRoundedRectangle (body, 5.0f);
         g.setColour (juce::Colour (0x55ffffff));
         g.drawRoundedRectangle (body.reduced (0.5f), 5.0f, 1.0f);

@@ -13,7 +13,7 @@ import sys
 import unicodedata
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
@@ -56,16 +56,41 @@ def f(v):
 
 
 def convert_image(mid):
-    src = Image.open(os.path.join(PEDALS, mid + ".png")).convert("RGB")
+    src = Image.open(os.path.join(PEDALS, mid + ".png"))
     lw, lh = src.width / 2.0, src.height / 2.0
     w, h = int(round(lw * STORE_SCALE)), int(round(lh * STORE_SCALE))
-    img = src.resize((w, h), Image.LANCZOS)
-    a = np.asarray(img).astype(np.float32)
-    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
-    edge = np.minimum.reduce([xx, w - 1 - xx, yy, h - 1 - yy]) / (0.06 * min(w, h))
-    k = np.clip(edge, 0, 1)[..., None] ** 1.5
-    a = a * k + SLOT_BG * (1 - k)                  # bordi sfumati verso il colore dello slot
-    Image.fromarray(np.clip(a, 0, 255).astype(np.uint8)).save(os.path.join(RES, mid + ".jpg"), quality=86,
+    img = src.convert("RGBA").resize((w, h), Image.LANCZOS)
+    rgba = np.asarray(img).astype(np.float32)
+    alpha = rgba[..., 3:4] / 255.0
+    rgb = rgba[..., :3]
+    if src.mode == "RGBA":
+        # render trasparente (pedale + ombra): colore in JPEG, alfa in una maschera PNG a 8 bit.
+        # Il colore dove l'alfa e' ~0 viene portato a nero (ombre) per non creare aloni.
+        rgb = np.where(alpha > 0.01, rgb, 0.0)
+        # ombra: il rumore del render si comprime male. Sfocatura leggera solo dove il colore e' nero
+        # (ombra pura, non i bordi del pedale) e 128 livelli di alfa: maschere ~3 volte piu' piccole.
+        a8 = rgba[..., 3]
+        blurred = np.asarray(Image.fromarray(np.clip(a8, 0, 255).astype(np.uint8), "L")
+                             .filter(ImageFilter.GaussianBlur(1.6))).astype(np.float32)
+        shadow = (a8 < 245) & (rgb.max(axis=2) < 10)
+        # l'ombra deve svanire prima del bordo dell'immagine (altrimenti su una pedana chiara
+        # si vede un rettangolo): attenuazione verso i bordi e intensita' leggermente ridotta
+        yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+        edge = np.clip(np.minimum.reduce([xx, w - 1 - xx, yy, h - 1 - yy]) / (0.10 * min(w, h)), 0, 1)
+        edge = edge * edge * (3 - 2 * edge)
+        a8 = np.where(shadow, blurred * 0.85 * edge, a8)
+        a8 = np.round(a8 / 2.0) * 2.0
+        Image.fromarray(np.clip(a8, 0, 255).astype(np.uint8), "L").save(os.path.join(RES, mid + "_a.png"), optimize=True)
+    else:
+        # render opaco (vecchia scena): bordi sfumati verso il colore dello slot
+        yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+        edge = np.minimum.reduce([xx, w - 1 - xx, yy, h - 1 - yy]) / (0.06 * min(w, h))
+        k = np.clip(edge, 0, 1)[..., None] ** 1.5
+        rgb = rgb * k + SLOT_BG * (1 - k)
+        mask = os.path.join(RES, mid + "_a.png")
+        if os.path.exists(mask):
+            os.remove(mask)
+    Image.fromarray(np.clip(rgb, 0, 255).astype(np.uint8)).save(os.path.join(RES, mid + ".jpg"), quality=86,
                                                                optimize=True, progressive=True)
 
 
@@ -122,7 +147,8 @@ def main():
     # rimuove immagini di modelli non piu' presenti
     keep = {m["id"] for m in models if m["id"] not in skipped and m["id"] not in missing}
     for fn in os.listdir(RES):
-        if fn.endswith(".jpg") and fn[:-4] not in keep:
+        stem = fn[:-6] if fn.endswith("_a.png") else fn[:-4]
+        if (fn.endswith(".jpg") or fn.endswith("_a.png")) and stem not in keep:
             os.remove(os.path.join(RES, fn))
     total = sum(os.path.getsize(os.path.join(RES, x)) for x in os.listdir(RES))
     print("Catalogo: %d modelli (%d senza immagine), immagini %.1f MB, esclusi %d %s" % (

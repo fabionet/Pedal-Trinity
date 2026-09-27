@@ -3,6 +3,7 @@
 */
 
 #include "InfoPanel.h"
+#include "Theme.h"
 #include "Assets.h"
 #include "../Version.h"
 #include "../engine/Model.h"
@@ -23,8 +24,17 @@ namespace pt::ui
 
     namespace
     {
-        const juce::Colour gold (0xffd9b464), text (0xffe9e6dc), dim (0xffa9a69c), cardTop (0xff26272b),
-                           cardBottom (0xff131416);
+        // colori del tema corrente (letti alla creazione del pannello)
+        juce::Colour gold, text, dim, cardTop, cardBottom, primaryButton, plainButton;
+
+        void loadTheme()
+        {
+            juce::SharedResourcePointer<ThemeManager> tm;
+            const auto& t = tm->current();
+            gold = t.accent; text = t.text; dim = t.textDim;
+            cardTop = t.panelTop.brighter (0.06f); cardBottom = t.panelBottom;
+            primaryButton = t.selected; plainButton = t.button.brighter (0.08f);
+        }
 
         void styleEditor (juce::TextEditor& e, float size)
         {
@@ -41,8 +51,8 @@ namespace pt::ui
 
         void styleButton (juce::TextButton& b, bool primary)
         {
-            b.setColour (juce::TextButton::buttonColourId, primary ? juce::Colour (0xff3d6b45) : juce::Colour (0xff34353a));
-            b.setColour (juce::TextButton::buttonOnColourId, juce::Colour (0xff4f8a59));
+            b.setColour (juce::TextButton::buttonColourId, primary ? primaryButton : plainButton);
+            b.setColour (juce::TextButton::buttonOnColourId, primaryButton.brighter (0.2f));
             b.setColour (juce::TextButton::textColourOffId, juce::Colours::white);
             b.setMouseCursor (juce::MouseCursor::PointingHandCursor);
         }
@@ -50,6 +60,7 @@ namespace pt::ui
 
     InfoPanel::InfoPanel()
     {
+        loadTheme();
         setWantsKeyboardFocus (true);
 
         title.setText (pt::productName, juce::dontSendNotification);

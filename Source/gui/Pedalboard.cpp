@@ -11,8 +11,6 @@ namespace pt::ui
 
     namespace
     {
-        const juce::Colour gold (0xffd9b464);
-
         /** Corsie DUAL: indici degli slot dopo lo splitter nella corsia A e nella B, in ordine. */
         void laneLists (const Chain& chain, int sp, std::vector<int>& a, std::vector<int>& b)
         {
@@ -47,11 +45,8 @@ namespace pt::ui
         addA.onClick = [add] { add (0); };
         addB.onClick = [add] { add (1); };
         for (auto* b : { &pageLeft, &pageRight, &addA, &addB })
-        {
-            b->setColour (juce::TextButton::buttonColourId, juce::Colour (0xe0202125));
-            b->setColour (juce::TextButton::textColourOffId, gold);
             addChildComponent (b);
-        }
+        themeChanged();
         startTimerHz (30);
     }
 
@@ -103,6 +98,20 @@ namespace pt::ui
     }
 
     void Pedalboard::refresh() { layout(); }
+
+    void Pedalboard::themeChanged()
+    {
+        const auto& t = themes->current();
+        for (auto* b : { &pageLeft, &pageRight, &addA, &addB })
+        {
+            b->setColour (juce::TextButton::buttonColourId, t.panelTop.withAlpha (0.92f));
+            b->setColour (juce::TextButton::textColourOffId, t.accent);
+        }
+        const auto& c = themes->cable();
+        overlay.setStyle (c.body, c.sheen, themes->showCables());
+        boardKey = {};
+        repaint();
+    }
     void Pedalboard::resized() { layout(); }
 
     juce::Rectangle<int> Pedalboard::boardArea() const { return cellGrid; }
@@ -133,6 +142,7 @@ namespace pt::ui
         const int pw = juce::jlimit (76, 112, getWidth() / 15);
         inPanel.setBounds (area.removeFromLeft (pw));
         outPanel.setBounds (area.removeFromRight (pw));
+        boardRect = area.reduced (4, 0);
         cellGrid = area.reduced (juce::jmax (22, getWidth() / 60), 0);
 
         cols = view == 18 ? 9 : view;
@@ -388,6 +398,25 @@ namespace pt::ui
     //==============================================================================
     void Pedalboard::paint (juce::Graphics& g)
     {
+        const auto& t = themes->current();
+        // pedana del tema (in cache: si ridisegna solo se cambiano tema o dimensioni)
+        const auto key = t.id + juce::String (boardRect.getWidth()) + "x" + juce::String (boardRect.getHeight());
+        if (key != boardKey && ! boardRect.isEmpty())
+        {
+            const float sc = (float) g.getInternalContext().getPhysicalPixelScaleFactor();
+            boardCache = juce::Image (juce::Image::ARGB, juce::roundToInt ((float) boardRect.getWidth() * sc),
+                                      juce::roundToInt ((float) boardRect.getHeight() * sc), true);
+            juce::Graphics bg (boardCache);
+            bg.addTransform (juce::AffineTransform::scale (sc));
+            paintBoard (bg, t, boardRect.withZeroOrigin().toFloat(), juce::jlimit (0.7f, 2.2f, (float) getHeight() / 700.0f));
+            boardKey = key;
+        }
+        if (boardCache.isValid())
+        {
+            g.setOpacity (1.0f);
+            g.drawImage (boardCache, boardRect.toFloat());
+        }
+
         // celle libere in coda: sagoma tratteggiata (il cavo ci passa sopra)
         const float dash[] = { 6.0f, 5.0f };
         for (int k = 0; k < (int) cells.size(); ++k)
@@ -395,33 +424,37 @@ namespace pt::ui
             const auto& c = cells[(size_t) k];
             if (c.slot != -1) continue;
             auto r = c.bounds.toFloat().reduced (6.0f);
-            g.setColour (juce::Colour (0x0affffff));
+            g.setColour (t.ink.withAlpha (0.06f));
             g.fillRoundedRectangle (r, 8.0f);
             juce::Path p, d;
             p.addRoundedRectangle (r, 8.0f);
-            juce::PathStrokeType (1.2f).createDashedStroke (d, p, dash, 2);
-            g.setColour (k == dropCell ? gold : juce::Colour (0x26ffffff));
+            juce::PathStrokeType (1.4f).createDashedStroke (d, p, dash, 2);
+            g.setColour (k == dropCell ? t.accent : t.ink.withAlpha (0.55f));
             g.fillPath (d);
             if (k == dropCell)
             {
-                g.setColour (gold.withAlpha (0.12f));
+                g.setColour (t.accent.withAlpha (0.14f));
                 g.fillRoundedRectangle (r, 8.0f);
             }
         }
         if (dual)
         {
-            // etichette delle corsie
-            g.setColour (juce::Colour (0x55d9b464));
+            // etichette delle corsie su una pastiglia scura: leggibili su qualsiasi pedana
             g.setFont (juce::Font (12.0f, juce::Font::bold));
             for (int row = 0; row < 2; ++row)
             {
-                const int y = cellGrid.getY() + row * (cellGrid.getHeight() / 2);
-                g.drawText (row == 0 ? "A" : "B", cellGrid.getX() - juce::jmax (22, getWidth() / 60), y, 18, 18, juce::Justification::centred);
+                const int y = cellGrid.getY() + row * (cellGrid.getHeight() / 2) + 4;
+                const auto pill = juce::Rectangle<float> ((float) cellGrid.getX() - (float) juce::jmax (22, getWidth() / 60) + 2.0f, (float) y, 18.0f, 18.0f);
+                g.setColour (t.panelBottom.withAlpha (0.9f));
+                g.fillRoundedRectangle (pill, 4.0f);
+                g.setColour (row == 0 ? t.accent : juce::Colour (0xffe0554b));
+                g.drawText (row == 0 ? "A" : "B", pill, juce::Justification::centred);
             }
         }
-        // cavi che tornano a capo passando sotto la pedaliera (coperti dagli slot)
-        for (const auto& c : underCables)
-            cables::drawCable (g, c);
+        // cavi che tornano a capo passando sotto la pedaliera (coperti dalle intestazioni)
+        if (themes->showCables())
+            for (const auto& c : underCables)
+                cables::drawCable (g, c, themes->cable().body, themes->cable().sheen);
     }
 
     void Pedalboard::timerCallback()
