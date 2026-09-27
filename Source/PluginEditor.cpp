@@ -152,8 +152,12 @@ void PedalTrinityEditor::showInfo (bool shouldShow)
     if (shouldShow)
     {
         infoPanel = std::make_unique<InfoPanel>();
-        infoPanel->onClose = [this] { juce::MessageManager::callAsync ([sp = juce::Component::SafePointer<PedalTrinityEditor> (this)]
-                                                                       { if (sp) sp->showInfo (false); }); };
+        // chiusura asincrona: il pannello non puo' distruggersi dentro il proprio callback
+        const juce::Component::SafePointer<PedalTrinityEditor> safeThis (this);
+        infoPanel->onClose = [safeThis]
+        {
+            juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->showInfo (false); });
+        };
         infoPanel->setBounds (board.getLocalBounds());
         board.addAndMakeVisible (*infoPanel);
         infoPanel->grabKeyboardFocus();

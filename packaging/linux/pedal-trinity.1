@@ -1,0 +1,25 @@
+.TH PEDAL-TRINITY 1 "2026-09-27" "1.0.0 beta" "Pedal Trinity"
+.SH NAME
+pedal-trinity \- overdrive, distortion and 7-band graphic EQ for guitar (standalone)
+.SH SYNOPSIS
+.B pedal-trinity
+[\fB\-\-selftest\fR] [\fB\-\-version\fR] [\fB\-\-screenshot\fR \fIfile.png\fR [\fB\-\-scale\fR \fIn\fR] [\fB\-\-info\fR] [\fB\-\-set\fR \fIid=value\fR]...]
+.SH DESCRIPTION
+Pedal Trinity chains three guitar pedals with a photorealistic interface:
+Emerald Drive ED-9 (overdrive), Metal Core MC-2W (distortion) and Graphic EQ GQ-7.
+The same effect is installed as VST3 (/usr/lib/vst3) and LV2 (/usr/lib/lv2) plugin.
+Audio devices (ALSA or JACK) are selected from the Options menu.
+.SH OPTIONS
+.TP
+.B \-\-selftest
+run the automatic DSP tests and exit (exit status 0 on success).
+.TP
+.B \-\-version
+print the version.
+.TP
+.BI \-\-screenshot " file.png"
+save an image of the user interface and exit.
+.SH FILES
+/usr/share/doc/pedal-trinity/PedalTrinity_Guida.pdf \- illustrated guide (Italian).
+.SH AUTHOR
+FabioNET. Licensed under the GNU General Public License v3 or later.
