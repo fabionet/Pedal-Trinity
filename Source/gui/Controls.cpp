@@ -258,8 +258,35 @@ namespace pt::ui
         }
         g.setColour (juce::Colour (0xff2a2b2e));
         g.drawEllipse (r, 1.2f);
-        g.setFont (juce::Font (r.getHeight() * 0.3f, juce::Font::bold));
-        g.drawText (c.label, r, juce::Justification::centred);
+        // icona sul cappuccio (il nome del comando e' serigrafato sotto il tasto)
+        const juce::String role (c.role != nullptr ? c.role : "");
+        const auto ic = r.reduced (r.getWidth() * 0.3f);
+        juce::Path p;
+        if (role == "stop")
+            p.addRectangle (ic.reduced (ic.getWidth() * 0.08f));
+        else if (role == "clear")
+        {
+            p.addLineSegment ({ ic.getTopLeft(), ic.getBottomRight() }, ic.getWidth() * 0.2f);
+            p.addLineSegment ({ ic.getTopRight(), ic.getBottomLeft() }, ic.getWidth() * 0.2f);
+        }
+        else if (role == "undo")
+        {
+            p.addCentredArc (ic.getCentreX(), ic.getCentreY(), ic.getWidth() * 0.45f, ic.getHeight() * 0.45f, 0.0f,
+                             -2.4f, 1.6f, true);
+            p = [&] { juce::Path s; juce::PathStrokeType (ic.getWidth() * 0.16f).createStrokedPath (s, p); return s; }();
+            const juce::Point<float> tip (ic.getCentreX() - ic.getWidth() * 0.34f, ic.getCentreY() - ic.getHeight() * 0.3f);
+            p.addTriangle (tip.translated (-ic.getWidth() * 0.2f, -ic.getWidth() * 0.05f), tip.translated (ic.getWidth() * 0.18f, -ic.getWidth() * 0.12f),
+                           tip.translated (0.0f, ic.getWidth() * 0.26f));
+        }
+        else
+        {
+            const float d = ic.getHeight() * 0.62f;       // cerchio (REC) + triangolo (PLAY)
+            p.addEllipse (ic.getX() - d * 0.15f, ic.getCentreY() - d * 0.5f, d, d);
+            const float x0 = ic.getX() + d * 1.0f, h = d * 0.5f;
+            p.addTriangle (x0, ic.getCentreY() - h, x0, ic.getCentreY() + h, x0 + d * 0.85f, ic.getCentreY());
+        }
+        g.setColour (role == "stop" || role == "clear" || role == "undo" ? juce::Colour (0xff2a2b2e) : juce::Colour (0xffb3202a));
+        g.fillPath (p);
     }
 
     //==============================================================================

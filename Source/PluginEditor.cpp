@@ -156,23 +156,26 @@ juce::Rectangle<int> PedalTrinityEditor::rackArea() const
 void PedalTrinityEditor::resized()
 {
     auto bar = getLocalBounds().removeFromTop (toolbarH).reduced (10, 6);
-    logo.setBounds (bar.getX() + 6, 2, 220, 30);
-    bar.removeFromLeft (230);
-    presetButton.setBounds (bar.removeFromLeft (230).reduced (0, 3));
-    bar.removeFromLeft (14);
+    // larghezze compatte: a 1280 px (minimo) tutti i tasti restano visibili
+    const bool wide = getWidth() >= 1500;
+    logo.setBounds (bar.getX() + 6, 2, 184, 30);
+    bar.removeFromLeft (192);
+    presetButton.setBounds (bar.removeFromLeft (wide ? 240 : 184).reduced (0, 3));
+    bar.removeFromLeft (10);
 
-    auto right = bar.removeFromRight (juce::jmin (560, bar.getWidth() / 2 + 60));
-    infoButton.setBounds (right.removeFromRight (64).reduced (0, 3));
-    right.removeFromRight (10);
+    const int gap = wide ? 10 : 7;
+    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 330, wide ? 580 : 528));
+    infoButton.setBounds (right.removeFromRight (60).reduced (0, 3));
+    right.removeFromRight (gap);
     outputGain.setBounds (right.removeFromRight (36).withHeight (30));
     inputGain.setBounds (right.removeFromRight (36).withHeight (30));
-    right.removeFromRight (10);
-    zoomIn.setBounds (right.removeFromRight (32).reduced (0, 3));
-    zoomLabel.setBounds (right.removeFromRight (90));
-    zoomOut.setBounds (right.removeFromRight (32).reduced (0, 3));
-    right.removeFromRight (10);
-    addButton.setBounds (right.removeFromRight (96).reduced (0, 3));
-    right.removeFromRight (10);
+    right.removeFromRight (gap);
+    zoomIn.setBounds (right.removeFromRight (30).reduced (0, 3));
+    zoomLabel.setBounds (right.removeFromRight (wide ? 90 : 78));
+    zoomOut.setBounds (right.removeFromRight (30).reduced (0, 3));
+    right.removeFromRight (gap);
+    addButton.setBounds (right.removeFromRight (wide ? 96 : 86).reduced (0, 3));
+    right.removeFromRight (gap);
     for (int i = 3; i >= 0; --i) viewButtons[i].setBounds (right.removeFromRight (34).reduced (1, 3));
 
     bar.removeFromRight (6);
@@ -201,7 +204,7 @@ void PedalTrinityEditor::refresh()
     const int last = juce::jmin (n, first + view);
     pageLabel.setText (n == 0 ? juce::String ("Nessun pedale: premi + Pedale")
                               : "Slot " + juce::String (first + 1) + " - " + juce::String (last) + " di " + juce::String (n)
-                                    + "     (" + juce::String (n) + "/100)",
+                                    + "   (" + juce::String (n) + "/100)",
                        juce::dontSendNotification);
     prevButton.setEnabled (first > 0);
     firstButton.setEnabled (first > 0);
