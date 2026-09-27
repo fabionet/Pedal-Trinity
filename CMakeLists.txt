@@ -133,6 +133,12 @@ target_sources(PedalTrinity PRIVATE
     Source/gui/OptionsPanel.cpp
     Source/engine/FxNam.cpp
     Source/engine/NamSecurity.cpp)
+# ResamplingContainer.h (AudioDSPTools) ridichiara LanczosResampler come alias: GCC 11-12 lo tratta come
+# errore "changes meaning" (permerror), i compilatori piu' recenti no. Solo per i file che lo includono.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set_source_files_properties(Source/engine/FxNam.cpp Source/engine/NamSecurity.cpp
+        PROPERTIES COMPILE_OPTIONS "-fpermissive;-Wno-changes-meaning")
+endif()
 
 target_include_directories(PedalTrinity PRIVATE Source Source/gui Source/engine)
 
