@@ -126,18 +126,23 @@ e l'LV2 in \texttt{...\textbackslash Common Files\textbackslash LV2}.
 \begin{center}\includegraphics[width=\linewidth]{../images/guide_overview.jpg}\end{center}
 \begin{tabularx}{\linewidth}{@{}l X@{}}
 \num{A} & \textbf{Preset}: carica i preset di fabbrica e i tuoi, salva, esporta/importa su file, elimina, nuova pedaliera. \\
-\num{B} & \textbf{Scorrimento}: \ctl{<} e \ctl{>} spostano la vista di 3 pedali; \ctl{<<} e \ctl{>>} di una pagina intera. \\
-\num{C} & \textbf{Posizione}: slot visibili, totale e numero di slot usati su 100. \\
+\num{B} & \textbf{Scorrimento}: \ctl{<} e \ctl{>} spostano la vista di 3 pedali; \ctl{<<} e \ctl{>>} di una pagina intera. Compaiono solo quando la catena non sta tutta nella vista (insieme alle frecce ai lati della pedaliera). \\
+\num{C} & \textbf{Posizione}: slot (o colonne, con lo splitter in DUAL) visibili, totale e numero di slot usati su 100. \\
 \num{D} & \textbf{Vista}: 3, 6, 9 o 18 pedali visibili contemporaneamente (18 = due file da 9). \\
 \num{E} & \textbf{+ Pedale}: aggiunge uno slot in fondo alla catena (fino a 100). \\
 \num{F} & \textbf{Zoom}: \ctl{-} e \ctl{+} passano tra 1280×760, 1440×810, 1600×900, 1920×1080 e 2560×1440 (2K); la finestra si può anche ridimensionare trascinando l'angolo. \\
-\num{G} & \textbf{IN / OUT}: guadagno d'ingresso e volume d'uscita generali (automatizzabili nella DAW). \\
-\num{H} & \textbf{INFO}: licenza, autore, versione, crediti e apertura di questa guida. \\
+\num{G} & \textbf{INPUT}: meter d'ingresso e fader del guadagno (da $-18$ a $+18$ dB); la presa jack porta il segnale al primo pedale. \\
+\num{H} & \textbf{OUTPUT}: meter d'uscita (mono, oppure L/R con lo splitter attivo) e fader del volume; con lo splitter in DUAL o STEREO anche i pomelli BALANCE, LEFT e RIGHT. Tutti automatizzabili nella DAW. \\
+\num{I} & \textbf{INFO}: licenza, autore, versione, crediti e apertura di questa guida. \\
 \end{tabularx}
 
-\subsection*{Il segnale}
-Il suono attraversa gli slot \textbf{da sinistra a destra e dall'alto in basso}, dallo slot 1 all'ultimo.
-Gli slot vuoti lasciano passare il segnale invariato.
+\subsection*{Il segnale e i cavi}
+Il suono attraversa gli slot \textbf{da sinistra a destra e dall'alto in basso}, dallo slot 1 all'ultimo,
+e i \textbf{cavi jack} disegnati sulla pedaliera mostrano il percorso: dalla presa del meter INPUT al
+primo pedale, da un pedale all'altro e dall'ultimo pedale al meter OUTPUT. Ogni volta che aggiungi un
+pedale compare il suo cavo; gli slot vuoti (e le celle libere in fondo) vengono attraversati dal cavo
+senza modificare il segnale. Nella vista a 18 il cavo che va a capo passa sotto la pedaliera.
+Senza splitter la catena è \textbf{mono}, come con cavi singoli veri: i pedali stereo usano solo le prese A.
 
 \clearpage
 \section{Gli slot}
@@ -146,21 +151,24 @@ Gli slot vuoti lasciano passare il segnale invariato.
 \end{minipage}\hfill
 \begin{minipage}[t]{0.54\linewidth}\vspace{0pt}
 \begin{tabularx}{\linewidth}{@{}l X@{}}
-\num{1} & numero dello slot (posizione nella catena); clic destro: duplica, inserisci, svuota, carica IR \\
-\num{2} & \textbf{menu di scelta del pedale}: presente su ogni slot, con i modelli divisi per categoria; «Slot vuoto» libera lo slot \\
-\num{3} & sposta lo slot a sinistra / a destra \\
+\num{1} & numero dello slot (posizione nella catena) e, con lo splitter in DUAL, la corsia \textbf{A} o \textbf{B}; clic destro: duplica, inserisci, svuota, carica IR, cambia corsia \\
+\num{2} & \textbf{menu di scelta del pedale}: presente su ogni slot, con i modelli divisi per categoria; in cima lo splitter SPL-3 e «Slot vuoto» \\
+\num{3} & sposta lo slot a sinistra / a destra (nella propria corsia) \\
 \num{4} & accende / spegne il pedale (come il footswitch) \\
 \num{5} & \textbf{zoom}: apre il pedale ingrandito \\
 \num{6} & elimina lo slot (i successivi scorrono) \\
 \num{7} & pomelli, cursori e levette: si regolano \textbf{direttamente sull'immagine} \\
 \num{8} & LED: acceso quando il pedale è attivo \\
 \num{9} & pedale/footswitch: clic per accendere o spegnere \\
+\num{10} & \textbf{cavo jack}: collega l'uscita del pedale all'ingresso del successivo \\
 \end{tabularx}
 \end{minipage}
 
 \begin{nota}[Spostare i pedali]
-Oltre ai tasti \num{3} puoi \textbf{trascinare} uno slot tenendo premuta la sua intestazione e
-rilasciarlo sopra un altro slot: il pedale si sposta in quella posizione.
+Oltre ai tasti \num{3} puoi \textbf{trascinare a mano} un pedale: afferralo dall'intestazione o dal
+corpo (fuori dai comandi) e rilascialo sopra un altro slot, che si sposta per fargli posto, oppure
+su una cella libera per metterlo in fondo alla catena. Con lo splitter in DUAL il rilascio in una
+fila sposta il pedale in quella corsia. Il tasto \textbf{+} nella prima cella libera aggiunge uno slot.
 \end{nota}
 
 \begin{nota}[Comandi]
@@ -186,26 +194,51 @@ precedente/successivo (anche con i tasti freccia; \texttt{Esc} chiude).
 \begin{center}\includegraphics[width=\linewidth]{../images/guide_zoom.jpg}\end{center}
 
 % ------------------------------------------------------------------
+\clearpage
+\section{Splitter, cavi e meter}
+Lo \textbf{splitter SPL-3} è un modulo che inserisci in uno slot qualsiasi (in cima al menu dei pedali,
+al massimo uno per catena): prima dello splitter il segnale è mono, dopo lo splitter segue il
+selettore \textbf{MODE}.
+\begin{itemize}
+  \item \textbf{MONO}: nessuna divisione, il segnale prosegue mono.
+  \item \textbf{DUAL}: due catene mono indipendenti. I pedali dopo lo splitter si dividono in due
+        file: la corsia \textbf{A} (sopra, uscita sinistra) e la corsia \textbf{B} (sotto, uscita destra).
+        Il cavo B scende dallo splitter al primo pedale della corsia B.
+  \item \textbf{STEREO}: una catena stereo. I pedali a doppio jack (stereo, con due prese per lato)
+        ricevono i cavi A e B; un pedale mono prende solo il cavo A e da lì il segnale torna mono,
+        finché un pedale stereo non lo riallarga, esattamente come con i pedali veri.
+\end{itemize}
+\textbf{BALANCE}, \textbf{LEVEL A} e \textbf{LEVEL B} sullo splitter regolano le due mandate; in uscita
+il meter OUTPUT diventa stereo (L/R) e mostra BALANCE, LEFT e RIGHT. Il meter INPUT mostra le due
+mandate A/B quando lo splitter è nel primo slot. Le due catene rientrano nel limite di 100 slot.
+\begin{center}
+\includegraphics[width=\linewidth]{../images/guide_dual.jpg}\\[0.2em]
+\small Splitter in DUAL: corsia A (noise gate, overdrive, ampli) e corsia B (distorsore, ampli) con le due uscite.\\[0.6em]
+\includegraphics[width=\linewidth]{../images/guide_stereo.jpg}\\[0.2em]
+\small Splitter in STEREO: chorus e delay stereo con i cavi A e B; il distorsore mono usa solo la presa A.
+\end{center}
+
+% ------------------------------------------------------------------
 \section{Preset}
 Il tasto \textbf{Preset} apre il menu:
 \begin{itemize}
-  \item \textbf{Fabbrica}: pedaliere pronte (originale, blues, rock, metal, ambient, fuzz vintage, amp + cabinet);
+  \item \textbf{Fabbrica}: pedaliere pronte (originale, blues, rock, metal, ambient stereo, fuzz vintage, amp + cabinet, doppio amp in dual mono);
   \item \textbf{I miei preset}: quelli salvati da te;
   \item \textbf{Salva\dots} (con nome), \textbf{Esporta su file\dots}, \textbf{Importa da file\dots}, \textbf{Elimina};
   \item \textbf{Nuova pedaliera vuota} e \textbf{Apri la cartella dei preset}.
 \end{itemize}
-Un preset contiene tutta la catena: pedali, posizioni, valori di ogni comando, stato on/off e i
-guadagni IN/OUT. I file (\texttt{.ptpreset}) si trovano in \texttt{\textasciitilde/.config/PedalTrinity/Presets}
+Un preset contiene tutta la catena: pedali, posizioni, corsie, splitter, valori di ogni comando,
+stato on/off, i volumi INPUT/OUTPUT e i comandi d'uscita dello splitter. I file (\texttt{.ptpreset}) si trovano in \texttt{\textasciitilde/.config/PedalTrinity/Presets}
 (Linux) o \texttt{\%APPDATA\%\textbackslash PedalTrinity\textbackslash Presets} (Windows). Nella DAW
 lo stato completo viene salvato anche nel progetto.
 
 % ------------------------------------------------------------------
 \section{Pedali speciali}
 \begin{itemize}
-  \item \textbf{Selettore A/B e splitter} (stile AB-2): in modalità \emph{selettore} sceglie l'ingresso
-        A (canale sinistro) o B (canale destro); in modalità \emph{splitter} manda il segnale all'uscita
-        A (sinistra) o B (destra). Il \emph{line selector} (stile LS-2) offre i 6 modi con i livelli A e B
-        (da muto a +20 dB); nel plugin i due loop corrispondono ai due canali della coppia stereo.
+  \item \textbf{Selettore A/B} (stile AB-2) e \textbf{line selector} (stile LS-2): lavorano sulle linee A e B
+        quando si trovano nella catena stereo dello splitter SPL-3. AB-2 sceglie l'ingresso A o B
+        oppure manda il segnale all'uscita A o B; LS-2 offre i 6 modi con i livelli A e B (da muto a +20 dB).
+        In un tratto mono (un solo cavo) lasciano passare il segnale.
   \item \textbf{Simulatori d'ampli e di cassa} (stile IR-2, IR-200, FBM-1, FDR-1): preamp a valvole,
         stack di tono reale, finale con sag e cassa. I pedali \emph{IR Loader} convolvono il segnale con
         risposte all'impulso di casse generate dal modello dell'altoparlante; con un \textbf{clic destro sul

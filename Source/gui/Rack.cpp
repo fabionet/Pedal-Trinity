@@ -8,14 +8,19 @@ namespace pt::ui
 {
     using namespace pt::engine;
 
-    juce::PopupMenu buildModelMenu (const ModelDef* current)
+    juce::PopupMenu buildModelMenu (const ModelDef* current, bool splitterAllowed)
     {
         juce::PopupMenu root;
         root.addItem (1, "- Slot vuoto -", true, current == nullptr);
+        for (int i = 0; i < numModels(); ++i)
+            if (model (i).family == Family::Splitter)
+                root.addItem (i + 2, juce::String (model (i).code) + "   " + model (i).name + "   (divide la catena: mono / dual / stereo)",
+                              splitterAllowed, &model (i) == current);
         root.addSeparator();
         juce::StringArray cats;
         for (int i = 0; i < numModels(); ++i)
-            cats.addIfNotAlreadyThere (model (i).category);
+            if (model (i).family != Family::Splitter)
+                cats.addIfNotAlreadyThere (model (i).category);
         for (const auto& cat : cats)
         {
             juce::PopupMenu sub;
@@ -92,8 +97,8 @@ namespace pt::ui
         for (auto* b : { left.get(), right.get(), zoomBtn.get(), del.get(), power.get() })
             addAndMakeVisible (b);
 
-        left->onClick = [this] { chain.move (index, index - 1); };
-        right->onClick = [this] { chain.move (index, index + 1); };
+        left->onClick = [this] { const int j = neighbour (-1); if (j >= 0) chain.moveTo (index, j, chain.lane (index)); };
+        right->onClick = [this] { const int j = neighbour (1); if (j >= 0) chain.moveTo (index, j, chain.lane (index)); };
         zoomBtn->onClick = [this] { if (cb.zoom) cb.zoom (index); };
         del->onClick = [this]
         {
@@ -117,6 +122,7 @@ namespace pt::ui
                 auto& ch = chain;
                 juce::MessageManager::callAsync ([&ch, idx, modelId] { ch.setModel (idx, modelId); });
             }
+            else refreshHeader();
         };
         addAndMakeVisible (selector);
         addAndMakeVisible (view);
@@ -138,15 +144,81 @@ namespace pt::ui
         auto* s = chain.slot (index);
         const ModelDef* d = s != nullptr ? s->def : nullptr;
         selector.clear (juce::dontSendNotification);
-        *selector.getRootMenu() = buildModelMenu (d);
+        *selector.getRootMenu() = buildModelMenu (d, chain.canPlaceSplitter (index));
         selector.setSelectedId (d == nullptr ? 1 : (int) (d - &model (0)) + 2, juce::dontSendNotification);
         if (d != nullptr) selector.setText (juce::String (d->code) + "  " + d->name, juce::dontSendNotification);
         else selector.setText ("- vuoto -", juce::dontSendNotification);
-        left->setEnabled (index > 0);
-        right->setEnabled (index < chain.size() - 1);
+        left->setEnabled (neighbour (-1) >= 0);
+        right->setEnabled (neighbour (1) >= 0);
         power->setEnabled (d != nullptr);
         power->setToggleState (s != nullptr && s->enabled.load(), juce::dontSendNotification);
         zoomBtn->setEnabled (d != nullptr);
+    }
+
+    void SlotComponent::setLaneLabel (const juce::String& l)
+    {
+        if (l == laneLabel) return;
+        laneLabel = l;
+        resized();
+        repaint();
+    }
+
+    int SlotComponent::numberWidth() const
+    {
+        return laneLabel.isEmpty() ? juce::jmin (26, getWidth() / 7) : juce::jmin (46, getWidth() / 5);
+    }
+
+    int SlotComponent::neighbour (int dir) const
+    {
+        const int n = chain.size(), sp = chain.splitterIndex();
+        const bool dual = chain.splitMode() == SplitMode::Dual;
+        if (! dual || index <= sp)
+        {
+            const int j = index + dir;
+            // in DUAL gli slot prima dello splitter si scambiano solo tra loro e con lo splitter
+            if (dual && j > sp && index <= sp) return -1;
+            return juce::isPositiveAndBelow (j, n) ? j : -1;
+        }
+        const int myLane = chain.lane (index);
+        for (int j = index + dir; j > sp && j < n; j += dir)
+            if (chain.lane (j) == myLane) return j;
+        return -1;
+    }
+
+    bool SlotComponent::jackPoint (bool output, int line, juce::Point<float>& out) const
+    {
+        juce::Point<float> p;
+        if (! view.jackPoint (output, line, p)) return false;
+        out = p + view.getPosition().toFloat();
+        return true;
+    }
+
+    namespace
+    {
+        /** Area dell'immagine del pedale dentro uno slot con questi limiti (come PedalView::imageArea). */
+        juce::Rectangle<float> nominalImage (juce::Rectangle<int> b, const ModelDef& d)
+        {
+            const int row = juce::jlimit (18, 28, b.getWidth() / 8);
+            auto v = b.withZeroOrigin().withTrimmedTop (row * 2 + 6).reduced (2).toFloat();
+            const float s = juce::jmin (v.getWidth() / d.imageW, v.getHeight() / d.imageH);
+            return juce::Rectangle<float> (d.imageW * s, d.imageH * s).withCentre (v.getCentre());
+        }
+    }
+
+    juce::Point<float> SlotComponent::nominalJack (juce::Rectangle<int> b, bool output, int line)
+    {
+        const auto* d = findModel ("split");                    // pedale compatto con prese A e B
+        if (d == nullptr) d = &model (0);
+        const auto a = nominalImage (b, *d);
+        const float s = a.getWidth() / d->imageW;
+        return { a.getX() + (output ? d->jackOutX : d->jackInX) * s, a.getY() + (line == 1 ? d->jackYB : d->jackYA) * s };
+    }
+
+    float SlotComponent::nominalScale (juce::Rectangle<int> b)
+    {
+        const auto* d = findModel ("split");
+        if (d == nullptr) d = &model (0);
+        return nominalImage (b, *d).getWidth() / d->imageW;
     }
 
     juce::Rectangle<int> SlotComponent::headerArea() const
@@ -161,7 +233,7 @@ namespace pt::ui
         const int row = juce::jlimit (18, 28, getWidth() / 8);
         auto header = r.removeFromTop (row * 2 + 6).reduced (3, 2);
         auto top = header.removeFromTop (row);
-        top.removeFromLeft (juce::jmin (26, getWidth() / 7));    // numero dello slot
+        top.removeFromLeft (numberWidth());                      // numero dello slot (e corsia)
         selector.setBounds (top);
         header.removeFromTop (2);
         const int n = 5, w = header.getWidth() / n;
@@ -185,7 +257,21 @@ namespace pt::ui
         const int row = juce::jlimit (18, 28, getWidth() / 8);
         g.setColour (juce::Colour (0xffd9b464));
         g.setFont (juce::Font ((float) row * 0.62f, juce::Font::bold));
-        g.drawText (juce::String (index + 1), 3, 2, juce::jmin (26, getWidth() / 7), row, juce::Justification::centred);
+        const int nw = numberWidth();
+        if (laneLabel.isNotEmpty())
+        {
+            // numero + corsia ("3A"): la lettera ha il colore del cavo della corsia
+            const auto box = juce::Rectangle<float> (3.0f, 2.0f, (float) nw, (float) row);
+            g.drawText (juce::String (index + 1), box.withTrimmedRight (box.getWidth() * 0.42f), juce::Justification::centredRight);
+            const auto badge = box.withTrimmedLeft (box.getWidth() * 0.6f).reduced (1.0f, 3.0f);
+            g.setColour (laneLabel == "B" ? juce::Colour (0xffc8322a) : juce::Colour (0xffd9b464));
+            g.fillRoundedRectangle (badge, 3.0f);
+            g.setColour (juce::Colour (0xff111214));
+            g.setFont (juce::Font (badge.getHeight() * 0.85f, juce::Font::bold));
+            g.drawText (laneLabel, badge, juce::Justification::centred);
+        }
+        else
+            g.drawText (juce::String (index + 1), 3, 2, nw, row, juce::Justification::centred);
     }
 
     void SlotComponent::paintOverChildren (juce::Graphics& g)
@@ -215,6 +301,9 @@ namespace pt::ui
         m.addItem (3, "Inserisci slot vuoto prima", chain.canAdd());
         m.addItem (4, "Inserisci slot vuoto dopo", chain.canAdd());
         m.addItem (5, "Svuota lo slot", hasFx);
+        const int sp = chain.splitterIndex();
+        if (chain.splitMode() == SplitMode::Dual && sp >= 0 && index > sp)
+            m.addItem (6, chain.lane (index) == 0 ? "Sposta nella corsia B (uscita destra)" : "Sposta nella corsia A (uscita sinistra)");
         m.showMenuAsync (juce::PopupMenu::Options().withTargetComponent (&selector), [this] (int r)
         {
             auto* sl = chain.slot (index);
@@ -232,20 +321,22 @@ namespace pt::ui
             }
             else if (r == 2 && sl != nullptr && sl->def != nullptr)
             {
-                const int at = chain.insert (index + 1, sl->def->id);
+                const int at = chain.insert (index + 1, sl->def->id, chain.lane (index));
                 if (at >= 0)
                     for (int k = 0; k < sl->def->numControls; ++k)
                         chain.setParam (at, k, sl->fx->p (k));
             }
-            else if (r == 3) chain.insert (index, {});
-            else if (r == 4) chain.insert (index + 1, {});
+            else if (r == 3) chain.insert (index, {}, chain.lane (index));
+            else if (r == 4) chain.insert (index + 1, {}, chain.lane (index));
             else if (r == 5) chain.setModel (index, {});
+            else if (r == 6) chain.setLane (index, 1 - chain.lane (index));
         });
     }
 
     void SlotComponent::mouseDrag (const juce::MouseEvent& e)
     {
-        if (! headerArea().contains (e.getMouseDownPosition()) || e.getDistanceFromDragStart() < 6) return;
+        // si trascina dall'intestazione o dal corpo del pedale (i comandi gestiscono i propri trascinamenti)
+        if (e.mods.isPopupMenu() || e.getDistanceFromDragStart() < 6) return;
         if (auto* dnd = juce::DragAndDropContainer::findParentDragContainerFor (this))
             if (! dnd->isDragAndDropActive())
             {
@@ -264,10 +355,10 @@ namespace pt::ui
         dropHover = false;
         const int from = d.description.toString().fromFirstOccurrenceOf ("slot:", false, false).getIntValue();
         const int to = index;
-        if (from != to)
+        if (from != to && cb.dropped)
         {
-            auto& ch = chain;
-            juce::MessageManager::callAsync ([&ch, from, to] { ch.move (from, to); });
+            const auto dropped = cb.dropped;
+            juce::MessageManager::callAsync ([dropped, from, to] { dropped (from, to); });
         }
         repaint();
     }

@@ -19,6 +19,8 @@ mkdir -p "$TMP"
     --chain cs3,bd2,ds1,ce2,dd3,rv6,sd1,mc2w,gq7,ph3,tr2,re2
 "$APP" --screenshot "$TMP/view18.png" --size 1920x1080 --view 18 \
     --chain ns2,cs3,ed9,sd1,bd2,ds1,mc2w,hm2,fz2,gq7,aw3,ce2,dc2,bf2,ph1,dm2,dd3,rv6,re2,tu3
+"$APP" --screenshot "$TMP/dual.png" --size 1920x1080 --view 6 --chain ns2,split=0.5,bd2,ir2,ds1@B,ir200@B
+"$APP" --screenshot "$TMP/stereo.png" --size 1920x1080 --view 6 --chain cs3,split=1,ce5,ds1,dd8,rv6
 "$APP" --screenshot "$TMP/zoom.png" --size 1600x900 --view 3 --chain ed9,mc2w,gq7 --zoom 1
 "$APP" --screenshot "$TMP/info.png" --size 1280x760 --info
 python3 "$ROOT/tools/art/guide_images.py" "$TMP"

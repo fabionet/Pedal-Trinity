@@ -12,6 +12,18 @@
     audio ha smesso di usarle.
     I parametri dei pedali sono atomici: girare un pomello non ricostruisce
     nulla.
+
+    Instradamento (come con cavi veri):
+      - il segnale entra mono (ingresso 1) e ogni pedale riceve un solo cavo;
+        un pedale stereo in un tratto mono usa solo le prese A;
+      - lo splitter SPL-3 (al massimo uno) divide la catena dal suo punto in poi:
+          MONO   il segnale prosegue mono (nessuna divisione);
+          DUAL   due catene mono indipendenti: corsia A -> uscita L, corsia B -> R;
+          STEREO una catena stereo: i pedali stereo elaborano A e B, un pedale
+                 mono prende solo A e riporta il segnale in mono finche' un
+                 pedale stereo non lo riallarga;
+      - all'uscita il segnale mono va su L e R; con lo splitter attivo si
+        applicano BALANCE e livelli LEFT/RIGHT d'uscita.
 */
 
 #pragma once
@@ -25,15 +37,34 @@ namespace pt::engine
 {
     inline constexpr int maxSlots = 100;
 
-    /** Uno slot della catena: pedale (o vuoto) + stato on/off. */
+    enum class SplitMode : int { Mono = 0, Dual = 1, Stereo = 2 };
+
+    /** Uno slot della catena: pedale (o vuoto) + stato on/off + corsia. */
     struct Slot
     {
         const ModelDef* def = nullptr;          // nullptr = slot vuoto
         std::unique_ptr<Effect> fx;
         std::atomic<bool> enabled { true };
+        std::atomic<int> lane { 0 };            // 0 = A, 1 = B (conta solo dopo lo splitter in DUAL)
         // stato usato solo dal thread audio
         float fade = 1.0f;
         bool wasOff = false;
+
+        bool isSplitter() const noexcept { return def != nullptr && def->family == Family::Splitter; }
+    };
+
+    /** Picchi per i meter: il thread audio accumula, l'interfaccia legge e azzera. */
+    struct LevelMeter
+    {
+        std::atomic<float> peak[2] { { 0.0f }, { 0.0f } };
+        std::atomic<int> channels { 1 };
+
+        void push (int ch, float v) noexcept
+        {
+            float cur = peak[ch].load (std::memory_order_relaxed);
+            while (v > cur && ! peak[ch].compare_exchange_weak (cur, v, std::memory_order_relaxed)) {}
+        }
+        float take (int ch) noexcept { return peak[ch].exchange (0.0f, std::memory_order_relaxed); }
     };
 
     class Chain : public juce::ChangeBroadcaster, private juce::Timer
@@ -44,6 +75,7 @@ namespace pt::engine
 
         //======================== thread audio
         void prepare (double sampleRate, int maxBlock);
+        /** Canale 0 = ingresso mono (gia' con il guadagno d'ingresso); in uscita L/R (o somma se mono). */
         void process (juce::AudioBuffer<float>& buffer, int numChannels);
 
         //======================== thread dei messaggi
@@ -52,27 +84,54 @@ namespace pt::engine
         /** Riferimento condiviso: mantiene vivo lo slot anche se viene rimosso dalla catena. */
         std::shared_ptr<Slot> slotRef (int index) const;
         bool canAdd() const { return size() < maxSlots; }
-        /** Inserisce uno slot (vuoto se modelId e' vuoto) nella posizione indicata (-1 = in fondo). */
-        int insert (int index, const juce::String& modelId);
+        /** Inserisce uno slot (vuoto se modelId e' vuoto) nella posizione indicata (-1 = in fondo).
+            Restituisce l'indice, -1 se la catena e' piena o se si tenta un secondo splitter. */
+        int insert (int index, const juce::String& modelId, int lane = 0);
         void remove (int index);
         void move (int from, int to);
-        void setModel (int index, const juce::String& modelId);
+        /** Sposta uno slot e lo assegna a una corsia (A = 0, B = 1). */
+        void moveTo (int from, int to, int lane);
+        /** Cambia il pedale di uno slot; false se si tenta un secondo splitter. */
+        bool setModel (int index, const juce::String& modelId);
         void setEnabled (int index, bool on);
         void setParam (int index, int control, float value);
+        void setLane (int index, int lane);
         void clear();
+
+        /** Indice dello splitter, -1 se assente. */
+        int splitterIndex() const;
+        /** Modalita' dello splitter (MONO se assente). */
+        SplitMode splitMode() const;
+        /** true se lo splitter c'e' ed e' in DUAL o STEREO. */
+        bool isSplitActive() const { return splitMode() != SplitMode::Mono; }
+        /** Si puo' mettere lo splitter nello slot indicato (nessun altro splitter nella catena)? */
+        bool canPlaceSplitter (int index) const;
+        int lane (int index) const;
 
         juce::ValueTree toValueTree() const;
         void fromValueTree (const juce::ValueTree&);
 
-        /** Numero di pedali (non vuoti) e stato per la GUI. */
         double getSampleRate() const { return sampleRate; }
 
+        //======================== uscita (scritti dal processore, letti dal thread audio)
+        std::atomic<float> outBalance { 0.0f };       // -1 (sinistra) .. +1 (destra)
+        std::atomic<float> outGainL { 1.0f }, outGainR { 1.0f };
+
+        LevelMeter inputMeter;          // ingresso della catena (A/B se lo splitter e' nel primo slot)
+        std::atomic<int> outputChannels { 1 };   // 2 quando lo splitter e' attivo
+
     private:
-        struct Snapshot { std::vector<std::shared_ptr<Slot>> slots; };
+        struct Snapshot
+        {
+            std::vector<std::shared_ptr<Slot>> slots;
+            int split = -1;
+        };
 
         void publish();
         void timerCallback() override;
         std::shared_ptr<Slot> makeSlot (const juce::String& modelId) const;
+        int splitterIndexLocked() const;
+        void runSlot (Slot&, float* const* ch, int nch, int n);
 
         std::vector<std::shared_ptr<Slot>> model;           // thread dei messaggi
         mutable juce::CriticalSection modelLock;             // protegge 'model' per get/setState da altri thread
@@ -85,6 +144,7 @@ namespace pt::engine
 
         double sampleRate = 48000.0;
         int blockSize = 512;
-        juce::AudioBuffer<float> dry;
+        juce::AudioBuffer<float> lines, dry;                 // linee A/B e copia "dry" per le dissolvenze
+        float lastGain[4] { 1.0f, 1.0f, 1.0f, 1.0f };       // mandate A/B e uscite L/R (rampe senza click)
     };
 }

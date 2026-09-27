@@ -76,9 +76,12 @@ target_sources(PedalTrinity PRIVATE
     Source/engine/FxTime.cpp
     Source/engine/FxUtility.cpp
     Source/gui/Assets.cpp
+    Source/gui/Cables.cpp
     Source/gui/Controls.cpp
     Source/gui/InfoPanel.cpp
+    Source/gui/Meters.cpp
     Source/gui/PedalView.cpp
+    Source/gui/Pedalboard.cpp
     Source/gui/Rack.cpp)
 
 target_include_directories(PedalTrinity PRIVATE Source Source/gui Source/engine)

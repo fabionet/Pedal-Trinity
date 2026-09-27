@@ -10,6 +10,9 @@ namespace
     constexpr const char* inId = "in_gain";
     constexpr const char* outId = "out_gain";
     constexpr const char* bypassId = "bypass_all";
+    constexpr const char* outBalId = "out_balance";
+    constexpr const char* outLId = "out_level_l";
+    constexpr const char* outRId = "out_level_r";
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout PedalTrinityProcessor::createLayout()
@@ -22,6 +25,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalTrinityProcessor::creat
     p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { outId, 1 }, "Output", NormalisableRange<float> (-30.0f, 12.0f, 0.1f), 0.0f,
                                                         AudioParameterFloatAttributes().withLabel ("dB").withStringFromValueFunction (db)));
     p.push_back (std::make_unique<AudioParameterBool> (ParameterID { bypassId, 1 }, "Bypass", false));
+    // uscita dello splitter (attiva in DUAL / STEREO): bilanciamento e livelli delle due linee
+    auto pct = [] (float v, int) { return v == 0.0f ? String ("C") : (v < 0 ? "L " : "R ") + String (std::abs (v), 0); };
+    p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { outBalId, 2 }, "Out Balance", NormalisableRange<float> (-100.0f, 100.0f, 1.0f), 0.0f,
+                                                        AudioParameterFloatAttributes().withLabel ("%").withStringFromValueFunction (pct)));
+    p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { outLId, 2 }, "Out Left", NormalisableRange<float> (-24.0f, 12.0f, 0.1f), 0.0f,
+                                                        AudioParameterFloatAttributes().withLabel ("dB").withStringFromValueFunction (db)));
+    p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { outRId, 2 }, "Out Right", NormalisableRange<float> (-24.0f, 12.0f, 0.1f), 0.0f,
+                                                        AudioParameterFloatAttributes().withLabel ("dB").withStringFromValueFunction (db)));
     return { p.begin(), p.end() };
 }
 
@@ -34,6 +45,9 @@ PedalTrinityProcessor::PedalTrinityProcessor()
     inParam = apvts.getRawParameterValue (inId);
     outParam = apvts.getRawParameterValue (outId);
     bypassParam = apvts.getRawParameterValue (bypassId);
+    outBalParam = apvts.getRawParameterValue (outBalId);
+    outLParam = apvts.getRawParameterValue (outLId);
+    outRParam = apvts.getRawParameterValue (outRId);
     uiState.setProperty ("view", 3, nullptr);
     uiState.setProperty ("first", 0, nullptr);
     loadDefaultChain();
@@ -85,6 +99,9 @@ void PedalTrinityProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     const int nch = juce::jmin (2, buffer.getNumChannels());
     inGain.setTargetValue (juce::Decibels::decibelsToGain (inParam->load()));
     outGain.setTargetValue (juce::Decibels::decibelsToGain (outParam->load()));
+    chain.outBalance.store (outBalParam->load() / 100.0f);
+    chain.outGainL.store (juce::Decibels::decibelsToGain (outLParam->load()));
+    chain.outGainR.store (juce::Decibels::decibelsToGain (outRParam->load()));
 
     for (int start = 0; start < n; start += maxBlock)
     {
@@ -96,6 +113,7 @@ void PedalTrinityProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             for (int c = 0; c < nch; ++c) part.getWritePointer (c)[i] *= g;
         }
         chain.process (part, nch);
+        float peak[2] = { 0.0f, 0.0f };
         for (int i = 0; i < len; ++i)
         {
             const float g = outGain.getNextValue();
@@ -103,8 +121,13 @@ void PedalTrinityProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             {
                 float& s = part.getWritePointer (c)[i];
                 s = std::isfinite (s) ? s * g : 0.0f;       // protezione da valori non validi
+                peak[c] = std::max (peak[c], std::abs (s));
             }
         }
+        const int outCh = nch > 1 ? chain.outputChannels.load (std::memory_order_relaxed) : 1;
+        outputMeter.channels.store (outCh, std::memory_order_relaxed);
+        outputMeter.push (0, outCh > 1 ? peak[0] : std::max (peak[0], peak[1]));
+        if (outCh > 1) outputMeter.push (1, peak[1]);
     }
 }
 

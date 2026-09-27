@@ -9,7 +9,7 @@
           --selftest                         verifica automatica del DSP
           --screenshot file.png [opzioni]    salva un'immagine dell'interfaccia
               --scale s  --size WxH  --view n  --first i  --factory numero|nome
-              --zoom slot  --info  --chain id,id,...  --set slot:comando=valore (ripetibile)
+              --zoom slot  --info  --chain id,id@B,split=0.5,...  --set slot:comando=valore (ripetibile)
 */
 
 #include <juce_audio_devices/juce_audio_devices.h>
@@ -74,6 +74,57 @@ namespace
         return out;
     }
 
+    /** Processa 1.5 s con un effetto in mono (un solo canale, come nei tratti mono della catena). */
+    bool runEffectMono (pt::engine::Effect& fx, double sr, int block)
+    {
+        fx.prepare (sr, block);
+        juce::AudioBuffer<float> buf (1, block);
+        bool ok = true;
+        for (int pos = 0; pos < (int) (sr * 1.5); pos += block)
+        {
+            fillGuitar (buf, sr, 0.25f, pos);
+            fx.messageThreadUpdate();
+            fx.process (buf.getArrayOfWritePointers(), 1, block);
+            ok = ok && allFinite (buf) && buf.getMagnitude (0, block) < 16.0f;
+        }
+        return ok;
+    }
+
+    /** Catena da 'ids' (";" separati, "id@B" = corsia B, "split=modo"); restituisce L/R dopo 1 s. */
+    juce::AudioBuffer<float> runChain (pt::engine::Chain& chain, const juce::String& ids)
+    {
+        juce::ValueTree t ("CHAIN");
+        for (auto tok : juce::StringArray::fromTokens (ids, ";", ""))
+        {
+            juce::ValueTree s ("SLOT");
+            const auto id = tok.upToFirstOccurrenceOf ("@", false, false).upToFirstOccurrenceOf ("=", false, false);
+            s.setProperty ("model", id, nullptr);
+            if (tok.contains ("@B")) s.setProperty ("lane", 1, nullptr);
+            if (tok.contains ("=")) s.setProperty ("p0", tok.fromFirstOccurrenceOf ("=", false, false).getFloatValue(), nullptr);
+            t.appendChild (s, nullptr);
+        }
+        chain.fromValueTree (t);
+        const double sr = 48000.0;
+        const int block = 256, total = (int) sr;
+        chain.prepare (sr, block);
+        juce::AudioBuffer<float> out (2, total), buf (2, block);
+        for (int pos = 0; pos < total; pos += block)
+        {
+            fillGuitar (buf, sr, 0.25f, pos);
+            buf.clear (1, 0, block);                  // chitarra solo sull'ingresso 1
+            chain.process (buf, 2);
+            for (int c = 0; c < 2; ++c) out.copyFrom (c, pos, buf, c, 0, juce::jmin (block, total - pos));
+        }
+        return out;
+    }
+
+    float channelDiff (const juce::AudioBuffer<float>& b)
+    {
+        float d = 0;
+        for (int i = b.getNumSamples() / 2; i < b.getNumSamples(); ++i) d = std::max (d, std::abs (b.getSample (0, i) - b.getSample (1, i)));
+        return d;
+    }
+
     int runSelfTest()
     {
         using namespace pt::engine;
@@ -112,6 +163,13 @@ namespace
                 if (! fin || ! sane) ok = false;
                 detail << juce::String (setting, 1) << ":" << (fin ? juce::String (lvl, 1) : juce::String ("NaN")) << "dB ";
             }
+            {
+                auto fx = createEffect (def);
+                for (int k = 0; k < def.numControls; ++k)
+                    if (def.controls[k].kind != ControlKind::Button) fx->params[k].store (0.5f);
+                if (! runEffectMono (*fx, 48000.0, 256)) { ok = false; detail << "mono: NON valido "; }
+                else detail << "mono ok";
+            }
             report (juce::String (def.code) + " " + def.name + " [" + def.inspiredBy + "]", ok, detail.trim());
         }
 
@@ -133,7 +191,29 @@ namespace
             report ("Catena di 99 pedali: uscita finita", allFinite (buf), "RMS " + juce::String (rmsDb (buf, 0, 256), 1) + " dB");
         }
 
-        // 3. processore completo e bypass
+        // 3. instradamento: splitter MONO / DUAL / STEREO
+        {
+            Chain chain;
+            const auto noSplit = runChain (chain, "ce5");
+            report ("Catena senza splitter: uscita mono (L = R)", allFinite (noSplit) && channelDiff (noSplit) < 1.0e-6f,
+                    "diff " + juce::String (channelDiff (noSplit), 6));
+            const auto stereo = runChain (chain, "split=1;ce5");
+            report ("Splitter STEREO + chorus stereo: immagine stereo", allFinite (stereo) && channelDiff (stereo) > 1.0e-3f,
+                    "diff " + juce::String (channelDiff (stereo), 4));
+            const auto collapse = runChain (chain, "split=1;ce5;ds1");
+            report ("STEREO: un pedale mono riporta il segnale in mono", allFinite (collapse) && channelDiff (collapse) < 1.0e-6f,
+                    "diff " + juce::String (channelDiff (collapse), 6));
+            const auto dualOut = runChain (chain, "split=0.5;ds1;ce2@B");
+            report ("Splitter DUAL: corsie A e B separate su L e R", allFinite (dualOut) && channelDiff (dualOut) > 1.0e-2f
+                        && dualOut.getMagnitude (1, 24000, 24000) > 1.0e-3f,
+                    "diff " + juce::String (channelDiff (dualOut), 4));
+            const int second = chain.insert (-1, "split");
+            report ("Un solo splitter per catena", second < 0 && ! chain.setModel (1, "split"), "secondo splitter rifiutato");
+            const auto mono = runChain (chain, "split=0;ds1");
+            report ("Splitter MONO: segnale non diviso", allFinite (mono) && channelDiff (mono) < 1.0e-6f, "L = R");
+        }
+
+        // 4. processore completo e bypass
         {
             PedalTrinityProcessor p;
             p.chain.fromValueTree (juce::ValueTree ("CHAIN"));
@@ -205,12 +285,15 @@ namespace
             else if (args[i] == "--info") info = true;
             else if (args[i] == "--chain")
             {
+                // "id" pedale, "id@B" nella corsia B, "split=0.5" splitter con MODE (0 mono, 0.5 dual, 1 stereo)
                 juce::ValueTree t ("CHAIN");
-                for (auto& id : juce::StringArray::fromTokens (next, ",", ""))
+                for (auto& tok : juce::StringArray::fromTokens (next, ",", ""))
                 {
                     juce::ValueTree s ("SLOT");
-                    s.setProperty ("model", id, nullptr);
+                    s.setProperty ("model", tok.upToFirstOccurrenceOf ("@", false, false).upToFirstOccurrenceOf ("=", false, false), nullptr);
                     s.setProperty ("on", true, nullptr);
+                    if (tok.contains ("@B")) s.setProperty ("lane", 1, nullptr);
+                    if (tok.contains ("=")) s.setProperty ("p0", tok.fromFirstOccurrenceOf ("=", false, false).getFloatValue(), nullptr);
                     t.appendChild (s, nullptr);
                 }
                 p.chain.fromValueTree (t);

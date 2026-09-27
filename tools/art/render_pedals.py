@@ -20,6 +20,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import catalog  # noqa: E402
 import pedal_layout as PL  # noqa: E402
+import pedal_geometry as PG  # noqa: E402
 import layout as L  # noqa: E402
 
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -199,10 +200,16 @@ def add_led(x, y, z, r):
     mesh_obj("led_dome", bm, PEDAL, [MAT_LED_OFF], (x, y, z + 0.0010))
 
 
-def add_jacks(W, y, z):
-    for s in (-1, 1):
-        cylinder("jack_nut", 0.0055, 0.0030, PEDAL, MAT_NICKEL, (s * (W / 2 - 0.0005), y, z), seg=6, rotation=(0, s * math.pi / 2, 0), edge=0.0003)
-        cylinder("jack_ring", 0.0046, 0.0042, PEDAL, MAT_CHROME, (s * (W / 2 - 0.0005), y, z), seg=40, rotation=(0, s * math.pi / 2, 0), edge=0.0003)
+def add_jacks(m):
+    """Prese jack sui fianchi: A (e B per i pedali stereo) su entrambi i lati; posizioni in pedal_geometry."""
+    W, pos = PG.jack_layout(m)
+    for p in pos:
+        if p is None:
+            continue
+        y, z = p
+        for s in (-1, 1):
+            cylinder("jack_nut", 0.0055, 0.0030, PEDAL, MAT_NICKEL, (s * (W / 2 - 0.0005), y, z), seg=6, rotation=(0, s * math.pi / 2, 0), edge=0.0003)
+            cylinder("jack_ring", 0.0046, 0.0042, PEDAL, MAT_CHROME, (s * (W / 2 - 0.0005), y, z), seg=40, rotation=(0, s * math.pi / 2, 0), edge=0.0003)
 
 
 def build_boss(m, lay):
@@ -224,7 +231,7 @@ def build_boss(m, lay):
     ry1 = -length / 2 + (r_back - PL.TREAD_Y0) / (ty1 - PL.TREAD_Y0) * length
     rb = rounded_box("rubber", PL.W - 0.008, ry1 - ry0, 0.0022, 0.004, 0.0008, PEDAL, MAT_RUBBER, (0, (ry0 + ry1) / 2, 0))
     rb.parent = tr
-    add_jacks(PL.W, 0.042, 0.022)
+    add_jacks(m)
     lx, ly, lz, lr = lay["led"]
     if lay.get("led_on_tread"):
         lz = PL.tread_top_z(ly, ty1)
@@ -244,7 +251,7 @@ def build_ts(m, lay):
     rounded_box("fs", fs["w"], fs["d"], fs["h"], 0.0035, 0.0018, PEDAL, MAT_FOOT, (fs["x"], fs["y"], PL.TS_H))
     lx, ly, lz, lr = lay["led"]
     add_led(lx, ly, lz, lr)
-    add_jacks(PL.TS_W, 0.028, 0.024)
+    add_jacks(m)
 
 
 # board e luci (come nella scena originale)

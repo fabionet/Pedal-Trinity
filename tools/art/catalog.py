@@ -22,12 +22,12 @@ sys.path.insert(0, HERE)
 
 FAMILIES = ["Circuit", "Compressor", "NoiseGate", "GraphicEQ", "ParametricEQ", "Wah", "BBDChorus", "BBDFlanger",
             "Phaser", "Tremolo", "AnalogDelay", "DigitalDelay", "TapeEcho", "Reverb", "Pitch", "Synth", "Acoustic",
-            "AmpSim", "CabIR", "Router", "Volume", "Tuner", "Looper", "SlowGear"]
+            "AmpSim", "CabIR", "Router", "Volume", "Tuner", "Looper", "SlowGear", "Splitter"]
 
 CATEGORIES = ["Overdrive / Boost", "Distorsione", "Fuzz", "Metal", "Basso", "Dinamica", "Equalizzatori",
               "Wah / Filtri", "Chorus / Dimension", "Flanger", "Phaser", "Tremolo / Pan / Slicer",
               "Vibrato / Rotary", "Delay", "Eco a nastro", "Riverbero", "Pitch / Ottave", "Synth", "Acustica",
-              "Amp / IR", "Utility / Routing", "Tuner / Looper"]
+              "Amp / IR", "Utility / Routing", "Tuner / Looper", "Splitter"]
 
 UNITS = {"dial", "db", "hz", "ms", "percent", "semitone", "choice"}
 

@@ -50,4 +50,26 @@ def geometry(m, lay=None):
         x0, y0, x1, y1 = lay["display"]
         a, b = proj(x0, y1, PL.PANEL_H), proj(x1, y0, PL.PANEL_H)
         data["display"] = [a[0], a[1], b[0] - a[0], b[1] - a[1]]
+    data["jacks"] = jacks(m)
     return data
+
+
+# prese jack sui fianchi (come in render_pedals.add_jacks): A sempre, B solo sui pedali stereo
+JACK_Y_A, JACK_Y_B, JACK_Z = 0.042, 0.020, 0.022
+TS_JACK_Y, TS_JACK_Z = 0.028, 0.024
+
+
+def jack_layout(m):
+    """(larghezza, [(y, z) presa A, (y, z) presa B o None]) in coordinate del pedale."""
+    if m.get("style") == "ts":
+        return PL.TS_W, [(TS_JACK_Y, TS_JACK_Z), None]
+    return PL.W, [(JACK_Y_A, JACK_Z), (JACK_Y_B, JACK_Z) if m.get("stereo") else None]
+
+
+def jacks(m):
+    """Bocche delle prese in pixel logici: [x ingresso (sinistra), x uscita (destra), y A, y B (= y A se mono)]."""
+    w, pos = jack_layout(m)
+    face = w / 2 + 0.0016
+    ya = proj(-face, *pos[0])[1]
+    yb = proj(-face, *pos[1])[1] if pos[1] else ya
+    return [proj(-face, *pos[0])[0], proj(face, *pos[0])[0], ya, yb]

@@ -9,6 +9,19 @@ namespace pt::engine
 {
     std::unique_ptr<Effect> makeCircuit (const ModelDef& d) { return std::make_unique<CircuitEffect> (d); }
 
+    namespace
+    {
+        /** SPL-3: nessuna elaborazione propria, l'instradamento lo esegue Chain leggendo i comandi. */
+        class SplitterEffect final : public Effect
+        {
+        public:
+            using Effect::Effect;
+            void prepare (double, int) override {}
+            void reset() override {}
+            void process (float* const*, int, int) override {}
+        };
+    }
+
     std::unique_ptr<Effect> createEffect (const ModelDef& d)
     {
         switch (d.family)
@@ -37,6 +50,7 @@ namespace pt::engine
             case Family::Tuner:        return makeTuner (d);
             case Family::Looper:       return makeLooper (d);
             case Family::SlowGear:     return makeSlowGear (d);
+            case Family::Splitter:     return std::make_unique<SplitterEffect> (d);
             case Family::Count:        break;
         }
         return makeVolume (d);
