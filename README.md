@@ -1,6 +1,6 @@
 # Pedal Trinity
 
-**Pedaliera virtuale fino a 100 pedali** con un catalogo di **219 modelli** ispirati all'intero catalogo
+**Pedaliera virtuale fino a 100 pedali** con un catalogo di **220 modelli** ispirati all'intero catalogo
 BOSS (compatti, Waza Craft, Twin, serie 200/500, amp e IR simulator, selettori A/B, tuner, looper) più
 l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D regolabili sull'immagine.
 
@@ -13,7 +13,7 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
 | **Licenza** | [GNU GPL v3](LICENSE) |
 | **Formati** | VST3 · LV2 · Standalone |
 | **Sistemi** | Linux (pacchetto `.deb`) · Windows 10/11 x64 (installer, driver **ASIO**) |
-| **Framework** | C++17 · JUCE 7.0.12 |
+| **Framework** | C++20 · JUCE 7.0.12 · NeuralAmpModelerCore 0.5.4 |
 
 ## Funzioni
 
@@ -29,6 +29,17 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
   tessuto a strappo, predefinito), Tolex e cromo, Noce e ottone, British Green, Alluminio spazzolato,
   Studio notte — con pedali renderizzati senza sfondo e con la propria ombra; cavi visibili e colore dei cavi.
   Il contrasto di testi e segni è verificato per ogni tema (WCAG 2.1).
+* **NAM-A1A2 Model** (rosso sangue, contenitore grande): lettore di modelli **Neural Amp Modeler**
+  (A1, A2-Lite / A2-Full, LSTM; file `.nam` e `.namb`) con due canali **A** e **B**, ciascuno con modello
+  e **IR**. Sul pedale: INPUT, BASS / MIDDLE / TREBLE (tonestack del plugin NAM), OUTPUT, volumi NAM e IR
+  per canale, footswitch A e B e meter a tacche LED (IN, NAM, IR per canale). Nel pannello di zoom:
+  caricamento dei file, pomello **SLIM** (attivo solo con modelli A2 slimmable), calibrazione d'ingresso
+  in dBu, uscita Raw / Normalized / Calibrated, noise gate — come nel plugin NAM ufficiale.
+* **Sicurezza dei file NAM**: sono accettati solo `.nam` / `.namb` il cui contenuto corrisponde
+  all'estensione; ogni file è verificato prima dell'uso (struttura, versione, architettura ammessa,
+  **numero esatto dei pesi** richiesto dalla rete, valori finiti, prova d'ascolto a vuoto) e i file alterati
+  sono rifiutati con il motivo. Nei preset è salvata l'impronta **SHA-256**: un file cambiato dopo il
+  salvataggio non viene caricato.
 * **Meter INPUT e OUTPUT** laterali (mono o stereo secondo lo splitter) con fader del volume d'ingresso e d'uscita.
 * **Scorrimento** a 3 pedali alla volta o a pagine (i tasti compaiono quando la catena supera la vista);
   **viste 3 / 6 / 9 / 18** pedali contemporaneamente.
@@ -98,7 +109,7 @@ Source/
   gui/                slot, vista del pedale, comandi 3D, pannelli zoom e info
   Presets.cpp         preset utente/fabbrica
   StandaloneApp.cpp   app standalone (ASIO, --selftest, --screenshot)
-Resources/            render dei 219 pedali, filmstrip 3D dei comandi, licenza, guida PDF
+Resources/            render dei 220 pedali, filmstrip 3D dei comandi, licenza, guida PDF
 docs/research/        dossier tecnici con le fonti di ogni pedale
 docs/guide/           guida (LaTeX) generata da tools/build_guide.sh
 packaging/            .deb (Linux) e installer Inno Setup (Windows)
@@ -125,3 +136,7 @@ VST è un marchio di Steinberg Media Technologies GmbH. ASIO è un marchio e sof
 
 Copyright © 2026 FabioNET — distribuito secondo i termini della
 **GNU General Public License v3.0** (o successiva). Vedi [LICENSE](LICENSE).
+
+Il pedale NAM-A1A2 include componenti di terze parti con licenza MIT — NeuralAmpModelerCore,
+AudioDSPTools e parti di NeuralAmpModelerPlugin (Steven Atkinson), nam-binary-loader (TONE3000),
+nlohmann/json — ed Eigen (MPL 2.0): testi in [Source/third_party/LICENSE-NAM.txt](Source/third_party/LICENSE-NAM.txt).

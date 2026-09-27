@@ -89,7 +89,9 @@ namespace pt::ui
             "\xc3\x88 distribuito nella speranza che sia utile, ma SENZA ALCUNA GARANZIA; senza neppure la garanzia "
             "implicita di COMMERCIABILIT\xc3\x80 o IDONEIT\xc3\x80 PER UNO SCOPO PARTICOLARE. "
             "Il testo completo della licenza \xc3\xa8 riportato qui sotto.\n\n"
-            "CREDITI: realizzato in C++ con JUCE 7 (GPLv3). VST\xc2\xae \xc3\xa8 un marchio di Steinberg Media "
+            "CREDITI: realizzato in C++ con JUCE 7 (GPLv3). Il pedale NAM-A1A2 usa NeuralAmpModelerCore, "
+            "AudioDSPTools e parti di NeuralAmpModelerPlugin di Steven Atkinson, il lettore .namb di TONE3000 "
+            "e nlohmann/json (licenza MIT), Eigen (MPL 2.0): testi completi in fondo alla licenza. VST\xc2\xae \xc3\xa8 un marchio di Steinberg Media "
             "Technologies GmbH. ASIO \xc3\xa8 un marchio e software di Steinberg Media Technologies GmbH. "
             "LV2 \xc2\xa9 lv2plug.in (licenza ISC).\n\n"
             "MARCHI: BOSS, Roland e le sigle dei pedali BOSS sono marchi di Roland Corporation; Ibanez e Tube Screamer "
@@ -100,7 +102,7 @@ namespace pt::ui
 
         styleEditor (license, 12.5f);
         license.setFont (juce::Font (juce::Font::getDefaultMonospacedFontName(), 12.0f, juce::Font::plain));
-        license.setText (Assets::resourceAsString ("license_gpl3_txt"));
+        license.setText (Assets::resourceAsString ("license_gpl3_txt") + "\n\n\n" + Assets::resourceAsString ("LICENSENAM_txt"));
         addAndMakeVisible (license);
 
         styleButton (guideButton, true);

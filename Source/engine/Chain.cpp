@@ -425,6 +425,9 @@ namespace pt::engine
                     st.setProperty ("p" + juce::String (i), s->fx->p (i), nullptr);
                 if (! s->fx->loadedFile.empty())
                     st.setProperty ("file", juce::String (s->fx->loadedFile), nullptr);
+                const auto extra = s->fx->saveState();
+                if (! extra.empty())
+                    st.setProperty ("state", juce::String::fromUTF8 (extra.c_str()), nullptr);
             }
             t.appendChild (st, nullptr);
         }
@@ -454,6 +457,8 @@ namespace pt::engine
                         s->fx->params[k].store ((float) st.getProperty ("p" + juce::String (k)));
                 const auto file = st.getProperty ("file").toString();
                 if (file.isNotEmpty()) s->fx->loadFile (file.toStdString());
+                const auto extra = st.getProperty ("state").toString();
+                if (extra.isNotEmpty()) s->fx->restoreState (extra.toStdString());
                 s->fx->reset();
             }
             s->fade = s->enabled.load() ? 1.0f : 0.0f;

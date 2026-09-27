@@ -15,12 +15,17 @@ PANEL_Y0, PANEL_Y1, PANEL_H = 0.018, D / 2, 0.050
 TREAD_Y0, TREAD_Y1 = -0.0645, 0.0160
 TREAD_H_FRONT, TREAD_H_BACK = 0.036, 0.047
 
+# enclosure grande (NAM-A1A2): piu' larga e profonda di un compatto, piano superiore piatto
+NAM_W, NAM_D, NAM_H = 0.088, 0.150, 0.040
+NAM_ROW2 = 0.0005          # seconda fila: abbastanza sotto la prima da non coprirne le etichette
+
 # enclosure tipo Tube Screamer
 TS_W, TS_D, TS_H = 0.074, 0.125, 0.046
 
 KNOB_R = {"ts_big": 0.0096, "ts_small": 0.0076, "boss": 0.0073, "boss_outer": 0.0079, "boss_inner": 0.0049}
 KNOB_H = {"ts_big": 0.0160, "ts_small": 0.0145, "boss": 0.0150, "boss_outer": 0.0100, "boss_inner": 0.0075}
-STRIP_ID = {"ts_big": 0, "ts_small": 1, "boss": 2, "boss_outer": 3, "boss_inner": 4, "slider": 5, "toggle": 6, "button": 255}
+STRIP_ID = {"ts_big": 0, "ts_small": 1, "boss": 2, "boss_outer": 3, "boss_inner": 4, "slider": 5, "toggle": 6, "button": 255,
+            "footswitch": 255}
 
 ROW_X = {1: [0.0], 2: [-0.0135, 0.0135], 3: [-0.022, 0.0, 0.022], 4: [-0.0255, -0.0085, 0.0085, 0.0255]}
 
@@ -66,6 +71,27 @@ def pedal_layout(m):
         fs = dict(x=0.0, y=-0.035, w=0.050, d=0.038, h=0.009)
         out["foot"] = [(fs["x"] + sx * fs["w"] / 2, fs["y"] + sy * fs["d"] / 2, TS_H + fs["h"])
                        for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
+        return out
+
+    if style == "nam":
+        # display dei meter in alto, due file di pomelli, due footswitch A/B con il loro LED
+        top = NAM_H
+        knobs = [c for c in ctrls if c["kind"] == "knob"]
+        foots = [c for c in ctrls if c["kind"] == "toggle"]
+        row1 = [(-0.034, 0.029), (-0.017, 0.029), (0.0, 0.029), (0.017, 0.029), (0.034, 0.029)]
+        row2 = [(-0.031, NAM_ROW2), (-0.0145, NAM_ROW2), (0.0145, NAM_ROW2), (0.031, NAM_ROW2)]
+        for c, (x, y) in zip(knobs, row1 + row2):
+            out["controls"][idx[id(c)]] = dict(x=x, y=y, z=top, strip="boss", r=KNOB_R["boss"], h=KNOB_H["boss"])
+        for c, x in zip(foots, (-0.022, 0.022)):
+            out["controls"][idx[id(c)]] = dict(x=x, y=-0.0535, z=top + 0.009, strip="footswitch", r=0.0085,
+                                                led=(x, -0.0372, top + 0.0012))
+        out["display"] = (-0.037, 0.045, 0.037, 0.068)
+        out["led"] = (-0.022, -0.0372, top, 0.0024)          # LED del canale A (quello del B e' nel footswitch B)
+        out["panel_y0"], out["tread_y1"] = -NAM_D / 2, -NAM_D / 2
+        out["foot"] = [(-0.001, -0.070, top), (0.001, -0.070, top), (0.001, -0.069, top), (-0.001, -0.069, top)]
+        for k, c in enumerate(out["controls"]):
+            if c is None:
+                raise ValueError("comando senza posizione: %s / %s" % (m["id"], ctrls[k]["label"]))
         return out
 
     # ---- enclosure compatta

@@ -42,6 +42,9 @@ namespace pt::engine
         virtual bool loadFile (const std::string& /*path*/) { return false; }
         virtual bool acceptsFiles() const { return false; }
         std::string loadedFile;
+        /** Stato aggiuntivo (file caricati, opzioni) salvato nel preset come testo; thread dei messaggi. */
+        virtual std::string saveState() const { return {}; }
+        virtual void restoreState (const std::string&) {}
 
         float p (int i) const noexcept { return params[i].load (std::memory_order_relaxed); }
 

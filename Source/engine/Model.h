@@ -45,6 +45,7 @@ namespace pt::engine
         Looper,
         SlowGear,
         Splitter,       // SPL-3: divide la catena (mono / dual mono / stereo), gestito da Chain
+        Nam,            // NAM-A1A2: modelli Neural Amp Modeler (.nam/.namb) su due canali A/B
         Count
     };
 

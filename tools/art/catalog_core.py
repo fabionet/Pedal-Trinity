@@ -91,4 +91,23 @@ MODELS = [
           "(A = uscita sinistra, B = destra), STEREO una catena stereo in cui i pedali a doppio jack elaborano "
           "A e B. BALANCE e LEVEL A/B regolano le due mandate; il bilanciamento d'uscita e' sul meter OUTPUT.",
           accent=(217, 180, 100), subtitle="A/B SPLITTER", stereo=True),
+
+    # ------------------------------------------------------------------ Neural Amp Modeler (A1 / A2)
+    model("nama1a2", "NAM-A1A2", "NAM-A1A2 Model", "Neural Amp Modeler di Steven Atkinson (core NAM, MIT)", "Amp / IR", "Nam",
+          (92, 4, 7),
+          [knob("INPUT", "input", 0.5, units="db", lo=-20, hi=20),
+           knob("BASS", "bass", 0.5), knob("MIDDLE", "middle", 0.5), knob("TREBLE", "treble", 0.5),
+           knob("OUTPUT", "output", 0.5, units="db", lo=-40, hi=40),
+           knob("NAM A", "namA", 30.0 / 42.0, units="db", lo=-30, hi=12),
+           knob("IR A", "irA", 30.0 / 42.0, units="db", lo=-30, hi=12),
+           knob("NAM B", "namB", 30.0 / 42.0, units="db", lo=-30, hi=12),
+           knob("IR B", "irB", 30.0 / 42.0, units="db", lo=-30, hi=12),
+           toggle("A", "chanA", ("OFF", "ON"), 1), toggle("B", "chanB", ("OFF", "ON"), 1)],
+          "",
+          "Lettore di modelli Neural Amp Modeler con il core NAM ufficiale: A1 (WaveNet), A2 slimmable "
+          "(A2-Full + A2-Lite nello stesso file), LSTM; file .nam e .namb (TONE3000). Due canali A e B, "
+          "ciascuno con modello e IR propri; tonestack, calibrazione d'ingresso e modi d'uscita "
+          "Raw / Normalized / Calibrated come nel plugin NAM. I file si caricano dal pannello di zoom e "
+          "vengono verificati contro manomissioni prima dell'uso.",
+          style="nam", text=(240, 232, 220), accent=(240, 232, 220), subtitle="NEURAL AMP MODELER", stereo=True),
 ]

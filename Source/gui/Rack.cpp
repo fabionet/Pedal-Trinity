@@ -327,8 +327,13 @@ namespace pt::ui
             {
                 const int at = chain.insert (index + 1, sl->def->id, chain.lane (index));
                 if (at >= 0)
+                {
                     for (int k = 0; k < sl->def->numControls; ++k)
                         chain.setParam (at, k, sl->fx->p (k));
+                    auto* copy = chain.slot (at);
+                    if (const auto extra = sl->fx->saveState(); ! extra.empty() && copy != nullptr && copy->fx != nullptr)
+                        copy->fx->restoreState (extra);      // file NAM/IR e opzioni del pannello
+                }
             }
             else if (r == 3) chain.insert (index, {}, chain.lane (index));
             else if (r == 4) chain.insert (index + 1, {}, chain.lane (index));
@@ -407,6 +412,14 @@ namespace pt::ui
             text << "\nDoppio clic su un comando = valore di fabbrica.";
         }
         info.setText (text, juce::dontSendNotification);
+        if (d != nullptr && d->family == Family::Nam)
+        {
+            if (nam == nullptr) { nam = std::make_unique<NamPanel> (chain, i); addAndMakeVisible (*nam); }
+            else nam->bindTo (i);
+        }
+        else nam.reset();
+        info.setVisible (nam == nullptr);
+        resized();
         prev.setEnabled (i > 0);
         next.setEnabled (i < chain.size() - 1);
         repaint();
@@ -437,8 +450,9 @@ namespace pt::ui
         prev.setBounds (top.removeFromRight (40).reduced (0, 4));
         title.setBounds (top);
         c.removeFromTop (10);
-        auto side = c.removeFromRight (juce::jmin (380, c.getWidth() / 3));
+        auto side = c.removeFromRight (nam != nullptr ? juce::jmin (560, c.getWidth() / 2) : juce::jmin (380, c.getWidth() / 3));
         info.setBounds (side.reduced (10, 0));
+        if (nam != nullptr) nam->setBounds (side.reduced (4, 0));
         view.setBounds (c);
     }
 

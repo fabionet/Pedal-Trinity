@@ -177,6 +177,49 @@ def ts_texture(m, lay):
     c.save("%s_top.png" % m["id"])
 
 
+def nam_texture(m, lay):
+    """Piano superiore del NAM-A1A2 (contenitore grande): display, pomelli, gruppi A/B, footswitch."""
+    body, text, accent, minor = colours(m)
+    c = MT.Canvas(-PL.NAM_W / 2, PL.NAM_W / 2, -PL.NAM_D / 2, PL.NAM_D / 2, body)
+    c.speckle(3.0, 0.6)
+    ctrls = m["controls"]
+    gold = (226, 190, 110)
+    # display dei meter con cornice
+    x0, y0, x1, y1 = lay["display"]
+    c.rect(x0 - 0.0012, y0 - 0.0012, x1 + 0.0012, y1 + 0.0012, fill=(40, 12, 14), radius_m=0.0016)
+    c.rect(x0, y0, x1, y1, fill=(6, 7, 8), radius_m=0.0012)
+    c.text(-0.0400, y1 + 0.0036, "FabioNET", 0.0023, MT.F_BLACKIT, text, anchor="lm")
+    c.text(0.0400, y1 + 0.0036, "STEREO  A / B", 0.0019, MT.F_BOLD, text, anchor="rm")
+    # pomelli
+    for k, ctl in enumerate(ctrls):
+        pp = lay["controls"][k]
+        if ctl["kind"] != "knob":
+            continue
+        r = pp["r"]
+        c.text(pp["x"], pp["y"] - r - 0.0050, ctl["label"], fit_size(ctl["label"], 0.0022, 0.0150, MT.F_BOLD), MT.F_BOLD, text)
+        c.arc_ticks(pp["x"], pp["y"], r + 0.0008, r + 0.0014, 11, text, 0.00026)
+    # gruppi dei canali sotto la seconda fila
+    for x, label in ((-0.02275, "CANALE A"), (0.02275, "CANALE B")):
+        yb = PL.NAM_ROW2 - 0.0073 - 0.0092
+        c.line(x - 0.0125, yb + 0.0018, x + 0.0125, yb + 0.0018, gold, 0.00030)
+        c.text(x, yb - 0.0006, label, 0.0021, MT.F_BOLD, gold, spacing=0.0003)
+    # nome del modello
+    c.text(0.0, -0.0228, m["name"], fit_size(m["name"], 0.0068, 0.078, MT.F_BLACKIT), MT.F_BLACKIT, accent)
+    c.line(-0.038, -0.0268, 0.038, -0.0268, text, 0.00035)
+    c.text(-0.038, -0.0292, (m.get("subtitle") or "").upper(), 0.0019, MT.F_BOLD, text, anchor="lm")
+    c.text(0.038, -0.0292, m["code"], 0.0032, MT.F_BLACK, text, anchor="rm")
+    # LED e footswitch A / B
+    for k, ctl in enumerate(ctrls):
+        pp = lay["controls"][k]
+        if ctl["kind"] != "toggle":
+            continue
+        lx, ly, _ = pp["led"]
+        c.text(lx + 0.0060, ly, ctl["label"], 0.0036, MT.F_BLACK, text, anchor="lm")
+        c.circle(pp["x"], pp["y"], pp["r"] + 0.0024, outline=gold, width_m=0.00030)
+    c.text(0.0, -0.0705, "FabioNET  \u2022  PEDAL TRINITY  \u2022  NAM CORE (MIT)", 0.0017, MT.F_BOLD, text, spacing=0.0002)
+    c.save("%s_top.png" % m["id"])
+
+
 def main(ids):
     models, errors = catalog.load_all(strict=False)
     if errors:
@@ -187,6 +230,8 @@ def main(ids):
         lay = PL.pedal_layout(m)
         if m["style"] == "ts":
             ts_texture(m, lay)
+        elif m["style"] == "nam":
+            nam_texture(m, lay)
         else:
             panel_texture(m, lay)
             tread_texture(m, lay)

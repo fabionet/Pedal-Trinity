@@ -255,6 +255,22 @@ def build_ts(m, lay):
     add_jacks(m)
 
 
+def build_nam(m, lay):
+    """Contenitore grande NAM-A1A2: piano piatto serigrafato, footswitch metallici A/B con LED, prese A/B."""
+    W, D, H = PL.NAM_W, PL.NAM_D, PL.NAM_H
+    mat = textured("nam_" + m["id"], os.path.join(TEX, m["id"] + "_top.png"), -W / 2, W / 2, -D / 2, D / 2, 0.15, 0.36, 0.35, 0.2)
+    rounded_box("nam_body", W, D, H, 0.008, 0.004, PEDAL, mat)
+    for k, c in enumerate(m["controls"]):
+        if c["kind"] != "toggle":
+            continue
+        p = lay["controls"][k]
+        cylinder("fs_nut", p["r"] * 1.30, 0.0030, PEDAL, MAT_NICKEL, (p["x"], p["y"], H), seg=6, edge=0.0004)
+        cylinder("fs_cap", p["r"], 0.0085, PEDAL, MAT_CHROME, (p["x"], p["y"], H + 0.0030), seg=64, edge=0.0016)
+        lx, ly, _ = p["led"]
+        add_led(lx, ly, H, 0.0024)
+    add_jacks(m)
+
+
 # board e luci (come nella scena originale)
 bm = bmesh.new(); bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=0.3)
 _board = mesh_obj("board", bm, STATIC, [MAT_BOARD], smooth=False)
@@ -318,8 +334,14 @@ for m in models:
         continue
     for o in list(PEDAL.objects):
         bpy.data.objects.remove(o, do_unlink=True)
+    # inquadratura dello stile (il contenitore grande e' piu' profondo)
+    PG.use_frame(m["style"])
+    scene.render.resolution_y = PG.RES_Y
+    cam.location = Vector((0.0, PG.VC / COS, 0.0)) - direction * 1.0
     if m["style"] == "ts":
         build_ts(m, lay)
+    elif m["style"] == "nam":
+        build_nam(m, lay)
     else:
         build_boss(m, lay)
     scene.render.filepath = png

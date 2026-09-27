@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <array>
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "Controls.h"
 #include "../engine/Chain.h"
@@ -52,5 +53,7 @@ namespace pt::ui
         juce::Image source, scaled;
         juce::Rectangle<int> scaledFor;
         bool lastOn = false;
+    public:
+        std::array<float, 6> namLevels {};       // livelli dei meter del NAM-A1A2 (thread dei messaggi)
     };
 }

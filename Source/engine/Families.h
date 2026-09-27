@@ -16,6 +16,7 @@ namespace pt::engine
     std::unique_ptr<Effect> makeTremolo (const ModelDef&);
     std::unique_ptr<Effect> makeCompressor (const ModelDef&);
     std::unique_ptr<Effect> makeNoiseGate (const ModelDef&);
+    std::unique_ptr<Effect> makeNam (const ModelDef&);
     std::unique_ptr<Effect> makeSlowGear (const ModelDef&);
     std::unique_ptr<Effect> makeVolume (const ModelDef&);
     std::unique_ptr<Effect> makeGraphicEQ (const ModelDef&);

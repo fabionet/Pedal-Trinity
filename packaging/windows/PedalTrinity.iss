@@ -57,6 +57,7 @@ Source: "{#BuildDir}\LV2\Pedal Trinity.lv2\*"; DestDir: "{commoncf64}\LV2\Pedal 
 Source: "..\..\docs\PedalTrinity_Guida.pdf"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignoreversion
 Source: "..\..\README.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\Source\third_party\LICENSE-NAM.txt"; DestDir: "{app}"; DestName: "THIRD-PARTY-NAM.txt"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\Pedal Trinity.exe"; Components: standalone

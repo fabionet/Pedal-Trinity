@@ -51,6 +51,7 @@ namespace pt::engine
             case Family::Looper:       return makeLooper (d);
             case Family::SlowGear:     return makeSlowGear (d);
             case Family::Splitter:     return std::make_unique<SplitterEffect> (d);
+            case Family::Nam:          return makeNam (d);
             case Family::Count:        break;
         }
         return makeVolume (d);

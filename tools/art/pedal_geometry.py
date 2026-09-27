@@ -13,10 +13,20 @@ COS, SIN = math.cos(TILT), math.sin(TILT)
 PPM = L.UI_WIDTH * L.RENDER_SCALE / (L.VIEW_X_MAX - L.VIEW_X_MIN)   # px/m del render (2x)
 RS = L.RENDER_SCALE
 X0, X1 = -0.047, 0.047
-V0, V1 = -0.068, 0.088
+# inquadratura verticale per stile (la larghezza e' la stessa per tutti: stessa scala in pixel)
+FRAMES = {"boss": (-0.068, 0.088), "ts": (-0.068, 0.088), "nam": (-0.082, 0.101)}
+V0, V1 = FRAMES["boss"]
 RES_X = int(round((X1 - X0) * PPM))
 RES_Y = int(round((V1 - V0) * PPM))
 VC = (V0 + V1) / 2
+
+
+def use_frame(style):
+    """Imposta l'inquadratura verticale dello stile (usata da proj e dal render)."""
+    global V0, V1, RES_Y, VC
+    V0, V1 = FRAMES.get(style, FRAMES["boss"])
+    RES_Y = int(round((V1 - V0) * PPM))
+    VC = (V0 + V1) / 2
 
 
 def proj(x, y, z):
@@ -26,6 +36,7 @@ def proj(x, y, z):
 
 
 def geometry(m, lay=None):
+    use_frame(m.get("style", "boss"))
     lay = lay or PL.pedal_layout(m)
     data = dict(id=m["id"], imageW=RES_X / RS, imageH=RES_Y / RS, controls=[])
     for k, c in enumerate(m["controls"]):
@@ -35,6 +46,8 @@ def geometry(m, lay=None):
             e["anchor"] = proj(p["x"], p["y"], p["z"]); e["top"] = proj(p["x"], p["y1"], p["z"]); e["radius"] = 10.0
         elif p["strip"] == "toggle":
             e["anchor"] = proj(p["x"], p["y"], PL.PANEL_H + 0.0048); e["top"] = e["anchor"]; e["radius"] = 14.0
+        elif p["strip"] == "footswitch":
+            e["anchor"] = proj(p["x"], p["y"], p["z"]); e["top"] = proj(*p["led"]); e["radius"] = p["r"] * PPM / RS
         elif p["strip"] == "button":
             e["anchor"] = proj(p["x"], p["y"], p["z"]); e["top"] = e["anchor"]; e["radius"] = p["r"] * PPM / RS
         else:
@@ -63,6 +76,8 @@ def jack_layout(m):
     """(larghezza, [(y, z) presa A, (y, z) presa B o None]) in coordinate del pedale."""
     if m.get("style") == "ts":
         return PL.TS_W, [(TS_JACK_Y, TS_JACK_Z), None]
+    if m.get("style") == "nam":
+        return PL.NAM_W, [(0.040, 0.020), (0.016, 0.020)]
     return PL.W, [(JACK_Y_A, JACK_Z), (JACK_Y_B, JACK_Z) if m.get("stereo") else None]
 
 
