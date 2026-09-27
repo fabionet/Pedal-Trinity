@@ -6,7 +6,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginProcessor.h"
-#include "gui/Rack.h"
+#include "gui/Pedalboard.h"
 #include "gui/InfoPanel.h"
 
 class PedalTrinityEditor : public juce::AudioProcessorEditor,
@@ -31,7 +31,6 @@ public:
 private:
     void changeListenerCallback (juce::ChangeBroadcaster*) override;
     void refresh();
-    void layoutSlots();
     void zoomStep (int dir);
     void showPresetMenu();
     void addPedal();
@@ -45,10 +44,8 @@ private:
                      addButton { "+ Pedale" }, zoomOut { "-" }, zoomIn { "+" }, infoButton { "INFO" };
     juce::TextButton viewButtons[4];
     juce::Label pageLabel, zoomLabel, logo;
-    juce::Slider inputGain, outputGain;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> inAttach, outAttach;
 
-    juce::OwnedArray<pt::ui::SlotComponent> slots;
+    std::unique_ptr<pt::ui::Pedalboard> board;
     std::unique_ptr<pt::ui::ZoomPanel> zoomPanel;
     std::unique_ptr<pt::ui::InfoPanel> infoPanel;
     juce::TooltipWindow tooltips { this, 500 };

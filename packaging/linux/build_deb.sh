@@ -73,7 +73,7 @@ License: GPL-3+
  On Debian systems, the complete text of the GNU General Public License
  version 3 can be found in "/usr/share/common-licenses/GPL-3".
 EOF
-printf '%s (%s) unstable; urgency=medium\n\n  * Prima release beta: pedaliera fino a 100 slot, catalogo di 219 pedali.\n  * Emulazione dei circuiti analogici, preset di fabbrica e utente.\n  * Viste 3/6/9/18, zoom del pedale, finestra da 1280x760 a 2560x1440.\n  * Formati VST3, LV2 e Standalone.\n\n -- %s  %s\n' \
+printf '%s (%s) unstable; urgency=medium\n\n  * Prima release beta: pedaliera fino a 100 slot, catalogo di 219 pedali.\n  * Splitter SPL-3 (mono / dual mono / stereo), cavi jack, meter INPUT/OUTPUT.\n  * Emulazione dei circuiti analogici, preset di fabbrica e utente.\n  * Viste 3/6/9/18, zoom del pedale, finestra da 1280x760 a 2560x1440.\n  * Formati VST3, LV2 e Standalone.\n\n -- %s  %s\n' \
     "$PKG" "$VERSION" "$MAINTAINER" "$(date -R)" | gzip -9n > "$D/usr/share/doc/$PKG/changelog.Debian.gz"
 
 # --- dipendenze: librerie collegate (dpkg-shlibdeps) + librerie X11 caricate a runtime da JUCE
@@ -113,7 +113,8 @@ Description: pedaliera per chitarra con 219 pedali emulati (VST3/LV2/Standalone)
  simulatori di amplificatore, cabinet IR, splitter A/B e utilita'.
  Gli stadi analogici sono emulati dalla circuitazione (clipper a diodi,
  reti di tono, BBD a clock), con preset di fabbrica e utente e viste
- da 3, 6, 9 o 18 pedali.
+ da 3, 6, 9 o 18 pedali. Lo splitter SPL-3 divide la catena in due linee
+ mono o in una catena stereo; cavi jack e meter mostrano il percorso.
  Include i formati VST3, LV2 e un'applicazione standalone (ALSA/JACK).
  Autore: FabioNET. Licenza: GNU GPL v3.
 EOF

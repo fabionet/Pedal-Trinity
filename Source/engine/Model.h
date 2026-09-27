@@ -44,6 +44,7 @@ namespace pt::engine
         Tuner,
         Looper,
         SlowGear,
+        Splitter,       // SPL-3: divide la catena (mono / dual mono / stereo), gestito da Chain
         Count
     };
 
@@ -95,6 +96,8 @@ namespace pt::engine
         float ledX, ledY, ledR;  // LED di stato
         float footX[4], footY[4];// zona del pedale/footswitch
         float dispX, dispY, dispW, dispH;   // finestra del display (accordatore/looper), 0 se assente
+        float jackInX, jackOutX; // bocche delle prese jack: ingresso (fianco sinistro) e uscita (destro)
+        float jackYA, jackYB;    // altezza delle prese A e B (B = A sui pedali mono)
         bool stereo;             // elaborazione stereo nativa
         const char* notes;       // descrizione breve (italiano)
     };

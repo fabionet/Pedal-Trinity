@@ -28,6 +28,12 @@ namespace pt::ui
         int boundIndex() const { return index; }
         const engine::ModelDef* model() const { return def; }
 
+        /** Bocca di una presa jack in coordinate della vista (uscita = fianco destro; line 0 = A, 1 = B).
+            false se lo slot e' vuoto. */
+        bool jackPoint (bool output, int line, juce::Point<float>& out) const;
+        /** Pixel della vista per pixel logico dell'immagine del pedale. */
+        float imageScale() const;
+
     private:
         class Canvas;
         void timerCallback() override;

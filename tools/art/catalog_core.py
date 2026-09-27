@@ -77,4 +77,18 @@ MODELS = [
           "Sette bande a gyrator RLC serie (f0 e Q calcolati dai componenti: 100 Hz Q 3.4 ... 3.2 kHz Q 3.7), "
           "la banda 6.4 kHz e' una mensola RC; Q proporzionale al guadagno come con i cursori reali. Level +-15 dB.",
           accent=(20, 60, 150), subtitle="7-BAND EQUALIZER"),
+
+    # ------------------------------------------------------------------ splitter di Pedal Trinity
+    model("split", "SPL-3", "Signal Splitter", "", "Splitter", "Splitter",
+          (38, 40, 46),
+          [selector("MODE", "mode", ["MONO", "DUAL", "STEREO"], 0, short=["MONO", "DUAL", "ST"]),
+           knob("BALANCE", "balance", 0.5, units="percent", lo=-100, hi=100),
+           knob("LEVEL A", "levelA", 2.0 / 3.0, units="db", lo=-24, hi=12),
+           knob("LEVEL B", "levelB", 2.0 / 3.0, units="db", lo=-24, hi=12)],
+          "",
+          "Modulo di instradamento (non e' un pedale del catalogo BOSS): divide il segnale mono in un punto "
+          "qualsiasi della catena. MONO lascia passare il segnale, DUAL crea due catene mono indipendenti "
+          "(A = uscita sinistra, B = destra), STEREO una catena stereo in cui i pedali a doppio jack elaborano "
+          "A e B. BALANCE e LEVEL A/B regolano le due mandate; il bilanciamento d'uscita e' sul meter OUTPUT.",
+          accent=(217, 180, 100), subtitle="A/B SPLITTER", stereo=True),
 ]

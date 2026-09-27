@@ -12,8 +12,9 @@
 
 namespace pt::ui
 {
-    /** Menu dei pedali per categorie (id menu = indice del modello + 2; 1 = slot vuoto). */
-    juce::PopupMenu buildModelMenu (const engine::ModelDef* current);
+    /** Menu dei pedali per categorie (id menu = indice del modello + 2; 1 = slot vuoto).
+        Lo splitter e' in cima ed e' disattivato se la catena ne ha gia' uno altrove. */
+    juce::PopupMenu buildModelMenu (const engine::ModelDef* current, bool splitterAllowed = true);
 
     //==============================================================================
     class SlotComponent : public juce::Component, public juce::DragAndDropTarget
@@ -23,7 +24,7 @@ namespace pt::ui
         {
             std::function<void (int)> zoom;
             std::function<void (int)> removed;
-            std::function<void()> changed;
+            std::function<void (int from, int to)> dropped;      // trascinamento su questo slot
         };
 
         SlotComponent (engine::Chain&, int index, juce::Component* popupParent, Callbacks);
@@ -31,6 +32,14 @@ namespace pt::ui
 
         void bindTo (int index);
         int getIndex() const { return index; }
+        /** Lettera della corsia mostrata accanto al numero ("A", "B" o vuota). */
+        void setLaneLabel (const juce::String&);
+        /** Bocca di una presa jack in coordinate dello slot (false se lo slot e' vuoto). */
+        bool jackPoint (bool output, int line, juce::Point<float>& out) const;
+        float pedalScale() const { return view.imageScale(); }
+        /** Presa A "tipica" (pedale compatto) per uno slot con questi limiti, in coordinate dello slot. */
+        static juce::Point<float> nominalJack (juce::Rectangle<int> slotBounds, bool output, int line = 0);
+        static float nominalScale (juce::Rectangle<int> slotBounds);
 
         void paint (juce::Graphics&) override;
         void paintOverChildren (juce::Graphics&) override;
@@ -47,6 +56,9 @@ namespace pt::ui
         class IconButton;
         void refreshHeader();
         juce::Rectangle<int> headerArea() const;
+        /** Slot vicino nella stessa corsia (dir -1 / +1), -1 se non c'e'. */
+        int neighbour (int dir) const;
+        int numberWidth() const;
 
         engine::Chain& chain;
         int index;
@@ -55,6 +67,7 @@ namespace pt::ui
         std::unique_ptr<IconButton> left, right, zoomBtn, del, power;
         PedalView view;
         bool dropHover = false;
+        juce::String laneLabel;
         std::unique_ptr<juce::FileChooser> chooser;
         void showContextMenu();
     };

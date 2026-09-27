@@ -84,6 +84,8 @@ namespace pt::ui
     //==============================================================================
     PedalView::PedalView (Chain& c, int slotIndex, juce::Component* popup) : chain (c), popupParent (popup)
     {
+        // i clic sul corpo del pedale (fuori dai comandi) arrivano allo slot: trascinamento a mano
+        setInterceptsMouseClicks (false, true);
         bindTo (slotIndex);
         startTimerHz (15);
     }
@@ -193,6 +195,22 @@ namespace pt::ui
         if (def == nullptr) return getLocalBounds().toFloat();
         const float s = juce::jmin ((float) getWidth() / def->imageW, (float) getHeight() / def->imageH);
         return juce::Rectangle<float> (def->imageW * s, def->imageH * s).withCentre (getLocalBounds().toFloat().getCentre());
+    }
+
+    float PedalView::imageScale() const
+    {
+        return def != nullptr ? imageArea().getWidth() / def->imageW : 1.0f;
+    }
+
+    bool PedalView::jackPoint (bool output, int line, juce::Point<float>& out) const
+    {
+        if (def == nullptr || slot == nullptr || slot->fx == nullptr) return false;
+        const auto a = imageArea();
+        const float s = a.getWidth() / def->imageW;
+        const float x = output ? def->jackOutX : def->jackInX;
+        const float y = line == 1 ? def->jackYB : def->jackYA;
+        out = { a.getX() + x * s, a.getY() + y * s };
+        return true;
     }
 
     void PedalView::resized()

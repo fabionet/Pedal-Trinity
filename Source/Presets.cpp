@@ -10,15 +10,17 @@ namespace pt
     namespace
     {
         struct FactoryPreset { const char* name; const char* slots; };
-        // "modello:on:p0,p1,..." separati da ';' (valori normalizzati 0..1)
+        // "modello:on:p0,p1,..." separati da ';' (valori normalizzati 0..1); "modello@B" = corsia B.
+        // split = SPL-3: MODE 0 mono, 0.5 dual, 1 stereo; poi BALANCE, LEVEL A, LEVEL B (0.667 = 0 dB)
         const FactoryPreset factory[] = {
             { "Pedal Trinity (originale)", "ed9:1:0.5,0.5,0.5;mc2w:0:0.5,0.5,0.5,0.5,0.5,0.6,0;gq7:1" },
             { "Blues pulito", "cs3:1;bd2:1:0.5,0.5,0.35;ce2:1;rv6:1" },
             { "Rock classico", "ed9:1:0.2,0.6,0.8;ds1:1:0.55,0.55,0.6;dd3:1;rv6:1" },
             { "Metal moderno", "ns2:1;sd1:1:0.85,0.55,0.1;mc2w:1:0.45,0.6,0.55,0.25,0.4,0.75,1;gq7:1" },
-            { "Ambient", "cs3:1;ce5:1;dd8:1;rv6:1;tr2:0" },
+            { "Ambient (stereo)", "cs3:1;tr2:0;split:1:1,0.5,0.667,0.667;ce5:1;dd8:1;rv6:1" },
             { "Fuzz vintage", "tb2w:1;ce2:1;re2:1" },
             { "Amplificatore + cabinet", "ed9:1:0.2,0.5,0.7;ir2:1;rv5:1" },
+            { "Doppio amp (dual mono)", "ns2:1;split:1:0.5,0.5,0.667,0.667;bd2:1;ir2:1;ds1@B:1;ir200@B:1" },
         };
     }
 
@@ -83,7 +85,8 @@ namespace pt
         {
             auto parts = juce::StringArray::fromTokens (tok, ":", "");
             juce::ValueTree s ("SLOT");
-            s.setProperty ("model", parts[0], nullptr);
+            s.setProperty ("model", parts[0].upToFirstOccurrenceOf ("@", false, false), nullptr);
+            if (parts[0].endsWith ("@B")) s.setProperty ("lane", 1, nullptr);
             s.setProperty ("on", parts.size() < 2 || parts[1] != "0", nullptr);
             if (parts.size() > 2)
             {

@@ -11,6 +11,18 @@ namespace pt::ui
 {
     namespace
     {
+        /** Pedali del catalogo (lo splitter SPL-3 e' un modulo di instradamento, non un pedale). */
+        int pedalCount()
+        {
+            int n = 0;
+            for (int i = 0; i < pt::engine::numModels(); ++i)
+                if (pt::engine::model (i).family != pt::engine::Family::Splitter) ++n;
+            return n;
+        }
+    }
+
+    namespace
+    {
         const juce::Colour gold (0xffd9b464), text (0xffe9e6dc), dim (0xffa9a69c), cardTop (0xff26272b),
                            cardBottom (0xff131416);
 
@@ -53,9 +65,11 @@ namespace pt::ui
 
         styleEditor (body, 14.5f);
         body.setText (juce::String (juce::CharPointer_UTF8 (
-            "Pedaliera virtuale: fino a 100 pedali in catena, scelti da un catalogo di ")) + juce::String (pt::engine::numModels())
+            "Pedaliera virtuale: fino a 100 pedali in catena, scelti da un catalogo di ")) + juce::String (pedalCount())
             + juce::String (juce::CharPointer_UTF8 (" modelli ispirati al catalogo BOSS (e al Tube Screamer), "
-            "con emulazione dei circuiti reali stadio per stadio, BBD a clock e modelli digitali dalle specifiche.\n"
+            "con emulazione dei circuiti reali stadio per stadio, BBD a clock e modelli digitali dalle specifiche. "
+            "Lo splitter SPL-3 divide la catena in due linee mono (dual) o in una catena stereo; i cavi jack "
+            "e i meter INPUT/OUTPUT mostrano il percorso del segnale.\n"
             "Formati: VST3, LV2 e Standalone (Linux e Windows, driver ASIO su Windows). Preset salvabili ed esportabili.\n\n"
             "LICENZA: GNU General Public License versione 3 (GPL-3.0-or-later).\n"
             "Copyright \xc2\xa9 2026 FabioNET.\n"

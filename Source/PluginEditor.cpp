@@ -84,20 +84,11 @@ PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcess
     infoButton.onClick = [this] { showInfo (true); };
     addAndMakeVisible (infoButton);
 
-    for (auto* s : { &inputGain, &outputGain })
-    {
-        s->setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
-        s->setTextBoxStyle (juce::Slider::NoTextBox, true, 0, 0);
-        s->setColour (juce::Slider::rotarySliderFillColourId, juce::Colour (0xffd9b464));
-        s->setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour (0xff3a3b40));
-        s->setColour (juce::Slider::thumbColourId, juce::Colour (0xffe9e6dc));
-        s->setPopupDisplayEnabled (true, false, this);
-        addAndMakeVisible (s);
-    }
-    inputGain.setTooltip ("Guadagno d'ingresso");
-    outputGain.setTooltip ("Volume d'uscita");
-    inAttach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (processor.apvts, "in_gain", inputGain);
-    outAttach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (processor.apvts, "out_gain", outputGain);
+    pt::ui::Pedalboard::Callbacks bcb;
+    bcb.zoom = [this] (int i) { showZoom (i); };
+    bcb.scroll = [this] (int delta) { scrollBy (delta); };
+    board = std::make_unique<pt::ui::Pedalboard> (processor, this, bcb);
+    addAndMakeVisible (*board);
 
     // stato dell'interfaccia salvato nel progetto
     view = (int) processor.uiState.getProperty ("view", 3);
@@ -117,7 +108,7 @@ PedalTrinityEditor::~PedalTrinityEditor()
 {
     saveUiState();
     processor.chain.removeChangeListener (this);
-    slots.clear();
+    board.reset();
     zoomPanel.reset();
     infoPanel.reset();
     setLookAndFeel (nullptr);
@@ -144,8 +135,6 @@ void PedalTrinityEditor::paint (juce::Graphics& g)
     g.setColour (juce::Colour (0xffb9b6ac));
     g.setFont (juce::Font (11.0f, juce::Font::bold));
     g.drawText (juce::String ("by ") + pt::author + "  v" + pt::versionString, 18, 30, 220, 16, juce::Justification::left);
-    g.drawText ("IN", inputGain.getBounds().translated (0, 0).withY (32).withHeight (16), juce::Justification::centred);
-    g.drawText ("OUT", outputGain.getBounds().withY (32).withHeight (16), juce::Justification::centred);
 }
 
 juce::Rectangle<int> PedalTrinityEditor::rackArea() const
@@ -164,11 +153,8 @@ void PedalTrinityEditor::resized()
     bar.removeFromLeft (10);
 
     const int gap = wide ? 10 : 7;
-    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 330, wide ? 580 : 528));
+    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 330, wide ? 500 : 448));
     infoButton.setBounds (right.removeFromRight (60).reduced (0, 3));
-    right.removeFromRight (gap);
-    outputGain.setBounds (right.removeFromRight (36).withHeight (30));
-    inputGain.setBounds (right.removeFromRight (36).withHeight (30));
     right.removeFromRight (gap);
     zoomIn.setBounds (right.removeFromRight (30).reduced (0, 3));
     zoomLabel.setBounds (right.removeFromRight (wide ? 90 : 78));
@@ -186,7 +172,8 @@ void PedalTrinityEditor::resized()
     pageLabel.setBounds (bar);
 
     zoomLabel.setText (juce::String (getWidth()) + " x " + juce::String (getHeight()), juce::dontSendNotification);
-    layoutSlots();
+    board->setBounds (rackArea());
+    board->setPage (first, view);
     if (zoomPanel) zoomPanel->setBounds (getLocalBounds());
     if (infoPanel) infoPanel->setBounds (getLocalBounds());
     saveUiState();
@@ -198,18 +185,24 @@ void PedalTrinityEditor::changeListenerCallback (juce::ChangeBroadcaster*) { ref
 void PedalTrinityEditor::refresh()
 {
     const int n = processor.chain.size();
-    first = juce::jlimit (0, juce::jmax (0, n - 1), first);
-    layoutSlots();
+    const int total = board->contentLength(), per = board->pageLength();
+    first = juce::jlimit (0, juce::jmax (0, total - 1), first);
+    board->setPage (first, view);
 
-    const int last = juce::jmin (n, first + view);
+    const bool dual = board->isDual();
+    const int last = juce::jmin (total, first + per);
+    const juce::String unit = dual ? "Colonne " : "Slot ";
     pageLabel.setText (n == 0 ? juce::String ("Nessun pedale: premi + Pedale")
-                              : "Slot " + juce::String (first + 1) + " - " + juce::String (last) + " di " + juce::String (n)
+                              : unit + juce::String (first + 1) + " - " + juce::String (last) + " di " + juce::String (total)
                                     + "   (" + juce::String (n) + "/100)",
                        juce::dontSendNotification);
+    // i tasti di pagina compaiono solo quando la catena non sta tutta nella vista
+    const bool paged = total > per || first > 0;
+    for (auto* b : { &firstButton, &prevButton, &nextButton, &lastButton }) b->setVisible (paged);
     prevButton.setEnabled (first > 0);
     firstButton.setEnabled (first > 0);
-    nextButton.setEnabled (first + view < n);
-    lastButton.setEnabled (first + view < n);
+    nextButton.setEnabled (first + per < total);
+    lastButton.setEnabled (first + per < total);
     addButton.setEnabled (processor.chain.canAdd());
     for (int i = 0; i < 4; ++i) viewButtons[i].setToggleState (views[i] == view, juce::dontSendNotification);
     presetButton.setButtonText ("Preset: " + processor.presets.currentName());
@@ -217,60 +210,30 @@ void PedalTrinityEditor::refresh()
     saveUiState();
 }
 
-void PedalTrinityEditor::layoutSlots()
-{
-    const int n = processor.chain.size();
-    const int rows = view == 18 ? 2 : 1, cols = view == 18 ? 9 : view;
-    const int visible = juce::jmax (0, juce::jmin (view, n - first));
-
-    // riuso dei componenti: si ricollegano agli indici invece di ricrearli
-    while (slots.size() > visible) slots.removeLast();
-    for (int k = 0; k < visible; ++k)
-    {
-        if (k < slots.size()) slots[k]->bindTo (first + k);
-        else
-        {
-            SlotComponent::Callbacks cb;
-            cb.zoom = [this] (int i) { showZoom (i); };
-            cb.removed = [this] (int i) { processor.chain.remove (i); };
-            auto* s = slots.add (new SlotComponent (processor.chain, first + k, this, cb));
-            addAndMakeVisible (s);
-        }
-    }
-
-    auto area = rackArea();
-    const int cw = area.getWidth() / cols, ch = area.getHeight() / rows;
-    for (int k = 0; k < slots.size(); ++k)
-    {
-        const int r = k / cols, c = k % cols;
-        slots[k]->setBounds (area.getX() + c * cw, area.getY() + r * ch, cw - 4, ch - 4);
-    }
-    if (zoomPanel) zoomPanel->toFront (false);
-    if (infoPanel) infoPanel->toFront (false);
-}
-
 void PedalTrinityEditor::setView (int v)
 {
     view = v;
-    const int n = processor.chain.size();
-    if (first + view > n) first = juce::jmax (0, n - view);
+    board->setPage (first, view);
+    const int total = board->contentLength(), per = board->pageLength();
+    if (first + per > total) first = juce::jmax (0, total - per);
     refresh();
 }
 
 void PedalTrinityEditor::scrollBy (int delta)
 {
-    const int n = processor.chain.size();
-    first = juce::jlimit (0, juce::jmax (0, n - 1), first + delta);
-    if (delta > 0 && first + view > n) first = juce::jmax (0, n - view);
+    const int total = board->contentLength(), per = board->pageLength();
+    first = juce::jlimit (0, juce::jmax (0, total - 1), first + delta);
+    if (delta > 0 && first + per > total) first = juce::jmax (0, total - per);
     refresh();
 }
 
 void PedalTrinityEditor::addPedal()
 {
-    const int idx = processor.chain.insert (-1, {});
+    // in DUAL il tasto aggiunge alla corsia A; la corsia B ha il suo "+" sulla pedaliera
+    const int idx = processor.chain.insert (-1, {}, 0);
     if (idx < 0) return;
-    const int n = processor.chain.size();
-    if (idx >= first + view) first = juce::jmax (0, n - view);
+    const int unit = board->unitOfSlot (idx), per = board->pageLength();
+    if (unit >= first + per || unit < first) first = juce::jmax (0, unit - per + 1);
     refresh();
 }
 

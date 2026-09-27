@@ -102,14 +102,16 @@ def main():
       { %s },
       %s,
       %s, 0xff%02x%02x%02xu, %s, %s, %s, %s, %s, %s,
-      { %s }, { %s }, %s, %s, %s, %s, %s,
+      { %s }, { %s }, %s, %s, %s, %s,
+      %s, %s, %s, %s, %s,
       %s },""" % (
             cstr(mid), cstr(m["name"]), cstr(m["code"]), cstr(m["inspired"]), cstr(m["category"]), m["family"],
             len(m["controls"]), ",\n        ".join(ctrl_lines), cstr(m["config"]),
             cstr(m["style"]), r, gc, b, cstr(mid + "_jpg") if has_image else "nullptr", f(geo["imageW"]), f(geo["imageH"]),
             f(led[0]), f(led[1]), f(led[2]),
             ", ".join(f(p[0]) for p in foot), ", ".join(f(p[1]) for p in foot),
-            f(disp[0]), f(disp[1]), f(disp[2]), f(disp[3]), "true" if m["stereo"] else "false",
+            f(disp[0]), f(disp[1]), f(disp[2]), f(disp[3]),
+            f(geo["jacks"][0]), f(geo["jacks"][1]), f(geo["jacks"][2]), f(geo["jacks"][3]), "true" if m["stereo"] else "false",
             cstr(m["notes"], allow_utf8=True)))
     with open(INC, "w") as fo:
         fo.write("// File GENERATO da tools/art/assemble_catalog.py - non modificare a mano.\n")

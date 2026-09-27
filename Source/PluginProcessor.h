@@ -49,6 +49,7 @@ public:
     pt::engine::Chain chain;
     pt::PresetManager presets { *this };
     juce::ValueTree uiState { "UI" };       // vista, pagina, zoom (salvati nel progetto)
+    pt::engine::LevelMeter outputMeter;     // picchi d'uscita (dopo il volume OUT) per il meter
 
 private:
     static juce::AudioProcessorValueTreeState::ParameterLayout createLayout();
@@ -58,6 +59,9 @@ private:
     std::atomic<float>* inParam {};
     std::atomic<float>* outParam {};
     std::atomic<float>* bypassParam {};
+    std::atomic<float>* outBalParam {};
+    std::atomic<float>* outLParam {};
+    std::atomic<float>* outRParam {};
     int maxBlock = 512;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PedalTrinityProcessor)

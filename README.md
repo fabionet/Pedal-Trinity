@@ -18,8 +18,16 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
 ## Funzioni
 
 * **Fino a 100 slot** in catena; su **ogni slot** c'è il menu di scelta del pedale (per categorie).
-* Slot **spostabili** (tasti ◀ ▶ o trascinamento), eliminabili, duplicabili; accensione dal footswitch.
-* **Scorrimento** a 3 pedali alla volta o a pagine; **viste 3 / 6 / 9 / 18** pedali contemporaneamente.
+* Slot **spostabili** a mano (trascinamento dall'intestazione o dal corpo del pedale, anche sulle celle libere)
+  o con i tasti ◀ ▶, eliminabili, duplicabili; accensione dal footswitch.
+* **Cavi jack** disegnati tra i pedali, dal meter INPUT al primo pedale e dall'ultimo al meter OUTPUT:
+  attraversano gli slot vuoti e si sdoppiano in A/B dopo lo splitter.
+* **Splitter SPL-3** in qualsiasi punto della catena: MONO, **DUAL** (due catene mono, A = L e B = R, su due file)
+  o **STEREO** (i pedali a doppio jack elaborano A e B, un pedale mono riporta il segnale in mono come
+  con i cavi veri). BALANCE e LEVEL A/B in ingresso, BALANCE / LEFT / RIGHT in uscita.
+* **Meter INPUT e OUTPUT** laterali (mono o stereo secondo lo splitter) con fader del volume d'ingresso e d'uscita.
+* **Scorrimento** a 3 pedali alla volta o a pagine (i tasti compaiono quando la catena supera la vista);
+  **viste 3 / 6 / 9 / 18** pedali contemporaneamente.
 * **Zoom** della finestra da 1280×760 fino a 2560×1440 (2K) e **pannello di zoom** del singolo pedale.
 * **Preset**: di fabbrica e dell'utente, salva / esporta / importa (`.ptpreset`), stato salvato nel progetto DAW.
 * Tasto **INFO** con licenza, autore, versione e [guida illustrata in PDF](docs/PedalTrinity_Guida.pdf).
