@@ -8,7 +8,7 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
 
 | | |
 |---|---|
-| **Versione** | 1.1.0 beta |
+| **Versione** | 1.1.1 beta |
 | **Autore** | FabioNET |
 | **Licenza** | [GNU GPL v3](LICENSE) |
 | **Formati** | VST3 · LV2 · Standalone |
@@ -67,13 +67,13 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
 
 ### Linux (Ubuntu 22.04+, Debian 12+, Mint 21+)
 ```bash
-sudo apt install ./pedal-trinity_1.1.0-beta_amd64.deb
+sudo apt install ./pedal-trinity_1.1.1-beta_amd64.deb
 ```
 Installa `/usr/lib/vst3/Pedal Trinity.vst3`, `/usr/lib/lv2/Pedal Trinity.lv2` e l'app `pedal-trinity`
 (nel menu *Audio*). La guida si trova in `/usr/share/doc/pedal-trinity/`.
 
 ### Windows 10/11 (x64)
-Esegui `PedalTrinity-1.1.0-beta-Windows-x64-Setup.exe`. Il VST3 va in
+Esegui `PedalTrinity-1.1.1-beta-Windows-x64-Setup.exe`. Il VST3 va in
 `C:\Program Files\Common Files\VST3`, l'LV2 in `C:\Program Files\Common Files\LV2`.
 L'app standalone supporta i driver **ASIO** (selezionati automaticamente al primo avvio se presenti),
 WASAPI e DirectSound.

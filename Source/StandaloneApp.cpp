@@ -2,7 +2,7 @@
     Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
 
     Applicazione Standalone personalizzata:
-      * finestra con titolo "Pedal Trinity 1.1.0 beta";
+      * finestra con titolo "Pedal Trinity 1.1.1 beta";
       * su Windows, al primo avvio, seleziona i driver ASIO se presenti;
       * ingresso audio attivo di default (e' un effetto per chitarra);
       * riga di comando:
@@ -10,7 +10,7 @@
           --screenshot file.png [opzioni]    salva un'immagine dell'interfaccia
               --scale s  --size WxH  --view n  --first i  --factory numero|nome
               --zoom slot  --info  --options  --theme pro|tolex|walnut|green|alu|night  --chain id,id@B,split=0.5,...  --set slot:comando=valore (ripetibile)
-              --nam slot:A|B=file.nam  --ir slot:A|B=file.wav   (NAM-A1A2)  --real (REAL MOD)
+              --nam slot:A|B=file.nam  --ir slot:A|B=file.wav   (NAM-A1A2)  --real (REAL MOD)  --photos (usa le foto personali)
 */
 
 #include <juce_audio_devices/juce_audio_devices.h>
@@ -507,6 +507,8 @@ namespace
         if (idx < 0 || idx + 1 >= args.size()) return 2;
         const juce::File outFile = juce::File::getCurrentWorkingDirectory().getChildFile (args[idx + 1].unquoted());
 
+        // le foto personali (RealPhotos) non finiscono negli screenshot, salvo richiesta esplicita
+        pt::ui::RealPhotos::setEnabled (args.contains ("--photos"));
         PedalTrinityProcessor p;
         float scale = 1.0f;
         int w = 1280, h = 760, zoomSlot = -1;
