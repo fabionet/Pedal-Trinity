@@ -11,6 +11,7 @@
 #include <array>
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "Controls.h"
+#include "RealMod.h"
 #include "../engine/Chain.h"
 
 namespace pt::ui
@@ -46,8 +47,12 @@ namespace pt::ui
         int index = -1;
         std::shared_ptr<engine::Slot> slotRef;   // mantiene vivo lo slot finche' la vista lo usa
         engine::Slot* slot = nullptr;
-        const engine::ModelDef* def = nullptr;
+        const engine::ModelDef* def = nullptr;          // aspetto disegnato (replica reale in REAL MOD)
+        const engine::ModelDef* engineDef = nullptr;    // modello dello slot (suono e comandi)
+        juce::Image photoImage;                         // foto personale in rilievo in uso (REAL MOD)
+        bool photoKnobs = true;
         juce::SharedResourcePointer<Assets> assets;
+        juce::SharedResourcePointer<RealPhotos> photos;
         juce::SharedResourcePointer<ThemeManager> themes;
         std::unique_ptr<Canvas> canvas;
         juce::Image source, scaled;

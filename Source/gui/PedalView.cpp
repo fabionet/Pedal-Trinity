@@ -18,7 +18,8 @@ namespace pt::ui
             const float r = c.radius * 1.15f;
             setBounds (juce::Rectangle<float> (c.x - r, c.y - r, r * 2.0f, r * 2.0f).getSmallestIntegerContainer());
             setMouseCursor (juce::MouseCursor::PointingHandCursor);
-            setTooltip (juce::String ("Canale ") + c.label + ": acceso / spento");
+            setTooltip (juce::String (c.label).length() <= 1 ? juce::String ("Canale ") + c.label + ": acceso / spento"
+                                                               : juce::String (c.label) + ": footswitch");
         }
         bool hitTest (int x, int y) override
         {
@@ -206,10 +207,16 @@ namespace pt::ui
         index = slotIndex;
         auto ref = chain.slotRef (index);
         const auto* d = ref != nullptr ? ref->def : nullptr;
-        if (ref.get() == slot && d == def && (canvas != nullptr || d == nullptr)) return;
+        const auto* v = visualDef (d);
+        RealPhotos::Photo photo;
+        if (v != d && v != nullptr) photo = photos->forModel (*v);
+        if (ref.get() == slot && d == engineDef && v == def && photo.image == photoImage && (canvas != nullptr || d == nullptr)) return;
         slotRef = ref;
         slot = ref.get();
-        def = d;
+        engineDef = d;
+        def = v;
+        photoImage = photo.image;
+        photoKnobs = photo.knobs;
         rebuild();
     }
 
@@ -221,7 +228,12 @@ namespace pt::ui
         scaledFor = {};
         if (def == nullptr || slot == nullptr || slot->fx == nullptr) { repaint(); return; }
 
-        source = Assets::pedalImage (def->image);
+        source = photoImage;                                 // foto personale in rilievo (REAL MOD)
+        if (! source.isValid())
+        {
+            source = Assets::pedalImage (def->image);
+            photoKnobs = true;
+        }
         canvas = std::make_unique<Canvas> (*this);
         canvas->setSize ((int) std::ceil (def->imageW), (int) std::ceil (def->imageH));
         addAndMakeVisible (*canvas);
@@ -260,7 +272,16 @@ namespace pt::ui
                 {
                     case ControlKind::Knob: case ControlKind::KnobOuter: case ControlKind::KnobInner: case ControlKind::Selector:
                     {
+                        if (c.strip == 254)          // bilanciere (REAL MOD: volume, espressione, wah)
+                        {
+                            auto* t = new TreadleControl (c);
+                            t->setPopupDisplayEnabled (true, false, popupParent);
+                            bind (*t, k);
+                            comp = t;
+                            break;
+                        }
                         auto* kn = new KnobControl (*assets, c);
+                        kn->setGhost (! photoKnobs);
                         if (c.kind == ControlKind::KnobOuter)
                             for (int j = 0; j < def->numControls; ++j)
                                 if (def->controls[j].kind == ControlKind::KnobInner && std::abs (def->controls[j].x - c.x) < 1.0f)

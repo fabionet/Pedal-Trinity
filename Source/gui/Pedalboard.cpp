@@ -110,6 +110,7 @@ namespace pt::ui
         const auto& c = themes->cable();
         overlay.setStyle (c.body, c.sheen, themes->showCables());
         boardKey = {};
+        layout();                    // REAL MOD: gli slot ridisegnano i pedali (repliche o originali)
         repaint();
     }
     void Pedalboard::resized() { layout(); }

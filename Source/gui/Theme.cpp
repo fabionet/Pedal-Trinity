@@ -323,6 +323,7 @@ namespace pt::ui
             if (allThemes()[(size_t) i].id == id) index = i;
         cables = props->getBoolValue ("cables", true);
         cableColour = juce::jlimit (0, (int) cableColours().size() - 1, props->getIntValue ("cableColour", 0));
+        real = props->getBoolValue ("realMod", false);
     }
 
     ThemeManager::~ThemeManager() { props->saveIfNeeded(); }
@@ -351,11 +352,15 @@ namespace pt::ui
         if (i != cableColour) { cableColour = i; save(); }
     }
 
+    void ThemeManager::setRealMode (bool b) { if (b != real) { real = b; save(); } }
+    void ThemeManager::previewRealMode (bool b) { if (b != real) { real = b; sendChangeMessage(); } }
+
     void ThemeManager::save()
     {
         props->setValue ("theme", current().id);
         props->setValue ("cables", cables);
         props->setValue ("cableColour", cableColour);
+        props->setValue ("realMod", real);
         props->saveIfNeeded();
         sendChangeMessage();
     }

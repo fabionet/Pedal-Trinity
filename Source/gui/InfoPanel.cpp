@@ -97,7 +97,9 @@ namespace pt::ui
             "MARCHI: BOSS, Roland e le sigle dei pedali BOSS sono marchi di Roland Corporation; Ibanez e Tube Screamer "
             "di Hoshino Gakki; Fender di Fender Musical Instruments. Pedal Trinity \xc3\xa8 un progetto indipendente, "
             "non affiliato n\xc3\xa9 approvato: i modelli hanno nomi e sigle originali, i riferimenti indicano solo il "
-            "suono di riferimento. Le immagini dei pedali sono render 3D originali.")));
+            "suono di riferimento. Le immagini dei pedali sono render 3D originali. In modalit\xc3\xa0 REAL MOD le repliche, "
+            "modellate da zero e senza loghi, riportano sigla e nome del pedale reale solo per identificarlo; le foto "
+            "personali restano sul computer dell'utente.")));
         addAndMakeVisible (body);
 
         styleEditor (license, 12.5f);
@@ -194,7 +196,7 @@ namespace pt::ui
 
         auto dir = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("PedalTrinity");
         dir.createDirectory();
-        auto pdf = dir.getChildFile ("PedalTrinity_Guida_v1.0.0-beta.pdf");
+        auto pdf = dir.getChildFile ("PedalTrinity_Guida_v1.1.0-beta.pdf");
         if (pdf.getSize() != (juce::int64) data.getSize())
             pdf.replaceWithData (data.getData(), data.getSize());
         return pdf.startAsProcess();

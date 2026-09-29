@@ -101,9 +101,17 @@ namespace pt::engine
         float jackYA, jackYB;    // altezza delle prese A e B (B = A sui pedali mono)
         bool stereo;             // elaborazione stereo nativa
         const char* notes;       // descrizione breve (italiano)
+        // solo nel catalogo REAL MOD: piano superiore del pedale e altezza del fronte nell'immagine (px logici),
+        // dove si appoggiano le foto personali
+        float bodyX = 0, bodyY = 0, bodyW = 0, bodyH = 0, bodyFront = 0;
     };
 
     const ModelDef* findModel (const char* id);
+    /** Replica fedele del pedale reale (modalita' REAL MOD): stessi comandi nello stesso ordine,
+        nome e sigla reali, forma e posizione dei comandi del pedale originale. nullptr se assente. */
+    const ModelDef* findRealModel (const char* id);
+    int numRealModels();
+    const ModelDef& realModel (int index);
     int numModels();
     const ModelDef& model (int index);
 }

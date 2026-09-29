@@ -2,7 +2,7 @@
     Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
 
     Applicazione Standalone personalizzata:
-      * finestra con titolo "Pedal Trinity 1.0.0 beta";
+      * finestra con titolo "Pedal Trinity 1.1.0 beta";
       * su Windows, al primo avvio, seleziona i driver ASIO se presenti;
       * ingresso audio attivo di default (e' un effetto per chitarra);
       * riga di comando:
@@ -10,7 +10,7 @@
           --screenshot file.png [opzioni]    salva un'immagine dell'interfaccia
               --scale s  --size WxH  --view n  --first i  --factory numero|nome
               --zoom slot  --info  --options  --theme pro|tolex|walnut|green|alu|night  --chain id,id@B,split=0.5,...  --set slot:comando=valore (ripetibile)
-              --nam slot:A|B=file.nam  --ir slot:A|B=file.wav   (NAM-A1A2)
+              --nam slot:A|B=file.nam  --ir slot:A|B=file.wav   (NAM-A1A2)  --real (REAL MOD)
 */
 
 #include <juce_audio_devices/juce_audio_devices.h>
@@ -28,6 +28,8 @@
 #include "engine/Circuit.h"
 #include "engine/FxNam.h"
 #include "engine/NamSecurity.h"
+#include "gui/RealMod.h"
+#include "gui/Assets.h"
 
 namespace
 {
@@ -276,6 +278,78 @@ namespace
         tmp.deleteRecursively();
     }
 
+    /** REAL MOD: repliche coerenti con i modelli e verifiche di sicurezza delle foto personali. */
+    void runRealModTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        int boss = 0, ok = 0, bad = 0;
+        juce::String firstBad;
+        for (int m = 0; m < numModels(); ++m)
+        {
+            const auto& d = model (m);
+            const bool isBoss = juce::String (d.inspiredBy).startsWith ("BOSS");
+            const auto* r = findRealModel (d.id);
+            if (! isBoss) { if (r != nullptr) { ++bad; firstBad = d.id; } continue; }
+            ++boss;
+            bool same = r != nullptr && r->numControls == d.numControls && r->family == d.family;
+            for (int k = 0; same && k < d.numControls; ++k)
+                same = std::strcmp (r->controls[k].label, d.controls[k].label) == 0
+                       && std::strcmp (r->controls[k].role, d.controls[k].role) == 0
+                       && r->controls[k].steps == d.controls[k].steps;
+            same = same && r->image != nullptr && pt::ui::Assets::pedalImage (r->image).isValid()
+                   && juce::String (r->name).containsIgnoreCase ("BOSS") == false && r->bodyW > 0;
+            if (same) ++ok; else { ++bad; if (firstBad.isEmpty()) firstBad = d.id; }
+        }
+        report ("REAL MOD: una replica per ogni pedale BOSS, stessi comandi nello stesso ordine",
+                bad == 0 && ok == boss && numRealModels() == boss,
+                juce::String (ok) + "/" + juce::String (boss) + " repliche" + (firstBad.isNotEmpty() ? ", problema: " + firstBad : juce::String()));
+
+        // foto personali: firma, dimensioni dichiarate prima di decodificare, composizione
+        const auto tmp = juce::File::getSpecialLocation (juce::File::tempDirectory)
+                             .getChildFile ("pt-real-selftest-" + juce::String::toHexString (juce::Random::getSystemRandom().nextInt64()));
+        tmp.createDirectory();
+        juce::Image photo (juce::Image::RGB, 300, 520, true);
+        {
+            juce::Graphics g (photo);
+            g.fillAll (juce::Colours::white);
+            g.setColour (juce::Colours::orange);
+            g.fillRoundedRectangle (40.0f, 30.0f, 220.0f, 460.0f, 12.0f);
+        }
+        const auto good = tmp.getChildFile ("ds1.png");
+        { juce::FileOutputStream os (good); juce::PNGImageFormat().writeImageToStream (photo, os); }
+        int w = 0, h = 0;
+        const auto e1 = pt::ui::RealPhotos::checkImageFile (good, w, h);
+        report ("REAL MOD: foto PNG valida accettata", e1.isEmpty() && w == 300 && h == 520, e1.isEmpty() ? "300 x 520" : e1);
+        // PNG che dichiara 40000 x 40000 pixel: rifiutato prima di decodificare
+        juce::MemoryBlock big;
+        good.loadFileAsData (big);
+        auto* b = static_cast<uint8_t*> (big.getData());
+        for (int i : { 16, 20 }) { b[i] = 0; b[i + 1] = 0; b[i + 2] = 0x9C; b[i + 3] = 0x40; }
+        const auto bomb = tmp.getChildFile ("bomba.png");
+        bomb.replaceWithData (big.getData(), big.getSize());
+        const auto e2 = pt::ui::RealPhotos::checkImageFile (bomb, w, h);
+        report ("REAL MOD: foto con dimensioni enormi dichiarate rifiutata", e2.isNotEmpty(), e2);
+        const auto fake = tmp.getChildFile ("finta.jpg");
+        good.copyFileTo (fake);                                   // PNG travestito da JPEG
+        const auto e3 = pt::ui::RealPhotos::checkImageFile (fake, w, h);
+        report ("REAL MOD: contenuto non coerente con l'estensione rifiutato", e3.isNotEmpty(), e3);
+        const auto exe = tmp.getChildFile ("foto.gif");
+        good.copyFileTo (exe);
+        const auto e4 = pt::ui::RealPhotos::checkImageFile (exe, w, h);
+        report ("REAL MOD: estensione non ammessa rifiutata", e4.isNotEmpty(), e4);
+        if (const auto* r = findRealModel ("ds1"))
+        {
+            const auto img = pt::ui::RealPhotos::compose (photo, *r, { 40, 30, 220, 460 }, 0);
+            // il piano superiore della foto deve restare opaco e del suo colore (niente ombra sopra la foto)
+            const auto mid = img.getPixelAt ((int) (r->bodyX * 2 + r->bodyW), (int) (r->bodyY * 2 + r->bodyH * 0.6f));
+            report ("REAL MOD: foto in rilievo alla dimensione della replica, piano opaco",
+                    img.getWidth() == (int) std::ceil (r->imageW * 2.0f) && img.getHeight() == (int) std::ceil (r->imageH * 2.0f)
+                        && mid.getAlpha() == 255 && mid.getRed() > 200,
+                    juce::String (img.getWidth()) + " x " + juce::String (img.getHeight()) + ", centro " + mid.toDisplayString (true));
+        }
+        tmp.deleteRecursively();
+    }
+
     int runSelfTest()
     {
         using namespace pt::engine;
@@ -384,7 +458,10 @@ namespace
         // 5. NAM-A1A2: sicurezza dei file ed elaborazione
         runNamTests (report);
 
-        // 6. processore completo e bypass
+        // 6. REAL MOD
+        runRealModTests (report);
+
+        // 7. processore completo e bypass
         {
             PedalTrinityProcessor p;
             p.chain.fromValueTree (juce::ValueTree ("CHAIN"));
@@ -455,6 +532,7 @@ namespace
             }
             else if (args[i] == "--zoom") zoomSlot = next.getIntValue();
             else if (args[i] == "--info") info = true;
+            else if (args[i] == "--real") themes->previewRealMode (true);        // REAL MOD senza salvarlo
             else if (args[i] == "--options") options = true;
             else if (args[i] == "--theme")
             {

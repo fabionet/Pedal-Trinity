@@ -106,7 +106,7 @@ namespace pt::ui
     OptionsPanel::OptionsPanel()
     {
         setWantsKeyboardFocus (true);
-        for (auto* l : { &title, &themeLabel, &cableLabel, &colourLabel })
+        for (auto* l : { &title, &themeLabel, &cableLabel, &colourLabel, &realLabel, &realInfo })
         {
             l->setInterceptsMouseClicks (false, false);
             addAndMakeVisible (l);
@@ -129,6 +129,20 @@ namespace pt::ui
             cableColour.addItem (cableColours()[(size_t) i].name, i + 1);
         cableColour.onChange = [this] { themes->setCableColour (cableColour.getSelectedId() - 1); };
         addAndMakeVisible (cableColour);
+        realLabel.setText ("REAL MOD", juce::dontSendNotification);
+        realLabel.setFont (juce::Font (16.0f, juce::Font::bold));
+        realInfo.setText ("Foto tue, dall'alto: <id>.jpg o <SIGLA>.jpg (es. DS-1.jpg) nella cartella; "
+                          "si appoggiano in rilievo sulla replica. Non fanno parte del programma.", juce::dontSendNotification);
+        realInfo.setFont (juce::Font (12.5f));
+        realInfo.setMinimumHorizontalScale (0.8f);
+        realMode.onClick = [this] { themes->setRealMode (realMode.getToggleState()); };
+        realMode.setTooltip ("Mostra le repliche dei pedali reali con i loro nomi (il suono non cambia)");
+        openPhotos.setTooltip (RealPhotos::folder().getFullPathName());
+        openPhotos.onClick = [] { RealPhotos::folder().startAsProcess(); };
+        reloadPhotos.setTooltip ("Rilegge le foto dopo averle aggiunte o cambiate nella cartella");
+        reloadPhotos.onClick = [this] { photos->reload(); themes->sendChangeMessage(); };
+        for (auto* b : std::initializer_list<juce::Component*> { &realMode, &openPhotos, &reloadPhotos })
+            addAndMakeVisible (b);
         closeButton.onClick = [this] { if (onClose) onClose(); };
         addAndMakeVisible (closeButton);
 
@@ -149,8 +163,9 @@ namespace pt::ui
     {
         const auto& t = themes->current();
         title.setColour (juce::Label::textColourId, t.accent);
-        for (auto* l : { &themeLabel, &cableLabel }) l->setColour (juce::Label::textColourId, t.text);
-        colourLabel.setColour (juce::Label::textColourId, t.textDim);
+        for (auto* l : { &themeLabel, &cableLabel, &realLabel }) l->setColour (juce::Label::textColourId, t.text);
+        for (auto* l : { &colourLabel, &realInfo }) l->setColour (juce::Label::textColourId, t.textDim);
+        realMode.setToggleState (themes->realMode(), juce::dontSendNotification);
         showCables.setToggleState (themes->showCables(), juce::dontSendNotification);
         cableColour.setSelectedId (themes->cableColourIndex() + 1, juce::dontSendNotification);
         cableColour.setEnabled (themes->showCables());
@@ -158,7 +173,7 @@ namespace pt::ui
 
     juce::Rectangle<int> OptionsPanel::card() const
     {
-        return getLocalBounds().withSizeKeepingCentre (juce::jmin (1000, getWidth() - 40), juce::jmin (660, getHeight() - 30));
+        return getLocalBounds().withSizeKeepingCentre (juce::jmin (1000, getWidth() - 40), juce::jmin (740, getHeight() - 20));
     }
 
     void OptionsPanel::paint (juce::Graphics& g)
@@ -174,6 +189,7 @@ namespace pt::ui
         g.drawRoundedRectangle (c.reduced (1.0f), 12.0f, 1.4f);
         g.setColour (t.text.withAlpha (0.12f));
         g.drawHorizontalLine (cableLabel.getY() - 8, (float) c.getX() + 24.0f, c.getRight() - 24.0f);
+        g.drawHorizontalLine (realLabel.getY() - 6, (float) c.getX() + 24.0f, c.getRight() - 24.0f);
     }
 
     void OptionsPanel::resized()
@@ -186,7 +202,17 @@ namespace pt::ui
 
         auto bottom = c.removeFromBottom (36);
         closeButton.setBounds (bottom.removeFromRight (120));
-        c.removeFromBottom (12);
+        c.removeFromBottom (10);
+        auto realRow = c.removeFromBottom (32);
+        realInfo.setBounds (c.removeFromBottom (20));
+        c.removeFromBottom (2);
+        realLabel.setBounds (c.removeFromBottom (24));
+        c.removeFromBottom (10);
+        realMode.setBounds (realRow.removeFromLeft (390));
+        realRow.removeFromLeft (10);
+        openPhotos.setBounds (realRow.removeFromLeft (210).reduced (0, 2));
+        realRow.removeFromLeft (8);
+        reloadPhotos.setBounds (realRow.removeFromLeft (130).reduced (0, 2));
         auto cablesRow = c.removeFromBottom (34);
         c.removeFromBottom (4);
         cableLabel.setBounds (c.removeFromBottom (26));

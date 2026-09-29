@@ -26,10 +26,11 @@ import layout as L  # noqa: E402
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 SAMPLES = int(argv[argv.index("--samples") + 1]) if "--samples" in argv else 64
 FORCE = "--force" in argv
+REAL = "--real" in argv            # repliche REAL MOD (build/real/, serigrafie in build/cat_real/)
 ONLY = [a for a in argv if not a.startswith("--") and not a.isdigit()]
 BUILD = os.path.join(HERE, "build")
-TEX = os.path.join(BUILD, "cat")
-OUT = os.path.join(BUILD, "pedals")
+TEX = os.path.join(BUILD, "cat_real" if REAL else "cat")
+OUT = os.path.join(BUILD, "real" if REAL else "pedals")
 os.makedirs(OUT, exist_ok=True)
 
 TILT = math.radians(L.TILT_DEG)
@@ -271,8 +272,134 @@ def build_nam(m, lay):
     add_jacks(m)
 
 
+# ------------------------------------------------------------------ repliche REAL MOD
+MAT_PAD = bumped(principled("pad_rubber", (0.015, 0.015, 0.016), 0.0, 0.8, spec=0.3), 1800.0, 0.3, distance=0.0003)
+MAT_SCREEN = principled("screen", (0.004, 0.006, 0.008), 0.0, 0.06, coat=1.0, spec=0.9)
+MAT_BLACKMETAL = principled("black_metal", (0.025, 0.025, 0.027), 0.6, 0.35)
+MAT_KNOB = principled("deco_knob", (0.018, 0.018, 0.019), 0.0, 0.45, coat=0.2)
+MAT_POINTER = principled("pointer", (0.9, 0.9, 0.88), 0.0, 0.4)
+
+
+def add_knob_base(x, y, z):
+    """Dado del perno dei pomelli (i pomelli sono filmstrip, disegnati dall'interfaccia)."""
+    cylinder("knob_nut", 0.0032, 0.0012, PEDAL, MAT_NICKEL, (x, y, z), seg=6, edge=0.0002)
+
+
+def add_toggles(r, lay, z):
+    for k, c in enumerate(r["controls"]):
+        if c["kind"] == "toggle":
+            p = lay["controls"][k]
+            cylinder("toggle_nut", 0.0026, 0.0016, PEDAL, MAT_NICKEL, (p["x"], p["y"], z), seg=6, edge=0.0002)
+            cylinder("toggle_collar", 0.0017, 0.0048, PEDAL, MAT_CHROME, (p["x"], p["y"], z), seg=32, edge=0.0003)
+
+
+def add_side_jacks(W, pos):
+    for p in pos:
+        if p is None:
+            continue
+        y, z = p
+        for sgn in (-1, 1):
+            cylinder("jack_nut", 0.0055, 0.0030, PEDAL, MAT_NICKEL, (sgn * (W / 2 - 0.0005), y, z), seg=6, rotation=(0, sgn * math.pi / 2, 0), edge=0.0003)
+            cylinder("jack_ring", 0.0046, 0.0042, PEDAL, MAT_CHROME, (sgn * (W / 2 - 0.0005), y, z), seg=40, rotation=(0, sgn * math.pi / 2, 0), edge=0.0003)
+
+
+def build_real_box(r, lay):
+    """Twin, serie 200/500, unita' da pavimento e da tavolo: scocca metallica con piano serigrafato,
+    footswitch in gomma (o pedali basculanti sui Twin), display, pulsanti, LED e prese."""
+    b = lay["body"]
+    W, D, H = b["W"], b["D"], b["H"]
+    body = principled("body_" + r["id"], srgb(r["colour"]), 0.35, 0.34, 0.25)
+    rounded_box("chassis", W, D, H - 0.003, 0.006, 0.0025, PEDAL, body)
+    top = textured("top_" + r["id"], os.path.join(TEX, r["id"] + "_top.png"), -W / 2, W / 2, -D / 2, D / 2, 0.2, 0.40, 0.25, 0.15)
+    rounded_box("topplate", W - 0.001, D - 0.001, 0.003, 0.006, 0.0012, PEDAL, top, (0, 0, H - 0.003))
+    for part in lay["parts"]:
+        t = part["type"]
+        if t == "footswitch":
+            if part.get("kind") == "treadle_pad":
+                # pedale basculante come i compatti: piastra verniciata + gomma
+                w, d = part["w"], part["d"]
+                pl = rounded_box("fs_plate", w, d, 0.010, 0.005, 0.003, PEDAL, body, (part["x"], part["y"], H - 0.001))
+                pl.rotation_euler = (math.radians(4.0), 0, 0)
+                rounded_box("fs_rubber", w - 0.008, d * 0.72, 0.0022, 0.004, 0.0008, PEDAL, MAT_RUBBER,
+                            (part["x"], part["y"] - d * 0.08, H + 0.0095))
+            else:
+                w, d = part["w"], part["d"]
+                rounded_box("fs_base", w + 0.003, d + 0.003, 0.0025, 0.004, 0.0008, PEDAL, MAT_BLACKMETAL, (part["x"], part["y"], H - 0.0005))
+                rounded_box("fs_pad", w, d, 0.0075, 0.0035, 0.0022, PEDAL, MAT_PAD, (part["x"], part["y"], H + 0.0015))
+        elif t == "display":
+            x0, y0, x1, y1 = part["x0"], part["y0"], part["x1"], part["y1"]
+            rounded_box("screen", x1 - x0, y1 - y0, 0.0006, 0.0008, 0.0002, PEDAL, MAT_SCREEN, ((x0 + x1) / 2, (y0 + y1) / 2, H))
+        elif t == "button":
+            cylinder("btn_ring", part["r"] * 1.25, 0.0008, PEDAL, MAT_BLACKMETAL, (part["x"], part["y"], H), seg=40)
+            cylinder("btn", part["r"], 0.0030, PEDAL, MAT_FOOT, (part["x"], part["y"], H + 0.0006), seg=40, edge=0.0008)
+        elif t == "led":
+            add_led(part["x"], part["y"], H, 0.0018)
+        elif t == "knob":
+            # pomello reale senza comando corrispondente: modellato (fisso)
+            add_knob_base(part["x"], part["y"], H)
+            cylinder("deco_knob", part["r"], 0.0140, PEDAL, MAT_KNOB, (part["x"], part["y"], H + 0.001), seg=48, edge=0.0012)
+            rounded_box("deco_ptr", 0.0012, part["r"] * 0.9, 0.0004, 0.0003, 0.0, PEDAL, MAT_POINTER,
+                        (part["x"], part["y"] + part["r"] * 0.45, H + 0.0151))
+        elif t == "switch":
+            rounded_box("sw_slot", 0.009, 0.0032, 0.0006, 0.0008, 0.0, PEDAL, MAT_BLACKMETAL, (part["x"], part["y"], H))
+            rounded_box("sw_cap", 0.0035, 0.0026, 0.0030, 0.0006, 0.0004, PEDAL, MAT_FOOT, (part["x"] - 0.0022, part["y"], H + 0.0005))
+        elif t == "slider":
+            rounded_box("sl_cap", 0.0060, 0.0030, 0.0070, 0.0008, 0.0006, PEDAL, MAT_FOOT, (part["x"], (part["y0"] + part["y1"]) / 2, H))
+    for k, c in enumerate(r["controls"]):
+        p = lay["controls"][k]
+        if p["strip"] in ("boss", "boss_outer"):
+            add_knob_base(p["x"], p["y"], H)
+        elif p["strip"] == "button":
+            cylinder("btn_ring", p["r"] * 1.25, 0.0008, PEDAL, MAT_BLACKMETAL, (p["x"], p["y"], H), seg=40)
+    add_toggles(r, lay, H)
+    lx, ly, lz, lr = lay["led"]
+    add_led(lx, ly, lz, lr)
+    add_side_jacks(W, lay["jacks"][1])
+    # piedini
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            cylinder("foot", 0.006, 0.002, PEDAL, MAT_RUBBER, (sx * (W / 2 - 0.012), sy * (D / 2 - 0.012), -0.002), seg=24)
+
+
+def build_real_treadle(r, lay):
+    """Pedali di volume/espressione, wah e rocker: basamento, bilanciere con gomma, targhetta, blocco comandi."""
+    b = lay["body"]
+    W, D = b["W"], b["D"]
+    t = lay["treadle"]
+    base_h = t["base_h"]
+    body = principled("body_" + r["id"], srgb(r["colour"]), 0.35, 0.36, 0.2)
+    rounded_box("base", W, D, base_h, 0.010, 0.003, PEDAL, body)
+    blk = lay["back_block"]
+    bd = blk["y1"] - blk["y0"]
+    bt = textured("back_" + r["id"], os.path.join(TEX, r["id"] + "_back.png"), -W / 2, W / 2, -bd / 2, bd / 2, 0.2, 0.4, 0.2)
+    rounded_box("backblock", W, bd, blk["z"] - base_h, 0.006, 0.002, PEDAL, bt, (0, (blk["y0"] + blk["y1"]) / 2, base_h))
+    # bilanciere: piastra verniciata inclinata, gomma e targhetta sulla punta
+    length = math.hypot(t["y1"] - t["y0"], t["z1"] - t["z0"])
+    ang = math.atan2(t["z1"] - t["z0"], t["y1"] - t["y0"])
+    tr = rounded_box("treadle", t["w"], length, 0.012, 0.008, 0.003, PEDAL, body, z0=-0.012)
+    tr.location = (0, (t["y0"] + t["y1"]) / 2, (t["z0"] + t["z1"]) / 2)
+    tr.rotation_euler = (ang, 0, 0)
+    rb = rounded_box("rubber", t["w"] - 0.010, length * 0.74, 0.0024, 0.005, 0.001, PEDAL, MAT_RUBBER, (0, -length * 0.08, 0))
+    rb.parent = tr
+    pl = textured("plate_" + r["id"], os.path.join(TEX, r["id"] + "_plate.png"), -(W - 0.020) / 2, (W - 0.020) / 2, -0.014, 0.014, 0.5, 0.3, 0.3)
+    pp = rounded_box("plate", W - 0.020, 0.028, 0.0012, 0.003, 0.0005, PEDAL, pl, (0, length / 2 - 0.022, 0))
+    pp.parent = tr
+    # fianchi del bilanciere (cerniera)
+    for sgn in (-1, 1):
+        cylinder("hinge", 0.006, 0.004, PEDAL, MAT_BLACKMETAL, (sgn * (W / 2 - 0.002), t["y0"] + 0.02, base_h + 0.004), seg=24,
+                 rotation=(0, math.pi / 2, 0))
+    for k, c in enumerate(r["controls"]):
+        p = lay["controls"][k]
+        if p["strip"] == "boss":
+            add_knob_base(p["x"], p["y"], p["z"])
+    add_toggles(r, lay, blk["z"])
+    lx, ly, lz, lr = lay["led"]
+    add_led(lx, ly, lz, lr)
+    add_side_jacks(W, lay["jacks"][1])
+
+
 # board e luci (come nella scena originale)
-bm = bmesh.new(); bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=0.3)
+bm = bmesh.new(); bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=1.2 if REAL else 0.3)
 _board = mesh_obj("board", bm, STATIC, [MAT_BOARD], smooth=False)
 _board.is_shadow_catcher = True          # invisibile, ma raccoglie l'ombra del pedale (canale alfa)
 
@@ -322,12 +449,17 @@ def export(m, lay):
         json.dump(PG.geometry(m, lay), f)
 
 
-models, errors = catalog.load_all(strict=False)
+if REAL:
+    import real_catalog  # noqa: E402
+    import real_layout  # noqa: E402
+    models = real_catalog.real_models(strict=False)
+else:
+    models, errors = catalog.load_all(strict=False)
 done = 0
 for m in models:
     if ONLY and m["id"] not in ONLY:
         continue
-    lay = PL.pedal_layout(m)
+    lay = real_layout.real_layout(m) if REAL else PL.pedal_layout(m)
     png = os.path.join(OUT, m["id"] + ".png")
     export(m, lay)
     if os.path.exists(png) and not FORCE:
@@ -335,10 +467,18 @@ for m in models:
     for o in list(PEDAL.objects):
         bpy.data.objects.remove(o, do_unlink=True)
     # inquadratura dello stile (il contenitore grande e' piu' profondo)
-    PG.use_frame(m["style"])
+    PG.use_frame(m["style"], lay.get("frame"))
+    scene.render.resolution_x = PG.RES_X
     scene.render.resolution_y = PG.RES_Y
+    # i contenitori grandi si renderizzano a risoluzione ridotta (lato lungo al massimo ~2400 px)
+    scene.render.resolution_percentage = min(100, int(2400 * 100 / max(PG.RES_X, PG.RES_Y)))
+    cd.ortho_scale = PG.X1 - PG.X0
     cam.location = Vector((0.0, PG.VC / COS, 0.0)) - direction * 1.0
-    if m["style"] == "ts":
+    if REAL and lay["builder"] == "box":
+        build_real_box(m, lay)
+    elif REAL and lay["builder"] == "treadle":
+        build_real_treadle(m, lay)
+    elif m["style"] == "ts":
         build_ts(m, lay)
     elif m["style"] == "nam":
         build_nam(m, lay)

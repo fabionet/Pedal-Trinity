@@ -11,7 +11,7 @@ OUT="${2:-$ROOT/dist}"
 ART="$BUILD/PedalTrinity_artefacts/Release"
 
 PKG="pedal-trinity"
-VERSION="1.0.0~beta-1"
+VERSION="1.1.0~beta-1"
 ARCH="$(dpkg --print-architecture)"
 MAINTAINER="FabioNET <19152770+fabionet@users.noreply.github.com>"
 
@@ -84,7 +84,7 @@ License: GPL-3+
  On Debian systems, the complete text of the GNU General Public License
  version 3 can be found in "/usr/share/common-licenses/GPL-3".
 EOF
-printf '%s (%s) unstable; urgency=medium\n\n  * Prima release beta: pedaliera fino a 100 slot, catalogo di 220 pedali.\n  * Splitter SPL-3 (mono / dual mono / stereo), cavi jack, meter INPUT/OUTPUT.\n  * NAM-A1A2 Model: lettore Neural Amp Modeler (A1, A2, .nam/.namb)\n    con verifica di sicurezza dei file.\n  * Emulazione dei circuiti analogici, preset di fabbrica e utente.\n  * Viste 3/6/9/18, zoom del pedale, finestra da 1280x760 a 2560x1440.\n  * Formati VST3, LV2 e Standalone.\n\n -- %s  %s\n' \
+printf '%s (%s) unstable; urgency=medium\n\n  * REAL MOD PEDALBOARD: 216 repliche 3D dei pedali reali e foto personali.\n  * Pedaliera fino a 100 slot, catalogo di 220 pedali.\n  * Splitter SPL-3 (mono / dual mono / stereo), cavi jack, meter INPUT/OUTPUT.\n  * NAM-A1A2 Model: lettore Neural Amp Modeler (A1, A2, .nam/.namb)\n    con verifica di sicurezza dei file.\n  * Emulazione dei circuiti analogici, preset di fabbrica e utente.\n  * Viste 3/6/9/18, zoom del pedale, finestra da 1280x760 a 2560x1440.\n  * Formati VST3, LV2 e Standalone.\n\n -- %s  %s\n' \
     "$PKG" "$VERSION" "$MAINTAINER" "$(date -R)" | gzip -9n > "$D/usr/share/doc/$PKG/changelog.Debian.gz"
 
 # --- dipendenze: librerie collegate (dpkg-shlibdeps) + librerie X11 caricate a runtime da JUCE
@@ -131,7 +131,7 @@ Description: pedaliera per chitarra con 220 pedali emulati (VST3/LV2/Standalone)
 EOF
 
 mkdir -p "$OUT"
-DEB="$OUT/${PKG}_1.0.0-beta_${ARCH}.deb"   # niente "~": GitHub lo rinomina negli allegati
+DEB="$OUT/${PKG}_1.1.0-beta_${ARCH}.deb"   # niente "~": GitHub lo rinomina negli allegati
 dpkg-deb --root-owner-group -Zxz --build "$D" "$DEB"
 echo "Creato: $DEB"
 dpkg-deb --info "$DEB" | sed -n '1,20p'

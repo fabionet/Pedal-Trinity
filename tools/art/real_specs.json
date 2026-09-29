@@ -1,0 +1,7276 @@
+[
+ {
+  "id": "ds1",
+  "code": "DS-1",
+  "name": "Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F26722",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DIST"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/"
+  ]
+ },
+ {
+  "id": "mc2w",
+  "code": "MT-2W",
+  "name": "Metal Zone",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#2A2A2A",
+  "text_colour_hex": "#EDEDED",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "MIDDLE",
+   "MID FREQ",
+   "DIST"
+  ],
+  "concentric_outer_inner": [
+   [
+    "LOW",
+    "HIGH"
+   ],
+   [
+    "MIDDLE",
+    "MID FREQ"
+   ]
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "LEVEL",
+    "LOW",
+    "HIGH",
+    "MIDDLE",
+    "MID FREQ",
+    "DIST"
+   ],
+   [
+    "MODE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Four knob positions: LEVEL, EQUALIZER (LOW outer ring / HIGH inner knob), EQUALIZER (MIDDLE outer / MID FREQ inner), DIST. Waza Craft: standard compact body with '技 WAZA CRAFT' badge on the pedal; a small 2-position slide switch (S = standard / C = custom) sits on the top panel centred just below the knob row.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/MT-2W_eng02_W.pdf",
+   "https://www.gbase.com/gear/boss-mt-2w-metal-zone-waza-craft-2022-black"
+  ]
+ },
+ {
+  "id": "gq7",
+  "code": "GE-7",
+  "name": "Graphic Equalizer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F1F1EC",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "100",
+   "200",
+   "400",
+   "800",
+   "1.6k",
+   "3.2k",
+   "6.4k",
+   "LEVEL"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "SLIDERS:7",
+    "LEVEL"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Seven vertical EQ sliders (100 Hz to 6.4 kHz) plus a LEVEL slider at the far right, all in one row across the top panel, centre-detent slots with dB scale printed between them; no knobs.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/GE-7_eng01_W.pdf"
+  ]
+ },
+ {
+  "id": "od1",
+  "code": "OD-1",
+  "name": "OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F2C400",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "OVER DRIVE"
+  ],
+  "notes": "Original 1977-1985 OD-1 (printed 'OverDrive'); two knobs only.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/OD-1_OM.pdf"
+  ]
+ },
+ {
+  "id": "od1_box40",
+  "code": "OD-1",
+  "name": "OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F2C400",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "OVER DRIVE"
+  ],
+  "notes": "2017 BOX-40 reissue (1500 sets with PH-1 and SP-1): hand-built exact reproduction of the 1977 OD-1 cosmetics; sold in a numbered presentation box.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.pitbullaudio.com/boss-box-40-40th-anniversary-box-set-includes-od-1-overdrive-ph-1-phaser-and-sp-1-spectrum.html",
+   "https://vintageking.com/boss-box-40-40th-anniversary-box-set"
+  ]
+ },
+ {
+  "id": "sd1",
+  "code": "SD-1",
+  "name": "SUPER OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F7D117",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DRIVE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://en.wikipedia.org/wiki/Boss_SD-1"
+  ]
+ },
+ {
+  "id": "sd1_4a",
+  "code": "SD-1-4A",
+  "name": "SUPER OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#151515",
+  "text_colour_hex": "#F7D117",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DRIVE"
+  ],
+  "notes": "40th Anniversary (2021): black body with yellow lettering, gold-capped knobs, vintage silver thumbscrew.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://chucklevins.com/products/boss-sd-1-4a-super-overdrive-limited-edition-40th-anniversary-sd-1-guitar-pedal"
+  ]
+ },
+ {
+  "id": "sd1_b50a",
+  "code": "SD-1-B50A",
+  "name": "SUPER OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#E9C61F",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DRIVE"
+  ],
+  "notes": "50th Anniversary (2023, 7000 units): metallic yellow paint, gold-capped knobs, silver thumbscrew, 50th emblem and 4-digit serial.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.guitarcenter.com/BOSS/SD-1-B50A-Super-Overdrive-50th-Anniversary-Effects-Pedal-Yellow-1500000410257.gc"
+  ]
+ },
+ {
+  "id": "sd1_be",
+  "code": "SD-1",
+  "name": "SUPER OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F7D117",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DRIVE"
+  ],
+  "notes": "Values given for a standard SD-1; the only Ishibashi-specific SD-1 found is a 2001 Zakk Wylde painted SD-1 made for Ishibashi Music (reportedly ~5 units); its graphic is presumably Zakk Wylde's black/cream concentric bull's-eye target.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.henrikhansson.com/product/sd-1-super-overdrive/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Ishibashi 'bull's eye' edition poorly documented; artwork/colours not verified."
+ },
+ {
+  "id": "sd1w",
+  "code": "SD-1W",
+  "name": "SUPER OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F7D117",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DRIVE"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "LEVEL",
+    "TONE",
+    "DRIVE"
+   ],
+   [
+    "MODE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Waza Craft: standard compact body with '技 WAZA CRAFT' badge on the pedal; a small 2-position slide switch (S = standard / C = custom) sits on the top panel centred just below the knob row.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/"
+  ]
+ },
+ {
+  "id": "od2",
+  "code": "OD-2",
+  "name": "TURBO OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F5C300",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "TURBO"
+  ],
+  "notes": "Four controls in a row; TURBO (ON/OFF) is a 2-position rotary selector at the right. 1985-1994.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-od-2-turbo-overdrive-black-label-1987-yellow"
+  ]
+ },
+ {
+  "id": "od2r",
+  "code": "OD-2R",
+  "name": "TURBO OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F5C300",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "TURBO"
+  ],
+  "notes": "Same look as OD-2 plus a REMOTE jack on the right side for switching TURBO with a footswitch.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-od-2r-turbo-overdrive-silver-label-1995-yellow"
+  ]
+ },
+ {
+  "id": "os2",
+  "code": "OS-2",
+  "name": "OverDrive/Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F4B000",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "COLOR",
+   "DRIVE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.boss.info/global/products/os-2/",
+   "https://www.amazon.com/BOSS-OS-2-Boss-Overdrive-Distortion/dp/B0013NFZHQ"
+  ]
+ },
+ {
+  "id": "sd2",
+  "code": "SD-2",
+  "name": "DUAL OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F2C200",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DRIVE",
+   "MODE"
+  ],
+  "concentric_outer_inner": [
+   [
+    "LEVEL",
+    "LEVEL CR"
+   ],
+   [
+    "TONE",
+    "TONE CR"
+   ],
+   [
+    "DRIVE",
+    "DRIVE CR"
+   ]
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "LEVEL",
+    "LEVEL CR",
+    "TONE",
+    "TONE CR",
+    "DRIVE",
+    "DRIVE CR",
+    "MODE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Three dual-concentric knobs (inner = CRUNCH, outer ring = LEAD) plus a larger MODE knob (CRUNCH(REMOTE)/LEAD/CRUNCH-LEAD) at the right; REMOTE jack on the right side; CHECK LED lights green/red.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/SD-2_OM.pdf",
+   "https://aflashfloodofgear.com/products/boss-sd-2-dual-overdrive-silver-label-yellow"
+  ]
+ },
+ {
+  "id": "odb3",
+  "code": "ODB-3",
+  "name": "Bass OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#E6D21A",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "HIGH",
+   "LOW",
+   "BALANCE",
+   "GAIN"
+  ],
+  "concentric_outer_inner": [
+   [
+    "HIGH",
+    "LOW"
+   ]
+  ],
+  "notes": "Four knob positions: LEVEL, dual-concentric EQUALIZER (HIGH/LOW), BALANCE, GAIN.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://reverb.com/item/24186684-boss-bass-overdrive-odb-3-yellow"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Exact shade (yellow vs. slightly green-yellow) not confirmed."
+ },
+ {
+  "id": "bd2",
+  "code": "BD-2",
+  "name": "Blues Driver",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1560BD",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "GAIN"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/"
+  ]
+ },
+ {
+  "id": "bd2_b50a",
+  "code": "BD-2-B50A",
+  "name": "Blues Driver",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1D5DB0",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "GAIN"
+  ],
+  "notes": "50th Anniversary (2023, 7000 units): metallic blue paint, gold-capped knobs, silver thumbscrew, 50th emblem, serial number.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.amazon.com/dp/B0CN6HRPP4"
+  ]
+ },
+ {
+  "id": "bd2_10m",
+  "code": "BD-2",
+  "name": "Blues Driver",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1560BD",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "GAIN"
+  ],
+  "notes": "2007 special edition commemorating 10 million BOSS compact pedals sold; base values are the standard BD-2.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://reverb.com/item/49146612-boss-bd-2-blues-driver-special-edition-10-million-compact-pedals-sold-2007"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Commemorative cosmetics (special print/finish) not documented in accessible sources."
+ },
+ {
+  "id": "bd2w",
+  "code": "BD-2W",
+  "name": "Blues Driver",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1560BD",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "GAIN"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "LEVEL",
+    "TONE",
+    "GAIN"
+   ],
+   [
+    "MODE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Waza Craft: standard compact body with '技 WAZA CRAFT' badge on the pedal; a small 2-position slide switch (S = standard / C = custom) sits on the top panel centred just below the knob row.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/"
+  ]
+ },
+ {
+  "id": "od3",
+  "code": "OD-3",
+  "name": "OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F8D22A",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DRIVE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/"
+  ]
+ },
+ {
+  "id": "dn2",
+  "code": "DN-2",
+  "name": "Dyna Drive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#E09A30",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DRIVE"
+  ],
+  "notes": "Gold-orange paint with a slight metallic sparkle.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.boss.info/us/products/dn-2/"
+  ]
+ },
+ {
+  "id": "bc2",
+  "code": "BC-2",
+  "name": "Combo Drive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#8A3A2C",
+  "text_colour_hex": "#F0E6D2",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "BASS",
+   "TREBLE",
+   "SOUND"
+  ],
+  "notes": "Warm red-brown ('milk chocolate') body with a brushed-metal control panel plate.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.premierguitar.com/boss-bc-2-combo-drive-pedal-review"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Sources disagree between red and chocolate brown; knob order not verified."
+ },
+ {
+  "id": "od1x",
+  "code": "OD-1X",
+  "name": "OverDrive",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#E0A800",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "DRIVE"
+  ],
+  "notes": "Premium 'X' finish: deeper yellow than OD-1/SD-1, chrome-mirror knobs and chrome control plate, silver thumbscrew.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.guitarworld.com/magazine/boss-ds-1x-distortion-and-od-1x-overdrive-pedals-review"
+  ]
+ },
+ {
+  "id": "bb1x",
+  "code": "BB-1X",
+  "name": "Bass Driver",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1B1B1B",
+  "text_colour_hex": "#E6E6E6",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "BLEND",
+   "LOW",
+   "HIGH",
+   "DRIVE"
+  ],
+  "notes": "Black 'X' finish with chrome knobs and chrome control plate, vintage silver thumbscrew; five knobs, LINE OUT jack.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.bossus.com/blog/2015/01/23/new-product-boss-bb-1x-bass-driver/",
+   "https://ksmusic.com/boss-bb-1x-bass-driver-black/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Exact arrangement of the 5 knobs (single row vs. BLEND smaller/raised) not verified."
+ },
+ {
+  "id": "jb2",
+  "code": "JB-2",
+  "name": "Angry Driver",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#2B2B2D",
+  "text_colour_hex": "#EDEDED",
+  "knob_order_left_to_right": [
+   "LEVEL A",
+   "LEVEL B",
+   "TONE A",
+   "TONE B",
+   "DRIVE A",
+   "DRIVE B",
+   "MODE"
+  ],
+  "concentric_outer_inner": [
+   [
+    "LEVEL A",
+    "LEVEL B"
+   ],
+   [
+    "TONE A",
+    "TONE B"
+   ],
+   [
+    "DRIVE A",
+    "DRIVE B"
+   ]
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "LEVEL A",
+    "LEVEL B",
+    "TONE A",
+    "TONE B",
+    "DRIVE A",
+    "DRIVE B",
+    "MODE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Left to right: LEVEL, TONE, DRIVE (dual concentric: on the real pedal the upper/inner knob is JHS and the lower/outer ring is BOSS) and a 6-position MODE knob; red knob caps (unique among BOSS pedals); JHS PEDALS logo; REMOTE jack on right side.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/JB-2_eng01_W.pdf",
+   "https://www.guitarworld.com/gear/review-boss-jb-2-angry-driver-jhs-pedals"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Body colour (dark grey/black) not confirmed by text source; red knobs confirmed."
+ },
+ {
+  "id": "od20",
+  "code": "OD-20",
+  "name": "Drive Zone",
+  "series": "twin",
+  "dims_mm": [
+   173,
+   158,
+   57
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#E8C000",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "DRIVE",
+    "BOTTOM",
+    "TONE",
+    "LEVEL",
+    "ATTACK",
+    "KNOB:HEAVY OCTAVE"
+   ],
+   [
+    "TYPE",
+    "VARIATION",
+    "LED",
+    "BUTTON:WRITE",
+    "BUTTON:SELECT"
+   ],
+   [
+    "FOOTSWITCH:EFFECT ON/OFF",
+    "FOOTSWITCH:MANUAL/MEMORY"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "EFFECT ON/OFF",
+    "MANUAL/MEMORY"
+   ]
+  },
+  "display": false,
+  "notes": "BOSS Twin-pedal metal chassis (two large treadles side by side, like DD-20/RC-20XL); six knobs across the top (ATTACK = ATTACK SHAPE; extra HEAVY OCTAVE knob), TYPE rotary selector and VARIATION button in the second row, memory WRITE/SELECT buttons at right.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/OD-20_OM.pdf",
+   "https://www.boss.info/us/products/od-20/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Body colour reported as yellow by a retailer summary only."
+ },
+ {
+  "id": "od200",
+  "code": "OD-200",
+  "name": "HYBRID DRIVE",
+  "series": "series200",
+  "dims_mm": [
+   101,
+   138,
+   63
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#EFC21B",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "DISPLAY",
+    "PARAM",
+    "LEVEL",
+    "DRIVE"
+   ],
+   [
+    "MODE",
+    "LOW",
+    "MIDDLE",
+    "HIGH"
+   ],
+   [
+    "BUTTON:PARAM",
+    "LED",
+    "BUTTON:MEMORY",
+    "LED",
+    "LED",
+    "LED",
+    "LED",
+    "LED"
+   ],
+   [
+    "FOOTSWITCH:ON/OFF",
+    "FOOTSWITCH:MEMORY/BOOST"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "ON/OFF",
+    "MEMORY/BOOST"
+   ]
+  },
+  "display": true,
+  "notes": "200-series metal chassis (65 mm with rubber feet): 3-character red 7-segment display top-left, large MODE selector below it, two footswitches; jacks and MIDI/USB on the rear.",
+  "sources": [
+   "https://www.boss.info/global/products/od-200/specifications/",
+   "https://static.roland.com/assets/media/pdf/OD-200_eng01_W.pdf"
+  ]
+ },
+ {
+  "id": "fa1",
+  "code": "FA-1",
+  "name": "FET Amplifier",
+  "series": "other",
+  "dims_mm": [
+   67,
+   43.5,
+   118.5
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#E6E6E6",
+  "layout": [
+   [
+    "LOW CUT"
+   ],
+   [
+    "TREBLE"
+   ],
+   [
+    "BASS"
+   ],
+   [
+    "VOLUME"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "1976-era pocket FET preamp worn on the belt (detachable belt clip on the back); upright box 67 W x 118.5 H x 43.5 D mm with IN/OUT jacks on top and the controls in a vertical column on the front face (TREBLE, BASS, LOW-CUT slide switch, VOLUME); no footswitch. Layout rows listed top-to-bottom of the front face.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/FA-1_OM.pdf"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Body colour (black/dark) inferred from manual photos; controls order LOW CUT position is between BASS and VOLUME on the real unit."
+ },
+ {
+  "id": "fb2",
+  "code": "FB-2",
+  "name": "Feedbacker/Booster",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1F3F8C",
+  "text_colour_hex": "#EDEDED",
+  "knob_order_left_to_right": [
+   "BOOST",
+   "FEEDBACK",
+   "TONE",
+   "CHARACTER"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.boss.info/us/products/fb-2/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Enclosure colour not found in accessible sources (estimate)."
+ },
+ {
+  "id": "bp1w",
+  "code": "BP-1W",
+  "name": "Booster/Preamp",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#ECEBE6",
+  "text_colour_hex": "#222222",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "GAIN",
+   "MODE",
+   "BUFFER"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "LEVEL",
+    "GAIN"
+   ],
+   [
+    "MODE",
+    "BUFFER"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Waza Craft booster/preamp (2023): mode selector RE / CE / NAT and a 2-position BUFFER (standard/vintage) switch. ",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-bp-1w-booster-preamp-2025-white",
+   "https://www.boss.info/us/products/bp-1w/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "White body from a dealer listing only; positions of MODE/BUFFER switches not verified."
+ },
+ {
+  "id": "db5",
+  "code": "DB-5",
+  "name": "Driver",
+  "series": "vintage_box",
+  "dims_mm": [
+   260,
+   180,
+   64
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#A7A9AC",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "SLIDERS:5",
+    "BUTTON:MODE (EQ / ATTACK+EQ / DIST+EQ)",
+    "DRIVE",
+    "LEVEL",
+    "TONE",
+    "LED"
+   ],
+   [
+    "FOOTSWITCH:EFFECT/NORMAL"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "EFFECT/NORMAL"
+   ]
+  },
+  "display": false,
+  "notes": "1977-1980 floor unit in the same large 260x180 mm enclosure family as CE-1/DM-1: slanted rear control panel with a 5-band graphic EQ (100/300/600 Hz, 1.2/3 kHz sliders), 3-way mode slide switch and two rotary controls (Attack/Distortion and Balance/Level-colour-mix); large front footswitch area. Our DRIVE/LEVEL/TONE are mapped to those rotaries.",
+  "sources": [
+   "https://www.bonhams.com/auction/30752/lot/142/rory-gallagher-a-boss-driver-db-5-distortiongraphic-equaliser-1970s-10in-wide-x-2-12in-high-x-7in-deep-255cm-wide-x-64cm-high-x-178cm-deep/",
+   "https://support.roland.com/hc/en-us/articles/201967489-DB-5-Specifications"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Panel arrangement and colours not verified from images; control mapping approximate."
+ },
+ {
+  "id": "pd1",
+  "code": "PD-1",
+  "name": "Rocker Distortion",
+  "series": "rocker",
+  "dims_mm": [
+   110,
+   320,
+   65
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#3A3A3A",
+  "text_colour_hex": "#E6E6E6",
+  "layout": [
+   [
+    "DIST",
+    "LED"
+   ],
+   [
+    "PEDAL"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (toe-press on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "1980s Rocker series: long low treadle pedal with ribbed rubber strips; small control panel at the far end with the knob and LED, BOSS logo plate; effect switched by pressing the toe.",
+  "sources": [
+   "https://reverb.com/item/7588325-boss-pd-1-rocker-distortion-1988-argentine-grey",
+   "https://static.roland.com/assets/media/pdf/PW-1_OM.pdf"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Dimensions assumed equal to PW-1 (same Rocker chassis); colour reported variously as grey or white/orange."
+ },
+ {
+  "id": "hm2",
+  "code": "HM-2",
+  "name": "Heavy Metal",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1A1A1A",
+  "text_colour_hex": "#F28A1E",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "DIST"
+  ],
+  "notes": "Black body with orange lettering; COLOR MIX LOW/HIGH knobs in the middle.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://en.wikipedia.org/wiki/Boss_HM-2"
+  ]
+ },
+ {
+  "id": "hm2w",
+  "code": "HM-2W",
+  "name": "Heavy Metal",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1A1A1A",
+  "text_colour_hex": "#F28A1E",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "DIST"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "LEVEL",
+    "LOW",
+    "HIGH",
+    "DIST"
+   ],
+   [
+    "MODE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Reproduces the HM-2 orange-on-black look and lettering positions. Waza Craft: standard compact body with '技 WAZA CRAFT' badge on the pedal; a small 2-position slide switch (S = standard / C = custom) sits on the top panel centred just below the knob row.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-hm-2w-heavy-metal-waza-craft-2021-black"
+  ]
+ },
+ {
+  "id": "df2",
+  "code": "DF-2",
+  "name": "SUPER Feedbacker & Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#EC6A22",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DIST",
+   "OVER TONE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.leylandpedals.co.uk/blog/all-i-know-about-the-boss-df-2"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Orange shade vs. DS-1 not confirmed."
+ },
+ {
+  "id": "ds2",
+  "code": "DS-2",
+  "name": "TURBO Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F28C1C",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DIST",
+   "TURBO"
+  ],
+  "notes": "TURBO (I/II) rotary mode selector at the right; REMOTE jack on the side.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-ds-2-turbo-distortion-silver-label-orange-1"
+  ]
+ },
+ {
+  "id": "mz2",
+  "code": "MZ-2",
+  "name": "Digital Metalizer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1A1A1A",
+  "text_colour_hex": "#E23A2E",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DRIVE"
+  ],
+  "notes": "Black finish with red accents/knob caps.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.rockboard.de/en/pedalPedia/BOSS/MZ-2-Digital-Metalizer/68976011/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour from a retailer summary; knob count/labels not verified (real unit also has mode/EQ controls)."
+ },
+ {
+  "id": "pw2",
+  "code": "PW-2",
+  "name": "Power Driver",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F2A01E",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "FAT",
+   "MUSCLE",
+   "DRIVE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-pw-2-power-driver-1997-orange"
+  ]
+ },
+ {
+  "id": "xt2",
+  "code": "XT-2",
+  "name": "Xtortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#B3121E",
+  "text_colour_hex": "#F2F2F2",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "CONTOUR",
+   "PUNCH",
+   "DIST"
+  ],
+  "notes": "Metallic sparkle red ('Ferrari red').",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-xt-2-xtortion-silver-label-1996-red"
+  ]
+ },
+ {
+  "id": "md2",
+  "code": "MD-2",
+  "name": "Mega Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#CF1F2D",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "BOTTOM",
+   "TONE",
+   "GAIN BOOST",
+   "DIST"
+  ],
+  "concentric_outer_inner": [
+   [
+    "BOTTOM",
+    "TONE"
+   ],
+   [
+    "GAIN BOOST",
+    "DIST"
+   ]
+  ],
+  "notes": "Three knob positions: LEVEL, TONE (inner) with BOTTOM ring (outer), DIST (inner) with GAIN BOOST ring (outer).",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/"
+  ]
+ },
+ {
+  "id": "st2",
+  "code": "ST-2",
+  "name": "Power Stack",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1A1A1A",
+  "text_colour_hex": "#F2F2F2",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "BASS",
+   "TREBLE",
+   "SOUND"
+  ],
+  "notes": "Black body, white lettering, gold control-panel area.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.amazon.com/Boss-ST-2-Power-Stack-Overdrive/dp/B0041OF27C"
+  ]
+ },
+ {
+  "id": "da2",
+  "code": "DA-2",
+  "name": "Adaptive Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#6B1F3A",
+  "text_colour_hex": "#F2F2F2",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "A-DIST"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.boss.info/us/products/da-2/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Enclosure colour not found in accessible text sources (estimate)."
+ },
+ {
+  "id": "ds1x",
+  "code": "DS-1X",
+  "name": "Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#D9531E",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "DIST"
+  ],
+  "notes": "Premium 'X' finish: deeper/darker orange than DS-1, chrome knobs and control plate, silver thumbscrew.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.guitarworld.com/magazine/boss-ds-1x-distortion-and-od-1x-overdrive-pedals-review"
+  ]
+ },
+ {
+  "id": "ds1w",
+  "code": "DS-1W",
+  "name": "Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F26722",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DIST"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "LEVEL",
+    "TONE",
+    "DIST"
+   ],
+   [
+    "MODE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Waza Craft: standard compact body with '技 WAZA CRAFT' badge on the pedal; a small 2-position slide switch (S = standard / C = custom) sits on the top panel centred just below the knob row.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/"
+  ]
+ },
+ {
+  "id": "ds1_4a",
+  "code": "DS-1-4A",
+  "name": "Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#151515",
+  "text_colour_hex": "#C9A24A",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DIST"
+  ],
+  "notes": "40th Anniversary (2017): black body, gold lettering, gold-capped knobs, vintage silver thumbscrew.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gearnews.com/namm-2017-boss-celebrates-40th-anniversary-limited-edition-ds-1-4a-distortion-pedal/"
+  ]
+ },
+ {
+  "id": "ds1_b50a",
+  "code": "DS-1-B50A",
+  "name": "Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#EE6A24",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DIST"
+  ],
+  "notes": "50th Anniversary (2023, 7000 units): metallic orange, gold-capped knobs, silver thumbscrew, emblem.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.guitarcenter.com/BOSS/DS-1-B50A-Distortion-50th-Anniversary-Effects-Pedal-Orange-1500000410256.gc"
+  ]
+ },
+ {
+  "id": "ds1_wh",
+  "code": "DS-1-WH",
+  "name": "Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F1F1EE",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DIST"
+  ],
+  "notes": "Limited white (sparkle/metallic white) colourway.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.guitarpedalx.com/news/boss-releases-limited-ds-1-wh-white-sparkle-colourway-edition-of-its-legendary-bestselling-ds-1-distortion"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Lettering colour not confirmed."
+ },
+ {
+  "id": "ds1_bk",
+  "code": "DS-1-BK",
+  "name": "Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#141414",
+  "text_colour_hex": "#F26722",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DIST"
+  ],
+  "notes": "2016 Guitar Center exclusive (3000 units): inverse DS-1 scheme, orange lettering on black.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://reverb.com/p/boss-ds-1-bk-distortion"
+  ]
+ },
+ {
+  "id": "ds1_6m",
+  "code": "DS-1",
+  "name": "Distortion",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#C9A94F",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "DIST"
+  ],
+  "notes": "Feb 1998 gold DS-1 celebrating 6,000,000 compact pedals (only a handful made); footswitch reads 'to celebrate 6,000,000 units, Feb 28, 1998'; jack labels replaced by 'Oct 1977' and 'Feb 1998'.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.guitarworld.com/news/one-of-the-rarest-boss-pedals-in-existence-in-now-available-for-purchase"
+  ]
+ },
+ {
+  "id": "fz2",
+  "code": "FZ-2",
+  "name": "HYPER Fuzz",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#A3A6A9",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "BASS",
+   "TREBLE",
+   "GAIN",
+   "MODE"
+  ],
+  "concentric_outer_inner": [
+   [
+    "BASS",
+    "TREBLE"
+   ]
+  ],
+  "notes": "Knob positions: LEVEL, EQUALIZER (BASS/TREBLE dual concentric), GAIN, MODE (FUZZ I / FUZZ II / BOOST).",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-hyper-fuzz-fz-2-1993-grey3253223"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour listed as grey by one dealer; not cross-checked."
+ },
+ {
+  "id": "fz3",
+  "code": "FZ-3",
+  "name": "Fuzz",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#A8ABAE",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "FUZZ"
+  ],
+  "notes": "Retro silver metallic finish.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://articles.boss.info/what-the-fuzz-the-origins-of-boss-fuzz-pedals/"
+  ]
+ },
+ {
+  "id": "fz5",
+  "code": "FZ-5",
+  "name": "Fuzz",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#B4B7BA",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "FUZZ",
+   "MODE"
+  ],
+  "notes": "Silver finish; MODE rotary (FZ-S / FF / OC).",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.amazon.com/BOSS-Audio-Systems-FZ-5-Boss/dp/B000S5KYN0"
+  ]
+ },
+ {
+  "id": "tb2w",
+  "code": "TB-2W",
+  "name": "Tone Bender",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#7D8284",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "ATTACK",
+   "LEVEL"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "ATTACK",
+    "LEVEL"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Grey hammertone finish, chicken-head knobs, MkII-style typeface; 7/9/12 V bias switch and true/buffered bypass selector on the chassis; Waza Craft badge.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.premierguitar.com/gear/reviews/boss-tb-2w-tone-bender-review"
+  ]
+ },
+ {
+  "id": "fz1w",
+  "code": "FZ-1W",
+  "name": "Fuzz",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#A5A8AA",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "TONE",
+   "FUZZ"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "LEVEL",
+    "TONE",
+    "FUZZ"
+   ],
+   [
+    "MODE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Waza Craft fuzz (2021) with V (vintage) / M (modern) mode slide switch below the knobs. Waza Craft: standard compact body with '技 WAZA CRAFT' badge on the pedal; a small 2-position slide switch (S = standard / C = custom) sits on the top panel centred just below the knob row.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.boss.info/global/products/fz-1w/features/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Silver vs. black body reported inconsistently."
+ },
+ {
+  "id": "mt2",
+  "code": "MT-2",
+  "name": "Metal Zone",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#2A2A2A",
+  "text_colour_hex": "#EDEDED",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "MIDDLE",
+   "MID FREQ",
+   "DIST"
+  ],
+  "concentric_outer_inner": [
+   [
+    "LOW",
+    "HIGH"
+   ],
+   [
+    "MIDDLE",
+    "MID FREQ"
+   ]
+  ],
+  "notes": "Four knob positions: LEVEL, EQ LOW (outer)/HIGH (inner), EQ MIDDLE (outer)/MID FREQ (inner), DIST.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://en.wikipedia.org/wiki/Boss_MT-2"
+  ]
+ },
+ {
+  "id": "mt2_3a",
+  "code": "MT-2-3A",
+  "name": "Metal Zone",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#141414",
+  "text_colour_hex": "#8C8C8C",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "MIDDLE",
+   "MID FREQ",
+   "DIST"
+  ],
+  "concentric_outer_inner": [
+   [
+    "LOW",
+    "HIGH"
+   ],
+   [
+    "MIDDLE",
+    "MID FREQ"
+   ]
+  ],
+  "notes": "30th Anniversary (2021): black body, grey lettering, vintage silver thumbscrew.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.guitarcenter.com/BOSS/30th-Anniversary-MT-2-3A-Metal-Zone-Effects-Pedal-Black-1500000349033.gc"
+  ]
+ },
+ {
+  "id": "mt2_8m",
+  "code": "MT-2",
+  "name": "Metal Zone",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#2A2A2A",
+  "text_colour_hex": "#EDEDED",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "MIDDLE",
+   "MID FREQ",
+   "DIST"
+  ],
+  "concentric_outer_inner": [
+   [
+    "LOW",
+    "HIGH"
+   ],
+   [
+    "MIDDLE",
+    "MID FREQ"
+   ]
+  ],
+  "notes": "2005 edition commemorating 8 million BOSS pedals; base values are the standard MT-2.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://equipboard.com/items/boss-mt-2-metal-zone-8-million-compact-pedals-sold"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Commemorative finish/markings not documented in accessible sources."
+ },
+ {
+  "id": "hm3",
+  "code": "HM-3",
+  "name": "HYPER Metal",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1A1A1A",
+  "text_colour_hex": "#EDEDED",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "DIST"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-hm-3-hyper-metal-distortion-1994-black"
+  ]
+ },
+ {
+  "id": "ml2",
+  "code": "ML-2",
+  "name": "Metal Core",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#141414",
+  "text_colour_hex": "#E23A2E",
+  "knob_order_left_to_right": [
+   "LEVEL",
+   "LOW",
+   "HIGH",
+   "DIST"
+  ],
+  "notes": "Black metallic finish.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://ksmusic.com/boss-ml-2-metal-core-black-metallic/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Lettering colour not verified."
+ },
+ {
+  "id": "ce1",
+  "code": "CE-1",
+  "name": "Chorus Ensemble",
+  "series": "vintage_box",
+  "dims_mm": [
+   260,
+   180,
+   64
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#8E9096",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "MODE",
+    "LEVEL",
+    "LED",
+    "INTENSITY",
+    "V.DEPTH",
+    "V.RATE",
+    "BUTTON:POWER"
+   ],
+   [
+    "LED",
+    "LED"
+   ],
+   [
+    "FOOTSWITCH:NORMAL/EFFECT",
+    "FOOTSWITCH:CHORUS/VIBRATO"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "NORMAL/EFFECT",
+    "CHORUS/VIBRATO"
+   ]
+  },
+  "display": false,
+  "notes": "1976 AC-powered box (power cord, 1.8 kg): raised rear section with a light control plate (input HIGH/LOW sensitivity toggle, LEVEL knob with peak LED, CHORUS INTENSITY, VIBRATO DEPTH/RATE, POWER rocker), two indicator lamps, and two large round footswitches on the front deck. MODE is best mapped to the small sensitivity toggle (the chorus/vibrato choice is the right footswitch).",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/CE-1_OM.pdf",
+   "https://www.gbase.com/gear/boss-ce-1-chorus-ensemble-1975-grey"
+  ]
+ },
+ {
+  "id": "ce2",
+  "code": "CE-2",
+  "name": "Chorus",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#8CC8E8",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/"
+  ]
+ },
+ {
+  "id": "ce3",
+  "code": "CE-3",
+  "name": "Chorus",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#4A6FB5",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH",
+   "MODE"
+  ],
+  "notes": "Stereo outputs A/B; MODE I/II switch.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-ce-3-chorus-green-label-1988-blue"
+  ]
+ },
+ {
+  "id": "dc2",
+  "code": "DC-2",
+  "name": "Dimension C",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#A99CC4",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "MODE"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "BUTTON:1",
+    "BUTTON:2",
+    "BUTTON:3",
+    "BUTTON:4"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "No knobs: four square push-buttons (MODE SELECTOR 1-4) in a row on the top panel; our MODE selector maps to these buttons. Stereo outputs.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/DC-2W_eng02_W.pdf",
+   "https://www.effectsdatabase.com/model/boss/compact/dc2"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour (violet/mauve light tone) from a retailer summary only."
+ },
+ {
+  "id": "ce2b",
+  "code": "CE-2B",
+  "name": "Bass Chorus",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#6E4B36",
+  "text_colour_hex": "#EDEDED",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH",
+   "E.LEVEL"
+  ],
+  "notes": "One of the late-1980s brown bass pedals.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://aflashfloodofgear.com/products/boss-ce-2b-bass-chorus-green-label-1990-brown-1"
+  ]
+ },
+ {
+  "id": "dc3",
+  "code": "DC-3",
+  "name": "Digital Dimension",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#E7A1B7",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "E.LEVEL",
+   "EQ",
+   "RATE",
+   "DEPTH"
+  ],
+  "notes": "Pink body; early units printed 'Digital Space-D'.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-dc-3-digital-dimension-blue-label-1988-pink-1"
+  ]
+ },
+ {
+  "id": "ch1",
+  "code": "CH-1",
+  "name": "SUPER Chorus",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#6FB3DE",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "E.LEVEL",
+   "EQ",
+   "RATE",
+   "DEPTH"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-ch-1-super-chorus-pink-label-1996-blue"
+  ]
+ },
+ {
+  "id": "ce5",
+  "code": "CE-5",
+  "name": "Chorus Ensemble",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#8FCBE8",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "E.LEVEL",
+   "RATE",
+   "DEPTH",
+   "HIGH",
+   "LOW"
+  ],
+  "concentric_outer_inner": [
+   [
+    "HIGH",
+    "LOW"
+   ]
+  ],
+  "notes": "Knobs: E.LEVEL, RATE, DEPTH, dual-concentric FILTER (HIGH/LOW); baby blue.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/CE-5_eng01_W.pdf",
+   "https://www.gbase.com/gear/boss-ce-5-blue"
+  ]
+ },
+ {
+  "id": "ceb3",
+  "code": "CEB-3",
+  "name": "Bass Chorus",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#3FB6BE",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "E.LEVEL",
+   "LOW FILTER",
+   "RATE",
+   "DEPTH"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.boss.info/us/products/ceb-3/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour not found in text sources (estimate)."
+ },
+ {
+  "id": "ce2w",
+  "code": "CE-2W",
+  "name": "Chorus",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#8CC8E8",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH",
+   "MODE"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "RATE",
+    "DEPTH"
+   ],
+   [
+    "MODE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "3-position slide switch (S / CE-1 chorus / CE-1 vibrato) below the knobs; sky blue like CE-2. Waza Craft badge, stereo outputs.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.guitarpedalx.com/news/gpx-blog/pedal-design-101---the-boss-colour-chart-and-40-shades-of-tone"
+  ]
+ },
+ {
+  "id": "dc2w",
+  "code": "DC-2W",
+  "name": "Dimension C",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#A99CC4",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "MODE",
+   "VOICE"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "BUTTON:1",
+    "BUTTON:2",
+    "BUTTON:3",
+    "BUTTON:4"
+   ],
+   [
+    "VOICE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Four MODE SELECTOR push-buttons 1-4 across the top panel with a small S / SDD-320 slide switch (our VOICE) centred below them; stereo in/out jacks A/B; Waza Craft badge.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/DC-2W_eng02_W.pdf",
+   "https://www.gbase.com/gear/boss-dc-2w-dimension-c"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour assumed same as DC-2."
+ },
+ {
+  "id": "ch1be",
+  "code": "CH-1",
+  "name": "SUPER Chorus",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#6FB3DE",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "E.LEVEL",
+   "EQ",
+   "RATE",
+   "DEPTH"
+  ],
+  "notes": "Values given for a standard CH-1 SUPER Chorus.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "No documentation found for a 'bull's eye' CH-1 edition."
+ },
+ {
+  "id": "md200",
+  "code": "MD-200",
+  "name": "MODULATION",
+  "series": "series200",
+  "dims_mm": [
+   101,
+   138,
+   63
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#8FB4CC",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "DISPLAY",
+    "RATE",
+    "DEPTH",
+    "E.LEVEL"
+   ],
+   [
+    "MODE",
+    "PARAM 1",
+    "PARAM 2",
+    "PARAM 3"
+   ],
+   [
+    "BUTTON:TAP DIVISION",
+    "LED",
+    "BUTTON:MEMORY",
+    "LED",
+    "LED",
+    "LED",
+    "LED",
+    "LED"
+   ],
+   [
+    "FOOTSWITCH:ON/OFF",
+    "FOOTSWITCH:MEMORY/TAP"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "ON/OFF",
+    "MEMORY/TAP"
+   ]
+  },
+  "display": true,
+  "notes": "200-series metal chassis in light steel blue: 3-character 7-segment display top-left, large MODE selector below it, PARAM 1-3 knobs grouped in a highlighted box; two footswitches.",
+  "sources": [
+   "https://www.boss.info/global/products/md-200/specifications/",
+   "https://static.roland.com/assets/media/pdf/MD-200_eng01_W.pdf"
+  ]
+ },
+ {
+  "id": "md500",
+  "code": "MD-500",
+  "name": "MODULATION",
+  "series": "series500",
+  "dims_mm": [
+   170,
+   138,
+   62
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#2F66B0",
+  "text_colour_hex": "#F2F2F2",
+  "layout": [
+   [
+    "MODE",
+    "DISPLAY",
+    "RATE",
+    "DEPTH",
+    "E.LEVEL"
+   ],
+   [
+    "BUTTON:EXIT",
+    "BUTTON:DOWN",
+    "BUTTON:UP",
+    "BUTTON:EDIT",
+    "PARAM 1",
+    "PARAM 2"
+   ],
+   [
+    "FOOTSWITCH:A",
+    "FOOTSWITCH:B",
+    "FOOTSWITCH:TAP/CTL"
+   ]
+  ],
+  "footswitches": {
+   "count": 3,
+   "labels": [
+    "A",
+    "B",
+    "TAP/CTL"
+   ]
+  },
+  "display": true,
+  "notes": "500-series wide metal chassis: MODE knob at left, backlit 128x64 graphic LCD, RATE/VALUE knob next to it, DEPTH and E.LEVEL at right with PARAM 1/2 below; three footswitches along the front edge. Blue finish.",
+  "sources": [
+   "https://www.boss.info/global/products/md-500/specifications/",
+   "https://static.roland.com/assets/media/pdf/MD-500_eng01_W.pdf",
+   "https://www.amazon.com/BOSS-Modulation-Guitar-MD-500-Standard/dp/B0736H8DWX"
+  ]
+ },
+ {
+  "id": "bf1",
+  "code": "BF-1",
+  "name": "Flanger",
+  "series": "vintage_box",
+  "dims_mm": [
+   115,
+   205,
+   65
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#7FA8C9",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "MANUAL",
+    "DEPTH",
+    "RATE",
+    "RESONANCE"
+   ],
+   [
+    "LED"
+   ],
+   [
+    "FOOTSWITCH:EFFECT/NORMAL"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "EFFECT/NORMAL"
+   ]
+  },
+  "display": false,
+  "notes": "1977 wedge-shaped box (AC adaptor powered): slanted top panel with four knobs under a 'MODULATION' bracket, a 'BOSS Flanger BF-1' nameplate, and a single round footswitch on the lower front deck.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/BF-1_OM.pdf",
+   "https://www.gbase.com/gear/boss-bf-1-1977-blue2938240"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour described as powder blue by dealers; exact shade and label colour unverified; LED presence uncertain."
+ },
+ {
+  "id": "bf2",
+  "code": "BF-2",
+  "name": "Flanger",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#6B3F99",
+  "text_colour_hex": "#EDEDED",
+  "knob_order_left_to_right": [
+   "MANUAL",
+   "DEPTH",
+   "RATE",
+   "RES"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-bf-2-flanger-black-label-1980-purple"
+  ]
+ },
+ {
+  "id": "hf2",
+  "code": "HF-2",
+  "name": "Hi Band Flanger",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#E08FB0",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "MANUAL",
+   "DEPTH",
+   "RATE",
+   "RES"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-hf-2-hi-band-flanger-green-label-1990-pink-1"
+  ]
+ },
+ {
+  "id": "bf2b",
+  "code": "BF-2B",
+  "name": "Bass Flanger",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#6E4B36",
+  "text_colour_hex": "#EDEDED",
+  "knob_order_left_to_right": [
+   "MANUAL",
+   "DEPTH",
+   "RATE",
+   "RES"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-bf-2b-bass-flanger-1990-brown"
+  ]
+ },
+ {
+  "id": "bf3",
+  "code": "BF-3",
+  "name": "Flanger",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#9B3C8C",
+  "text_colour_hex": "#EDEDED",
+  "knob_order_left_to_right": [
+   "MANUAL",
+   "RES",
+   "DEPTH",
+   "RATE",
+   "MODE"
+  ],
+  "concentric_outer_inner": [
+   [
+    "MANUAL",
+    "RES"
+   ]
+  ],
+  "notes": "Knob positions: MANUAL (outer)/RES (inner), DEPTH, RATE, MODE (rotary); stereo in/out; TEMPO input.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/BF-3_eng01_W.pdf",
+   "https://www.gbase.com/gear/boss-bf-3-flanger-2017-purple"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Described as purple or pink-purple."
+ },
+ {
+  "id": "ph1",
+  "code": "PH-1",
+  "name": "Phaser",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#2E9E45",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/PH-1_OM.pdf"
+  ]
+ },
+ {
+  "id": "ph1r",
+  "code": "PH-1R",
+  "name": "Phaser",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#2E9E45",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH",
+   "RESONANCE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://cdn.roland.com/assets/media/pdf/PH-1R_OM.pdf",
+   "https://www.gbase.com/gear/boss-ph-1r-phaser-black-label-1982-green"
+  ]
+ },
+ {
+  "id": "ph2",
+  "code": "PH-2",
+  "name": "SUPER Phaser",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#38A04A",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH",
+   "RES",
+   "MODE"
+  ],
+  "notes": "Small MODE I/II slide switch.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-ph-2-phaser-1999-green"
+  ]
+ },
+ {
+  "id": "ph3",
+  "code": "PH-3",
+  "name": "Phase Shifter",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#8CC63F",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH",
+   "RES",
+   "STAGE"
+  ],
+  "notes": "STAGE/MODE rotary selector at the right.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-ph-3-phase-shifter-black-label-2000-green"
+  ]
+ },
+ {
+  "id": "pn2",
+  "code": "PN-2",
+  "name": "Tremolo/Pan",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#5DB36A",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH",
+   "MODE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-pn-2-tremolo-pan-1993-green"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Shade of green not verified."
+ },
+ {
+  "id": "tr2",
+  "code": "TR-2",
+  "name": "Tremolo",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1E8A6E",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "WAVE",
+   "RATE",
+   "DEPTH"
+  ],
+  "notes": "Teal green.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-tr-2-tremolo-pedal-2000s-green"
+  ]
+ },
+ {
+  "id": "sl2",
+  "code": "SL-2",
+  "name": "Slicer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1FA590",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "TYPE",
+   "VARIATION",
+   "ATTACK",
+   "DUTY",
+   "BALANCE",
+   "TEMPO"
+  ],
+  "concentric_outer_inner": [
+   [
+    "TEMPO",
+    "BALANCE"
+   ],
+   [
+    "DUTY",
+    "ATTACK"
+   ]
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "BALANCE",
+    "TEMPO",
+    "ATTACK",
+    "DUTY",
+    "VARIATION",
+    "TYPE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Left to right: BALANCE (inner knob) with TEMPO (outer ring), ATTACK (inner) with DUTY (outer ring) - note this is the reverse of the outer/inner assignment in our control kinds, VARIATION knob, TYPE rotary (DUAL/SINGLE/TREMOLO/SFX/HARMONIC); metallic teal-green; stereo jacks, CTL/EXP jack, rear MIDI IN/DC/USB.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/SL-2_eng01_W.pdf",
+   "https://www.gbase.com/gear/boss-sl-2-slicer-metallic-green"
+  ]
+ },
+ {
+  "id": "sl20",
+  "code": "SL-20",
+  "name": "Slicer",
+  "series": "twin",
+  "dims_mm": [
+   173,
+   158,
+   57
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#6FC04A",
+  "layout": [
+   [
+    "E.LEVEL",
+    "LED",
+    "BANK",
+    "PATTERN",
+    "TEMPO"
+   ],
+   [
+    "D.LEVEL",
+    "BUTTON:OUTPUT MODE",
+    "ATTACK",
+    "DUTY",
+    "BUTTON:PEDAL MODE"
+   ],
+   [
+    "FOOTSWITCH:START/STOP",
+    "LED",
+    "FOOTSWITCH:TAP"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "START/STOP",
+    "TAP"
+   ]
+  },
+  "display": false,
+  "notes": "BOSS Twin-pedal chassis (two treadles); black body with green graphics/'SLICER' logo; large TEMPO knob with tempo LED at top right; indicator strip between the two pedals.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/SL-20_OM.pdf",
+   "https://www.boss.info/us/products/sl-20/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour described only as black and green."
+ },
+ {
+  "id": "rt2",
+  "code": "RT-2",
+  "name": "Rotary Ensemble",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#CDB27A",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "FAST",
+   "SLOW",
+   "LEVEL",
+   "DRIVE",
+   "MODE",
+   "SPEED"
+  ],
+  "concentric_outer_inner": [
+   [
+    "LEVEL",
+    "DRIVE"
+   ],
+   [
+    "FAST",
+    "SLOW"
+   ]
+  ],
+  "layout": [
+   [
+    "LEVEL",
+    "DRIVE",
+    "CHECK LED",
+    "FAST",
+    "SLOW"
+   ],
+   [
+    "MODE",
+    "DISPLAY",
+    "SPEED"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Champagne-gold body; left dual knob LEVEL/DRIVE, right dual knob FAST/SLOW, round 'rotor' light dome between them (spinning LED display), 3-way MODE slide switch under the left knob; SPEED = pedal hold/'SPEED' jack on right side; rear DC IN with RISE/FALL TIME and DRIVE KNOB trim switches.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/RT-2_eng01_W.pdf"
+  ]
+ },
+ {
+  "id": "rt20",
+  "code": "RT-20",
+  "name": "Rotary Ensemble",
+  "series": "twin",
+  "dims_mm": [
+   173,
+   158,
+   57
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#C9A14A",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "MODE",
+    "RISE TIME",
+    "DISPLAY",
+    "BALANCE",
+    "OVERDRIVE"
+   ],
+   [
+    "E.LEVEL",
+    "D.LEVEL",
+    "DISPLAY",
+    "SLOW",
+    "FAST"
+   ],
+   [
+    "FOOTSWITCH:EFFECT ON/OFF",
+    "LED",
+    "SPEED"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "EFFECT ON/OFF",
+    "SLOW/FAST (our SPEED)"
+   ]
+  },
+  "display": true,
+  "notes": "BOSS Twin-pedal chassis, gold and black; large round 'Virtual Rotor' LED display in the centre of the panel (red inner horn, blue outer ring); printed 'RT-20 ROTARY SOUND PROCESSOR' and 'Rotary Ensemble'.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/RT-20_OM.pdf",
+   "https://www.gbase.com/gear/boss-rt-20-rotary-sound-processor-2008-gold-and-black"
+  ]
+ },
+ {
+  "id": "vb2",
+  "code": "VB-2",
+  "name": "Vibrato",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#3F6FB6",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH",
+   "RISE TIME",
+   "MODE"
+  ],
+  "notes": "MODE is a 3-way slide switch (UNLATCH/LATCH/...); 1982-1986.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://mmguitarbar.com/products/1982-boss-vb-2-vibrato-vintage-guitar-effects-pedal-black-label-japan-1"
+  ]
+ },
+ {
+  "id": "vb2w",
+  "code": "VB-2W",
+  "name": "Vibrato",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#3F6FB6",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH",
+   "RISE TIME",
+   "MODE"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "RATE",
+    "DEPTH",
+    "RISE TIME",
+    "MODE"
+   ],
+   [
+    "VOICE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "MODE 3-way switch plus S/C (our VOICE) slide switch. Waza Craft: standard compact body with '技 WAZA CRAFT' badge on the pedal; a small 2-position slide switch (S = standard / C = custom) sits on the top panel centred just below the knob row.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/VB-2W_eng02_W.pdf"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Blue shade assumed from VB-2."
+ },
+ {
+  "id": "pw1",
+  "code": "PW-1",
+  "name": "Rocker Wah",
+  "series": "rocker",
+  "dims_mm": [
+   110,
+   320,
+   65
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#232323",
+  "text_colour_hex": "#E6E6E6",
+  "layout": [
+   [
+    "LED",
+    "KNOB:WIDTH",
+    "BUTTON:RANGE H/M/L"
+   ],
+   [
+    "PEDAL"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (toe-press normal/effect)"
+   ]
+  },
+  "display": false,
+  "notes": "1980s Rocker series: long flat treadle with raised rib strips and BOSS logo, control panel at the far end (WIDTH knob, 3-way RANGE slide, LED); Hall-effect sensor, powered by two 1.5 V cells. Our PEDAL maps to the treadle.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PW-1_OM.pdf"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Body colour not verified (manual is B/W)."
+ },
+ {
+  "id": "fw3",
+  "code": "FW-3",
+  "name": "Foot Wah",
+  "series": "treadle_wah",
+  "dims_mm": [
+   111,
+   291,
+   69
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#E6E6E6",
+  "layout": [
+   [
+    "PEAK",
+    "LED"
+   ],
+   [
+    "PEDAL"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (full press on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "1991-1996 metal treadle wah: small panel strip at the far end with PEAK knob and CHECK LED, BOSS logo plate, long ribbed rubber treadle.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/FW-3_OM.pdf",
+   "https://reverb.com/price-guide/guide/10176-boss-fw-3-foot-wah-1990s-black"
+  ]
+ },
+ {
+  "id": "tw1",
+  "code": "TW-1",
+  "name": "T Wah",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#D9CDB0",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "SENS",
+   "PEAK",
+   "DRIVE"
+  ],
+  "notes": "Early units printed 'Touch Wah', later 'T Wah'; DRIVE is an UP/DOWN slide switch.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.craveguitars.co.uk/home/features/effects/feature-1985-boss-tw-1-t-wah/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Beige colour from a retailer summary; printed name variant."
+ },
+ {
+  "id": "ft2",
+  "code": "FT-2",
+  "name": "Dynamic Filter",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#EFD33A",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "SENS",
+   "CUTOFF",
+   "Q",
+   "MODE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://reverb.com/item/81832360-boss-ft-2-dynamic-filter-black-label-1986-1989-yellow"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Yellow reported by a single listing."
+ },
+ {
+  "id": "aw2",
+  "code": "AW-2",
+  "name": "Auto Wah",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#E8D23C",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "RATE",
+   "DEPTH",
+   "MANUAL",
+   "SENS"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-aw-2-auto-wah-silver-label-1991-yellow"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Yellow reported by a single listing."
+ },
+ {
+  "id": "aw3",
+  "code": "AW-3",
+  "name": "Dynamic Wah",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#C9A640",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "DECAY",
+   "MANUAL",
+   "SENS",
+   "MODE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.boss.info/us/products/aw-3/"
+  ]
+ },
+ {
+  "id": "pw10",
+  "code": "PW-10",
+  "name": "V-Wah",
+  "series": "treadle_wah",
+  "dims_mm": [
+   100,
+   270,
+   100
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#E6E6E6",
+  "layout": [
+   [
+    "LED",
+    "TYPE",
+    "RANGE",
+    "DRIVE",
+    "LED",
+    "BUTTON:MANUAL/MEMORY"
+   ],
+   [
+    "PEDAL"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "TOE SWITCH (on/off)",
+    "HEEL SWITCH (manual/memory)"
+   ]
+  },
+  "display": false,
+  "notes": "Black metal body with a silver/chrome treadle carrying black rubber ribs; control panel with three knobs under a hood at the far (toe) end; height 100 mm max.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PW-10_OM.pdf"
+  ]
+ },
+ {
+  "id": "pw3",
+  "code": "PW-3",
+  "name": "Wah",
+  "series": "treadle_wah",
+  "dims_mm": [
+   80,
+   192,
+   58
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#E6E6E6",
+  "layout": [
+   [
+    "LED",
+    "PEDAL",
+    "LED"
+   ],
+   [
+    "TONE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "TOE SWITCH (under treadle)"
+   ]
+  },
+  "display": false,
+  "notes": "Compact-width treadle wah (max height 74 mm), black metal body and treadle with rubber grip; status LEDs on both sides; TONE (RICH/VINTAGE) switch on the chassis side.",
+  "sources": [
+   "https://www.boss.info/global/products/pw-3/specifications/"
+  ]
+ },
+ {
+  "id": "dm1",
+  "code": "DM-1",
+  "name": "Delay Machine",
+  "series": "tabletop",
+  "dims_mm": [
+   260,
+   180,
+   64
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#E6E6E6",
+  "layout": [
+   [
+    "BUTTON:INPUT LEVEL 0/-15/-35",
+    "DLY TIME",
+    "INTENSITY",
+    "DLY VOLUME",
+    "BUTTON:POWER",
+    "LED"
+   ],
+   [
+    "LED"
+   ],
+   [
+    "FOOTSWITCH:NORMAL/EFFECT"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "NORMAL/EFFECT"
+   ]
+  },
+  "display": false,
+  "notes": "1978 AC-powered unit in the CE-1-sized box (1.8 kg): black body with a silver control plate on the raised rear section, power pilot lamp and effect lamp, one footswitch at the front.",
+  "sources": [
+   "https://support.roland.com/hc/en-us/articles/201948039-DM-1-Specifications",
+   "https://www.clinganguitars.com/en-us/products/78159977-boss-dm-1-delay-machine-1978-1979-black"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Panel arrangement inferred from the CE-1 family, not verified from a manual."
+ },
+ {
+  "id": "dm2",
+  "code": "DM-2",
+  "name": "Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#E0508A",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "REP. RATE",
+   "ECHO",
+   "INTENSITY"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-dm-2-analog-delay-1983-pink"
+  ]
+ },
+ {
+  "id": "dm3",
+  "code": "DM-3",
+  "name": "Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#C0282D",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "REP. RATE",
+   "ECHO",
+   "INTENSITY",
+   "TONE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-dm-3-analog-delay-1989-red"
+  ]
+ },
+ {
+  "id": "dm2w",
+  "code": "DM-2W",
+  "name": "Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#E0508A",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "REP. RATE",
+   "ECHO",
+   "INTENSITY"
+  ],
+  "layout": [
+   [
+    "CHECK LED"
+   ],
+   [
+    "REP. RATE",
+    "ECHO",
+    "INTENSITY"
+   ],
+   [
+    "MODE"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "PEDAL (on/off)"
+   ]
+  },
+  "display": false,
+  "notes": "Pink like DM-2. Waza Craft: standard compact body with '技 WAZA CRAFT' badge on the pedal; a small 2-position slide switch (S = standard / C = custom) sits on the top panel centred just below the knob row.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-dm-2w-delay-waza-craft-2018-pink"
+  ]
+ },
+ {
+  "id": "dm101",
+  "code": "DM-101",
+  "name": "Delay Machine",
+  "series": "floor",
+  "dims_mm": [
+   192,
+   133,
+   52
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#1C1C1C",
+  "layout": [
+   [
+    "BUTTON:MEMORY",
+    "LED",
+    "LED",
+    "LED",
+    "LED",
+    "LED",
+    "BUTTON:TAP DIVISION"
+   ],
+   [
+    "MOD RATE",
+    "MOD DEPTH",
+    "VARIATION",
+    "MODE",
+    "DLY TIME",
+    "INTENSITY",
+    "DLY VOLUME"
+   ],
+   [
+    "FOOTSWITCH:ON/OFF",
+    "FOOTSWITCH:MEMORY",
+    "FOOTSWITCH:TAP"
+   ]
+  ],
+  "footswitches": {
+   "count": 3,
+   "labels": [
+    "ON/OFF",
+    "MEMORY",
+    "TAP"
+   ]
+  },
+  "display": false,
+  "notes": "VHS-sized black textured metal chassis with a silver top panel inspired by the 1978 DM-1; seven knobs in one row (MODE in the centre), memory LEDs and buttons above, three footswitches along the front.",
+  "sources": [
+   "https://www.boss.info/global/products/dm-101/specifications/",
+   "https://static.roland.com/assets/media/pdf/DM-101_startup_guide_eng01_W.pdf",
+   "https://www.gbase.com/gear/boss-dm-101-delay-machine-2023-black-silver-1"
+  ],
+  "panel_colour_hex": "#C8C9CB"
+ },
+ {
+  "id": "dd2",
+  "code": "DD-2",
+  "name": "Digital Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F2F2EF",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "E.LEVEL",
+   "F.BACK",
+   "D.TIME",
+   "MODE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-dd-2-digital-delay-blue-label-1984-white-1"
+  ]
+ },
+ {
+  "id": "dsd2",
+  "code": "DSD-2",
+  "name": "Digital Sampler/Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#B8BABC",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "E.LEVEL",
+   "F.BACK",
+   "TIME",
+   "MODE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-dsd-2-digital-sampler-delay-blue-label-1985-silver-3"
+  ]
+ },
+ {
+  "id": "dsd3",
+  "code": "DSD-3",
+  "name": "Digital Sampler/Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#8E9093",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "E.LEVEL",
+   "F.BACK",
+   "TIME",
+   "MODE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://www.gbase.com/gear/boss-dsd-3-digital-sampler-delay-blue-label-1987-gray"
+  ]
+ },
+ {
+  "id": "dd3",
+  "code": "DD-3",
+  "name": "Digital Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F2F2EF",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "E.LEVEL",
+   "F.BACK",
+   "D.TIME",
+   "MODE"
+  ],
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/"
+  ]
+ },
+ {
+  "id": "dd5",
+  "code": "DD-5",
+  "name": "Digital Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": false,
+  "body_colour_hex": "#F0F0EC",
+  "text_colour_hex": "#111111",
+  "knob_order_left_to_right": [
+   "E.LEVEL",
+   "F.BACK",
+   "D.TIME",
+   "MODE"
+  ],
+  "notes": "Stereo outputs and TEMPO jack; 1995-2003.",
+  "sources": [
+   "https://www.boss.info/global/products/ds-1/specifications/",
+   "https://reverb.com/p/boss-dd-5-digital-delay"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "White body inferred from a listing title."
+ },
+ {
+  "id": "dd6",
+  "code": "DD-6",
+  "name": "Digital Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#f2f2ee",
+  "text_colour_hex": "#1a1a1a",
+  "notes": "Standard white compact delay. Real knob labels E.LEVEL, F.BACK, D.TIME, MODE match ours.",
+  "sources": [
+   "https://www.boss.info/global/products/dd-6/"
+  ]
+ },
+ {
+  "id": "dd7",
+  "code": "DD-7",
+  "name": "Digital Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#f2f2ee",
+  "text_colour_hex": "#1a1a1a",
+  "notes": "Standard white compact delay. Real knob labels E.LEVEL, F.BACK, D.TIME, MODE match ours.",
+  "sources": [
+   "https://www.boss.info/global/products/dd-7/"
+  ]
+ },
+ {
+  "id": "te2",
+  "code": "TE-2",
+  "name": "Tera Echo",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#f1efe8",
+  "text_colour_hex": "#1fa3a8",
+  "notes": "Pearl-white body with turquoise-blue lettering; champagne-gold knob panel area and champagne-gold knobs (not the usual black knobs). Knob labels E.LEVEL, TONE, FEEDBACK, S-TIME.",
+  "sources": [
+   "https://www.thomannmusic.com/boss_te_2_tera_echo.htm",
+   "https://www.sweetwater.com/store/detail/TE2--boss-te-2-tera-echo-pedal"
+  ]
+ },
+ {
+  "id": "dd8",
+  "code": "DD-8",
+  "name": "Digital Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#f2f2ee",
+  "text_colour_hex": "#1a1a1a",
+  "notes": "White compact. Real labels: E.LEVEL, FEEDBACK, TIME, MODE (match ours). CARRYOVER is a small slide switch, not part of the knob row (exact position not verified; treat as small switch near the jacks/rear). Stereo jacks A/B and TEMPO/EXP jack.",
+  "sources": [
+   "https://www.boss.info/global/products/dd-8/specifications/",
+   "https://static.roland.com/assets/media/pdf/DD-8_eng02_W.pdf"
+  ]
+ },
+ {
+  "id": "dd3t",
+  "code": "DD-3T",
+  "name": "Digital Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#f2f2ee",
+  "text_colour_hex": "#1a1a1a",
+  "notes": "White compact like DD-3. Real knob labels are E.LEVEL, F.BACK, D.TIME, MODE: our FEEDBACK = F.BACK, TIME = D.TIME. Extra TEMPO jack (no extra panel control).",
+  "sources": [
+   "https://www.boss.info/global/products/dd-3t/"
+  ]
+ },
+ {
+  "id": "sde3",
+  "code": "SDE-3",
+  "name": "Dual Digital Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#101012",
+  "text_colour_hex": "#2f95dc",
+  "layout": [
+   [
+    "DEPTH/LEVEL",
+    "RATE/FEEDBACK",
+    "HI CUT/TIME",
+    "OFFSET"
+   ]
+  ],
+  "notes": "Glossy black body with vivid blue lettering (SDE-3000 homage). Three dual-concentric knobs: inner LEVEL/outer DEPTH, inner FEEDBACK/outer RATE, inner TIME/outer HI CUT, plus a larger single OFFSET knob (right position assumed from manual numbering). CARRYOVER is a slide switch on the rear panel, not on top. Stereo A/B jacks, CTL/EXP and MIDI IN mini-jack.",
+  "sources": [
+   "https://www.boss.info/global/products/sde-3/specifications/",
+   "https://articles.boss.info/the-boss-sde-3-dual-digital-delay-masterclass/",
+   "https://www.soundonsound.com/reviews/boss-sde-3",
+   "https://www.guitarpedalx.com/news/gpx-blog/boss-shrinks-down-its-excellent-sde-3000-dual-digital-delay-to-compact-sde-3-proportions---featuring-smart-offset-function-and-panning-stereo-output",
+   "https://images.equipboard.com/uploads/item/manual/117812/boss-sde-3-dual-digital-delay-pedal-manual.pdf"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Left-right position of OFFSET knob inferred from manual numbering, not visually verified"
+ },
+ {
+  "id": "dd20",
+  "code": "DD-20",
+  "name": "Giga Delay",
+  "series": "twin",
+  "dims_mm": [
+   173,
+   158,
+   57
+  ],
+  "body_colour_hex": "#ECECE8",
+  "text_colour_hex": "#1C1C1C",
+  "layout": [
+   [
+    "E.LEVEL",
+    "F.BACK",
+    "TONE",
+    "MODE",
+    "DELAY TIME"
+   ],
+   [
+    "DISPLAY",
+    "BUTTON:TAP",
+    "BUTTON:TEMPO",
+    "LED",
+    "BUTTON:SELECT",
+    "BUTTON:WRITE"
+   ],
+   [
+    "FOOTSWITCH:ON/OFF",
+    "FOOTSWITCH:MEMORY/TAP"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "ON/OFF",
+    "MEMORY/TAP"
+   ]
+  },
+  "display": true,
+  "notes": "BOSS Twin Pedal body: raised rear control deck and two side-by-side metal treadle pedals with rubber pads; backlit custom LCD. DELAY TIME is a larger knob beside the LCD.",
+  "uncertain": true,
+  "uncertain_reason": "Knob/button positions reconstructed from manual callout text, not a verified drawing; white body per Reverb finish data.",
+  "sources": [
+   "https://www.boss.info/global/products/dd-20/specifications/",
+   "https://static.roland.com/assets/media/pdf/DD-20_OM.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20dd-20 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "dd200",
+  "code": "DD-200",
+  "name": "Digital Delay",
+  "series": "series200",
+  "dims_mm": [
+   101,
+   138,
+   63
+  ],
+  "body_colour_hex": "#B9BCC0",
+  "text_colour_hex": "#1E1E1E",
+  "layout": [
+   [
+    "DISPLAY",
+    "TIME",
+    "FEEDBACK",
+    "E.LEVEL"
+   ],
+   [
+    "MODE",
+    "PARAM",
+    "TONE",
+    "MOD DEPTH"
+   ],
+   [
+    "BUTTON:TAP DIVISION",
+    "LED",
+    "BUTTON:MEMORY",
+    "LED"
+   ],
+   [
+    "FOOTSWITCH:ON/OFF",
+    "FOOTSWITCH:MEMORY/TAP"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "ON/OFF",
+    "MEMORY/TAP"
+   ]
+  },
+  "display": true,
+  "notes": "200-series box: taller narrow enclosure, 3-character 7-segment LED display top-left, MODE is a rotary selector at the start of the second knob row; two small footswitches side by side. Silver body.",
+  "sources": [
+   "https://www.boss.info/global/products/dd-200/specifications/",
+   "https://static.roland.com/assets/media/pdf/DD-200_eng03_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20dd-200 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "dd500",
+  "code": "DD-500",
+  "name": "Digital Delay",
+  "series": "series500",
+  "dims_mm": [
+   170,
+   138,
+   62
+  ],
+  "body_colour_hex": "#EEEEEA",
+  "text_colour_hex": "#1C1C1C",
+  "layout": [
+   [
+    "MODE",
+    "DISPLAY",
+    "BUTTON:EXIT",
+    "BUTTON:EDIT",
+    "BUTTON:PAGE"
+   ],
+   [
+    "TIME",
+    "FEEDBACK",
+    "E.LEVEL",
+    "TONE",
+    "MOD DEPTH"
+   ],
+   [
+    "FOOTSWITCH:A",
+    "FOOTSWITCH:B",
+    "FOOTSWITCH:TAP/CTL"
+   ]
+  ],
+  "footswitches": {
+   "count": 3,
+   "labels": [
+    "A",
+    "B",
+    "TAP/CTL"
+   ]
+  },
+  "display": true,
+  "notes": "500-series box: wide enclosure with 128x64 backlit graphic LCD, MODE selector knob next to the display, five parameter knobs (TIME/VALUE, FEEDBACK, E.LEVEL, TONE, MOD DEPTH) and three footswitches with indicators. White body.",
+  "uncertain": true,
+  "uncertain_reason": "Exact placement of MODE knob and small buttons relative to the LCD is from memory; controls list and dims are official.",
+  "sources": [
+   "https://www.boss.info/global/products/dd-500/specifications/",
+   "https://static.roland.com/assets/media/pdf/DD-500(B)_eng02_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20dd-500 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "sde3000d",
+  "code": "SDE-3000D",
+  "name": "Dual Digital Delay",
+  "series": "series500",
+  "dims_mm": [
+   199,
+   135,
+   54
+  ],
+  "body_colour_hex": "#1B1B1D",
+  "text_colour_hex": "#E8E8E8",
+  "layout": [
+   [
+    "DISPLAY",
+    "TIME",
+    "FEEDBACK",
+    "OUT",
+    "RATE",
+    "DEPTH",
+    "BUTTON:1",
+    "BUTTON:2",
+    "BUTTON:3",
+    "BUTTON:4",
+    "BUTTON:BANK A",
+    "BUTTON:BANK B"
+   ],
+   [
+    "FILTER",
+    "BUTTON:TIME x2",
+    "BUTTON:DELAY PHASE",
+    "BUTTON:MOD",
+    "BUTTON:FEEDBACK PHASE",
+    "MODE",
+    "BUTTON:SETUP"
+   ],
+   [
+    "FOOTSWITCH:DDL 1",
+    "FOOTSWITCH:DDL 2",
+    "FOOTSWITCH:TAP/CTL 1"
+   ]
+  ],
+  "footswitches": {
+   "count": 3,
+   "labels": [
+    "DDL 1",
+    "DDL 2",
+    "TAP/CTL 1"
+   ]
+  },
+  "display": true,
+  "notes": "No rotary knobs on the real unit: TIME, FEEDBACK, OUT, RATE, DEPTH are pairs of small up/down push-buttons under a 12-digit red 7-segment LED display, mimicking the 1983 SDE-3000 rack panel; FILTER is a push-button and our MODE maps to the DIGITAL DELAY 1/2 buttons. Black body, 199 mm wide (wider than DD-500).",
+  "uncertain": true,
+  "uncertain_reason": "Area arrangement (control / memory / delay-settings / switches) from the Startup Guide diagram; button-by-button order approximate.",
+  "sources": [
+   "https://www.boss.info/global/products/sde-3000d/specifications/",
+   "https://static.roland.com/assets/media/pdf/SDE-3000D_StartupGuide_eng04_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20sde-3000d (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "sde3000evh",
+  "code": "SDE-3000EVH",
+  "name": "Dual Digital Delay",
+  "series": "series500",
+  "dims_mm": [
+   199,
+   135,
+   54
+  ],
+  "body_colour_hex": "#161616",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "DISPLAY",
+    "TIME",
+    "FEEDBACK",
+    "OUT",
+    "RATE",
+    "DEPTH",
+    "BUTTON:1",
+    "BUTTON:2",
+    "BUTTON:3",
+    "BUTTON:4",
+    "BUTTON:BANK A",
+    "BUTTON:BANK B",
+    "BUTTON:EVH"
+   ],
+   [
+    "FILTER",
+    "BUTTON:TIME x2",
+    "BUTTON:DELAY PHASE",
+    "BUTTON:MOD",
+    "BUTTON:FEEDBACK PHASE",
+    "MODE",
+    "BUTTON:SETUP"
+   ],
+   [
+    "FOOTSWITCH:DDL 1",
+    "FOOTSWITCH:DDL 2",
+    "FOOTSWITCH:TAP/CTL 1"
+   ]
+  ],
+  "footswitches": {
+   "count": 3,
+   "labels": [
+    "DDL 1",
+    "DDL 2",
+    "TAP/CTL 1"
+   ]
+  },
+  "display": true,
+  "notes": "Same chassis and button-panel as SDE-3000D (no rotary knobs; up/down buttons per parameter, 12-digit LED) plus an EVH button; finished in black with grey/white Van Halen-style stripe graphics (stripe colour approx #9A9A9A).",
+  "uncertain": true,
+  "uncertain_reason": "Stripe graphic colours from Reverb finish text ('black / grey stripes'); button order approximate.",
+  "sources": [
+   "https://www.boss.info/global/products/sde-3000evh/specifications/",
+   "https://static.roland.com/assets/media/pdf/SDE-3000EVH_StartupGuide_eng07_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20sde-3000evh (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "re2",
+  "code": "RE-2",
+  "name": "Space Echo",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#3f6b4a",
+  "text_colour_hex": "#e8e8e0",
+  "layout": [
+   [
+    "REVERB/ECHO",
+    "TONE/INTENSITY",
+    "WOW&FLUT/REP. RATE",
+    "MODE"
+   ]
+  ],
+  "notes": "Three dual-concentric knobs plus 11-position MODE selector. On the real pedal the INNER knobs are the top-labelled ECHO, INTENSITY, REPEAT RATE and the OUTER rings are REVERB, TONE, WOW & FLUTTER (our kinds have REP. RATE/INTENSITY/ECHO as outer: reversed). Left-right order from manual numbering (ECHO/REVERB, INTENSITY/TONE, REPEAT RATE/WOW&FLUTTER, MODE). CARRYOVER is a slide switch on the rear panel. Styled on the RE-201 livery (green with black/silver panel graphics).",
+  "sources": [
+   "https://www.boss.info/global/products/re-2/specifications/",
+   "https://static.roland.com/manuals/re-2_om/eng/25633368.html",
+   "https://www.musicradar.com/reviews/boss-re-2-space-echo",
+   "https://www.soundonsound.com/reviews/boss-space-echo-re-202-re-2",
+   "https://www.gbase.com/gear/boss-re-2-space-echo-black-green"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Body colour not confirmed: sources describe it as 'black/green' and as 'green-on-silver livery of the original units'; exact knob left-right order inferred from manual numbering"
+ },
+ {
+  "id": "re20",
+  "code": "RE-20",
+  "name": "Space Echo",
+  "series": "twin",
+  "dims_mm": [
+   173,
+   158,
+   57
+  ],
+  "body_colour_hex": "#3F6B45",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "BASS",
+    "TREBLE",
+    "REVERB VOL",
+    "MODE",
+    "INPUT VOL",
+    "LED"
+   ],
+   [
+    "REP. RATE",
+    "INTENSITY",
+    "ECHO VOL",
+    "DISPLAY"
+   ],
+   [
+    "FOOTSWITCH:EFFECT ON/OFF",
+    "FOOTSWITCH:TAP"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "EFFECT ON/OFF",
+    "TAP"
+   ]
+  },
+  "display": true,
+  "notes": "Twin Pedal body in Space Echo green with a black RE-201-style control panel; large 12-position MODE SELECTOR, small INPUT VOLUME knob with PEAK LED, and a 'Virtual Tape Display' LED strip that animates running tape. DIRECT switch on the side/rear.",
+  "uncertain": true,
+  "uncertain_reason": "Row arrangement inferred from manual callouts/spec order; exact knob positions not verified.",
+  "sources": [
+   "https://www.boss.info/global/products/re-20/specifications/",
+   "https://static.roland.com/assets/media/pdf/RE-20_OM.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20re-20 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "re202",
+  "code": "RE-202",
+  "name": "Space Echo",
+  "series": "floor",
+  "dims_mm": [
+   192,
+   133,
+   53
+  ],
+  "body_colour_hex": "#2F4F3A",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "SATURATION/WOW&FLUT",
+    "BASS",
+    "TREBLE",
+    "REVERB VOL",
+    "BUTTON:MEMORY",
+    "LED",
+    "BUTTON:INPUT",
+    "TAPE"
+   ],
+   [
+    "MODE",
+    "REP. RATE",
+    "INTENSITY",
+    "ECHO VOL"
+   ],
+   [
+    "FOOTSWITCH:ON/OFF",
+    "FOOTSWITCH:MEMORY",
+    "FOOTSWITCH:TAP"
+   ]
+  ],
+  "footswitches": {
+   "count": 3,
+   "labels": [
+    "ON/OFF",
+    "MEMORY",
+    "TAP"
+   ]
+  },
+  "display": false,
+  "notes": "Green-sided body with a black RE-201-style top panel and large 12-position MODE SELECTOR; no display, memory LEDs only; TAPE is a push-button (new/worn tape). Three footswitches along the front edge.",
+  "uncertain": true,
+  "uncertain_reason": "Knob placement from memory; whether SATURATION and WOW&FLUTTER are concentric (as our kinds imply) or two small separate knobs not verified.",
+  "sources": [
+   "https://www.boss.info/global/products/re-202/specifications/",
+   "https://static.roland.com/assets/media/pdf/RE-202_startup_guide_eng01_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20re-202 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "rv2",
+  "code": "RV-2",
+  "name": "Digital Reverb",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#4a4d52",
+  "text_colour_hex": "#e6e6e6",
+  "notes": "Dark grey body (1987-1990). Real labels E.LEVEL, PRE EQ, TIME, MODE (6-position: ROOM, HALL1, HALL2, PLATE, GATE, DELAY); stereo outputs.",
+  "sources": [
+   "https://www.craveguitars.co.uk/home/features/effects/feature-1987-boss-rv-2-digital-reverb/",
+   "https://www.effects-pedals.info/p/boss-rv-2-digital-reverb/",
+   "https://www.gbase.com/gear/boss-rv-2-digital-reverb-1987-grey-1"
+  ]
+ },
+ {
+  "id": "rv3",
+  "code": "RV-3",
+  "name": "Digital Reverb/Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#3e4250",
+  "text_colour_hex": "#e6e6e6",
+  "notes": "Knob labels BALANCE, TONE/F.BACK (dual-function label, single knob), R/D.TIME (reverb/delay time), MODE - all single knobs in the standard row.",
+  "sources": [
+   "https://www.effects-pedals.info/p/boss-rv-3-digital-reverb-delay/",
+   "https://applink.reverb.com/item/98004481-boss-rv-3-digital-reverb-delay-pink-or-dark-gray-label-1994-2002-grey"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Retail listings call it grey; exact shade (dark blue-grey vs neutral grey) not verified"
+ },
+ {
+  "id": "rv5",
+  "code": "RV-5",
+  "name": "Digital Reverb",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#1f4a9c",
+  "text_colour_hex": "#f2f2f2",
+  "notes": "Blue compact. Real labels E.LEVEL, TONE, TIME, MODE match ours; stereo in/out.",
+  "sources": [
+   "https://www.boss.info/global/products/rv-5/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour hex from memory (blue); not confirmed by a text source"
+ },
+ {
+  "id": "frv1",
+  "code": "FRV-1",
+  "name": "'63 Fender Reverb",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#5c3b28",
+  "text_colour_hex": "#efe3c8",
+  "notes": "Fender-licensed Legend series: brown finish with cream legending copying the brown 1963 Fender reverb unit (Fender script logo). Knobs DWELL, TONE, MIXER match ours.",
+  "sources": [
+   "https://www.boss.info/global/products/frv-1/",
+   "https://www.soundonsound.com/reviews/boss-frv1",
+   "https://applink.reverb.com/item/97799840-boss-frv-1-63-fender-reverb-2009-present-brown"
+  ]
+ },
+ {
+  "id": "rv6",
+  "code": "RV-6",
+  "name": "Reverb",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#1b2e66",
+  "text_colour_hex": "#e8eef8",
+  "notes": "Dark blue compact. Real labels E.LEVEL, TONE, TIME, MODE match ours; stereo in/out plus EXP jack.",
+  "sources": [
+   "https://www.boss.info/global/products/rv-6/specifications/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour hex from memory (dark blue); not confirmed by a text source"
+ },
+ {
+  "id": "rv200",
+  "code": "RV-200",
+  "name": "Reverb",
+  "series": "series200",
+  "dims_mm": [
+   101,
+   138,
+   63
+  ],
+  "body_colour_hex": "#1C1F26",
+  "text_colour_hex": "#D8DEE8",
+  "layout": [
+   [
+    "DISPLAY",
+    "TIME",
+    "PRE-DELAY",
+    "E.LEVEL"
+   ],
+   [
+    "MODE",
+    "PARAM",
+    "LOW",
+    "HIGH"
+   ],
+   [
+    "BUTTON:DENSITY",
+    "LED",
+    "BUTTON:MEMORY",
+    "LED"
+   ],
+   [
+    "FOOTSWITCH:ON/OFF",
+    "FOOTSWITCH:MEMORY/HOLD"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "ON/OFF",
+    "MEMORY/HOLD"
+   ]
+  },
+  "display": true,
+  "notes": "Same 200-series chassis as DD-200 (3-character LED display top-left, MODE selector starting the second row); very dark navy/black body.",
+  "sources": [
+   "https://www.boss.info/global/products/rv-200/specifications/",
+   "https://static.roland.com/assets/media/pdf/RV-200_eng01_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20rv-200 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "rv500",
+  "code": "RV-500",
+  "name": "Reverb",
+  "series": "series500",
+  "dims_mm": [
+   170,
+   138,
+   62
+  ],
+  "body_colour_hex": "#1C1F26",
+  "text_colour_hex": "#E6E9EE",
+  "layout": [
+   [
+    "MODE",
+    "DISPLAY",
+    "BUTTON:EXIT",
+    "BUTTON:EDIT",
+    "BUTTON:UP",
+    "BUTTON:DOWN"
+   ],
+   [
+    "TIME",
+    "PRE-DELAY",
+    "E.LEVEL",
+    "LOW",
+    "HIGH"
+   ],
+   [
+    "FOOTSWITCH:A",
+    "FOOTSWITCH:B",
+    "FOOTSWITCH:TAP/CTL"
+   ]
+  ],
+  "footswitches": {
+   "count": 3,
+   "labels": [
+    "A",
+    "B",
+    "TAP/CTL"
+   ]
+  },
+  "display": true,
+  "notes": "500-series chassis identical to DD-500 (graphic LCD, MODE selector, TIME/VALUE + 4 knobs, 3 footswitches) in a very dark navy/black finish.",
+  "uncertain": true,
+  "uncertain_reason": "Button positions around LCD from memory (same as DD-500).",
+  "sources": [
+   "https://www.boss.info/global/products/rv-500/specifications/",
+   "https://static.roland.com/assets/media/pdf/RV-500_eng01_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20rv-500 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "rc2",
+  "code": "RC-2",
+  "name": "Loop Station",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#c4161c",
+  "text_colour_hex": "#f0f0f0",
+  "layout": [
+   [
+    "PHRASE LVL",
+    "KNOB:PHRASE SELECT",
+    "LED",
+    "BUTTON:TAP TEMPO",
+    "KNOB:MODE"
+   ]
+  ],
+  "notes": "Red compact. Real top panel: dual-concentric knob (outer PHRASE LEVEL / inner GUIDE LEVEL), PHRASE SELECT knob, TAP TEMPO/SELECT/ENTER button with LED, MODE knob, plus LOOP/ONE SHOT and REC/PLAY/DUB indicators. Our REC/PLAY, STOP, CLEAR are functions of the single pedal switch (no separate buttons). 'KNOB:<label>' items are real knobs with no counterpart in our controls.",
+  "sources": [
+   "https://www.boss.info/global/products/rc-2/specifications/",
+   "https://thermionic-studios.com/wiki/index.php?title=RC-2",
+   "https://medias.audiofanzine.com/files/rc-2-manual-476265.pdf",
+   "https://vgwguitar.com/products/boss-rc-2-loop-station-2006-present-red"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Exact spatial arrangement of knobs/button/indicators not visually verified"
+ },
+ {
+  "id": "rc3",
+  "code": "RC-3",
+  "name": "Loop Station",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#c4161c",
+  "text_colour_hex": "#f0f0f0",
+  "layout": [
+   [
+    "LOOP LEVEL",
+    "KNOB:RHYTHM LEVEL",
+    "DISPLAY"
+   ],
+   [
+    "BUTTON:DOWN",
+    "BUTTON:UP",
+    "BUTTON:WRITE",
+    "BUTTON:RHYTHM ON/OFF",
+    "BUTTON:TAP TEMPO"
+   ]
+  ],
+  "notes": "Red compact with 2-character 7-segment LED display, REC and PLAY(DUB) indicators, two knobs (LOOP and RHYTHM output level) and five small buttons (DOWN, UP, WRITE, RHYTHM ON/OFF, TAP TEMPO). Our REC/PLAY, STOP, CLEAR are pedal-switch functions. Stereo jacks, AUX IN, USB.",
+  "sources": [
+   "https://www.boss.info/global/products/rc-3/specifications/",
+   "https://www.amazon.com/BOSS-Audio-RC-3-Station-Pedal/dp/B004J27QXY"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Controls confirmed from specs, but their exact positions/rows are not visually verified"
+ },
+ {
+  "id": "rc1",
+  "code": "RC-1",
+  "name": "Loop Station",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#dcdcd8",
+  "text_colour_hex": "#1a1a1a",
+  "layout": [
+   [
+    "LED",
+    "LEVEL"
+   ]
+  ],
+  "notes": "Single LEVEL knob and a large multicolour circular LOOP indicator ring (rotating LED segments) on the top panel; single pedal switch performs REC/PLAY, STOP (double press) and CLEAR (hold). Stereo A/B jacks, STOP/UNDO jack.",
+  "sources": [
+   "https://www.boss.info/global/products/rc-1/specifications/"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Body colour (light grey/white) and whether the LEVEL knob sits inside the LED ring not verified"
+ },
+ {
+  "id": "rc5",
+  "code": "RC-5",
+  "name": "Loop Station",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   56
+  ],
+  "body_colour_hex": "#1c1c1e",
+  "text_colour_hex": "#e6e6e6",
+  "layout": [
+   [
+    "DISPLAY",
+    "LOOP LEVEL"
+   ],
+   [
+    "BUTTON:RHYTHM TEMPO",
+    "BUTTON:RHYTHM ON/OFF",
+    "BUTTON:SETUP",
+    "BUTTON:MEMORY"
+   ]
+  ],
+  "notes": "Black compact (official height 56 mm). Back row: RGB-backlit 96x32 graphic LCD (left) and MEMORY/LOOP LEVEL push-knob (right); below them a row of four small buttons, left to right RHYTHM [TEMPO], RHYTHM [ON/OFF], [SETUP], [MEMORY] (per the manual's panel diagram). Our REC/PLAY, STOP (double press), CLEAR (hold while stopped) are pedal-switch functions.",
+  "sources": [
+   "https://www.boss.info/global/products/rc-5/specifications/",
+   "https://static.roland.com/assets/media/pdf/RC-5_eng01_W.pdf"
+  ]
+ },
+ {
+  "id": "rc1bk",
+  "code": "RC-1",
+  "name": "Loop Station",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#161616",
+  "text_colour_hex": "#e6e6e6",
+  "layout": [
+   [
+    "LED",
+    "LEVEL"
+   ]
+  ],
+  "notes": "Black version of the RC-1 (same panel: LEVEL knob + circular multicolour LOOP LED ring). Printed model code is RC-1.",
+  "sources": [
+   "https://www.boss.info/global/products/rc-1/specifications/"
+  ]
+ },
+ {
+  "id": "rc20",
+  "code": "RC-20",
+  "name": "Loop Station",
+  "series": "twin",
+  "dims_mm": [
+   173,
+   158,
+   57
+  ],
+  "body_colour_hex": "#222224",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "LEVEL",
+    "KNOB:GUIDE",
+    "KNOB:PHRASE SELECT",
+    "KNOB:INST/MIC"
+   ],
+   [
+    "LED",
+    "BUTTON:REVERSE",
+    "BUTTON:TAP TEMPO",
+    "BUTTON:WRITE",
+    "CLEAR",
+    "BUTTON:MODE"
+   ],
+   [
+    "REC/PLAY",
+    "STOP"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "REC/PLAY/OVERDUB",
+    "STOP"
+   ]
+  },
+  "display": false,
+  "notes": "REC/PLAY, STOP and CLEAR are footswitch functions on the real unit (CLEAR = hold STOP); here CLEAR is placed on the small EXIT/DELETE button. Twin Pedal body with two treadle pedals; panel assumed same as successor RC-20XL.",
+  "uncertain": true,
+  "uncertain_reason": "Owner's manual PDF is image-only; layout assumed equal to RC-20XL and colour only from a few Reverb listings (black, one red/black).",
+  "sources": [
+   "https://www.boss.info/global/products/rc-20/specifications/",
+   "https://static.roland.com/assets/media/pdf/RC-20_OM.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20rc-20 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "rc20xl",
+  "code": "RC-20XL",
+  "name": "Loop Station",
+  "series": "twin",
+  "dims_mm": [
+   173,
+   158,
+   57
+  ],
+  "body_colour_hex": "#222224",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "LEVEL",
+    "KNOB:GUIDE",
+    "KNOB:PHRASE SELECT",
+    "KNOB:INST",
+    "KNOB:MIC"
+   ],
+   [
+    "LED",
+    "BUTTON:REVERSE",
+    "BUTTON:TAP TEMPO",
+    "BUTTON:WRITE",
+    "CLEAR",
+    "BUTTON:AUTO START",
+    "BUTTON:MODE"
+   ],
+   [
+    "REC/PLAY",
+    "STOP"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "REC/PLAY/OVERDUB",
+    "STOP/TAP TEMPO"
+   ]
+  },
+  "display": false,
+  "notes": "REC/PLAY, STOP and CLEAR are footswitch functions on the real unit (CLEAR = hold STOP); CLEAR placed on the EXIT(SHIFT) button (EXIT+WRITE = DELETE). Twin Pedal body; LEVEL is the phrase playback level knob.",
+  "uncertain": true,
+  "uncertain_reason": "Row arrangement from manual callout positions; colour from Reverb finish data (black).",
+  "sources": [
+   "https://www.boss.info/global/products/rc-20xl/specifications/",
+   "https://static.roland.com/assets/media/pdf/RC-20XL_OM.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20rc-20xl (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "rc30",
+  "code": "RC-30",
+  "name": "Loop Station",
+  "series": "twin",
+  "dims_mm": [
+   173,
+   158,
+   57
+  ],
+  "body_colour_hex": "#C4161C",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "BUTTON:LOOP FX TYPE",
+    "BUTTON:LOOP FX ON/OFF",
+    "SLIDERS:2",
+    "DISPLAY",
+    "BUTTON:DOWN",
+    "BUTTON:UP",
+    "BUTTON:WRITE",
+    "CLEAR",
+    "KNOB:RHYTHM OUTPUT LEVEL",
+    "BUTTON:RHYTHM TYPE",
+    "BUTTON:RHYTHM ON/OFF",
+    "BUTTON:TAP TEMPO",
+    "LOOP LEVEL",
+    "LED"
+   ],
+   [
+    "REC/PLAY",
+    "STOP"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "REC/PLAY/OVERDUB",
+    "STOP/TAP TEMPO"
+   ]
+  },
+  "display": true,
+  "notes": "REC/PLAY, STOP and CLEAR are footswitch functions on the real unit (CLEAR = hold STOP); LOOP LEVEL placed on the MIC INPUT LEVEL knob position and CLEAR on the DELETE button; track levels are two sliders. Red Twin Pedal body with 2-digit LED display.",
+  "uncertain": true,
+  "uncertain_reason": "Mapping of our LOOP LEVEL/CLEAR to physical elements is a substitution; left-to-right order from manual callouts.",
+  "sources": [
+   "https://www.boss.info/global/products/rc-30/specifications/",
+   "https://static.roland.com/assets/media/pdf/RC-30_eng03_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20rc-30 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "rc500",
+  "code": "RC-500",
+  "name": "Loop Station",
+  "series": "series500",
+  "dims_mm": [
+   170,
+   138,
+   62
+  ],
+  "body_colour_hex": "#B5121B",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "SLIDERS:2",
+    "DISPLAY",
+    "LOOP LEVEL",
+    "KNOB:MIC LEVEL"
+   ],
+   [
+    "BUTTON:RHYTHM TEMPO",
+    "BUTTON:RHYTHM ON/OFF",
+    "BUTTON:MEMORY",
+    "BUTTON:MENU",
+    "BUTTON:EXIT",
+    "BUTTON:ENTER",
+    "BUTTON:INPUT"
+   ],
+   [
+    "REC/PLAY",
+    "STOP",
+    "CLEAR"
+   ]
+  ],
+  "footswitches": {
+   "count": 3,
+   "labels": [
+    "REC/PLAY",
+    "STOP",
+    "TRACK SELECT"
+   ]
+  },
+  "display": true,
+  "notes": "REC/PLAY, STOP and CLEAR are footswitch functions on the real unit (CLEAR = hold STOP); LOOP LEVEL placed on the MEMORY/VALUE knob, CLEAR on the TRACK SELECT footswitch. TRACK 1/2 level sliders with EDIT buttons on the left, RGB-backlit LCD in the middle. Red body.",
+  "uncertain": true,
+  "uncertain_reason": "Our LOOP LEVEL/CLEAR are substituted onto different real controls.",
+  "sources": [
+   "https://www.boss.info/global/products/rc-500/specifications/",
+   "https://static.roland.com/assets/media/pdf/RC-500_eng02_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20rc-500 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "rc50",
+  "code": "RC-50",
+  "name": "Loop Station",
+  "series": "floor",
+  "dims_mm": [
+   472,
+   198,
+   64
+  ],
+  "body_colour_hex": "#1E1E1E",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "DISPLAY",
+    "BUTTON:PARAMETER",
+    "KNOB:PATCH/VALUE",
+    "BUTTON:TAP TEMPO",
+    "BUTTON:NAME/PATCH",
+    "BUTTON:PLAY MODE",
+    "BUTTON:LOOP SYNC",
+    "SLIDERS:3",
+    "KNOB:GUIDE LEVEL",
+    "KNOB:INPUT LEVEL",
+    "BUTTON:AUTO REC",
+    "BUTTON:INPUT MODE",
+    "LEVEL"
+   ],
+   [
+    "REC/PLAY",
+    "STOP",
+    "FOOTSWITCH:TEMPO",
+    "CLEAR",
+    "FOOTSWITCH:PHRASE 1",
+    "FOOTSWITCH:PHRASE 2",
+    "FOOTSWITCH:PHRASE 3"
+   ]
+  ],
+  "footswitches": {
+   "count": 7,
+   "labels": [
+    "REC/PLAY/OVERDUB",
+    "STOP",
+    "TEMPO",
+    "UNDO/REDO",
+    "PHRASE 1",
+    "PHRASE 2",
+    "PHRASE 3"
+   ]
+  },
+  "display": true,
+  "notes": "REC/PLAY, STOP and CLEAR are footswitch functions on the real unit (CLEAR = hold STOP); LEVEL mapped to MASTER LEVEL knob (far right), CLEAR to the UNDO/REDO pedal. Long black metal floor unit with red accents; control strip along the back, single row of seven pedals in front; phrase level knobs per phrase.",
+  "uncertain": true,
+  "uncertain_reason": "Phrase levels may be knobs rather than sliders (spec says 'PHRASE LEVEL knobs'); strip order from manual callouts.",
+  "sources": [
+   "https://www.boss.info/global/products/rc-50/specifications/",
+   "https://static.roland.com/assets/media/pdf/RC-50_OM.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20rc-50 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "rc300",
+  "code": "RC-300",
+  "name": "Loop Station",
+  "series": "floor",
+  "dims_mm": [
+   536,
+   231,
+   76
+  ],
+  "body_colour_hex": "#1E1E1E",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "MASTER",
+    "LED",
+    "BUTTON:RHYTHM ON/OFF",
+    "DISPLAY",
+    "BUTTON:MEMORY/EDIT",
+    "KNOB:AUX",
+    "KNOB:INST",
+    "KNOB:MIC",
+    "FOOTSWITCH:LOOP FX"
+   ],
+   [
+    "SLIDERS:3"
+   ],
+   [
+    "CLEAR",
+    "REC/PLAY",
+    "STOP",
+    "FOOTSWITCH:REC/DUB/PLAY 2",
+    "FOOTSWITCH:STOP 2",
+    "FOOTSWITCH:REC/DUB/PLAY 3",
+    "FOOTSWITCH:STOP 3",
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 8,
+   "labels": [
+    "ALL START/STOP",
+    "REC/DUB/PLAY 1",
+    "STOP 1",
+    "REC/DUB/PLAY 2",
+    "STOP 2",
+    "REC/DUB/PLAY 3",
+    "STOP 3",
+    "LOOP FX"
+   ]
+  },
+  "display": true,
+  "notes": "REC/PLAY, STOP and CLEAR are footswitch functions on the real unit (CLEAR = hold STOP); CLEAR placed on ALL START/STOP (left). Large black metal floor unit (536 mm) with red accents: control strip with LCD + 2-digit LED, three track-level sliders, three track sections of REC/DUB/PLAY + STOP footswitches and a built-in expression pedal (EXP) at the right end.",
+  "uncertain": true,
+  "uncertain_reason": "Relative position of LOOP FX switch and per-track switch pairs partly inferred from manual callout rows.",
+  "sources": [
+   "https://www.boss.info/global/products/rc-300/specifications/",
+   "https://static.roland.com/assets/media/pdf/RC-300_OM.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20rc-300 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "rc10r",
+  "code": "RC-10R",
+  "name": "Rhythm Loop Station",
+  "series": "series200",
+  "dims_mm": [
+   101,
+   138,
+   63
+  ],
+  "body_colour_hex": "#B81D24",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "DISPLAY",
+    "BUTTON:MENU"
+   ],
+   [
+    "KNOB:VALUE",
+    "BUTTON:EXIT"
+   ],
+   [
+    "KNOB:RHYTHM LEVEL",
+    "LED"
+   ],
+   [
+    "LED",
+    "LOOP LEVEL"
+   ],
+   [
+    "REC/PLAY",
+    "STOP"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "LOOP",
+    "RHYTHM"
+   ]
+  },
+  "display": true,
+  "notes": "REC/PLAY, STOP and CLEAR are footswitch functions on the real unit (CLEAR = hold STOP); REC/PLAY on the LOOP switch, STOP on the RHYTHM switch position; CLEAR has no dedicated control. 16x2 backlit LCD, VALUE knob, and two large circular LOOP / RHYTHM status indicator rings. Red body.",
+  "uncertain": true,
+  "uncertain_reason": "Official spec says 101x138x63 mm (same as 200 series); grid arrangement read from manual callouts; CLEAR not mapped (hold LOOP switch).",
+  "sources": [
+   "https://www.boss.info/global/products/rc-10r/specifications/",
+   "https://static.roland.com/assets/media/pdf/RC-10R_eng03_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20rc-10r (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "rc600",
+  "code": "RC-600",
+  "name": "Loop Station",
+  "series": "floor",
+  "dims_mm": [
+   435,
+   163,
+   66
+  ],
+  "body_colour_hex": "#B01E23",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "OUTPUT LVL",
+    "DISPLAY",
+    "BUTTON:MENU",
+    "BUTTON:LOOP",
+    "BUTTON:RHYTHM",
+    "BUTTON:TAP TEMPO",
+    "LED",
+    "BUTTON:EXIT",
+    "BUTTON:ENTER",
+    "BUTTON:PAGE"
+   ],
+   [
+    "FOOTSWITCH:TRACK SELECT",
+    "CLEAR",
+    "FOOTSWITCH:ALL START/STOP"
+   ],
+   [
+    "REC/PLAY",
+    "STOP",
+    "FOOTSWITCH:REC/PLAY 2",
+    "FOOTSWITCH:STOP 2",
+    "FOOTSWITCH:REC/PLAY 3",
+    "FOOTSWITCH:STOP 3"
+   ]
+  ],
+  "footswitches": {
+   "count": 9,
+   "labels": [
+    "TRACK SELECT",
+    "UNDO/REDO",
+    "ALL START/STOP",
+    "REC/PLAY 1",
+    "STOP 1",
+    "REC/PLAY 2",
+    "STOP 2",
+    "REC/PLAY 3",
+    "STOP 3"
+   ]
+  },
+  "display": true,
+  "notes": "REC/PLAY, STOP and CLEAR are footswitch functions on the real unit (CLEAR = hold STOP); CLEAR placed on UNDO/REDO. Monochrome graphic LCD on the left with four value knobs [1]-[4] under it, multicolour circular loop-status indicator in the centre, three footswitches at the top and six along the front.",
+  "uncertain": true,
+  "uncertain_reason": "Footswitch grouping from review text ('six along the bottom, three at the top'); exact left/right position of the upper three not verified.",
+  "sources": [
+   "https://www.boss.info/global/products/rc-600/specifications/",
+   "https://static.roland.com/assets/media/pdf/RC-600_eng05_W.pdf",
+   "https://guitar.com/reviews/effects-pedal/the-big-review-boss-rc-600-loop-station/",
+   "https://api.reverb.com/api/listings?query=boss%20rc-600 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "ge10",
+  "code": "GE-10",
+  "name": "Graphic Equalizer",
+  "series": "tabletop",
+  "dims_mm": [
+   340,
+   180,
+   70
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#1B1B1B",
+  "text_colour_hex": "#E8E8E8",
+  "layout": [
+   [
+    "31",
+    "62",
+    "125",
+    "250",
+    "500",
+    "1k",
+    "2k",
+    "4k",
+    "8k",
+    "16k",
+    "LEVEL"
+   ],
+   [
+    "LED",
+    "BUTTON:EFFECT",
+    "BUTTON:POWER"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "1970s BOSS 10-band graphic equalizer desk unit (not a stompbox): black metal case with a row of vertical slider faders; effect on/off could be remote-switched with an optional footswitch. Our 11 sliders map to the 10 bands plus the level slider.",
+  "sources": [
+   "https://reverb.com/p/boss-ge-10",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "No official dimensions or panel drawing found (effectsdatabase unreachable, no BOSS manual online); dims, LEVEL slider position and switch placement estimated."
+ },
+ {
+  "id": "sp1",
+  "code": "SP-1",
+  "name": "Spectrum",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#c0302a",
+  "text_colour_hex": "#111111",
+  "notes": "1977 original 'traffic light' trio (with yellow OD-1 and green PH-1): red body. Two knobs BALANCE and SPECTRUM (real left-right order believed BALANCE, SPECTRUM). Early units: clear 'skeleton' footswitch pad and silver thumbscrew; later black.",
+  "sources": [
+   "https://www.bosszone.info/?page_id=14",
+   "https://www.gbase.com/gear/boss-sp-1-spectrum-black-label-1978-red",
+   "https://justpedals.co.uk/shop/used-1977-1981-boss-sp-1-spectrum-pedal-red-guitar-effect-pedal/"
+  ]
+ },
+ {
+  "id": "ge6",
+  "code": "GE-6",
+  "name": "Graphic Equalizer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#d9d5c8",
+  "text_colour_hex": "#1a1a1a",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "100",
+    "200",
+    "400",
+    "800",
+    "1.6k",
+    "3.2k"
+   ]
+  ],
+  "notes": "Six vertical EQ sliders (100 Hz-3.2 kHz, +/-15 dB), no level slider. 1978-1981.",
+  "sources": [
+   "https://equipboard.com/items/boss-ge-6-graphic-equalizer-pedal",
+   "https://reverb.com/uk/item/86610874-boss-ge-6-graphic-equalizer-1979-made-in-japan-silver-screw-vintage-guitar-effect-pedal-8700"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour reported as 'cream' by one source and 'silver' by another; slider count/labels certain"
+ },
+ {
+  "id": "ge7b",
+  "code": "GE-7B",
+  "name": "Bass Equalizer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#6a4a35",
+  "text_colour_hex": "#f0f0f0",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "62",
+    "125",
+    "250",
+    "500",
+    "1k",
+    "2k",
+    "4k",
+    "LEVEL"
+   ]
+  ],
+  "notes": "GE-7 style panel: seven band sliders plus LEVEL slider at the right. Brown finish per several listings (1987-1995).",
+  "sources": [
+   "https://www.effects-pedals.info/p/boss-ge-7b-bass-equalizer/",
+   "https://www.clinganguitars.com/en-us/products/boss-ge-7b-bass-equalizer-black-label-brown"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Brown colour from retailer finish fields; exact shade not verified"
+ },
+ {
+  "id": "eh2",
+  "code": "EH-2",
+  "name": "Enhancer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#6cc3d5",
+  "text_colour_hex": "#1a1a1a",
+  "notes": "Light blue body (1990-1998). Knobs MIX, FREQ, SENS.",
+  "sources": [
+   "https://www.gbase.com/gear/boss-eh-2-enhancer-silver-label-1990-light-blue",
+   "https://www.gbase.com/gear/boss-eh-2-enhancer-silver-label-1995-light-blue"
+  ]
+ },
+ {
+  "id": "pq4",
+  "code": "PQ-4",
+  "name": "Parametric Equalizer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#ecebe6",
+  "text_colour_hex": "#1a1a1a",
+  "layout": [
+   [
+    "PRESENCE/LOW",
+    "MIDDLE/MID FREQ",
+    "HIGH/HIGH FREQ",
+    "LEVEL"
+   ]
+  ],
+  "notes": "White body. Three dual-concentric knobs (PRESENCE with LOW, MIDDLE with its FREQ 100 Hz-1.6 kHz, HIGH with its FREQ 500 Hz-8 kHz) plus LEVEL. 1991-1997.",
+  "sources": [
+   "https://www.gbase.com/gear/boss-pq-4-parametric-equalizer-silver-label-1991-white",
+   "https://equipboard.com/items/boss-pq-4-parametric-equalizer",
+   "https://cdn.roland.com/assets/media/pdf/PQ-4_OM.pdf"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Which part of each dual knob is inner vs outer, and LEVEL position (left or right), not verified"
+ },
+ {
+  "id": "pq3b",
+  "code": "PQ-3B",
+  "name": "Bass Parametric Equalizer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#6a4a35",
+  "text_colour_hex": "#f0f0f0",
+  "layout": [
+   [
+    "LOW FREQ/LOW",
+    "MID FREQ/MIDDLE",
+    "HIGH FREQ/HIGH",
+    "LEVEL"
+   ]
+  ],
+  "notes": "Three dual-concentric knobs; on the real pedal the OUTER ring sets frequency and the smaller INNER knob sets the band level (our kinds have it reversed), plus a single LEVEL knob.",
+  "sources": [
+   "https://equipboard.com/items/boss-pq-3b-bass-parametric-equalizer",
+   "https://cdn.roland.com/assets/media/pdf/PQ-3B_OM.pdf"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour (brown per one source) not confirmed; LEVEL knob position not verified"
+ },
+ {
+  "id": "geb7",
+  "code": "GEB-7",
+  "name": "Bass Equalizer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#3f8fd2",
+  "text_colour_hex": "#0e1a3a",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "50",
+    "120",
+    "400",
+    "500",
+    "800",
+    "4.5k",
+    "10k",
+    "LEVEL"
+   ]
+  ],
+  "notes": "GE-7 style panel with seven band sliders and a LEVEL slider at the right; blue body.",
+  "sources": [
+   "https://www.boss.info/global/products/geb-7/"
+  ]
+ },
+ {
+  "id": "eq200",
+  "code": "EQ-200",
+  "name": "Graphic Equalizer",
+  "series": "series200",
+  "dims_mm": [
+   101,
+   138,
+   60
+  ],
+  "body_colour_hex": "#2A2B2E",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "30",
+    "60",
+    "120",
+    "200",
+    "400",
+    "800",
+    "1.6k",
+    "3.2k",
+    "6.4k",
+    "12.8k",
+    "LEVEL"
+   ],
+   [
+    "DISPLAY",
+    "BUTTON:CHANNEL",
+    "LED"
+   ],
+   [
+    "BUTTON:MEMORY",
+    "LED"
+   ],
+   [
+    "FOOTSWITCH:ON/OFF",
+    "FOOTSWITCH:MEMORY"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "ON/OFF",
+    "MEMORY"
+   ]
+  },
+  "display": true,
+  "notes": "200-series chassis with ten short EQ sliders plus a LEVEL slider across the rear half, small 64x32 graphic LCD (EQ curve) at left below the sliders with CHANNEL/MEMORY buttons to its right. 60 mm tall (62 mm with feet). Black/dark-grey body.",
+  "sources": [
+   "https://www.boss.info/global/products/eq-200/specifications/",
+   "https://static.roland.com/assets/media/pdf/EQ-200_eng03_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20eq-200 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "ac2",
+  "code": "AC-2",
+  "name": "Acoustic Simulator",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#d9b04f",
+  "text_colour_hex": "#1a1a1a",
+  "notes": "Yellow/gold body. Four knobs LEVEL, BODY, TOP, MODE; MODE is a rotary knob (4 modes: STANDARD, JUMBO, ENHANCE, PIEZO), not a toggle.",
+  "sources": [
+   "https://www.gbase.com/gear/boss-ac-2-acoustic-simulator-2001-yellow",
+   "https://equipboard.com/items/boss-ac-2-acoustic-simulator"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour reported variously as yellow/orange/beige; exact shade uncertain"
+ },
+ {
+  "id": "ac3",
+  "code": "AC-3",
+  "name": "Acoustic Simulator",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#d59a3c",
+  "text_colour_hex": "#2a1a0e",
+  "layout": [
+   [
+    "REVERB/LEVEL",
+    "BODY",
+    "TOP",
+    "MODE"
+   ]
+  ],
+  "notes": "Amber/yellow-orange body. Real left-right order (manual numbering): dual-concentric REVERB/LEVEL, BODY, TOP, MODE (4 modes) - reverse of our control list order. Inner/outer assignment of REVERB vs LEVEL not verified. Jacks INPUT, G.AMP OUT, LINE OUT.",
+  "sources": [
+   "https://www.boss.info/global/products/ac-3/specifications/",
+   "https://www.effects-pedals.info/p/boss-ac-3-acoustic-simulator/",
+   "https://static.roland.com/assets/media/pdf/AC-3_OM.pdf"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Exact shade (yellow vs amber/tan) not confirmed"
+ },
+ {
+  "id": "ad2",
+  "code": "AD-2",
+  "name": "Acoustic Preamp",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#8a5a33",
+  "text_colour_hex": "#f0e6d2",
+  "layout": [
+   [
+    "RESONANCE",
+    "KNOB:AMBIENCE",
+    "NOTCH"
+   ]
+  ],
+  "notes": "Real panel has three knobs: ACOUSTIC RESONANCE, AMBIENCE, NOTCH (our RESONANCE = ACOUSTIC RESONANCE; AMBIENCE has no counterpart in our controls). Line out TRS jack.",
+  "sources": [
+   "https://www.boss.info/global/products/ad-2/specifications/",
+   "https://www.musicradar.com/reviews/boss-ad-2-acoustic-preamp"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Body colour (brown/bronze estimate) not confirmed by any text source; knob left-right order not verified"
+ },
+ {
+  "id": "ad3",
+  "code": "AD-3",
+  "name": "Acoustic Instrument Processor",
+  "series": "twin",
+  "dims_mm": [
+   170,
+   156,
+   70
+  ],
+  "body_colour_hex": "#6A4329",
+  "text_colour_hex": "#E9DDB8",
+  "layout": [
+   [
+    "LED",
+    "ANTI-FB",
+    "BOTTOM",
+    "TOP",
+    "KNOB:2x2 CHORUS",
+    "KNOB:REVERB",
+    "LED"
+   ],
+   [
+    "FOOTSWITCH:ANTI-FEEDBACK AUTO",
+    "FOOTSWITCH:CHORUS"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "ANTI-FEEDBACK AUTO",
+    "CHORUS"
+   ]
+  },
+  "display": false,
+  "notes": "Two-pedal box (not a compact): a raised rear control strip with 5 knobs (ANTI-FEEDBACK/FREQ, BOTTOM, TOP, 2x2 CHORUS, REVERB) flanked by POWER LED (left) and PEAK LED (right), BOSS AD-3 logo below the knobs; two treadle pedals side by side in front, each with its own LED. INPUT LEVEL knob, INPUT/OUTPUT jacks, OUTPUT SELECT and POWER switch are on the rear panel.",
+  "sources": [
+   "https://www.boss.info/global/products/ad-3/specifications/",
+   "https://static.roland.com/assets/media/pdf/AD-3_OM.pdf",
+   "https://equipboard.com/items/boss-ad-3-acoustic-instrument-processor",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "ad5",
+  "code": "AD-5",
+  "name": "Acoustic Instrument Processor",
+  "series": "tabletop",
+  "dims_mm": [
+   150,
+   155,
+   65
+  ],
+  "body_colour_hex": "#5B3B27",
+  "text_colour_hex": "#EDE3C8",
+  "layout": [
+   [
+    "LED",
+    "LED",
+    "KNOB:INPUT LEVEL MAGNETIC",
+    "KNOB:INPUT LEVEL PIEZO"
+   ],
+   [
+    "PREAMP",
+    "BASS",
+    "MIDDLE",
+    "TREBLE",
+    "PRESENCE",
+    "AFB DEPTH",
+    "AFB FREQ"
+   ],
+   [
+    "BUTTON:EFFECTS BYPASS",
+    "BODY",
+    "MIC DIST",
+    "KNOB:2x2 CHORUS",
+    "KNOB:REVERB"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Nearly square box with a flat top panel and no built-in footswitch (optional FS-5U via REMOTE jack). Top panel: two XLR balanced outputs at the rear with the BOSS/AD-5 logo; then PEAK/POWER LEDs and INPUT LEVEL (MAGNETIC, PIEZO + NOR/INV phase switch); a row of 7 separate knobs PREAMP LEVEL, BASS, MIDDLE, TREBLE, PRESENCE, ANTI-FEEDBACK DEPTH, FREQ; front row EFFECTS BYPASS push button with LED, ACOUSTIC BODY, MIC DISTANCE, 2x2 CHORUS, REVERB. All knobs are single (NOT concentric) - our outer/inner pairs map to adjacent separate knobs.",
+  "sources": [
+   "https://www.boss.info/global/products/ad-5/specifications/",
+   "https://www.boss.info/global/products/ad-5/",
+   "https://static.roland.com/assets/media/pdf/AD-5_OM.pdf",
+   "https://www.manualslib.com/manual/314781/Boss-Ad-5.html",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "ad8",
+  "code": "AD-8",
+  "name": "Acoustic Guitar Processor",
+  "series": "floor",
+  "dims_mm": [
+   250,
+   180,
+   60
+  ],
+  "body_colour_hex": "#5A3A22",
+  "text_colour_hex": "#F0E6D2",
+  "layout": [
+   [
+    "BODY TYPE",
+    "BODY",
+    "ENHANCE",
+    "BASS",
+    "MIDDLE/MID FREQ",
+    "TREBLE/PRESENCE",
+    "KNOB:REVERB",
+    "LEVEL"
+   ],
+   [
+    "DISPLAY",
+    "BUTTON:WRITE",
+    "BUTTON:SELECT",
+    "LED",
+    "BUTTON:PITCH",
+    "BUTTON:BYPASS/MUTE"
+   ],
+   [
+    "FOOTSWITCH:MEMORY DOWN",
+    "FOOTSWITCH:MEMORY UP",
+    "FOOTSWITCH:ON/OFF"
+   ]
+  ],
+  "footswitches": {
+   "count": 3,
+   "labels": [
+    "MEMORY ▼",
+    "MEMORY ▲",
+    "ON/OFF"
+   ]
+  },
+  "display": true,
+  "notes": "Brown metal floor unit with a row of knobs (BODY TYPE, BODY, STRING ENHANCE, 4-band EQ with MIDDLE GAIN/FREQ, REVERB, OUTPUT LEVEL), a tuner meter/7-segment display, and three footswitches (MEMORY down/up, ON/OFF).",
+  "uncertain": true,
+  "uncertain_reason": "Real MIDDLE GAIN/FREQ and TREBLE/PRESENCE are probably separate knobs, not concentric; knob order approximate.",
+  "sources": [
+   "https://www.boss.info/global/products/ad-8/specifications/",
+   "https://static.roland.com/assets/media/pdf/AD-8_OM.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20ad-8 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "ad10",
+  "code": "AD-10",
+  "name": "Acoustic Preamp",
+  "series": "floor",
+  "dims_mm": [
+   217,
+   161,
+   65
+  ],
+  "body_colour_hex": "#4B3020",
+  "text_colour_hex": "#F0E6D2",
+  "layout": [
+   [
+    "BASS",
+    "MIDDLE/MID FREQ",
+    "TREBLE",
+    "PRESENCE",
+    "LEVEL",
+    "KNOB:OUTPUT LEVEL"
+   ],
+   [
+    "NOTCH",
+    "KNOB:COMP",
+    "RESONANCE",
+    "KNOB:DELAY TIME",
+    "KNOB:DELAY E.LEVEL",
+    "KNOB:AMBIENCE",
+    "DISPLAY"
+   ],
+   [
+    "FOOTSWITCH:BOOST",
+    "FOOTSWITCH:DELAY",
+    "FOOTSWITCH:TUNER & MUTE"
+   ]
+  ],
+  "footswitches": {
+   "count": 3,
+   "labels": [
+    "BOOST",
+    "DELAY",
+    "TUNER & MUTE"
+   ]
+  },
+  "display": true,
+  "notes": "Brown floor unit with soft-touch footswitches set at an angle/offset to avoid kicking knobs; EQ row (BASS, MID with FREQ button, TREBLE, PRESENCE, EQ LEVEL) at the back, effects row (anti-feedback REDUCTION + NOTCH buttons, COMP, ACOUSTIC RESONANCE, DELAY/CHORUS, AMBIENCE) below, 2-digit LED display.",
+  "uncertain": true,
+  "uncertain_reason": "Row assignment from review/manual text; our MID FREQ is a FREQ push-button on the real unit and NOTCH maps to the REDUCTION knob.",
+  "sources": [
+   "https://www.boss.info/global/products/ad-10/specifications/",
+   "https://static.roland.com/assets/media/pdf/AD-10_eng04_W.pdf",
+   "https://acousticguitar.com/gear-review-boss-ad-10-acoustic-preamp/",
+   "https://api.reverb.com/api/listings?query=boss%20ad-10 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "fbm1",
+  "code": "FBM-1",
+  "name": "'59 Bassman",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#C9B07E",
+  "text_colour_hex": "#3A2718",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "MIDDLE/PRESENCE",
+    "BASS",
+    "TREBLE",
+    "GAIN/LEVEL"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "notes": "Legend Series, printed 'Fender '59 Bassman' / FBM-1. Speckled tweed-look finish with brown/silver faceplate. Four knob positions: dual concentric MIDDLE (outer ring)/PRESENCE (inner), single BASS and TREBLE with CHECK LED between them above, dual concentric GAIN (outer)/LEVEL (inner). Inner/outer inferred from BOSS label convention (upper label = inner knob). Our INPUT toggle has no switch on the real pedal: it corresponds to the separate BRIGHT IN jack next to INPUT.",
+  "sources": [
+   "https://www.boss.info/global/products/fbm-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/FBM-1_OM.pdf",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "fdr1",
+  "code": "FDR-1",
+  "name": "'65 Deluxe Reverb",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#E8E8E8",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "GAIN/LEVEL",
+    "TREBLE",
+    "BASS",
+    "KNOB:REVERB/VIBRATO"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "notes": "Legend Series, black 'blackface' look. Four knob positions: dual concentric GAIN (outer)/LEVEL (inner), single TREBLE and BASS with CHECK LED between them above, dual concentric REVERB (outer)/VIBRATO (inner). REVERB and VIBRATO have no counterpart in our controls. Inner/outer inferred from BOSS label convention (upper label = inner knob).",
+  "sources": [
+   "https://www.boss.info/global/products/fdr-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/FDR-1_OM.pdf",
+   "https://equipboard.com/items/boss-fdr-1-fender-65-deluxe-reverb",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "ir2",
+  "code": "IR-2",
+  "name": "Amp & Cabinet",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#3D4757",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "BASS/KNOB:AMBIENCE",
+    "MIDDLE/LEVEL",
+    "TREBLE/GAIN",
+    "TYPE"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "notes": "Dark slate grey-blue enclosure with a black control-panel area and white print. Three dual concentric knobs (outer ring/inner knob): BASS/AMBIENCE, MIDDLE/LEVEL, TREBLE/GAIN, then an 11-position amp TYPE rotary selector at the right; CHECK LED top centre (red/green = channel). Our pairs differ: ours GAIN(outer)/TREBLE(inner) is real TREBLE outer/GAIN inner; ours LEVEL(outer)/MIDDLE(inner) is real MIDDLE outer/LEVEL inner; our BASS is the outer ring of the AMBIENCE knob.",
+  "sources": [
+   "https://www.boss.info/global/products/ir-2/specifications/",
+   "https://static.roland.com/assets/media/pdf/IR-2_eng01_W.pdf",
+   "https://www.soundonsound.com/reviews/boss-ir-2",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "ir200",
+  "code": "IR-200",
+  "name": "Amp & IR Cabinet",
+  "series": "series200",
+  "dims_mm": [
+   101,
+   138,
+   63
+  ],
+  "body_colour_hex": "#B8BBBF",
+  "text_colour_hex": "#1E1E1E",
+  "layout": [
+   [
+    "DISPLAY",
+    "KNOB:MEMORY"
+   ],
+   [
+    "AMP",
+    "CABINET",
+    "KNOB:AMBIENCE",
+    "BUTTON:MENU",
+    "BUTTON:EXIT"
+   ],
+   [
+    "GAIN",
+    "LEVEL",
+    "BASS",
+    "MIDDLE",
+    "TREBLE"
+   ],
+   [
+    "FOOTSWITCH:DOWN",
+    "FOOTSWITCH:UP"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "DOWN",
+    "UP"
+   ]
+  },
+  "display": true,
+  "notes": "200-series chassis with 132x32 graphic LCD and MEMORY push-knob on top, AMP/CABINET/AMBIENCE selector knobs in row 2, GAIN LEVEL BASS MIDDLE TREBLE in row 3. Silver body.",
+  "sources": [
+   "https://www.boss.info/global/products/ir-200/specifications/",
+   "https://static.roland.com/assets/media/pdf/IR-200_eng02_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20ir-200 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "cs1",
+  "code": "CS-1",
+  "name": "Compression Sustainer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#2F74BD",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "LEVEL",
+    "MODE",
+    "SUSTAIN"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "notes": "1978-1982, first BOSS compact compressor. Two knobs LEVEL and SUSTAIN plus a small NORMAL/TREBLE mode switch (our MODE toggle). Exact position of the mode switch on the top panel not verified.",
+  "uncertain": true,
+  "uncertain_reason": "Position of the NORMAL/TREBLE switch not verified; exact blue shade estimated.",
+  "sources": [
+   "https://equipboard.com/items/boss-cs-1-compression-sustainer-pedal",
+   "https://en.audiofanzine.com/guitar-compressor-sustainer/boss/cs-1/",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "cs2",
+  "code": "CS-2",
+  "name": "Compression Sustainer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#4C9ED8",
+  "text_colour_hex": "#111111",
+  "sources": [
+   "https://www.boss.info/global/products/cs-2/",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "cs3",
+  "code": "CS-3",
+  "name": "Compression Sustainer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#63B8E6",
+  "text_colour_hex": "#111111",
+  "sources": [
+   "https://www.boss.info/global/products/cs-3/specifications/",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "bc1x",
+  "code": "BC-1X",
+  "name": "Bass Comp",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#2E6F5C",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "LEVEL",
+    "RELEASE",
+    "RATIO",
+    "THRESHOLD"
+   ],
+   [
+    "DISPLAY"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "notes": "X-series: green metal-flake finish. Real left-to-right knob order is LEVEL, RELEASE, RATIO, THRESHOLD (RATIO/RELEASE swapped vs our order). DISPLAY = 12-segment GAIN REDUCTION LED bar meter below the knobs.",
+  "sources": [
+   "https://www.boss.info/global/products/bc-1x/specifications/",
+   "https://static.roland.com/assets/media/pdf/BC-1X_M_eng02_W.pdf",
+   "https://www.premierguitar.com/boss-bc-1x-bass-compressor-review",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "cp1x",
+  "code": "CP-1X",
+  "name": "Compressor",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#3C78C4",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "LEVEL",
+    "ATTACK",
+    "RATIO",
+    "COMP"
+   ],
+   [
+    "DISPLAY"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "notes": "X-series: sparkly metallic blue finish. DISPLAY = 16-segment GAIN REDUCTION LED bar meter below the knobs.",
+  "sources": [
+   "https://www.boss.info/global/products/cp-1x/specifications/",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "lm2",
+  "code": "LM-2",
+  "name": "Limiter",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#4E7DB8",
+  "text_colour_hex": "#111111",
+  "notes": "1987-1992. Knobs left to right LEVEL, TONE, RELEASE, THRESHOLD (matches ours).",
+  "uncertain": true,
+  "uncertain_reason": "Colour only from Reverb/Equipboard 'blue' finish tags; shade estimated.",
+  "sources": [
+   "https://modulargrid.net/p/boss-lm-2-limiter",
+   "https://equipboard.com/items/boss-lm-2-limiter",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "lm2b",
+  "code": "LM-2B",
+  "name": "Bass Limiter",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#5E4230",
+  "text_colour_hex": "#F0F0F0",
+  "notes": "1990-1995. Knobs left to right ENHANCE, LEVEL, THRESHOLD (matches ours); CHECK LED above LEVEL.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/LM-2B_OM.pdf",
+   "https://equipboard.com/items/boss-lm-2b-bass-limiter",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "lmb3",
+  "code": "LMB-3",
+  "name": "Bass Limiter Enhancer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#3F7FB8",
+  "text_colour_hex": "#111111",
+  "notes": "Real knob label THSHD = our THRESHOLD; order LEVEL, ENHANCE, RATIO, THSHD.",
+  "sources": [
+   "https://www.boss.info/global/products/lmb-3/specifications/",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "nf1",
+  "code": "NF-1",
+  "name": "Noise Gate",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#8C8E90",
+  "text_colour_hex": "#111111",
+  "notes": "1979-1988. Two knobs SENS and DECAY.",
+  "sources": [
+   "https://equipboard.com/items/boss-nf-1-noise-gate-pedal",
+   "https://modulargrid.net/p/boss-nf-1-noise-gate",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "ns2",
+  "code": "NS-2",
+  "name": "Noise Suppressor",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#F1F0EB",
+  "text_colour_hex": "#111111",
+  "notes": "Knobs THRESHOLD, DECAY, MODE (rotary selector). Has two small LEDs: CHECK/MUTE and REDUCTION.",
+  "sources": [
+   "https://www.boss.info/global/products/ns-2/specifications/",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "ns1x",
+  "code": "NS-1X",
+  "name": "Noise Suppressor",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#DCDDDD",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "KNOB:DAMP",
+    "THRESHOLD",
+    "DECAY",
+    "MODE"
+   ],
+   [
+    "DISPLAY"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "notes": "X-series style, white/silver metallic finish. Four knobs DAMP, THRESHOLD, DECAY, MODE (GATE/REDUCTION/MUTE); DAMP has no counterpart in ours. DISPLAY = REDUCTION LED meter below the knobs. SEND/RETURN jacks on the sides.",
+  "sources": [
+   "https://www.boss.info/global/products/ns-1x/specifications/",
+   "https://static.roland.com/assets/media/pdf/NS-1X_eng01_W.pdf",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "sg1",
+  "code": "SG-1",
+  "name": "Slow Gear",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#1E1E1E",
+  "text_colour_hex": "#EDEDED",
+  "notes": "1979-1982, rare. Two knobs SENS and ATTACK.",
+  "uncertain": true,
+  "uncertain_reason": "Colour sources conflict: modulargrid and 2 Reverb listings say black (may refer to the black bottom label); some recollections say white/cream.",
+  "sources": [
+   "https://modulargrid.net/p/boss-sg-1-slow-gear",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "tu2",
+  "code": "TU-2",
+  "name": "Chromatic Tuner",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#F0EFEA",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "DISPLAY"
+   ],
+   [
+    "BUTTON:STREAM/CENT",
+    "DISPLAY",
+    "BUTTON:MODE"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "notes": "Top: CHECK LED and tuning-guide arrows, arched 11-LED meter with mode labels; below it STREAM/CENT button (left), 7-segment note display (centre), MODE button (right) with 'PITCH' printed between the buttons (reference pitch set with both). Our PITCH knob = the two buttons; our OUTPUT toggle has no real switch (BYPASS jack on left side).",
+  "sources": [
+   "https://www.boss.info/global/products/tu-2/specifications/",
+   "https://static.roland.com/assets/media/pdf/TU-2_OM.pdf",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "tu3",
+  "code": "TU-3",
+  "name": "Chromatic Tuner",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#F0EFEA",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "DISPLAY"
+   ],
+   [
+    "BUTTON:STREAM/CENT",
+    "DISPLAY",
+    "BUTTON:MODE"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "notes": "Same panel concept as TU-2 with a 21-segment arched LED meter and note-name display. Our PITCH = MODE + STREAM/CENT buttons; our OUTPUT toggle has no real switch (BYPASS jack).",
+  "sources": [
+   "https://www.boss.info/global/products/tu-3/specifications/",
+   "https://static.roland.com/assets/media/pdf/TU-3_OM.pdf",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "tu3s",
+  "code": "TU-3S",
+  "name": "Chromatic Tuner",
+  "series": "other",
+  "dims_mm": [
+   73,
+   84,
+   56
+  ],
+  "body_colour_hex": "#ECECE8",
+  "text_colour_hex": "#1C1C1C",
+  "layout": [
+   [
+    "LED",
+    "DISPLAY"
+   ],
+   [
+    "PITCH",
+    "OUTPUT"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": true,
+  "notes": "Short compact-width tuner with no pedal switch (only 84 mm deep): 21-segment LED meter + note display, CHECK LED, and two small buttons (STREAM/CENT, MODE). Our PITCH maps to the MODE button and OUTPUT to the STREAM/CENT button; no output switch exists.",
+  "sources": [
+   "https://www.boss.info/global/products/tu-3s/specifications/",
+   "https://static.roland.com/assets/media/pdf/TU-3S_M_eng02_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20tu-3s (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "tu3w",
+  "code": "TU-3W",
+  "name": "Chromatic Tuner",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#1B1B1C",
+  "text_colour_hex": "#F2F2F2",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "DISPLAY"
+   ],
+   [
+    "BUTTON:STREAM/CENT",
+    "DISPLAY",
+    "BUTTON:MODE"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "notes": "Waza Craft: black enclosure, WAZA CRAFT badge on the pedal. Same layout as TU-3. Our OUTPUT toggle = OUTPUT BUF/THRU slide switch on the rear panel next to DC IN/DC OUT; our PITCH = MODE + STREAM/CENT buttons.",
+  "sources": [
+   "https://www.boss.info/global/products/tu-3w/specifications/",
+   "https://static.roland.com/assets/media/pdf/TU-3W_eng02_W.pdf",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "tu1000",
+  "code": "TU-1000",
+  "name": "Stage Tuner",
+  "series": "floor",
+  "dims_mm": [
+   414,
+   160,
+   61
+  ],
+  "body_colour_hex": "#1A1A1A",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "DISPLAY",
+    "LED"
+   ],
+   [
+    "BUTTON:FLAT TUNING",
+    "BUTTON:MODE",
+    "OUTPUT",
+    "PITCH",
+    "BUTTON:DISPLAY"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "TUNER ON/OFF"
+   ]
+  },
+  "display": true,
+  "notes": "Wide black stage tuner with an oversized LED meter and note-name display across the (slanted) top; a central TUNER ON/OFF push switch flanked by small FLAT TUNING, MODE, PITCH and DISPLAY buttons; blue-lit BOSS logo on the rear. Our OUTPUT = TUNER ON/OFF, PITCH = PITCH button.",
+  "uncertain": true,
+  "uncertain_reason": "Whether TUNER ON/OFF is a foot-operable switch or a large button not confirmed; callout order from manual.",
+  "sources": [
+   "https://www.boss.info/global/products/tu-1000/specifications/",
+   "https://static.roland.com/assets/media/pdf/TU-1000_OM.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20tu-1000 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "psm5",
+  "code": "PSM-5",
+  "name": "Power Supply & Master Switch",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#B3262C",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "LOOP"
+   ]
+  ],
+  "notes": "No knobs: the top panel carries two 1/4\" jacks (AMP output left, GUITAR input right) with a DC 9V IN jack and CHECK LED between them; SEND/RETURN jacks on the sides, 9V OUT on the rear. Our LOOP toggle = the pedal switch (loop on/off).",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/PSM-5_OM.pdf",
+   "https://equipboard.com/items/boss-psm-5-power-supply-master-switch",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "ls2",
+  "code": "LS-2",
+  "name": "Line Selector",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#EFEEE9",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "LED",
+    "LED"
+   ],
+   [
+    "LEVEL A",
+    "LEVEL B",
+    "MODE"
+   ],
+   [
+    "PEDAL"
+   ]
+  ],
+  "notes": "No CHECK LED: two line indicators A and B above the LEVEL knobs. Real order left to right LEVEL A, LEVEL B, MODE (6-position rotary with printed mode list). Top panel carries 'SEND - A - RETURN' print; B send/return jacks on the sides. Our PEDAL = pedal switch.",
+  "sources": [
+   "https://www.boss.info/global/products/ls-2/specifications/",
+   "https://static.roland.com/assets/media/pdf/LS-2_OM.pdf",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "ab2",
+  "code": "AB-2",
+  "name": "2-Way Selector",
+  "series": "other",
+  "dims_mm": [
+   96,
+   90,
+   43
+  ],
+  "body_colour_hex": "#2B5FA8",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "LED",
+    "LED"
+   ],
+   [
+    "A/B"
+   ]
+  ],
+  "footswitches": {
+   "count": 1,
+   "labels": [
+    "A/B"
+   ]
+  },
+  "display": false,
+  "notes": "Small low box (not a compact) with one footswitch and red (A) / yellow (B) indicators; runs on two AAA batteries; jacks A, B and IN/OUT. Our MODE selector has no physical counterpart.",
+  "uncertain": true,
+  "uncertain_reason": "Manual is image-only; colour from Reverb finish data (blue); MODE control does not exist on the real unit.",
+  "sources": [
+   "https://www.boss.info/global/products/ab-2/specifications/",
+   "https://static.roland.com/assets/media/pdf/AB-2_OM.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20ab-2 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "es5",
+  "code": "ES-5",
+  "name": "Effects Switching System",
+  "series": "floor",
+  "dims_mm": [
+   337,
+   97,
+   68
+  ],
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "DISPLAY",
+    "ROUTING",
+    "LEVEL A",
+    "LEVEL B",
+    "BUTTON:EDIT",
+    "BUTTON:DISPLAY/EXIT",
+    "BUTTON:WRITE",
+    "BUTTON:ENTER",
+    "BUTTON:-/+",
+    "BUTTON:CURSOR"
+   ],
+   [
+    "PATCH",
+    "FOOTSWITCH:2",
+    "FOOTSWITCH:3",
+    "FOOTSWITCH:4",
+    "FOOTSWITCH:5",
+    "FOOTSWITCH:BANK",
+    "FOOTSWITCH:MUTE"
+   ]
+  ],
+  "footswitches": {
+   "count": 7,
+   "labels": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "BANK",
+    "MUTE"
+   ]
+  },
+  "display": true,
+  "notes": "Slim black floor switcher: narrow top strip with 16x2 LCD and edit buttons, single row of seven footswitches with blue/red indicators. The real unit has no knobs: our ROUTING / LEVEL A / LEVEL B are placeholders in the button strip, PATCH = switch 1.",
+  "uncertain": true,
+  "uncertain_reason": "Real unit has no ROUTING/LEVEL knobs; footswitch order assumed numbers first, then BANK, MUTE.",
+  "sources": [
+   "https://www.boss.info/global/products/es-5/specifications/",
+   "https://static.roland.com/assets/media/pdf/ES-5_e01_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20es-5 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "es8",
+  "code": "ES-8",
+  "name": "Effects Switching System",
+  "series": "floor",
+  "dims_mm": [
+   439,
+   137,
+   65
+  ],
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "DISPLAY",
+    "ROUTING",
+    "LEVEL A",
+    "LEVEL B",
+    "BUTTON:EDIT",
+    "BUTTON:DISPLAY/EXIT",
+    "BUTTON:WRITE",
+    "BUTTON:ENTER",
+    "BUTTON:-/+",
+    "BUTTON:CURSOR"
+   ],
+   [
+    "FOOTSWITCH:MEMORY/MANUAL",
+    "FOOTSWITCH:5",
+    "FOOTSWITCH:6",
+    "FOOTSWITCH:7",
+    "FOOTSWITCH:8",
+    "FOOTSWITCH:BANK UP"
+   ],
+   [
+    "FOOTSWITCH:MUTE",
+    "PATCH",
+    "FOOTSWITCH:2",
+    "FOOTSWITCH:3",
+    "FOOTSWITCH:4",
+    "FOOTSWITCH:BANK DOWN"
+   ]
+  ],
+  "footswitches": {
+   "count": 12,
+   "labels": [
+    "MEMORY/MANUAL",
+    "MUTE",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "BANK DOWN",
+    "BANK UP"
+   ]
+  },
+  "display": true,
+  "notes": "Black metal floor switcher: rear strip with 3-digit LED (bank/number) + 16x2 LCD and edit buttons, then two rows of six footswitches with indicators. No knobs on the real unit: ROUTING / LEVEL A / LEVEL B are placeholders; PATCH = switch 1.",
+  "uncertain": true,
+  "uncertain_reason": "Two-row grid arrangement (numbers 1-4 front, 5-8 back, mode switches at the ends) from memory.",
+  "sources": [
+   "https://www.boss.info/global/products/es-8/specifications/",
+   "https://static.roland.com/assets/media/pdf/ES-8_e02_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20es-8 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "pv1",
+  "code": "PV-1",
+  "name": "Rocker Volume",
+  "series": "rocker",
+  "dims_mm": [
+   110,
+   250,
+   70
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#B9BBBD",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Late-1970s Rocker series pedal: unpainted/silver cast-metal rocker body with a black rubber pad on the treadle; runs on 9 V. Our VOLUME has no knob on the real unit and maps to the treadle.",
+  "sources": [
+   "https://reverb.com/p/boss-pv-1-rocker-volume",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "No official specs found; dimensions and any secondary control (e.g. minimum-volume trim) unverified."
+ },
+ {
+  "id": "fv50h",
+  "code": "FV-50H",
+  "name": "Volume Pedal",
+  "series": "treadle_volume",
+  "dims_mm": [
+   86,
+   200,
+   54
+  ],
+  "body_colour_hex": "#161616",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "MIN VOL",
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Light, compact black plastic treadle with vertical ridges; stereo high-impedance (INPUT 1/2, OUTPUT 1/2 on the far/toe-end face). TUNER OUT jack and the MINIMUM VOLUME knob are on the left side panel (knob toward the heel). Blue 'H' badge on the FV-50 logo plate. Our VOLUME = treadle.",
+  "sources": [
+   "https://www.boss.info/global/products/fv-50h_50l/specifications/",
+   "https://static.roland.com/assets/media/pdf/FV-50H_OM.pdf",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "fv50l",
+  "code": "FV-50L",
+  "name": "Volume Pedal",
+  "series": "treadle_volume",
+  "dims_mm": [
+   86,
+   200,
+   54
+  ],
+  "body_colour_hex": "#161616",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "MIN VOL",
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Same chassis as FV-50H (black plastic ridged treadle) in low-impedance stereo version for keyboards/effects: INPUT 1/2, OUTPUT 1/2 at the toe end, TUNER OUT and MINIMUM VOLUME knob on left side panel. Our VOLUME = treadle.",
+  "sources": [
+   "https://www.boss.info/global/products/fv-50h_50l/specifications/",
+   "https://static.roland.com/assets/media/pdf/FV-50L_OM.pdf",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Badge colour of the 'L' version not verified."
+ },
+ {
+  "id": "fv300h",
+  "code": "FV-300H",
+  "name": "Guitar/Bass Foot Volume",
+  "series": "treadle_volume",
+  "dims_mm": [
+   111,
+   291,
+   69
+  ],
+  "body_colour_hex": "#2A2A2C",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "MIN VOL"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "1991 full-size metal volume pedal, black anodised (looks very dark grey) casing and treadle with ribbed rubber pad; INPUT 1/2, OUTPUT 1/2, TUNER OUT jacks and the MINIMUM VOLUME knob grouped on the fixed panel at the toe (far) end. Our VOLUME = treadle.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/FV-300H_OM.pdf",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "fv300l",
+  "code": "FV-300L",
+  "name": "Foot Volume/Expression",
+  "series": "treadle_volume",
+  "dims_mm": [
+   111,
+   291,
+   69
+  ],
+  "body_colour_hex": "#2A2A2C",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "MIN VOL"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Low-impedance stereo version of FV-300H (usable as expression pedal with PCS-33 cable): same black anodised metal chassis, jacks (INPUT 1/2, OUTPUT/EXP 1/2, TUNER OUT) and MINIMUM VOLUME knob at the toe end. Our VOLUME = treadle.",
+  "sources": [
+   "https://static.roland.com/assets/media/pdf/FV-300L_OM.pdf",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "fv500h",
+  "code": "FV-500H",
+  "name": "Foot Volume",
+  "series": "treadle_volume",
+  "dims_mm": [
+   110,
+   289,
+   72
+  ],
+  "body_colour_hex": "#9A9C9F",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "MIN VOL",
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Heavy die-cast aluminium body (silver-grey metal) with black non-slip rubber pad on the treadle; max height 120 mm. INPUT, OUTPUT and EXP jacks at the toe (far) end, TUNER OUT and MINIMUM VOLUME knob on the left side panel (knob toward the heel); PEDAL FEEL torque screw underneath. Our VOLUME = treadle.",
+  "sources": [
+   "https://www.boss.info/global/products/fv-500h_500l/specifications/",
+   "https://static.roland.com/assets/media/pdf/FV-500H_OM.pdf",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Body shade from Reverb finish ('metal'/'silver'/'grey-black'); jack side placement read from manual connection drawing."
+ },
+ {
+  "id": "fv500l",
+  "code": "FV-500L",
+  "name": "Foot Volume",
+  "series": "treadle_volume",
+  "dims_mm": [
+   110,
+   289,
+   72
+  ],
+  "body_colour_hex": "#9A9C9F",
+  "text_colour_hex": "#111111",
+  "layout": [
+   [
+    "MIN VOL",
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Stereo low-impedance twin of the FV-500H (INPUT 1/2, OUTPUT 1/2, EXP, TUNER OUT): same die-cast silver-grey aluminium body, black rubber treadle pad, MINIMUM VOLUME knob on the side panel. Our VOLUME = treadle.",
+  "sources": [
+   "https://www.boss.info/global/products/fv-500h_500l/specifications/",
+   "https://static.roland.com/assets/media/pdf/FV-500L_OM.pdf",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Body shade from Reverb finish ('metal'/'silver'/'grey')."
+ },
+ {
+  "id": "fv30h",
+  "code": "FV-30H",
+  "name": "Foot Volume",
+  "series": "treadle_volume",
+  "dims_mm": [
+   80,
+   192,
+   58
+  ],
+  "body_colour_hex": "#6A6C70",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Compact die-cast aluminium volume pedal (same chassis as EV-30), grey with black rubber pad; max height 92 mm. INPUT, OUTPUT and TUNER OUT jacks on the rear (toe-end) face. The real unit has no minimum-volume knob: our MIN VOL has no physical counterpart and our VOLUME = treadle.",
+  "sources": [
+   "https://www.boss.info/global/products/fv-30h_30l/specifications/",
+   "https://static.roland.com/assets/media/pdf/FV-30H_eng04_W.pdf",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "fv30l",
+  "code": "FV-30L",
+  "name": "Foot Volume",
+  "series": "treadle_volume",
+  "dims_mm": [
+   80,
+   192,
+   58
+  ],
+  "body_colour_hex": "#6A6C70",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Low-impedance stereo version of FV-30H: grey die-cast body, INPUT 1/2 and OUTPUT 1/2 on the rear (toe-end) face, no tuner out and no minimum-volume knob (our MIN VOL has no physical counterpart; VOLUME = treadle).",
+  "sources": [
+   "https://www.boss.info/global/products/fv-30h_30l/specifications/",
+   "https://static.roland.com/assets/media/pdf/FV-30L_eng04_W.pdf",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "fv60",
+  "code": "FV-60",
+  "name": "Volume Pedal",
+  "series": "treadle_volume",
+  "dims_mm": [
+   86,
+   200,
+   54
+  ],
+  "body_colour_hex": "#161616",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "KNOB:MIN VOLUME",
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Exists (c.1985-1988, often listed as 'Stereo Volume'): light compact stereo volume pedal on the FV-50-size chassis, black; INPUT 1/2, OUTPUT 1/2, TUNER OUT; minimum-volume knob on the left side. Our VOLUME = treadle.",
+  "sources": [
+   "https://www.manualslib.com/manual/3985948/Boss-Fv-60.html",
+   "https://www.chicagomusicexchange.com/products/boss-fv-60-stereo-volume-1401856",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "fv100",
+  "code": "FV-100",
+  "name": "Guitar Volume",
+  "series": "treadle_volume",
+  "dims_mm": [
+   110,
+   290,
+   75
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "KNOB:MIN VOLUME"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Exists (c.1981-1992, Made in Japan): passive, large heavy metal-chassis volume pedal, black, with tuner output and a minimum-volume knob on the top of the fixed toe-end section. Our VOLUME = treadle.",
+  "sources": [
+   "https://reverb.com/p/boss-fv-100-volume-pedal",
+   "https://equipboard.com/items/boss-fv-100-volume-pedal",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "No official specs/manual found; dimensions estimated from the similar full-size FV-300."
+ },
+ {
+  "id": "fv200",
+  "code": "FV-200",
+  "name": "Keyboard Volume",
+  "series": "treadle_volume",
+  "dims_mm": [
+   110,
+   290,
+   75
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "KNOB:MIN VOLUME"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Exists (c.1981-1992, Made in Japan): stereo keyboard sibling of the FV-100 with the same heavy black metal chassis, dual inputs/outputs and a minimum-volume knob. Our VOLUME = treadle.",
+  "sources": [
+   "https://www.ebay.com/p/19024708484",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "No official specs/manual found; dimensions estimated from the similar full-size FV-300."
+ },
+ {
+  "id": "ev30",
+  "code": "EV-30",
+  "name": "Dual Expression Pedal",
+  "series": "treadle_volume",
+  "dims_mm": [
+   80,
+   192,
+   58
+  ],
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "KNOB:MIN EXP 2",
+    "SWITCH:POLARITY",
+    "MIN EXP 1"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Compact black die-cast aluminium pedal with rubber pad (max height 92 mm). All controls on the rear (toe-end) face, left to right: EXP 2 OUT jack, EXP 2 MIN knob, POLARITY switch (EXP 2), EXP 1 MIN knob, EXP 1 OUT jack. Our EXP 1 = treadle, MIN EXP 1 = the EXP 1 MIN knob.",
+  "sources": [
+   "https://www.boss.info/global/products/ev-30/specifications/",
+   "https://static.roland.com/assets/media/pdf/EV-30_eng05_W.pdf",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "ev1wl",
+  "code": "EV-1-WL",
+  "name": "Wireless MIDI Expression Pedal",
+  "series": "treadle_volume",
+  "dims_mm": [
+   87,
+   200,
+   62
+  ],
+  "body_colour_hex": "#1C1C1C",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "BUTTON:Bluetooth",
+    "BUTTON:POWER"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "footswitches": {
+   "count": 0,
+   "labels": []
+  },
+  "display": false,
+  "notes": "Black battery-powered expression pedal (max height 92 mm) with a toe switch (EXP SW) and EXP SW indicators on both sides; rear panel carries Bluetooth button/indicator, POWER switch and indicator, DC IN, MIDI OUT (mini TRS) and USB-B; CTL 1,2 jack on the side; torque screw on the right side. Our EXP = treadle.",
+  "sources": [
+   "https://www.boss.info/global/products/ev-1-wl/specifications/",
+   "https://static.roland.com/assets/media/pdf/EV-1-WL_eng03_W.pdf",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "oc2",
+  "code": "OC-2",
+  "name": "Octave",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "dims_estimated": true,
+  "body_colour_hex": "#56382A",
+  "text_colour_hex": "#F0F0F0",
+  "notes": "Knobs OCT 1, OCT 2, DIRECT LEVEL. Brown finish per Reverb finish data.",
+  "uncertain": true,
+  "uncertain_reason": "Left-to-right knob order and text colour not verified.",
+  "sources": [
+   "https://www.boss.info/global/products/oc-2/specifications/",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "oc3",
+  "code": "OC-3",
+  "name": "Super Octave",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#4F3428",
+  "text_colour_hex": "#F0F0F0",
+  "notes": "Knobs left to right DIRECT LEVEL, OCT1 LEVEL, CONTROL, MODE (rotary: POLY/DRIVE/OCT 2). Brown finish per Reverb finish data.",
+  "sources": [
+   "https://www.boss.info/global/products/oc-3/specifications/",
+   "https://static.roland.com/assets/media/pdf/OC-3_e01_W.pdf",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "oc5",
+  "code": "OC-5",
+  "name": "Octave",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#5A3A2A",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "DIRECT",
+    "+1 OCT",
+    "-1 OCT",
+    "-2 OCT"
+   ],
+   [
+    "MODE"
+   ],
+   [
+    "TREADLE"
+   ]
+  ],
+  "notes": "Four knobs DIRECT LEVEL, +1OCT LEVEL, -1OCT LEVEL, -2OCT/RANGE; CHECK LED between knobs 2 and 3. Our MODE = VINTAGE/POLY mini slide switch below the middle knobs. A GUITAR/BASS mini switch sits at the rear-right corner. 'Root beer' brown finish.",
+  "sources": [
+   "https://www.boss.info/global/products/oc-5/specifications/",
+   "https://static.roland.com/assets/media/pdf/OC-5_eng01_W.pdf",
+   "https://api.reverb.com/api/listings (listing 'finish' field, via reverb_finish.py)"
+  ]
+ },
+ {
+  "id": "ps2",
+  "code": "PS-2",
+  "name": "Digital Pitch Shifter/Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#3F6DB4",
+  "text_colour_hex": "#101010",
+  "notes": "Standard 4-knob compact (1990). Real panel left to right: BALANCE, F.BACK, FINE/MANUAL, MODE (6-position rotary: 1-3 delay 125ms/500ms/2s, 4 manual pitch, 5 +1 oct, 6 -1 oct); our MANUAL = the FINE/MANUAL knob. Extra TUNER OUT jack on the right side below INPUT.",
+  "sources": [
+   "https://cdn.roland.com/assets/media/pdf/PS-2_OM.pdf",
+   "https://www.pedal-of-the-day.com/2023/05/18/boss-ps-2-digital-pitch-shifter-delay-2/",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour documented only as 'blue' (Reverb finish, 10 listings); exact shade estimated."
+ },
+ {
+  "id": "ps3",
+  "code": "PS-3",
+  "name": "Digital Pitch Shifter/Delay",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#6C7FC4",
+  "text_colour_hex": "#101010",
+  "notes": "Standard 4-knob layout (1994). Real panel: BALANCE (DIR/EFX) at left, two unlabelled 'control knobs' with a multi-row legend (PITCH A / PITCH B for dual pitch-shift modes, F.BACK / PITCH for single pitch shift, F.BACK / D.TIME for delay), MODE rotary 1-11 at right. Our PITCH A/PITCH B map to the two centre knobs in order. EXP jack on right side.",
+  "sources": [
+   "https://cdn.roland.com/assets/media/pdf/PS-3_OM.pdf",
+   "https://www.manualslib.com/manual/4354823/Boss-Ps-3.html",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour only documented as 'blue' (single Reverb finish); lilac-blue shade is an estimate."
+ },
+ {
+  "id": "ps5",
+  "code": "PS-5",
+  "name": "Super Shifter",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#3AA0AE",
+  "text_colour_hex": "#101010",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "BALANCE/D.TIME",
+    "H.R KEY",
+    "PITCH",
+    "MODE"
+   ]
+  ],
+  "notes": "Left knob is concentric: outer BALANCE, inner D.TIME/SPEED. H.R KEY and PITCH are rotary switches, MODE (PITCH SHIFTER, HARMONIST, DETUNE, T.ARM, FLUTTER) at right. Aqua/metallic blue-green body. OUTPUT A(MONO)/B on left side, INPUT and EXP on right side.",
+  "sources": [
+   "https://medias.audiofanzine.com/files/ps-5-manual-476259.pdf",
+   "https://www.zzounds.com/productreview--BOSPS5",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "ps6",
+  "code": "PS-6",
+  "name": "Harmonist",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#3569B0",
+  "text_colour_hex": "#101010",
+  "notes": "Standard 4-knob layout. Real labels left to right: BALANCE (RISE TIME), SHIFT, KEY (FALL TIME), MODE (HARMONY maj/min, PITCH SHIFTER, DETUNE, S-BEND). Metallic blue body. Stereo OUTPUT A/B left side, INPUT and EXP right side.",
+  "sources": [
+   "https://www.boss.info/global/products/ps-6/specifications/",
+   "https://static.roland.com/assets/media/pdf/PS-6_OM.pdf",
+   "https://www.amazon.com/BOSS-PS-6-Boss-Harmonist-Pedal/dp/B0045I3JLK",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "hr2",
+  "code": "HR-2",
+  "name": "Harmonist",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#34569C",
+  "text_colour_hex": "#101010",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "E.LEVEL A/E.LEVEL B",
+    "VOICE A",
+    "VOICE B",
+    "KEY"
+   ]
+  ],
+  "notes": "Left knob concentric E.LEVEL A (outer) / B (inner); VOICE A, VOICE B and KEY are rotary switches (intervals -OCT..+OCT with DT; 12 keys). Extra DETECTOR IN jack on right side below INPUT; OUTPUT A(MONO)/B on left side. Blue body (1994-1999).",
+  "sources": [
+   "https://cdn.roland.com/assets/media/pdf/HR-2_OM.pdf",
+   "https://equipboard.com/items/boss-hr-2-harmonist-guitar-effect-pedal",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Exact blue shade not documented (Reverb finish 'blue')."
+ },
+ {
+  "id": "mo2",
+  "code": "MO-2",
+  "name": "Multi Overtone",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#8EC2E6",
+  "text_colour_hex": "#101010",
+  "notes": "Standard 4-knob layout: BALANCE, TONE, DETUNE, MODE (1-3). Sparkle/metallic sky-blue finish. Stereo OUTPUT A(MONO)/B on left side.",
+  "sources": [
+   "https://www.boss.info/global/products/mo-2/specifications/",
+   "https://static.roland.com/assets/media/pdf/MO-2_M_eng02_W.pdf",
+   "https://www.premierguitar.com/gear/boss-mo-2-multi-overtone-pedal-review",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "xs1",
+  "code": "XS-1",
+  "name": "Poly Shifter",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#1F9CDE",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "BALANCE",
+    "SHIFT"
+   ],
+   [
+    "SWITCH:PEDAL MODE",
+    "SWITCH:SHIFT DIRECTION"
+   ]
+  ],
+  "notes": "Two knobs on a black panel inlay: BALANCE left, SHIFT right (legend SEMITONE 1-7 / OCT 1-3). Below each knob a small slide switch: PEDAL MODE (TOGGLE/MOMENT) under BALANCE, SHIFT DIRECTION (down/DETUNE/up) under SHIFT. Bright sky-blue body, white/black printing; CTL/EXP jack on right side below INPUT. Released 2025.",
+  "sources": [
+   "https://www.boss.info/global/products/xs-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/XS-1_eng01_W.pdf",
+   "https://www.guitarcenter.com/BOSS/XS-1-Poly-Shifter-Pitch-and-Octave-Effects-Pedal-Blue-1500000466191.gc",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "xs100",
+  "code": "XS-100",
+  "name": "Poly Shifter",
+  "series": "treadle_wah",
+  "dims_mm": [
+   147,
+   230,
+   72
+  ],
+  "body_colour_hex": "#1F9CDE",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "TREADLE",
+    "DISPLAY"
+   ],
+   [
+    "BUTTON:EFFECT",
+    "BUTTON:MEMORY"
+   ],
+   [
+    "BALANCE"
+   ],
+   [
+    "FOOTSWITCH:EFFECT"
+   ],
+   [
+    "TUNE DOWN"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "EFFECT",
+    "TUNE DOWN"
+   ]
+  },
+  "display": true,
+  "notes": "Blue metal floor unit (max height 96 mm): black rubber EXP1 treadle with toe switch occupies the full-length left part; right-hand column from back to front holds the 64x32 LCD, EFFECT and MEMORY buttons, SELECT push knob, then EFFECT and TUNE DOWN footswitches in line (EFFECT raised higher). Our PEDAL = treadle, BALANCE = SELECT knob (menu parameter), TUNE DOWN = footswitch. All jacks (INPUT, THRU, OUTPUT, CTL1,2/EXP2, MIDI, USB-C, DC IN) on the rear panel. Released 2025.",
+  "sources": [
+   "https://www.boss.info/global/products/xs-100/specifications/",
+   "https://static.roland.com/assets/media/pdf/XS-100_eng01_W.pdf",
+   "https://www.guitarcenter.com/BOSS/XS-100-Poly-Shifter-Pitch-Octave-Effects-Pedal-Blue-1500000466193.gc",
+   "https://guitar.com/reviews/effects-pedal/the-big-review-boss-xs-100-poly-shifter/",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ },
+ {
+  "id": "syb3",
+  "code": "SYB-3",
+  "name": "Bass Synthesizer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#B8BAC0",
+  "text_colour_hex": "#101010",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "EFFECT/DIRECT",
+    "FREQ/RES",
+    "SENS",
+    "MODE"
+   ]
+  ],
+  "notes": "Real panel: EFFECT/DIRECT concentric, FREQ/RES concentric, then a single (non-concentric) SENS/DECAY knob (DECAY in modes 1-7, SENS in modes 8-11), MODE rotary 1-11. Our SENS and DECAY both map to that one knob. OUTPUT A(MONO)/B jacks on left side.",
+  "sources": [
+   "https://cdn.roland.com/assets/media/pdf/SYB-3_OM.pdf",
+   "https://www.vintageandrare.com/product/Boss-SYB-3-Bass-Synthesizer-Pink-Or-Dark-Gray-Label-Silver-114558",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour documented only as 'silver'; exact tint estimated."
+ },
+ {
+  "id": "syb5",
+  "code": "SYB-5",
+  "name": "Bass Synthesizer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#BCBEC4",
+  "text_colour_hex": "#101010",
+  "layout": [
+   [
+    "LED"
+   ],
+   [
+    "EFFECT/DIRECT",
+    "FREQ/RES",
+    "DECAY",
+    "MODE"
+   ]
+  ],
+  "notes": "Real order differs from ours: EFFECT/DIRECT concentric (left), FREQ/RES concentric, single DECAY/RATE knob (RATE in modes 3 and 6), MODE 1-11 (right). Our RATE maps to the DECAY/RATE knob. OUTPUT A(MONO)/B left side, EXP right side.",
+  "sources": [
+   "https://www.boss.info/global/products/syb-5/specifications/",
+   "https://www.zikinf.com/manuels/boss-bass-synthesizer-syb-5-manuel-utilisateur-en-44030.pdf",
+   "https://reverb.com/it/item/85304401-boss-syb-5-bass-synthesizer-2004-present-silver",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour documented only as 'silver'; exact tint estimated."
+ },
+ {
+  "id": "vo1",
+  "code": "VO-1",
+  "name": "Vocoder",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#B8263C",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "MIC SENS"
+   ],
+   [
+    "LED"
+   ],
+   [
+    "LEVEL/BLEND",
+    "TONE",
+    "MODE/COLOR"
+   ]
+  ],
+  "notes": "Three knob positions: LEVEL (outer)/BLEND (inner) concentric at left, TONE centre, MODE (outer, VINTAGE/ADVANCED/TALK BOX/CHOIR)/COLOR (inner) concentric at right. MIC SENS LOW/HIGH slide switch is on the rear face beside the DC IN jack (not on the top). XLR MIC jack on right side below INPUT; SEND/RETURN jacks on left side below OUTPUT.",
+  "sources": [
+   "https://www.boss.info/global/products/vo-1/specifications/",
+   "https://images.equipboard.com/uploads/item/manual/34411/boss-vo-1-vocoder-manual.pdf",
+   "https://diabloguitars.com/products/boss-vo-1-vocoder-red",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour given as 'red' by Reverb (23 listings) and a retailer; exact shade estimated."
+ },
+ {
+  "id": "sy1",
+  "code": "SY-1",
+  "name": "Synthesizer",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   129,
+   59
+  ],
+  "body_colour_hex": "#2F5FAF",
+  "text_colour_hex": "#FFFFFF",
+  "layout": [
+   [
+    "GTR/BASS"
+   ],
+   [
+    "LED"
+   ],
+   [
+    "EFFECT/DIRECT",
+    "TONE/DEPTH",
+    "VARIATION",
+    "TYPE"
+   ]
+  ],
+  "notes": "Real order is the reverse of ours: EFFECT/DIRECT concentric (left), TONE/RATE (outer)/DEPTH (inner) concentric, VARIATION rotary 1-11, TYPE rotary (LEAD1/2, PAD, BASS, STR, ORGN, BELL, SFX1/2, SEQ1/2) at right. GUITAR/BASS slide switch on the rear face next to DC IN. SEND/RETURN on left side, INPUT and EXP/CTL on right side.",
+  "sources": [
+   "https://www.boss.info/global/products/sy-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/SY-1_eng03_W.pdf",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ],
+  "uncertain": true,
+  "uncertain_reason": "Colour documented as 'blue' (Reverb, reviews); exact shade estimated."
+ },
+ {
+  "id": "sy200",
+  "code": "SY-200",
+  "name": "Synthesizer",
+  "series": "series200",
+  "dims_mm": [
+   101,
+   138,
+   63
+  ],
+  "body_colour_hex": "#2B4C8C",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "DISPLAY",
+    "KNOB:MEMORY"
+   ],
+   [
+    "KNOB 1",
+    "KNOB 2",
+    "KNOB 3",
+    "BUTTON:MENU",
+    "BUTTON:EXIT"
+   ],
+   [
+    "D.LEVEL",
+    "E.LEVEL",
+    "VARIATION",
+    "TYPE"
+   ],
+   [
+    "FOOTSWITCH:ON/OFF",
+    "FOOTSWITCH:MEMORY/CTL 1"
+   ]
+  ],
+  "footswitches": {
+   "count": 2,
+   "labels": [
+    "ON/OFF",
+    "MEMORY/CTL 1"
+   ]
+  },
+  "display": true,
+  "notes": "200-series chassis: 132x32 LCD with MEMORY push-knob, three parameter knobs [1]-[3], then D.LEVEL, E.LEVEL, VARIATION and a larger TYPE selector at right. Metallic blue body.",
+  "sources": [
+   "https://www.boss.info/global/products/sy-200/specifications/",
+   "https://static.roland.com/assets/media/pdf/SY-200_eng03_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20sy-200 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "sy300",
+  "code": "SY-300",
+  "name": "Guitar Synthesizer",
+  "series": "floor",
+  "dims_mm": [
+   255,
+   191,
+   70
+  ],
+  "body_colour_hex": "#2F5597",
+  "text_colour_hex": "#F0F0F0",
+  "layout": [
+   [
+    "SYNTH",
+    "DISPLAY",
+    "WAVE",
+    "BUTTON:SYNTH/FX",
+    "BUTTON:BLENDER",
+    "BUTTON:MENU",
+    "BUTTON:WRITE",
+    "BUTTON:EXIT",
+    "BUTTON:PAGE"
+   ],
+   [
+    "CUTOFF",
+    "RESO",
+    "ENV DEPTH",
+    "DECAY",
+    "DIRECT"
+   ],
+   [
+    "FOOTSWITCH:ON/OFF",
+    "FOOTSWITCH:CTL 1",
+    "FOOTSWITCH:DOWN/CTL 2",
+    "FOOTSWITCH:UP/CTL 3"
+   ]
+  ],
+  "footswitches": {
+   "count": 4,
+   "labels": [
+    "ON/OFF",
+    "CTL 1",
+    "DOWN/CTL 2",
+    "UP/CTL 3"
+   ]
+  },
+  "display": true,
+  "notes": "Metallic blue floor unit with 132x64 graphic LCD, a push-to-enter SELECT knob (our WAVE), four parameter knobs [1]-[4] under the display (our CUTOFF/RESO/ENV DEPTH/DECAY) and an OUTPUT LEVEL knob (our SYNTH); our DIRECT has no dedicated knob. Four footswitches along the front.",
+  "uncertain": true,
+  "uncertain_reason": "Physical positions of OUTPUT LEVEL/SELECT knobs and buttons from memory; DIRECT is a placeholder.",
+  "sources": [
+   "https://www.boss.info/global/products/sy-300/specifications/",
+   "https://static.roland.com/assets/media/pdf/SY-300_e01_W.pdf",
+   "https://api.reverb.com/api/listings?query=boss%20sy-300 (listing 'finish' field, colour consensus)"
+  ]
+ },
+ {
+  "id": "px1",
+  "code": "PX-1",
+  "name": "Plugout FX",
+  "series": "compact",
+  "dims_mm": [
+   73,
+   125,
+   56
+  ],
+  "body_colour_hex": "#F2F2EF",
+  "text_colour_hex": "#1E5FB4",
+  "layout": [
+   [
+    "LEFT",
+    "LED",
+    "RIGHT"
+   ],
+   [
+    "CENTER"
+   ],
+   [
+    "DISPLAY"
+   ]
+  ],
+  "notes": "Slightly smaller than a standard compact (73x125x56 official). White body with three blue push-encoder knobs: large LEFT and RIGHT at the back corners, smaller CENTER knob between and slightly forward. A 128x48 graphic LCD sits on the pedal cover just above the rubber pad, below the blue 'Plugout FX PX-1' logo. There is no MODEL knob: the effect model is chosen via the LCD menu with the knobs, so our MODEL maps to DISPLAY. Stereo INPUT A/B, OUTPUT A/B and CTL1,2/EXP jacks on the sides; DC IN, MIDI IN, USB-C on the rear. AC adaptor only (no battery). Released 2025.",
+  "sources": [
+   "https://www.boss.info/global/products/px-1/specifications/",
+   "https://static.roland.com/assets/media/pdf/PX-1_eng01_W.pdf",
+   "https://www.guitarcenter.com/BOSS/PX-1-Plugout-FX-Multi-Effects-Pedal-White-1500000466192.gc",
+   "https://equipboard.com/posts/boss-px-1-review",
+   "https://api.reverb.com/api/listings (listing \"finish\" field)"
+  ]
+ }
+]

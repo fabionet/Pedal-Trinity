@@ -25,7 +25,7 @@ TS_W, TS_D, TS_H = 0.074, 0.125, 0.046
 KNOB_R = {"ts_big": 0.0096, "ts_small": 0.0076, "boss": 0.0073, "boss_outer": 0.0079, "boss_inner": 0.0049}
 KNOB_H = {"ts_big": 0.0160, "ts_small": 0.0145, "boss": 0.0150, "boss_outer": 0.0100, "boss_inner": 0.0075}
 STRIP_ID = {"ts_big": 0, "ts_small": 1, "boss": 2, "boss_outer": 3, "boss_inner": 4, "slider": 5, "toggle": 6, "button": 255,
-            "footswitch": 255}
+            "footswitch": 255, "footbutton": 253, "treadle": 254}
 
 ROW_X = {1: [0.0], 2: [-0.0135, 0.0135], 3: [-0.022, 0.0, 0.022], 4: [-0.0255, -0.0085, 0.0085, 0.0255]}
 

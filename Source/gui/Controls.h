@@ -54,12 +54,15 @@ namespace pt::ui
         bool hitTest (int x, int y) override;
         void syncFromModel() override;
         void setExclusion (float r) { exclusion = r; }
+        /** Sopra una foto personale con i pomelli veri: solo un sottile arco del valore. */
+        void setGhost (bool g) { ghost = g; repaint(); }
 
     private:
         const Assets& assets;
         const engine::ControlDef& c;
         juce::Point<float> origin;
         float exclusion = 0;
+        bool ghost = false;
     };
 
     //==============================================================================
@@ -104,6 +107,19 @@ namespace pt::ui
         void paintButton (juce::Graphics&, bool over, bool down) override;
         void syncFromModel() override {}
         std::function<void()> onPress;
+    private:
+        const engine::ControlDef& c;
+    };
+
+    //==============================================================================
+    /** Pedale a bilanciere (REAL MOD: volume, espressione, wah): si trascina in verticale sul pedale,
+        il valore e' mostrato da una barra a LED accanto (strip 254: anchor = tallone, top = punta). */
+    class TreadleControl : public juce::Slider, public BoundControl
+    {
+    public:
+        explicit TreadleControl (const engine::ControlDef&);
+        void paint (juce::Graphics&) override;
+        void syncFromModel() override;
     private:
         const engine::ControlDef& c;
     };
