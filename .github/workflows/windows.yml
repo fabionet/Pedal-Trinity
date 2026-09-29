@@ -71,7 +71,7 @@ jobs:
           Copy-Item -Recurse "build\PedalTrinity_artefacts\Release\LV2\Pedal Trinity.lv2" $dst
           Copy-Item "build\PedalTrinity_artefacts\Release\Standalone\Pedal Trinity.exe" $dst
           Copy-Item docs\PedalTrinity_Guida.pdf, LICENSE, README.md $dst
-          Compress-Archive -Path "portable\Pedal Trinity" -DestinationPath "dist\PedalTrinity-1.1.0-beta-Windows-x64.zip"
+          Compress-Archive -Path "portable\Pedal Trinity" -DestinationPath "dist\PedalTrinity-1.1.1-beta-Windows-x64.zip"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a   # v7.0.1
         with:
