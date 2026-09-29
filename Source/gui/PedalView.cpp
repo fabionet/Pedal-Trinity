@@ -65,7 +65,7 @@ namespace pt::ui
             // LED
             if (on && d->ledR > 0)
             {
-                const juce::Point<float> c (d->ledX, d->ledY);
+                const auto c = owner.ledPoint();
                 const float r = d->ledR;
                 juce::ColourGradient halo (juce::Colour (0x88ff2a14), c, juce::Colour (0x00ff2a14), c.translated (r * 6.5f, 0), true);
                 g.setGradientFill (halo);
@@ -192,6 +192,107 @@ namespace pt::ui
     };
 
     //==============================================================================
+    //==============================================================================
+    /** Sovrapposizione di allineamento: cerchi trascinabili sui pomelli della foto (rotellina = dimensione)
+        e un mirino per il LED CHECK. */
+    class PedalView::Aligner : public juce::Component
+    {
+    public:
+        Aligner (PedalView& o) : owner (o)
+        {
+            setMouseCursor (juce::MouseCursor::DraggingHandCursor);
+            const auto* d = owner.def;
+            for (int k = 0; k < d->numControls; ++k)
+            {
+                const auto& c = d->controls[k];
+                if (c.kind != ControlKind::Knob && c.kind != ControlKind::KnobOuter && c.kind != ControlKind::Selector) continue;
+                AlignItem it;
+                it.control = k;
+                it.label = c.label;
+                it.centre = { (c.x + c.tx) * 0.5f, (c.y + c.ty) * 0.5f };
+                it.radius = c.radius;
+                for (const auto& p : owner.photoControls)
+                    if (p.first.equalsIgnoreCase (c.label))
+                    {
+                        it.centre = { d->bodyX + p.second.x * d->bodyW, d->bodyY + p.second.y * d->bodyH };
+                        it.radius = p.second.z * d->bodyW;
+                    }
+                items.push_back (it);
+            }
+            led = owner.ledPoint();
+        }
+        std::vector<AlignItem> items;
+        juce::Point<float> led;
+
+        void paint (juce::Graphics& g) override
+        {
+            g.fillAll (juce::Colours::black.withAlpha (0.12f));
+            for (int i = 0; i < (int) items.size(); ++i)
+            {
+                const auto& it = items[(size_t) i];
+                const bool sel = i == selected;
+                const auto r = juce::Rectangle<float> (it.radius * 2, it.radius * 2).withCentre (it.centre);
+                g.setColour ((sel ? juce::Colour (0xffffd040) : juce::Colour (0xff40e0ff)).withAlpha (0.95f));
+                const float dash[] = { 5.0f, 3.0f };
+                juce::Path circle; circle.addEllipse (r);
+                juce::Path dashed; juce::PathStrokeType (sel ? 2.4f : 1.6f).createDashedStroke (dashed, circle, dash, 2);
+                g.fillPath (dashed);
+                g.drawLine (it.centre.x - 4, it.centre.y, it.centre.x + 4, it.centre.y, 1.2f);
+                g.drawLine (it.centre.x, it.centre.y - 4, it.centre.x, it.centre.y + 4, 1.2f);
+                g.setFont (juce::Font (11.0f, juce::Font::bold));
+                const auto tr = juce::Rectangle<float> (80, 14).withCentre ({ it.centre.x, r.getBottom() + 9 });
+                g.setColour (juce::Colours::black.withAlpha (0.7f));
+                g.fillRoundedRectangle (tr.reduced (14, 0), 3.0f);
+                g.setColour (juce::Colours::white);
+                g.drawText (it.label, tr, juce::Justification::centred);
+            }
+            g.setColour (selected == ledIndex ? juce::Colour (0xffffd040) : juce::Colour (0xffff4040));
+            g.drawEllipse (juce::Rectangle<float> (14, 14).withCentre (led), 1.8f);
+            g.drawLine (led.x - 10, led.y, led.x + 10, led.y, 1.2f);
+            g.drawLine (led.x, led.y - 10, led.x, led.y + 10, 1.2f);
+        }
+        int pick (juce::Point<float> p) const
+        {
+            if (p.getDistanceFrom (led) < 9) return ledIndex;
+            int best = -1; float bd = 1e9f;
+            for (int i = 0; i < (int) items.size(); ++i)
+            {
+                const float d = p.getDistanceFrom (items[(size_t) i].centre);
+                if (d < items[(size_t) i].radius * 1.2f && d < bd) { bd = d; best = i; }
+            }
+            return best;
+        }
+        void mouseDown (const juce::MouseEvent& e) override
+        {
+            selected = pick (e.position);
+            grab = e.position - (selected == ledIndex ? led : selected >= 0 ? items[(size_t) selected].centre : e.position);
+            repaint();
+        }
+        void mouseDrag (const juce::MouseEvent& e) override
+        {
+            const auto p = (e.position - grab).withX (juce::jlimit (0.0f, (float) getWidth(), e.position.x - grab.x))
+                                                .withY (juce::jlimit (0.0f, (float) getHeight(), e.position.y - grab.y));
+            if (selected == ledIndex) { led = p; owner.photoLed = true; owner.photoLedAt = p; owner.canvasRepaint(); }
+            else if (selected >= 0) { items[(size_t) selected].centre = p; owner.applyAlignItem (items[(size_t) selected]); }
+            repaint();
+        }
+        void mouseWheelMove (const juce::MouseEvent& e, const juce::MouseWheelDetails& w) override
+        {
+            const int i = selected >= 0 && selected != ledIndex ? selected : pick (e.position);
+            if (i < 0 || i == ledIndex) return;
+            auto& it = items[(size_t) i];
+            it.radius = juce::jlimit (4.0f, 200.0f, it.radius * (w.deltaY > 0 ? 1.04f : 1.0f / 1.04f));
+            selected = i;
+            owner.applyAlignItem (it);
+            repaint();
+        }
+        static constexpr int ledIndex = 1000;
+    private:
+        PedalView& owner;
+        int selected = -1;
+        juce::Point<float> grab;
+    };
+
     PedalView::PedalView (Chain& c, int slotIndex, juce::Component* popup) : chain (c), popupParent (popup)
     {
         // i clic sul corpo del pedale (fuori dai comandi) arrivano allo slot: trascinamento a mano
@@ -217,11 +318,17 @@ namespace pt::ui
         def = v;
         photoImage = photo.image;
         photoKnobs = photo.knobs;
+        photoControls = photo.controls;
+        photoFile = photo.file;
+        photoLed = photo.hasLed && v != nullptr && v->bodyW > 0;
+        if (photoLed) photoLedAt = { v->bodyX + photo.ledU * v->bodyW, v->bodyY + photo.ledV * v->bodyH };
         rebuild();
     }
 
     void PedalView::rebuild()
     {
+        aligner.reset();
+        knobComps.clear();
         canvas.reset();
         source = {};
         scaled = {};
@@ -233,6 +340,8 @@ namespace pt::ui
         {
             source = Assets::pedalImage (def->image);
             photoKnobs = true;
+            photoControls.clear();
+            photoLed = false;
         }
         canvas = std::make_unique<Canvas> (*this);
         canvas->setSize ((int) std::ceil (def->imageW), (int) std::ceil (def->imageH));
@@ -282,6 +391,9 @@ namespace pt::ui
                         }
                         auto* kn = new KnobControl (*assets, c);
                         kn->setGhost (! photoKnobs);
+                        knobComps[k] = kn;
+                        if (photoKnobs && ! photoControls.empty())
+                            placeOnPhoto (*kn, k);           // pomello 3D esattamente sopra quello della foto
                         if (c.kind == ControlKind::KnobOuter)
                             for (int j = 0; j < def->numControls; ++j)
                                 if (def->controls[j].kind == ControlKind::KnobInner && std::abs (def->controls[j].x - c.x) < 1.0f)
@@ -327,6 +439,89 @@ namespace pt::ui
             }
         resized();
         repaint();
+    }
+
+    juce::Point<float> PedalView::ledPoint() const
+    {
+        return photoLed ? photoLedAt : juce::Point<float> (def->ledX, def->ledY);
+    }
+
+    void PedalView::placeOnPhoto (KnobControl& kn, int k)
+    {
+        const auto& c = def->controls[k];
+        auto find = [this] (const char* label) -> const PhotoKnob*
+        {
+            for (const auto& p : photoControls)
+                if (p.first.equalsIgnoreCase (label)) return &p.second;
+            return nullptr;
+        };
+        const auto* p = find (c.label);
+        float rScale = 1.0f;
+        if (p == nullptr && c.kind == ControlKind::KnobInner)
+            for (int j = 0; j < def->numControls && p == nullptr; ++j)
+                if (def->controls[j].kind == ControlKind::KnobOuter && std::abs (def->controls[j].x - c.x) < 1.0f)
+                    if ((p = find (def->controls[j].label)) != nullptr) rScale = def->controls[k].radius / juce::jmax (1.0f, def->controls[j].radius);
+        if (p == nullptr || def->bodyW <= 0.0f)
+        {
+            kn.setGhost (true);                        // pomello non presente nella foto: solo l'arco del valore
+            return;
+        }
+        // centro e raggio del pomello della foto, nelle coordinate dell'immagine della replica
+        kn.setGhost (false);
+        const juce::Point<float> target (def->bodyX + p->x * def->bodyW, def->bodyY + p->y * def->bodyH);
+        const float radius = p->z * def->bodyW * rScale;
+        const juce::Point<float> centre ((c.x + c.tx) * 0.5f, (c.y + c.ty) * 0.5f);
+        const float s = juce::jlimit (0.3f, 4.0f, radius / juce::jmax (1.0f, c.radius));
+        kn.setTransform (juce::AffineTransform::translation (target - centre).scaled (s, s, target.x, target.y));
+    }
+
+    void PedalView::setKnobPlacement (int k, juce::Point<float> target, float radius)
+    {
+        const auto it = knobComps.find (k);
+        if (it == knobComps.end()) return;
+        const auto& c = def->controls[k];
+        const juce::Point<float> centre ((c.x + c.tx) * 0.5f, (c.y + c.ty) * 0.5f);
+        const float s = juce::jlimit (0.3f, 4.0f, radius / juce::jmax (1.0f, c.radius));
+        it->second->setGhost (false);
+        it->second->setTransform (juce::AffineTransform::translation (target - centre).scaled (s, s, target.x, target.y));
+        // l'anello interno di un pomello concentrico segue il suo esterno
+        if (c.kind == ControlKind::KnobOuter)
+            for (int j = 0; j < def->numControls; ++j)
+                if (def->controls[j].kind == ControlKind::KnobInner && std::abs (def->controls[j].x - c.x) < 1.0f)
+                    setKnobPlacement (j, target, radius * def->controls[j].radius / juce::jmax (1.0f, c.radius));
+    }
+
+    void PedalView::canvasRepaint() { if (canvas != nullptr) canvas->repaint(); }
+
+    void PedalView::applyAlignItem (const AlignItem& it) { setKnobPlacement (it.control, it.centre, it.radius); }
+
+    void PedalView::setAlignMode (bool on)
+    {
+        if (on == isAligning()) return;
+        if (! on) { aligner.reset(); rebuild(); return; }        // annulla: torna alle posizioni salvate
+        if (! hasPhoto() || canvas == nullptr) return;
+        aligner = std::make_unique<Aligner> (*this);
+        aligner->setBounds (canvas->getLocalBounds());
+        canvas->addAndMakeVisible (*aligner);
+        aligner->toFront (false);
+        for (const auto& it : aligner->items) applyAlignItem (it);
+    }
+
+    juce::String PedalView::saveAlignment()
+    {
+        if (aligner == nullptr || def == nullptr || def->bodyW <= 0) return "nessun allineamento in corso";
+        std::vector<std::pair<juce::String, PhotoKnob>> out;
+        for (const auto& it : aligner->items)
+            out.push_back ({ it.label, PhotoKnob { (it.centre.x - def->bodyX) / def->bodyW, (it.centre.y - def->bodyY) / def->bodyH,
+                                                   it.radius / def->bodyW } });
+        const auto l = aligner->led;
+        const auto err = RealPhotos::saveAlignment (photoFile, out, true, (l.x - def->bodyX) / def->bodyW, (l.y - def->bodyY) / def->bodyH);
+        if (err.isNotEmpty()) return err;
+        aligner.reset();
+        photos->reload();
+        slot = nullptr;                                          // forza la ricostruzione con le nuove posizioni
+        bindTo (index);
+        return {};
     }
 
     juce::Rectangle<float> PedalView::imageArea() const

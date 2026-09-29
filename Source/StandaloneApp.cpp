@@ -2,7 +2,7 @@
     Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
 
     Applicazione Standalone personalizzata:
-      * finestra con titolo "Pedal Trinity 1.1.1 beta";
+      * finestra con titolo "Pedal Trinity 1.1.2 beta";
       * su Windows, al primo avvio, seleziona i driver ASIO se presenti;
       * ingresso audio attivo di default (e' un effetto per chitarra);
       * riga di comando:
@@ -347,6 +347,32 @@ namespace
                         && mid.getAlpha() == 255 && mid.getRed() > 200,
                     juce::String (img.getWidth()) + " x " + juce::String (img.getHeight()) + ", centro " + mid.toDisplayString (true));
         }
+        // file .json delle foto: posizioni dei pomelli e del LED, valori fuori dai limiti rifiutati
+        {
+            auto parse = [] (const char* text, pt::ui::RealPhotos::Photo& ph)
+            {
+                juce::Rectangle<int> crop; int rot = 0; bool knobs = true;
+                return pt::ui::RealPhotos::parseSidecar (juce::JSON::parse (juce::String (text)), { 0, 0, 800, 1200 }, ph, crop, rot, knobs);
+            };
+            pt::ui::RealPhotos::Photo ok;
+            const auto e0 = parse ("{\"knobs\": true, \"controls\": {\"TONE\": [0.29, 0.12, 0.13], \"DIST\": [0.75, 0.12, 0.13]}, \"led\": [0.5, 0.05]}", ok);
+            report ("REAL MOD: posizioni dei pomelli sulla foto lette dal .json",
+                    e0.isEmpty() && ok.controls.size() == 2 && ok.hasLed && std::abs (ok.controls[0].second.x - 0.29f) < 1.0e-4f,
+                    e0.isEmpty() ? "2 pomelli + LED" : e0);
+            const char* bad[] = {
+                "{\"controls\": {\"TONE\": [1.5, 0.1, 0.1]}}",          // fuori dalla foto
+                "{\"controls\": {\"TONE\": [0.5, 0.1, 0.9]}}",          // raggio assurdo
+                "{\"controls\": {\"TONE\": [0.5, \"x\", 0.1]}}",       // non numerico
+                "{\"controls\": [1, 2, 3]}",                           // tipo sbagliato
+                "{\"led\": [0.5, -1]}", "{\"rotate\": 45}", "{\"crop\": [0, 0, 5, 5]}" };
+            int rejected = 0;
+            for (auto* b : bad) { pt::ui::RealPhotos::Photo ph; if (parse (b, ph).isNotEmpty()) ++rejected; }
+            juce::String many = "{\"controls\": {";
+            for (int i = 0; i < 40; ++i) many << (i ? "," : "") << "\"K" << i << "\": [0.5, 0.5, 0.1]";
+            many << "}}";
+            { pt::ui::RealPhotos::Photo ph; if (parse (many.toRawUTF8(), ph).isNotEmpty()) ++rejected; }
+            report ("REAL MOD: .json delle foto con valori non validi rifiutato", rejected == 8, juce::String (rejected) + "/8 rifiutati");
+        }
         tmp.deleteRecursively();
     }
 
@@ -588,6 +614,7 @@ namespace
         if (editor == nullptr) return 3;
         editor->setSize (w, h);
         if (zoomSlot >= 0) editor->showZoom (zoomSlot);
+        if (zoomSlot >= 0 && args.contains ("--align")) editor->startZoomAlign();
         if (info) editor->showInfo (true);
         if (options) editor->showOptions (true);
         auto img = editor->createComponentSnapshot (editor->getLocalBounds(), true, scale);

@@ -396,6 +396,22 @@ namespace pt::ui
         close.onClick = [this] { if (onClose) onClose(); };
         prev.setTooltip ("Pedale precedente");
         next.setTooltip ("Pedale successivo");
+        align.setTooltip ("REAL MOD, foto personale: porta i pomelli 3D esattamente sopra quelli della foto");
+        cancelAlign.setTooltip ("Esce senza salvare");
+        alignHint.setText ("Trascina i cerchi sui pomelli della foto, rotellina = dimensione; il mirino rosso e' il LED CHECK.",
+                           juce::dontSendNotification);
+        alignHint.setFont (juce::Font (13.0f));
+        alignHint.setJustificationType (juce::Justification::centredLeft);
+        align.onClick = [this]
+        {
+            if (! view.isAligning()) { view.setAlignMode (true); updateAlignButtons(); return; }
+            const auto err = view.saveAlignment();
+            if (err.isNotEmpty())
+                juce::AlertWindow::showMessageBoxAsync (juce::MessageBoxIconType::WarningIcon, "Allineamento non salvato", err);
+            updateAlignButtons();
+        };
+        cancelAlign.onClick = [this] { view.setAlignMode (false); updateAlignButtons(); };
+        for (auto* c : std::initializer_list<juce::Component*> { &align, &cancelAlign, &alignHint }) addChildComponent (c);
         show (i);
     }
 
@@ -432,7 +448,20 @@ namespace pt::ui
         resized();
         prev.setEnabled (i > 0);
         next.setEnabled (i < chain.size() - 1);
+        updateAlignButtons();
         repaint();
+    }
+
+    void ZoomPanel::updateAlignButtons()
+    {
+        const bool photo = view.hasPhoto(), on = view.isAligning();
+        align.setVisible (photo);
+        align.setButtonText (on ? "Salva allineamento" : "Allinea pomelli sulla foto");
+        cancelAlign.setVisible (photo && on);
+        alignHint.setVisible (photo && on);
+        prev.setEnabled (! on && index > 0);
+        next.setEnabled (! on && index < chain.size() - 1);
+        alignHint.setColour (juce::Label::textColourId, themes->current().accent);
     }
 
     juce::Rectangle<int> ZoomPanel::card() const { return getLocalBounds().reduced (juce::jmax (20, getWidth() / 20), juce::jmax (16, getHeight() / 22)); }
@@ -458,7 +487,12 @@ namespace pt::ui
         top.removeFromRight (8);
         next.setBounds (top.removeFromRight (40).reduced (0, 4));
         prev.setBounds (top.removeFromRight (40).reduced (0, 4));
+        top.removeFromRight (12);
+        cancelAlign.setBounds (top.removeFromRight (90).reduced (0, 4));
+        top.removeFromRight (6);
+        align.setBounds (top.removeFromRight (210).reduced (0, 4));
         title.setBounds (top);
+        alignHint.setBounds (c.removeFromTop (22));
         c.removeFromTop (10);
         auto side = c.removeFromRight (nam != nullptr ? juce::jmin (560, c.getWidth() / 2) : juce::jmin (380, c.getWidth() / 3));
         info.setBounds (side.reduced (10, 0));
@@ -473,6 +507,11 @@ namespace pt::ui
 
     bool ZoomPanel::keyPressed (const juce::KeyPress& k)
     {
+        if (view.isAligning())
+        {
+            if (k == juce::KeyPress::escapeKey) { cancelAlign.triggerClick(); return true; }
+            return false;
+        }
         if (k == juce::KeyPress::escapeKey && onClose) { onClose(); return true; }
         if (k == juce::KeyPress::leftKey) { prev.triggerClick(); return true; }
         if (k == juce::KeyPress::rightKey) { next.triggerClick(); return true; }

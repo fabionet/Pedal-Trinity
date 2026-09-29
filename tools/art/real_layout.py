@@ -91,7 +91,24 @@ def _compact_order(r):
     return new, idx
 
 
+# compatti a 3 pomelli "a V" (verificato sulle foto dei pedali reali): sinistra, centro piu' basso, destra
+V_TRIO = {}
+for _ids, _order in (
+        (("ds1", "ds1_4a", "ds1_b50a", "ds1_wh", "ds1_bk", "ds1_6m", "ds1w"), ("TONE", "LEVEL", "DIST")),
+        (("sd1", "sd1_4a", "sd1_b50a", "sd1_be", "sd1w"), ("LEVEL", "TONE", "DRIVE")),
+        (("bd2", "bd2_b50a", "bd2_10m", "bd2w"), ("LEVEL", "TONE", "GAIN")),
+        (("od3",), ("LEVEL", "TONE", "DRIVE")),
+        (("cs2",), ("LEVEL", "ATTACK", "SUSTAIN")),
+        (("tr2",), ("RATE", "WAVE", "DEPTH")),
+        (("fz5",), ("LEVEL", "MODE", "FUZZ"))):
+    for _i in _ids:
+        V_TRIO[_i] = _order
+V_TOP_Y, V_MID_Y, V_X = 0.039, 0.0275, 0.022
+
+
 def compact_layout(r):
+    if r["id"] in V_TRIO:
+        r = dict(r, real_knob_order=list(V_TRIO[r["id"]]), real_concentric=[])
     ctrls, idx = _compact_order(r)
     lay = PL.pedal_layout(dict(r, style="boss", controls=ctrls))
     pos = [None] * len(ctrls)
@@ -101,6 +118,16 @@ def compact_layout(r):
         kinds[i] = ctrls[j]["kind"]
     lay["controls"] = pos
     lay["kinds"] = kinds                  # tipi visivi (pomelli concentrici del pedale reale)
+    if r["id"] in V_TRIO:
+        keys = {_label_key(c["label"]): i for i, c in enumerate(r["controls"])}
+        for j, lab in enumerate(V_TRIO[r["id"]]):
+            i = keys[_label_key(lab)]
+            p = dict(pos[i])
+            p["x"] = (-V_X, 0.0, V_X)[j]
+            p["y"] = V_MID_Y if j == 1 else V_TOP_Y
+            if j == 1:
+                p["label_above"] = True     # come sui pedali reali: l'etichetta del pomello centrale sta sopra
+            pos[i] = p
     lay["builder"] = "compact"
     lay["body"] = dict(W=PL.W, D=PL.D, H=PL.PANEL_H)
     lay["frame"] = None
