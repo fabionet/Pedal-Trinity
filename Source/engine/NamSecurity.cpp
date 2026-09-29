@@ -172,7 +172,9 @@ namespace pt::namsafe
             }
             info.realtimeLoad = (juce::Time::getMillisecondCounterHiRes() - t0) / 1000.0 / 0.5;
             if (peak > 100.0) fail ("il modello produce livelli esplosivi (oltre +40 dB): file alterato?");
-            if (info.realtimeLoad > 0.8) fail ("il modello e' troppo pesante per il tempo reale su questo computer");
+            // rifiuto solo se inutilizzabile anche a computer scarico; sopra l'80% il modello si carica con un avviso
+            // (la misura dipende dal carico del momento: una DAW impegnata non deve far scartare un file integro)
+            if (info.realtimeLoad > 8.0) fail ("il modello e' troppo pesante per il tempo reale (oltre 8 volte)");
             info.sampleRate = sr;
         }
     }

@@ -65,10 +65,16 @@ namespace pt::ui
         void setCableColour (int);
         const CableColour& cable() const;
 
+        /** Modalita' REAL MOD PEDALBOARD: repliche fedeli dei pedali reali (o le foto personali). */
+        bool realMode() const { return real; }
+        void setRealMode (bool);
+        /** Come setRealMode ma senza salvarla nelle preferenze (screenshot della guida). */
+        void previewRealMode (bool);
+
     private:
         void save();
         std::unique_ptr<juce::PropertiesFile> props;
         int index = 0, cableColour = 0;
-        bool cables = true;
+        bool cables = true, real = false;
     };
 }

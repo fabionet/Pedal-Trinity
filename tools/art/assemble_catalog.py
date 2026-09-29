@@ -55,10 +55,16 @@ def f(v):
     return "%.3ff" % float(v)
 
 
-def convert_image(mid):
-    src = Image.open(os.path.join(PEDALS, mid + ".png"))
-    lw, lh = src.width / 2.0, src.height / 2.0
-    w, h = int(round(lw * STORE_SCALE)), int(round(lh * STORE_SCALE))
+def convert_image(mid, src_dir=None, res=None, stem=None, logical=None, max_side=None):
+    src_dir = src_dir or PEDALS
+    res = res or RES
+    stem = stem or mid
+    src = Image.open(os.path.join(src_dir, mid + ".png"))
+    lw, lh = logical if logical else (src.width / 2.0, src.height / 2.0)
+    k = STORE_SCALE
+    if max_side:
+        k = min(k, max_side / max(lw, lh))
+    w, h = int(round(lw * k)), int(round(lh * k))
     img = src.convert("RGBA").resize((w, h), Image.LANCZOS)
     rgba = np.asarray(img).astype(np.float32)
     alpha = rgba[..., 3:4] / 255.0
@@ -80,18 +86,93 @@ def convert_image(mid):
         edge = edge * edge * (3 - 2 * edge)
         a8 = np.where(shadow, blurred * 0.85 * edge, a8)
         a8 = np.round(a8 / 2.0) * 2.0
-        Image.fromarray(np.clip(a8, 0, 255).astype(np.uint8), "L").save(os.path.join(RES, mid + "_a.png"), optimize=True)
+        Image.fromarray(np.clip(a8, 0, 255).astype(np.uint8), "L").save(os.path.join(res, stem + "_a.png"), optimize=True)
     else:
         # render opaco (vecchia scena): bordi sfumati verso il colore dello slot
         yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
         edge = np.minimum.reduce([xx, w - 1 - xx, yy, h - 1 - yy]) / (0.06 * min(w, h))
         k = np.clip(edge, 0, 1)[..., None] ** 1.5
         rgb = rgb * k + SLOT_BG * (1 - k)
-        mask = os.path.join(RES, mid + "_a.png")
+        mask = os.path.join(res, stem + "_a.png")
         if os.path.exists(mask):
             os.remove(mask)
-    Image.fromarray(np.clip(rgb, 0, 255).astype(np.uint8)).save(os.path.join(RES, mid + ".jpg"), quality=86,
+    Image.fromarray(np.clip(rgb, 0, 255).astype(np.uint8)).save(os.path.join(res, stem + ".jpg"), quality=86,
                                                                optimize=True, progressive=True)
+
+
+def model_row(m, geo, image, name, code, kinds=None, config=None, body=None):
+    ctrl_lines = []
+    for k, c in enumerate(m["controls"]):
+        g = geo["controls"][k]
+        kind = (kinds[k] if kinds and kinds[k] else c["kind"])
+        steps = len(c["choices"]) if c["kind"] == "selector" else (2 if c["kind"] == "toggle" else 0)
+        choices = "|".join(ascii_only(x) for x in c["choices"]) if c.get("choices") else None
+        ctrl_lines.append("{ %s, %s, CK::%s, %d, %s, %d, U::%s, %s, %s, %s, %s, %s, %s, %s, %s }" % (
+            cstr(c["label"]), cstr(c["role"]), KIND[kind], g["strip"], f(c["default"]), steps,
+            UNITS[c["units"]], f(c["lo"]), f(c["hi"]), cstr(choices) if choices else "nullptr",
+            f(g["anchor"][0]), f(g["anchor"][1]), f(g["top"][0]), f(g["top"][1]), f(g["radius"])))
+    led, foot = geo["led"], geo["foot"]
+    disp = geo.get("display", [0, 0, 0, 0])
+    r, gc, b = m["colour"]
+    extra = ""
+    if body:
+        extra = ",\n      %s, %s, %s, %s, %s" % tuple(f(v) for v in body)
+    return """    { %s, %s, %s, %s, %s, Family::%s, %d,
+      { %s },
+      %s,
+      %s, 0xff%02x%02x%02xu, %s, %s, %s, %s, %s, %s,
+      { %s }, { %s }, %s, %s, %s, %s,
+      %s, %s, %s, %s, %s,
+      %s%s },""" % (
+        cstr(m["id"]), cstr(name), cstr(code), cstr(m["inspired"]), cstr(m["category"]), m["family"],
+        len(m["controls"]), ",\n        ".join(ctrl_lines), cstr(m["config"] if config is None else config),
+        cstr(m["style"]), r, gc, b, cstr(image) if image else "nullptr", f(geo["imageW"]), f(geo["imageH"]),
+        f(led[0]), f(led[1]), f(led[2]),
+        ", ".join(f(p[0]) for p in foot), ", ".join(f(p[1]) for p in foot),
+        f(disp[0]), f(disp[1]), f(disp[2]), f(disp[3]),
+        f(geo["jacks"][0]), f(geo["jacks"][1]), f(geo["jacks"][2]), f(geo["jacks"][3]), "true" if m["stereo"] else "false",
+        cstr(m["notes"], allow_utf8=True), extra)
+
+
+REAL_SRC = os.path.join(HERE, "build", "real")
+REAL_RES = os.path.join(ROOT, "Resources", "pedals_real")
+REAL_INC = os.path.join(ROOT, "Source", "engine", "CatalogReal.inc")
+
+
+def main_real():
+    """Catalogo REAL MOD: Resources/pedals_real/r_<id>.jpg (+ _a.png) e Source/engine/CatalogReal.inc."""
+    import real_catalog
+    import real_layout
+    os.makedirs(REAL_RES, exist_ok=True)
+    rows, missing = [], []
+    for r in real_catalog.real_models(strict=False):
+        mid = r["id"]
+        if not os.path.exists(os.path.join(REAL_SRC, mid + ".png")):
+            missing.append(mid)
+            continue
+        lay = real_layout.real_layout(r)
+        geo = PG.geometry(r, lay)
+        convert_image(mid, REAL_SRC, REAL_RES, "r_" + mid, (geo["imageW"], geo["imageH"]), max_side=1150)
+        kinds = list(lay.get("kinds") or [None] * len(r["controls"]))
+        for k, v in (lay.get("kinds_override") or {}).items():
+            kinds[k] = v
+        rows.append(model_row(r, geo, "r_" + mid + "_jpg", r["real_name"], r["real_code"], kinds, "", geo["body"]))
+    with open(REAL_INC, "w") as fo:
+        fo.write("// File GENERATO da tools/art/assemble_catalog.py --real - non modificare a mano.\n")
+        fo.write("// Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3\n")
+        fo.write("// Repliche REAL MOD: stessi comandi (stesso ordine) dei modelli Pedal Trinity, aspetto del pedale reale.\n")
+        if rows:
+            fo.write("const ModelDef realModels[] = {\n" + "\n".join(rows) + "\n};\n")
+            fo.write("constexpr int realCount = (int) (sizeof (realModels) / sizeof (realModels[0]));\n")
+        else:
+            fo.write("const ModelDef realModels[1] = {};\nconstexpr int realCount = 0;\n")
+    keep = {"r_" + r for r in [x["id"] for x in real_catalog.real_models(strict=False)] if r not in missing}
+    for fn in os.listdir(REAL_RES):
+        stem = fn[:-6] if fn.endswith("_a.png") else fn[:-4]
+        if stem not in keep:
+            os.remove(os.path.join(REAL_RES, fn))
+    total = sum(os.path.getsize(os.path.join(REAL_RES, x)) for x in os.listdir(REAL_RES))
+    print("REAL MOD: %d repliche, %d senza render %s, immagini %.1f MB" % (len(rows), len(missing), missing[:8], total / 1e6))
 
 
 def main():
@@ -156,4 +237,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if "--real" in sys.argv:
+        main_real()
+    else:
+        main()

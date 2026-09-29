@@ -11,6 +11,41 @@ using namespace pt::ui;
 namespace
 {
     /** Tasto OPZIONI: ingranaggio disegnato. */
+    /** Tasto REAL MOD PEDALBOARD: acceso trasforma la pedaliera nelle repliche dei pedali reali,
+        ripremuto torna ai pedali originali Pedal Trinity (il suono non cambia). */
+    class RealModButton : public juce::Button
+    {
+    public:
+        RealModButton() : juce::Button ("REAL MOD PEDALBOARD")
+        {
+            setClickingTogglesState (true);
+            setTooltip ("REAL MOD PEDALBOARD: mostra le repliche dei pedali reali con i loro nomi "
+                        "(o le tue foto dalla cartella RealPhotos). Ripremi per tornare ai pedali originali.");
+            setMouseCursor (juce::MouseCursor::PointingHandCursor);
+        }
+        void paintButton (juce::Graphics& g, bool over, bool down) override
+        {
+            const bool on = getToggleState();
+            auto r = getLocalBounds().toFloat().reduced (0.5f);
+            const auto accent = findColour (juce::TextButton::textColourOffId);
+            if (on)
+            {
+                g.setGradientFill (juce::ColourGradient (juce::Colour (0xffe8402e), r.getTopLeft(), juce::Colour (0xff8a1810), r.getBottomLeft(), false));
+                g.fillRoundedRectangle (r, 5.0f);
+                g.setColour (juce::Colour (0xffffd0a0).withAlpha (over ? 0.95f : 0.7f));
+                g.drawRoundedRectangle (r.reduced (0.5f), 5.0f, 1.2f);
+            }
+            else
+                getLookAndFeel().drawButtonBackground (g, *this, findColour (juce::TextButton::buttonColourId), over, down);
+            g.setColour (on ? juce::Colours::white : accent);
+            auto t = r.reduced (4.0f, 2.0f);
+            g.setFont (juce::Font (13.5f, juce::Font::bold));
+            g.drawFittedText ("REAL MOD", t.removeFromTop (t.getHeight() * 0.55f).toNearestInt(), juce::Justification::centredBottom, 1);
+            g.setFont (juce::Font (9.5f, juce::Font::bold));
+            g.drawFittedText ("PEDALBOARD", t.toNearestInt(), juce::Justification::centredTop, 1, 0.8f);
+        }
+    };
+
     class GearButton : public juce::Button
     {
     public:
@@ -77,10 +112,10 @@ PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcess
     prevButton.setTooltip ("Indietro di 3 pedali");
     nextButton.setTooltip ("Avanti di 3 pedali");
     lastButton.setTooltip ("Pagina successiva");
-    firstButton.onClick = [this] { scrollBy (-view); };
+    firstButton.onClick = [this] { scrollBy (-board->pageLength()); };
     prevButton.onClick = [this] { scrollBy (-3); };
     nextButton.onClick = [this] { scrollBy (3); };
-    lastButton.onClick = [this] { scrollBy (view); };
+    lastButton.onClick = [this] { scrollBy (board->pageLength()); };
     for (auto* b : { &firstButton, &prevButton, &nextButton, &lastButton }) addAndMakeVisible (b);
 
     pageLabel.setJustificationType (juce::Justification::centred);
@@ -116,6 +151,11 @@ PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcess
     infoButton.setTooltip ("Informazioni, licenza e guida");
     infoButton.onClick = [this] { showInfo (true); };
     addAndMakeVisible (infoButton);
+    realButton = std::make_unique<RealModButton>();
+    realButton->setToggleState (themes->realMode(), juce::dontSendNotification);
+    realButton->onClick = [this] { themes->setRealMode (realButton->getToggleState()); };
+    addAndMakeVisible (*realButton);
+
     optionsButton = std::make_unique<GearButton>();
     optionsButton->onClick = [this] { showOptions (true); };
     addAndMakeVisible (*optionsButton);
@@ -180,6 +220,7 @@ void PedalTrinityEditor::applyTheme()
 {
     const auto& t = themes->current();
     lookAndFeel.applyTheme (t);
+    if (realButton) realButton->setToggleState (themes->realMode(), juce::dontSendNotification);
     logo.setColour (juce::Label::textColourId, t.accent);
     pageLabel.setColour (juce::Label::textColourId, t.accent);
     zoomLabel.setColour (juce::Label::textColourId, t.textDim);
@@ -200,11 +241,13 @@ void PedalTrinityEditor::resized()
     const bool wide = getWidth() >= 1500;
     logo.setBounds (bar.getX() + 6, 2, 184, 30);
     bar.removeFromLeft (192);
-    presetButton.setBounds (bar.removeFromLeft (wide ? 240 : 184).reduced (0, 3));
-    bar.removeFromLeft (10);
+    presetButton.setBounds (bar.removeFromLeft (wide ? 240 : 170).reduced (0, 3));
+    bar.removeFromLeft (wide ? 10 : 6);
+    realButton->setBounds (bar.removeFromLeft (wide ? 118 : 96).reduced (0, 3));
+    bar.removeFromLeft (wide ? 10 : 6);
 
     const int gap = wide ? 10 : 7;
-    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 330, wide ? 546 : 490));
+    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 290, wide ? 546 : 490));
     infoButton.setBounds (right.removeFromRight (60).reduced (0, 3));
     right.removeFromRight (6);
     optionsButton->setBounds (right.removeFromRight (36).reduced (0, 3));

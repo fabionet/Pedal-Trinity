@@ -325,7 +325,8 @@ namespace pt::engine
             st.namLoad = info.realtimeLoad;
             st.warning = false;
             st.message = "Modello verificato: " + info.kind + ", " + std::to_string (info.weights) + " pesi, carico "
-                         + std::to_string ((int) std::lround (info.realtimeLoad * 100.0)) + "% del tempo reale.";
+                         + std::to_string ((int) std::lround (info.realtimeLoad * 100.0)) + "% del tempo reale."
+                         + (info.realtimeLoad > 0.8 ? " Attenzione: carico alto, con buffer piccoli l'audio potrebbe interrompersi." : "");
             return true;
         }
         catch (const std::exception& e)

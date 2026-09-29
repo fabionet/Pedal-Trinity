@@ -14,13 +14,13 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")  # nessun redistributable VC++ richiesto
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "")
 
-project(PedalTrinity VERSION 1.0.0 LANGUAGES C CXX)
+project(PedalTrinity VERSION 1.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)        # NeuralAmpModelerCore richiede la libreria C++20
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(PT_VERSION_STRING "1.0.0-beta")
+set(PT_VERSION_STRING "1.1.0-beta")
 set(PT_JUCE_DIR "" CACHE PATH "Cartella dei sorgenti di JUCE 7 (vuoto = download automatico)")
 set(PT_ASIO_SDK_DIR "" CACHE PATH "Cartella dello Steinberg ASIO SDK (solo Windows)")
 set(PT_JUCE_GIT_SHA "4f43011b96eb0636104cb3e433894cda98243626")
@@ -130,6 +130,7 @@ target_sources(PedalTrinity PRIVATE
     Source/gui/Pedalboard.cpp
     Source/gui/Rack.cpp
     Source/gui/Theme.cpp
+    Source/gui/RealMod.cpp
     Source/gui/OptionsPanel.cpp
     Source/engine/FxNam.cpp
     Source/engine/NamSecurity.cpp)
@@ -144,7 +145,9 @@ target_include_directories(PedalTrinity PRIVATE Source Source/gui Source/engine)
 
 # immagini renderizzate dei pedali (una per modello del catalogo)
 file(GLOB PT_PEDAL_IMAGES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Resources/pedals/*.jpg"
-                                            "${CMAKE_CURRENT_SOURCE_DIR}/Resources/pedals/*_a.png")
+                                            "${CMAKE_CURRENT_SOURCE_DIR}/Resources/pedals/*_a.png"
+                                            "${CMAKE_CURRENT_SOURCE_DIR}/Resources/pedals_real/*.jpg"
+                                            "${CMAKE_CURRENT_SOURCE_DIR}/Resources/pedals_real/*_a.png")
 
 juce_add_binary_data(PedalTrinityData
     HEADER_NAME BinaryData.h

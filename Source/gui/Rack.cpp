@@ -31,9 +31,15 @@ namespace pt::ui
                 if (cat != m.category) continue;
                 const bool isCur = &m == current;
                 containsCurrent |= isCur;
-                juce::String text = juce::String (m.code) + "   " + m.name;
-                if (m.inspiredBy != nullptr && *m.inspiredBy)
-                    text << "   (stile " << m.inspiredBy << ")";
+                juce::String text;
+                if (const auto* v = visualDef (&m); v != &m)
+                    text = juce::String (v->code) + "   " + v->name + "   (replica reale)";     // REAL MOD
+                else
+                {
+                    text = juce::String (m.code) + "   " + m.name;
+                    if (m.inspiredBy != nullptr && *m.inspiredBy)
+                        text << "   (stile " << m.inspiredBy << ")";
+                }
                 sub.addItem (i + 2, text, true, isCur);
             }
             root.addSubMenu (cat, sub, true, nullptr, containsCurrent);
@@ -148,7 +154,7 @@ namespace pt::ui
         selector.clear (juce::dontSendNotification);
         *selector.getRootMenu() = buildModelMenu (d, chain.canPlaceSplitter (index));
         selector.setSelectedId (d == nullptr ? 1 : (int) (d - &model (0)) + 2, juce::dontSendNotification);
-        if (d != nullptr) selector.setText (juce::String (d->code) + "  " + d->name, juce::dontSendNotification);
+        if (const auto* v = visualDef (d); v != nullptr) selector.setText (juce::String (v->code) + "  " + v->name, juce::dontSendNotification);
         else selector.setText ("- vuoto -", juce::dontSendNotification);
         left->setEnabled (neighbour (-1) >= 0);
         right->setEnabled (neighbour (1) >= 0);
@@ -399,13 +405,17 @@ namespace pt::ui
         view.bindTo (i);
         auto* s = chain.slot (i);
         const ModelDef* d = s != nullptr ? s->def : nullptr;
-        title.setText (juce::String ("Slot ") + juce::String (i + 1) + "  -  " + (d != nullptr ? juce::String (d->code) + "  " + d->name : juce::String ("vuoto")),
+        const ModelDef* v = visualDef (d);
+        title.setText (juce::String ("Slot ") + juce::String (i + 1) + "  -  " + (v != nullptr ? juce::String (v->code) + "  " + v->name : juce::String ("vuoto")),
                        juce::dontSendNotification);
         juce::String text;
         if (d != nullptr)
         {
             text << "Categoria: " << d->category << "\n";
-            if (d->inspiredBy != nullptr && *d->inspiredBy) text << "Suono di riferimento: " << d->inspiredBy << "\n\n";
+            if (v != d)
+                text << "REAL MOD: replica del pedale reale. Suono e comandi del modello Pedal Trinity "
+                     << d->code << " " << d->name << ".\n\n";
+            else if (d->inspiredBy != nullptr && *d->inspiredBy) text << "Suono di riferimento: " << d->inspiredBy << "\n\n";
             if (d->notes != nullptr) text << juce::String::fromUTF8 (d->notes) << "\n\n";
             text << "Comandi:\n";
             for (int k = 0; k < d->numControls; ++k) text << "  - " << d->controls[k].label << "\n";

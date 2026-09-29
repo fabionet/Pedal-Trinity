@@ -171,6 +171,19 @@ namespace pt::ui
         double prop = juce::Slider::getValue();
         if (c.kind == ControlKind::Selector && c.steps > 1)
             prop = 0.08 + 0.84 * prop;       // i selettori a scatti non usano tutta la corsa
+        if (ghost)
+        {
+            const juce::Point<float> ctr ((c.x + c.tx) * 0.5f - origin.x, (c.y + c.ty) * 0.5f - origin.y);
+            const float r = c.radius * 1.08f;
+            const float a0 = juce::degreesToRadians (-150.0f), a1 = a0 + (float) prop * juce::degreesToRadians (300.0f);
+            juce::Path arc;
+            arc.addCentredArc (ctr.x, ctr.y, r, r, 0.0f, a0, a1, true);
+            g.setColour (juce::Colours::black.withAlpha (0.45f));
+            g.strokePath (arc, juce::PathStrokeType (3.2f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+            g.setColour (juce::Colour (0xffffc040).withAlpha (isMouseOverOrDragging() ? 0.95f : 0.7f));
+            g.strokePath (arc, juce::PathStrokeType (1.6f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+            return;
+        }
         assets.drawFrame (g, c.strip, Assets::frameForProportion (c.strip, prop), c.x - origin.x, c.y - origin.y);
     }
 
@@ -277,6 +290,16 @@ namespace pt::ui
     void PushControl::paintButton (juce::Graphics& g, bool over, bool down)
     {
         auto r = getLocalBounds().toFloat().reduced (1.0f);
+        if (c.strip == 253)
+        {
+            // footswitch renderizzato (REAL MOD, looper da pavimento): solo l'ombra della pressione
+            if (down || over)
+            {
+                g.setColour (down ? juce::Colour (0x44000000) : juce::Colour (0x14ffffff));
+                g.fillRoundedRectangle (r, r.getWidth() * 0.18f);
+            }
+            return;
+        }
         g.setGradientFill (juce::ColourGradient (juce::Colour (0xffd8d9dc), r.getTopLeft(), juce::Colour (0xff6d6f74), r.getBottomRight(), false));
         g.fillEllipse (r);
         if (down || over)
@@ -339,4 +362,49 @@ namespace pt::ui
     }
 
     bool FootZone::hitTest (int x, int y) { return shape.contains ((float) x, (float) y); }
+
+    //==============================================================================
+    TreadleControl::TreadleControl (const ControlDef& cd) : c (cd)
+    {
+        setSliderStyle (juce::Slider::LinearVertical);
+        setTextBoxStyle (juce::Slider::NoTextBox, true, 0, 0);
+        setRange (0.0, 1.0);
+        setSliderSnapsToMousePosition (false);
+        setMouseDragSensitivity (220);
+        setDoubleClickReturnValue (true, c.def);
+        setMouseCursor (juce::MouseCursor::UpDownResizeCursor);
+        setTitle (c.label);
+        setTooltip (juce::String (c.label) + ": trascina il pedale in su (punta) o in giu' (tallone)");
+        textFromValueFunction = [this] (double v) { return formatControlValue (c, v); };
+        onValueChange = [this] { if (onChange) onChange ((float) juce::Slider::getValue()); };
+        const float top = juce::jmin (c.y, c.ty), bottom = juce::jmax (c.y, c.ty);
+        setBounds (juce::Rectangle<float> (c.x - c.radius, top, c.radius * 2.0f, bottom - top).getSmallestIntegerContainer());
+    }
+
+    void TreadleControl::syncFromModel()
+    {
+        if (readModel && ! isMouseButtonDown())
+            setValue (readModel(), juce::dontSendNotification);
+    }
+
+    void TreadleControl::paint (juce::Graphics& g)
+    {
+        const auto r = getLocalBounds().toFloat();
+        if (isMouseOverOrDragging())
+        {
+            g.setColour (juce::Colours::white.withAlpha (0.05f));
+            g.fillRoundedRectangle (r.reduced (2.0f), 8.0f);
+        }
+        // barra a LED lungo il bordo destro del pedale
+        const int n = 16;
+        const auto bar = r.withLeft (r.getRight() - juce::jmax (7.0f, r.getWidth() * 0.06f)).reduced (1.5f, 6.0f);
+        const float seg = bar.getHeight() / (float) n;
+        const int lit = (int) std::round (getValue() * n);
+        for (int i = 0; i < n; ++i)
+        {
+            const auto cell = juce::Rectangle<float> (bar.getX(), bar.getBottom() - seg * (float) (i + 1), bar.getWidth(), seg).reduced (0.0f, seg * 0.16f);
+            g.setColour (i < lit ? juce::Colour (0xffffb030) : juce::Colours::black.withAlpha (0.45f));
+            g.fillRoundedRectangle (cell, 1.5f);
+        }
+    }
 }

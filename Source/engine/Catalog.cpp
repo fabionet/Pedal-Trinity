@@ -11,6 +11,7 @@ namespace pt::engine
     namespace
     {
         #include "Catalog.inc"
+        #include "CatalogReal.inc"          // realModels[], realCount (tools/art/assemble_catalog.py --real)
     }
 
     int numModels() { return (int) (sizeof (models) / sizeof (models[0])); }
@@ -21,6 +22,17 @@ namespace pt::engine
         for (const auto& m : models)
             if (std::strcmp (m.id, id) == 0)
                 return &m;
+        return nullptr;
+    }
+
+    int numRealModels() { return realCount; }
+    const ModelDef& realModel (int index) { return realModels[index]; }
+
+    const ModelDef* findRealModel (const char* id)
+    {
+        for (int i = 0; i < realCount; ++i)
+            if (std::strcmp (realModels[i].id, id) == 0)
+                return &realModels[i];
         return nullptr;
     }
 }

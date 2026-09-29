@@ -26,6 +26,8 @@ for t in pro tolex walnut green alu night; do
 done
 "$APP" --screenshot "$TMP/options.png" --theme pro --size 1600x900 --view 6 --options --chain ed9,ds1,ce5
 "$APP" --screenshot "$TMP/zoom.png" --theme pro --size 1600x900 --view 3 --chain ed9,mc2w,gq7 --zoom 1
+"$APP" --screenshot "$TMP/realmod.png" --theme pro --size 1920x1080 --view 6 --real \
+    --chain ds1,dd500,fv500h,rc30,od200,mt2
 NAMX="$ROOT/build/_deps/nam_core-src/example_models"      # modelli di esempio di NeuralAmpModelerCore
 "$APP" --screenshot "$TMP/nam.png" --theme pro --size 1600x900 --view 3 --chain nama1a2 \
     --nam "0:A=$NAMX/A2.nam" --nam "0:B=$NAMX/wavenet_a1_standard.nam" --zoom 0
