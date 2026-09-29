@@ -196,7 +196,7 @@ namespace pt::ui
 
         auto dir = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("PedalTrinity");
         dir.createDirectory();
-        auto pdf = dir.getChildFile ("PedalTrinity_Guida_v1.1.1-beta.pdf");
+        auto pdf = dir.getChildFile ("PedalTrinity_Guida_v1.1.2-beta.pdf");
         if (pdf.getSize() != (juce::int64) data.getSize())
             pdf.replaceWithData (data.getData(), data.getSize());
         return pdf.startAsProcess();

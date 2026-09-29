@@ -263,30 +263,94 @@ namespace pt::ui
             if (side.getSize() > maxSidecarBytes) { e.error = side.getFileName() + ": file troppo grande"; return {}; }
             const auto v = juce::JSON::parse (side.loadFileAsString());
             if (! v.isObject()) { e.error = side.getFileName() + ": JSON non valido"; return {}; }
-            if (const auto* c = v.getProperty ("crop", {}).getArray(); c != nullptr && c->size() == 4)
-            {
-                int q[4];
-                for (int i = 0; i < 4; ++i)
-                {
-                    const auto& x = (*c)[i];
-                    if (! (x.isInt() || x.isInt64() || x.isDouble())) { e.error = side.getFileName() + ": crop non numerico"; return {}; }
-                    const double d = (double) x;
-                    if (! std::isfinite (d) || d < 0 || d > maxSide) { e.error = side.getFileName() + ": crop fuori dai limiti"; return {}; }
-                    q[i] = (int) d;
-                }
-                crop = juce::Rectangle<int> (q[0], q[1], q[2], q[3]).getIntersection (img.getBounds());
-                if (crop.getWidth() < minSide / 2 || crop.getHeight() < minSide / 2) { e.error = side.getFileName() + ": crop troppo piccolo"; return {}; }
-            }
-            const int r = (int) v.getProperty ("rotate", 0);
-            if (r == 0 || r == 90 || r == 180 || r == 270) rotate = r;
-            else { e.error = side.getFileName() + ": rotate ammette solo 0, 90, 180, 270"; return {}; }
-            knobs = (bool) v.getProperty ("knobs", true);
+            bool knobsFlag = true;
+            if (auto err = parseSidecar (v, img.getBounds(), e.photo, crop, rotate, knobsFlag); err.isNotEmpty())
+                { e.error = side.getFileName() + ": " + err; return {}; }
+            knobs = knobsFlag;
         }
         if (crop.isEmpty()) crop = autoCrop (img);
         e.photo.image = compose (img, real, crop, rotate);
         e.photo.knobs = knobs;
         e.photo.file = file;
         return e.photo;
+    }
+
+    juce::String RealPhotos::parseSidecar (const juce::var& v, juce::Rectangle<int> imageBounds, Photo& photo,
+                                           juce::Rectangle<int>& crop, int& rotate, bool& knobs)
+    {
+        if (! v.isObject()) return "JSON non valido";
+        auto number = [] (const juce::var& x) { return (x.isInt() || x.isInt64() || x.isDouble()) ? (double) x : std::nan (""); };
+        if (const auto* c = v.getProperty ("crop", {}).getArray(); c != nullptr)
+        {
+            if (c->size() != 4) return "crop deve avere 4 valori";
+            int q[4];
+            for (int i = 0; i < 4; ++i)
+            {
+                const double d = number ((*c)[i]);
+                if (! std::isfinite (d) || d < 0 || d > maxSide) return "crop fuori dai limiti";
+                q[i] = (int) d;
+            }
+            crop = juce::Rectangle<int> (q[0], q[1], q[2], q[3]).getIntersection (imageBounds);
+            if (crop.getWidth() < minSide / 2 || crop.getHeight() < minSide / 2) return "crop troppo piccolo";
+        }
+        const double r = v.hasProperty ("rotate") ? number (v.getProperty ("rotate", 0)) : 0.0;
+        if (r == 0 || r == 90 || r == 180 || r == 270) rotate = (int) r;
+        else return "rotate ammette solo 0, 90, 180, 270";
+        knobs = (bool) v.getProperty ("knobs", true);
+        if (const auto* l = v.getProperty ("led", {}).getArray(); l != nullptr)
+        {
+            const double lu = l->size() == 2 ? number ((*l)[0]) : -1.0, lv = l->size() == 2 ? number ((*l)[1]) : -1.0;
+            if (! (std::isfinite (lu) && std::isfinite (lv) && lu >= 0 && lu <= 1 && lv >= 0 && lv <= 1)) return "led fuori dai limiti";
+            photo.hasLed = true; photo.ledU = (float) lu; photo.ledV = (float) lv;
+        }
+        if (v.hasProperty ("controls"))
+        {
+            auto* obj = v.getProperty ("controls", {}).getDynamicObject();
+            if (obj == nullptr) return "\"controls\" deve essere un oggetto";
+            const auto& props = obj->getProperties();
+            if (props.size() > 32) return "troppi comandi in \"controls\"";
+            for (const auto& nv : props)
+            {
+                const auto label = nv.name.toString();
+                const auto* a = nv.value.getArray();
+                if (label.isEmpty() || label.length() > 32 || a == nullptr || a->size() != 3)
+                    return "\"controls\" non valido (" + label.substring (0, 32) + ")";
+                float q[3];
+                for (int i = 0; i < 3; ++i)
+                {
+                    const double d = number ((*a)[i]);
+                    if (! std::isfinite (d) || d < 0.0 || d > 1.0) return "posizione fuori dai limiti (" + label + ")";
+                    q[i] = (float) d;
+                }
+                if (q[2] <= 0.005f || q[2] > 0.5f) return "raggio non valido (" + label + ")";
+                photo.controls.push_back ({ label, PhotoKnob { q[0], q[1], q[2] } });
+            }
+        }
+        return {};
+    }
+
+    juce::String RealPhotos::saveAlignment (const juce::File& photoFile, const std::vector<std::pair<juce::String, PhotoKnob>>& knobs,
+                                            bool hasLed, float ledU, float ledV)
+    {
+        // solo accanto a una foto della cartella RealPhotos; conserva crop e rotate gia' presenti
+        if (photoFile.getParentDirectory() != folder()) return "la foto non e' nella cartella RealPhotos";
+        const auto side = photoFile.withFileExtension ("json");
+        juce::var root;
+        if (side.existsAsFile() && side.getSize() <= maxSidecarBytes) root = juce::JSON::parse (side.loadFileAsString());
+        auto* obj = root.getDynamicObject();
+        if (obj == nullptr) { obj = new juce::DynamicObject(); root = juce::var (obj); }
+        auto* ctr = new juce::DynamicObject();
+        auto clamp01 = [] (float x) { return juce::jlimit (0.0, 1.0, std::round ((double) x * 10000.0) / 10000.0); };
+        for (const auto& k : knobs)
+        {
+            juce::Array<juce::var> a { clamp01 (k.second.x), clamp01 (k.second.y), juce::jlimit (0.006, 0.5, clamp01 (k.second.z)) };
+            ctr->setProperty (k.first, a);
+        }
+        obj->setProperty ("knobs", true);
+        obj->setProperty ("controls", juce::var (ctr));
+        if (hasLed) obj->setProperty ("led", juce::Array<juce::var> { clamp01 (ledU), clamp01 (ledV) });
+        if (! side.replaceWithText (juce::JSON::toString (root, false))) return "impossibile scrivere " + side.getFileName();
+        return {};
     }
 
     juce::String RealPhotos::problemFor (const char* id) const

@@ -24,6 +24,7 @@ public:
     void showInfo (bool shouldShow);
     void showOptions (bool shouldShow);
     void showZoom (int slotIndex);
+    void startZoomAlign() { if (zoomPanel) zoomPanel->startAlign(); }
     void setView (int pedalsVisible);
     void scrollBy (int delta);
 

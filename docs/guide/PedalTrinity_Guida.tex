@@ -34,7 +34,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small\color{steel}\textbf{PEDAL TRINITY} \,·\, Guida all'uso}
-\fancyhead[R]{\small\color{steel}v1.1.1 beta}
+\fancyhead[R]{\small\color{steel}v1.1.2 beta}
 \fancyfoot[L]{\small\color{steel}© 2026 FabioNET \,·\, GNU GPL v3}
 \fancyfoot[R]{\small\color{steel}\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -62,7 +62,7 @@
       {{\heavy\fontsize{54}{58}\selectfont PEDAL TRINITY}\\[0.6em]
        {\Large\color{gold}Pedaliera virtuale fino a 100 pedali \,·\, \modelcount\ modelli}\\[2.2em]
        {\LARGE\bfseries Guida illustrata all'uso}\\[0.4em]
-       {\large Versione 1.1.1 beta}};
+       {\large Versione 1.1.2 beta}};
   \node[anchor=south west,text width=17cm,align=left,text=white] at ([xshift=2cm,yshift=2.2cm]current page.south west)
       {\large by \textbf{FabioNET}\\[0.3em]
        \color{white!70}Plugin VST3 \,·\, LV2 \,·\, Standalone \quad per Linux e Windows (ASIO)\\
@@ -110,13 +110,13 @@ informazioni disponibili per ogni modello (alta = schema di fabbrica verificato)
 \subsection{Linux (pacchetto .deb)}
 Per Ubuntu 22.04 o successivi, Debian 12, Linux Mint 21 e derivate (64 bit):
 \begin{tcolorbox}[colback=charcoal,colupper=white,boxrule=0pt,arc=2mm]
-\texttt{sudo apt install ./pedal-trinity\_1.1.1-beta\_amd64.deb}
+\texttt{sudo apt install ./pedal-trinity\_1.1.2-beta\_amd64.deb}
 \end{tcolorbox}
 Installa il VST3 in \texttt{/usr/lib/vst3}, l'LV2 in \texttt{/usr/lib/lv2}, l'applicazione
 \texttt{pedal-trinity} (menu \emph{Audio}) e questa guida in \texttt{/usr/share/doc/pedal-trinity/}.
 
 \subsection{Windows 10/11}
-Avvia \texttt{PedalTrinity-1.1.1-beta-Windows-x64-Setup.exe}: installa lo Standalone (con driver
+Avvia \texttt{PedalTrinity-1.1.2-beta-Windows-x64-Setup.exe}: installa lo Standalone (con driver
 \textbf{ASIO}), il VST3 in \texttt{C:\textbackslash Program Files\textbackslash Common Files\textbackslash VST3}
 e l'LV2 in \texttt{...\textbackslash Common Files\textbackslash LV2}.
 
@@ -308,6 +308,14 @@ rilievo) e lascia i comandi regolabili sopra. Un file facoltativo con lo stesso 
 estensione \texttt{.json} permette di correggere il ritaglio e la rotazione e di nascondere i pomelli
 3D quando la foto ha già i suoi:
 \texttt{\{ "crop": [x, y, larghezza, altezza], "rotate": 90, "knobs": false \}}.
+
+\textbf{Pomelli sulla foto.} Il file \texttt{.json} può indicare dove si trova ogni pomello nella foto
+(\texttt{"controls": \{"TONE": [u, v, r], \dots\}}, centro e raggio in frazioni della foto) e il LED
+(\texttt{"led": [u, v]}): i pomelli 3D regolabili si sovrappongono esattamente a quelli veri, alla stessa
+dimensione, e il LED CHECK si accende al suo posto. Non serve scriverlo a mano: nel pannello di zoom
+di un pedale con foto personale premi \textbf{Allinea pomelli sulla foto}, trascina ogni cerchio sul
+suo pomello (la rotellina ne regola la dimensione, il mirino rosso è il LED) e premi \textbf{Salva
+allineamento}; \emph{Annulla} o \textsc{Esc} escono senza salvare.
 \begin{avviso}[Foto: note importanti]
 Le foto restano solo sul tuo computer e non fanno parte del programma: usa foto tue o di cui hai i
 diritti. Per sicurezza sono accettati solo JPEG e PNG veri (firma controllata), fino a 25 MB e
@@ -393,7 +401,7 @@ Lo Standalone ascolta l'ingresso: con microfono e altoparlanti del portatile usa
 \includegraphics[width=\linewidth]{../images/guide_info.jpg}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.46\linewidth}\vspace{0pt}
-Il tasto \textbf{INFO} mostra versione (\textbf{1.1.1 beta}), autore (\textbf{FabioNET}), il testo
+Il tasto \textbf{INFO} mostra versione (\textbf{1.1.2 beta}), autore (\textbf{FabioNET}), il testo
 completo della \textbf{GNU GPL v3} seguito dalle licenze dei componenti del NAM-A1A2 (MIT ed
 Eigen MPL 2.0), i crediti e apre questa guida.
 \end{minipage}
@@ -435,5 +443,5 @@ File NAM rifiutato & Il messaggio nel pannello di zoom indica il motivo: scarica
 Volume troppo alto/basso & Usa \ctl{OUT} e i \ctl{LEVEL} dei pedali; i livelli seguono quelli dei pedali reali. \\ \bottomrule
 \end{tabularx}
 \vfill
-\begin{center}\small\color{steel}Pedal Trinity 1.1.1 beta \,·\, © 2026 FabioNET \,·\, GNU General Public License v3\end{center}
+\begin{center}\small\color{steel}Pedal Trinity 1.1.2 beta \,·\, © 2026 FabioNET \,·\, GNU General Public License v3\end{center}
 \end{document}

@@ -8,7 +8,7 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
 
 | | |
 |---|---|
-| **Versione** | 1.1.1 beta |
+| **Versione** | 1.1.2 beta |
 | **Autore** | FabioNET |
 | **Licenza** | [GNU GPL v3](LICENSE) |
 | **Formati** | VST3 · LV2 · Standalone |
@@ -34,7 +34,8 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
   serie 200/500, unità da pavimento, pedali di volume e wah a bilanciere, Rocker, box d'epoca) e comandi
   nella posizione reale; il bilanciere si trascina, i footswitch dei looper funzionano. Il suono non cambia;
   ripremendo il tasto tutto torna com'era. Si possono usare anche le **proprie foto** (cartella RealPhotos),
-  appoggiate in rilievo sulla replica; le foto restano sul proprio computer.
+  appoggiate in rilievo sulla replica con i pomelli 3D allineati sopra quelli della foto (comando
+  **Allinea pomelli sulla foto** nel pannello di zoom); le foto restano sul proprio computer.
 * **NAM-A1A2 Model** (rosso sangue, contenitore grande): lettore di modelli **Neural Amp Modeler**
   (A1, A2-Lite / A2-Full, LSTM; file `.nam` e `.namb`) con due canali **A** e **B**, ciascuno con modello
   e **IR**. Sul pedale: INPUT, BASS / MIDDLE / TREBLE (tonestack del plugin NAM), OUTPUT, volumi NAM e IR
@@ -67,13 +68,13 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
 
 ### Linux (Ubuntu 22.04+, Debian 12+, Mint 21+)
 ```bash
-sudo apt install ./pedal-trinity_1.1.1-beta_amd64.deb
+sudo apt install ./pedal-trinity_1.1.2-beta_amd64.deb
 ```
 Installa `/usr/lib/vst3/Pedal Trinity.vst3`, `/usr/lib/lv2/Pedal Trinity.lv2` e l'app `pedal-trinity`
 (nel menu *Audio*). La guida si trova in `/usr/share/doc/pedal-trinity/`.
 
 ### Windows 10/11 (x64)
-Esegui `PedalTrinity-1.1.1-beta-Windows-x64-Setup.exe`. Il VST3 va in
+Esegui `PedalTrinity-1.1.2-beta-Windows-x64-Setup.exe`. Il VST3 va in
 `C:\Program Files\Common Files\VST3`, l'LV2 in `C:\Program Files\Common Files\LV2`.
 L'app standalone supporta i driver **ASIO** (selezionati automaticamente al primo avvio se presenti),
 WASAPI e DirectSound.

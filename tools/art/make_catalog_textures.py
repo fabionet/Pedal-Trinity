@@ -89,7 +89,7 @@ def panel_texture(m, lay):
         p = lay["controls"][k]
         if ctl["kind"] in ("knob", "selector", "outer"):
             r = p["r"]
-            ty = p["y"] - r - 0.0052
+            ty = p["y"] + r + 0.0046 if p.get("label_above") else p["y"] - r - 0.0052
             if ctl["kind"] == "outer":
                 inn = ctrls[k + 1]
                 c.text(p["x"], ty + 0.0006, ctl["label"], fit_size(ctl["label"], 0.0022, 0.0165, MT.F_BOLD), MT.F_BOLD, text)

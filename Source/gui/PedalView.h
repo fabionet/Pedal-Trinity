@@ -9,6 +9,7 @@
 #pragma once
 
 #include <array>
+#include <map>
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "Controls.h"
 #include "RealMod.h"
@@ -36,10 +37,23 @@ namespace pt::ui
         /** Pixel della vista per pixel logico dell'immagine del pedale. */
         float imageScale() const;
 
+        //==================== REAL MOD: allineamento dei pomelli sulla foto personale
+        bool hasPhoto() const { return photoImage.isValid() && def != nullptr && def->bodyW > 0; }
+        bool isAligning() const { return aligner != nullptr; }
+        void setAlignMode (bool);
+        /** Salva nel .json della foto le posizioni allineate; errore o stringa vuota. */
+        juce::String saveAlignment();
+
     private:
         class Canvas;
+        class Aligner;
+        struct AlignItem { int control = -1; juce::String label; juce::Point<float> centre; float radius = 0; };
+        void applyAlignItem (const AlignItem&);
+        void setKnobPlacement (int controlIndex, juce::Point<float> target, float radius);
+        void canvasRepaint();
         void timerCallback() override;
         void rebuild();
+        void placeOnPhoto (KnobControl&, int controlIndex);
         juce::Rectangle<float> imageArea() const;
 
         engine::Chain& chain;
@@ -51,6 +65,13 @@ namespace pt::ui
         const engine::ModelDef* engineDef = nullptr;    // modello dello slot (suono e comandi)
         juce::Image photoImage;                         // foto personale in rilievo in uso (REAL MOD)
         bool photoKnobs = true;
+        std::vector<std::pair<juce::String, PhotoKnob>> photoControls;   // pomelli nella foto
+        juce::File photoFile;
+        std::map<int, KnobControl*> knobComps;          // pomelli creati, per indice del comando
+        std::unique_ptr<Aligner> aligner;
+        bool photoLed = false;                          // LED CHECK nella foto
+        juce::Point<float> photoLedAt;
+        juce::Point<float> ledPoint() const;
         juce::SharedResourcePointer<Assets> assets;
         juce::SharedResourcePointer<RealPhotos> photos;
         juce::SharedResourcePointer<ThemeManager> themes;

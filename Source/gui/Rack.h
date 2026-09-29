@@ -87,6 +87,8 @@ namespace pt::ui
         void show (int index);
         int currentIndex() const { return index; }
         std::function<void()> onClose;
+        /** Avvia l'allineamento dei pomelli sulla foto (screenshot della guida). */
+        void startAlign() { view.setAlignMode (true); updateAlignButtons(); }
 
     private:
         juce::Rectangle<int> card() const;
@@ -94,6 +96,9 @@ namespace pt::ui
         int index;
         PedalView view;
         juce::TextButton prev { "<" }, next { ">" }, close { "Chiudi" };
+        juce::TextButton align { "Allinea pomelli sulla foto" }, cancelAlign { "Annulla" };
+        juce::Label alignHint;
+        void updateAlignButtons();
         juce::Label title, info;
         std::unique_ptr<NamPanel> nam;          // solo per il NAM-A1A2 Model
         juce::SharedResourcePointer<ThemeManager> themes;

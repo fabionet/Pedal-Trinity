@@ -14,7 +14,10 @@
         <id>.jpg / .jpeg / .png        (es. ds1.jpg)
         <SIGLA>.jpg / .jpeg / .png     (es. DS-1.jpg)
     e, facoltativo, un file <stesso nome>.json:
-        { "crop": [x, y, w, h], "rotate": 0|90|180|270, "knobs": true|false }
+        { "crop": [x, y, w, h], "rotate": 0|90|180|270, "knobs": true|false,
+          "controls": { "LEVEL": [u, v, r], ... }, "led": [u, v] }
+    "controls" indica dove sono i pomelli nella foto: i pomelli 3D regolabili vi si
+    sovrappongono esattamente, alla stessa dimensione.
     La foto (vista dall'alto) viene ritagliata, adagiata sul piano superiore
     della replica con fronte, bordi, luce e ombra (rilievo 3D) e i comandi
     restano regolabili sopra di essa.
@@ -31,6 +34,9 @@ namespace pt::ui
     /** Definizione da disegnare: la replica reale se REAL MOD e' attivo e il modello ne ha una. */
     const engine::ModelDef* visualDef (const engine::ModelDef*);
 
+    /** Pomello nella foto: centro (x = u, y = v) e raggio z, in frazioni della foto ritagliata. */
+    struct PhotoKnob { float x = 0, y = 0, z = 0; };
+
     class RealPhotos
     {
     public:
@@ -39,6 +45,11 @@ namespace pt::ui
             juce::Image image;          // composizione alla dimensione dell'immagine della replica (2x)
             bool knobs = true;          // disegna i pomelli 3D sopra la foto
             juce::File file;
+            /** Pomelli della foto: etichetta del comando -> centro (u, v) e raggio r, in frazioni
+                della foto ritagliata (u, r sulla larghezza, v sull'altezza). I pomelli 3D vi si sovrappongono. */
+            std::vector<std::pair<juce::String, PhotoKnob>> controls;
+            bool hasLed = false;        // LED CHECK della foto (u, v in frazioni della foto)
+            float ledU = 0, ledV = 0;
         };
 
         /** Cartella delle foto personali (creata al primo uso, con ELENCO_FOTO.txt dei nomi accettati). */
@@ -57,6 +68,12 @@ namespace pt::ui
 
         /** Verifiche di sicurezza sul file (estensione, firma, dimensioni dichiarate). Esposte per l'autotest. */
         static juce::String checkImageFile (const juce::File&, int& width, int& height);
+        /** Lettura del file .json di una foto (crop, rotate, knobs, led, controls): errore o stringa vuota. */
+        static juce::String parseSidecar (const juce::var&, juce::Rectangle<int> imageBounds, Photo&,
+                                          juce::Rectangle<int>& crop, int& rotate, bool& knobs);
+        /** Salva nel .json della foto le posizioni dei pomelli (e del LED) allineate nel pannello di zoom. */
+        static juce::String saveAlignment (const juce::File& photoFile, const std::vector<std::pair<juce::String, PhotoKnob>>&,
+                                           bool hasLed, float ledU, float ledV);
         /** Composizione in rilievo della foto sul piano della replica. Esposta per l'autotest. */
         static juce::Image compose (const juce::Image& photo, const engine::ModelDef& real, juce::Rectangle<int> crop, int rotate);
 
