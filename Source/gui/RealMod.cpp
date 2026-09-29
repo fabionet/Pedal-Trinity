@@ -109,7 +109,34 @@ namespace pt::ui
     {
         auto dir = juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory).getChildFile ("PedalTrinity").getChildFile ("RealPhotos");
         if (! dir.isDirectory()) dir.createDirectory();
+        static bool listed = false;                      // una volta per sessione (thread dei messaggi)
+        if (! listed) { listed = true; writeList (dir); }
         return dir;
+    }
+
+    void RealPhotos::writeList (const juce::File& dir)
+    {
+        // elenco dei nomi di file accettati, uno per pedale (riscritto se il catalogo cambia)
+        const auto list = dir.getChildFile ("ELENCO_FOTO.txt");
+        juce::String text;
+        text << "Pedal Trinity - REAL MOD PEDALBOARD: foto personali\n"
+             << "======================================================\n\n"
+             << "Metti in questa cartella le TUE foto dei pedali (scattate dall'alto, pedale intero),\n"
+             << "chiamate con uno dei due nomi della riga del pedale, in .jpg, .jpeg o .png.\n"
+             << "Poi, nel programma: Opzioni -> Ricarica foto (con REAL MOD acceso).\n"
+             << "Le foto restano sul tuo computer: usa foto tue o di cui hai i diritti.\n\n"
+             << "Facoltativo, un file .json con lo stesso nome (es. ds1.json):\n"
+             << "  { \"crop\": [x, y, larghezza, altezza], \"rotate\": 90, \"knobs\": false }\n"
+             << "crop = ritaglio in pixel, rotate = 0/90/180/270, knobs = false nasconde i pomelli 3D.\n\n"
+             << juce::String ("NOME FILE").paddedRight (' ', 22) << juce::String ("OPPURE").paddedRight (' ', 22) << "PEDALE\n";
+        for (int i = 0; i < numRealModels(); ++i)
+        {
+            const auto& r = realModel (i);
+            text << (juce::String (r.id) + ".jpg").paddedRight (' ', 22) << (juce::String (r.code) + ".jpg").paddedRight (' ', 22)
+                 << r.code << "  " << r.name << "\n";
+        }
+        if (! list.existsAsFile() || list.loadFileAsString() != text)
+            list.replaceWithText (text);
     }
 
     juce::String RealPhotos::checkImageFile (const juce::File& f, int& width, int& height)
@@ -205,6 +232,7 @@ namespace pt::ui
 
     RealPhotos::Photo RealPhotos::forModel (const ModelDef& real)
     {
+        if (! isEnabled()) return {};
         const auto dir = folder();
         juce::File file;
         for (auto stem : { juce::String (real.id), juce::String (real.code) })

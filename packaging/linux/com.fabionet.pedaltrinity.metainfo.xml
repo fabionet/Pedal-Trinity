@@ -18,6 +18,7 @@
     <category>Audio</category>
   </categories>
   <releases>
+    <release version="1.1.1~beta" date="2026-09-29"/>
     <release version="1.1.0~beta" date="2026-09-29"/>
     <release version="1.0.0~beta" date="2026-09-27"/>
   </releases>

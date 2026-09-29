@@ -41,14 +41,19 @@ namespace pt::ui
             juce::File file;
         };
 
-        /** Cartella delle foto personali (creata al primo uso). */
+        /** Cartella delle foto personali (creata al primo uso, con ELENCO_FOTO.txt dei nomi accettati). */
         static juce::File folder();
+        /** Scrive ELENCO_FOTO.txt: per ogni pedale i nomi di file accettati. */
+        static void writeList (const juce::File& dir);
         /** Foto personale per la replica 'real' (non valida se assente o rifiutata). */
         Photo forModel (const engine::ModelDef& real);
         /** Ultimo errore per il modello (vuoto se nessuno). */
         juce::String problemFor (const char* id) const;
         /** Svuota la cache (dopo aver cambiato le foto nella cartella). */
         void reload();
+        /** Disattiva le foto personali (screenshot per la guida: mai foto dell'utente nei documenti pubblici). */
+        static void setEnabled (bool e) { enabledFlag() = e; }
+        static bool isEnabled() { return enabledFlag(); }
 
         /** Verifiche di sicurezza sul file (estensione, firma, dimensioni dichiarate). Esposte per l'autotest. */
         static juce::String checkImageFile (const juce::File&, int& width, int& height);
@@ -56,6 +61,7 @@ namespace pt::ui
         static juce::Image compose (const juce::Image& photo, const engine::ModelDef& real, juce::Rectangle<int> crop, int rotate);
 
     private:
+        static bool& enabledFlag() { static bool e = true; return e; }
         struct Entry { juce::String key; Photo photo; juce::String error; };
         std::map<juce::String, Entry> cache;
     };
