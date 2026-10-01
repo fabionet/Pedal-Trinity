@@ -9,6 +9,23 @@ namespace pt
 {
     namespace
     {
+        void removeExternalFileReferences (juce::ValueTree& state)
+        {
+            const auto chain = state.getChildWithName ("CHAIN");
+            for (int i = 0; i < chain.getNumChildren(); ++i)
+            {
+                auto slot = chain.getChild (i);
+                slot.removeProperty ("file", nullptr);
+                const auto extra = juce::JSON::parse (slot.getProperty ("state").toString());
+                if (auto* obj = extra.getDynamicObject())
+                {
+                    for (const char* key : { "namA", "namB", "namShaA", "namShaB", "irA", "irB", "irShaA", "irShaB" })
+                        obj->removeProperty (key);
+                    slot.setProperty ("state", juce::JSON::toString (extra), nullptr);
+                }
+            }
+        }
+
         struct FactoryPreset { const char* name; const char* slots; };
         // "modello:on:p0,p1,..." separati da ';' (valori normalizzati 0..1); "modello@B" = corsia B.
         // split = SPL-3: MODE 0 mono, 0.5 dual, 1 stereo; poi BALANCE, LEVEL A, LEVEL B (0.667 = 0 dB)
@@ -48,9 +65,10 @@ namespace pt
         return s;
     }
 
-    bool PresetManager::saveTo (const juce::File& file)
+    bool PresetManager::saveTo (const juce::File& file, bool includeExternalReferences)
     {
         auto state = processor.captureState();
+        if (! includeExternalReferences) removeExternalFileReferences (state);
         state.setProperty ("presetName", file.getFileNameWithoutExtension(), nullptr);
         if (auto xml = state.createXml())
             if (xml->writeTo (file))
@@ -65,7 +83,7 @@ namespace pt
     {
         const auto clean = juce::File::createLegalFileName (name.trim());
         if (clean.isEmpty()) return false;
-        return saveTo (folder().getChildFile (clean).withFileExtension ("ptpreset"));
+        return saveTo (folder().getChildFile (clean).withFileExtension ("ptpreset"), true);
     }
 
     bool PresetManager::load (const juce::File& file)

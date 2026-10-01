@@ -104,7 +104,7 @@ PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcess
     logo.setColour (juce::Label::textColourId, juce::Colour (0xffd9b464));
     addAndMakeVisible (logo);
 
-    presetButton.setTooltip ("Preset: carica, salva, esporta, importa");
+    presetButton.setTooltip ("Preset: esporta senza i percorsi locali dei file NAM/IR; per usarli su un altro computer ricarica i file");
     presetButton.onClick = [this] { showPresetMenu(); };
     addAndMakeVisible (presetButton);
 
@@ -391,7 +391,7 @@ void PedalTrinityEditor::showPresetMenu()
         else if (r == 2 || r == 3)
         {
             const bool save = r == 2;
-            chooser = std::make_unique<juce::FileChooser> (save ? "Esporta preset" : "Importa preset",
+            chooser = std::make_unique<juce::FileChooser> (save ? "Esporta preset (senza percorsi locali NAM/IR)" : "Importa preset",
                                                            PresetManager::folder(), "*.ptpreset");
             const auto flags = save ? (juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::warnAboutOverwriting)
                                     : juce::FileBrowserComponent::openMode;
