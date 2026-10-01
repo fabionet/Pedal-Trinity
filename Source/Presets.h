@@ -25,7 +25,7 @@ namespace pt
         static juce::StringArray factoryNames();
 
         bool save (const juce::String& name);                 // salva nella cartella utente
-        bool saveTo (const juce::File& file);                 // esporta
+        bool saveTo (const juce::File& file, bool includeExternalReferences = false); // esporta; i riferimenti locali sono esclusi
         bool load (const juce::File& file);                   // carica / importa
         bool loadFactory (int index);
         bool remove (const juce::File& file);
