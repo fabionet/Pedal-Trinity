@@ -353,6 +353,8 @@ namespace pt::engine
         auto& st = state[(size_t) k];
         auto fail = [&st] (const std::string& why) { st.warning = true; st.message = "IR rifiutato: " + why; return false; };
         const auto ext = file.getFileExtension().toLowerCase();
+        if (! pt::namsafe::isSafeLocalFile (file.getFullPathName(), 32 * 1024 * 1024))
+            return fail ("percorso non ammesso: serve un file locale regolare (niente percorsi di rete o file speciali)");
         if (! file.existsAsFile()) return fail ("il file non esiste");
         if (ext != ".wav" && ext != ".aif" && ext != ".aiff") return fail ("sono ammessi solo file .wav o .aiff");
         if (file.getSize() < 44 || file.getSize() > 32 * 1024 * 1024) return fail ("dimensione non plausibile");
@@ -461,7 +463,9 @@ namespace pt::engine
 
     void NamEffect::restoreState (const std::string& text)
     {
-        const auto v = juce::JSON::parse (juce::String::fromUTF8 (text.c_str()));
+        const auto json = juce::String::fromUTF8 (text.c_str());
+        if (! pt::namsafe::plausibleJson (json, 64 * 1024)) return;     // stato da preset di altri: niente JSON anomali
+        const auto v = juce::JSON::parse (json);
         if (! v.isObject()) return;
         Options o = options();
         o.calibrateInput = (bool) v.getProperty ("calibrate", o.calibrateInput);
@@ -482,6 +486,13 @@ namespace pt::engine
             auto reopen = [&st] (const juce::String& path, const juce::String& sha, const char* what) -> bool
             {
                 if (path.isEmpty()) return false;
+                // percorso dal preset/progetto: prima la regola di sicurezza, poi qualsiasi accesso al file
+                if (! pt::namsafe::isSafeLocalFile (path, 64 * 1024 * 1024))
+                {
+                    st.warning = true;
+                    st.message = std::string (what) + ": percorso non ammesso (rete, file speciale o non trovato)";
+                    return false;
+                }
                 const juce::File f (path);
                 if (! f.existsAsFile())
                 {

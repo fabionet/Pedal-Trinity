@@ -33,7 +33,9 @@ DEFAULT_DIMS = {"compact": (73, 129, 59), "twin": (173, 158, 57), "series200": (
                 "tabletop": (300, 200, 90), "other": (120, 140, 62)}
 
 # scritte che non devono mai comparire sulle repliche (marchi e loghi del produttore)
-NO_BRAND = re.compile(r"\bBOSS\b|\bRoland\b", re.I)
+# nomi di aziende (BOSS, Roland e i marchi dei partner delle edizioni in collaborazione): mai stampati;
+# restano solo i nomi di prodotto, per identificare il pedale di riferimento
+NO_BRAND = re.compile(r"\bBOSS\b|\bRoland\b|\bFender\b|\bIbanez\b|\bJHS\b", re.I)
 
 
 def hex_rgb(h, fallback):

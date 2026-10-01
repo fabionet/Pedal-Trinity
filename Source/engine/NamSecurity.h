@@ -49,4 +49,14 @@ namespace pt::namsafe
 
     /** true se l'estensione e' ammessa (.nam / .namb, maiuscole comprese). */
     bool hasModelExtension (const juce::File& file);
+
+    /** Regola comune per ogni percorso che arriva da preset, progetti o file esterni (modelli, IR):
+        percorso assoluto locale, niente percorsi di rete (\\server\... o //server/..., che su Windows
+        invierebbero le credenziali al server solo per controllarne l'esistenza) ne' spazi \\?\ / \\.\,
+        solo file regolari (niente /dev/zero, FIFO, dispositivi) di dimensione tra 1 byte e maxBytes.
+        Va chiamata PRIMA di qualsiasi accesso al file. */
+    bool isSafeLocalFile (const juce::String& path, juce::int64 maxBytes);
+
+    /** Testo JSON di dimensione e annidamento plausibili (da controllare prima del parser ricorsivo). */
+    bool plausibleJson (const juce::String& text, size_t maxBytes, int maxDepth = 32);
 }

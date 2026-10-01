@@ -1410,7 +1410,7 @@ const ModelDef realModels[] = {
       31.529f, 300.471f, 144.016f, 216.009f, true,
       "Riverbero stereo 2-in/2-out a 6 modi: SPRING (modello a due molle con interferenza), PLATE, HALL, ROOM, GATE e MODULATE (hall modulata); TONE caldo/brillante, tempi non pubblicati (manuale RV-5).",
       37.176f, 33.366f, 257.648f, 440.652f, 47.597f },
-    { "frv1", "'63 Fender Reverb", "FRV-1", "BOSS FRV-1 '63 Fender Reverb", "Riverbero", Family::Reverb, 3,
+    { "frv1", "'63 Reverb", "FRV-1", "BOSS FRV-1 '63 Fender Reverb", "Riverbero", Family::Reverb, 3,
       { { "DWELL", "time", CK::Knob, 2, 0.500f, 0, U::Dial, 0.000f, 10.000f, nullptr, 88.353f, 126.630f, 88.353f, 106.798f, 25.765f },
         { "TONE", "tone", CK::Knob, 2, 0.500f, 0, U::Dial, 0.000f, 10.000f, nullptr, 166.000f, 126.630f, 166.000f, 106.798f, 25.765f },
         { "MIXER", "level", CK::Knob, 2, 0.400f, 0, U::Dial, 0.000f, 10.000f, nullptr, 243.647f, 126.630f, 243.647f, 106.798f, 25.765f } },

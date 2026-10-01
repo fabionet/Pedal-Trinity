@@ -3,10 +3,41 @@
 */
 
 #include "Presets.h"
+#include "engine/NamSecurity.h"
 #include "PluginProcessor.h"
 
 namespace pt
 {
+    bool plausibleStateXml (const char* t, size_t n)
+    {
+        constexpr size_t maxBytes = 8 * 1024 * 1024;
+        constexpr int maxDepth = 32;                       // i preset reali arrivano a 4 livelli
+        if (t == nullptr || n == 0 || n > maxBytes) return false;
+        int depth = 0;
+        for (size_t i = 0; i < n; ++i)
+        {
+            if (t[i] != '<') continue;
+            if (i + 1 >= n) return false;
+            const char c = t[i + 1];
+            if (c == '?' || c == '!') continue;            // dichiarazione, commento
+            const bool closing = c == '/';
+            // fine del tag (rispettando le virgolette degli attributi)
+            char quote = 0; size_t j = i + 1;
+            for (; j < n; ++j)
+            {
+                if (quote) { if (t[j] == quote) quote = 0; }
+                else if (t[j] == '"' || t[j] == '\'') quote = t[j];
+                else if (t[j] == '>') break;
+            }
+            if (j >= n) return false;
+            if (closing) --depth;
+            else if (t[j - 1] != '/') ++depth;
+            if (depth > maxDepth || depth < 0) return false;
+            i = j;
+        }
+        return true;
+    }
+
     namespace
     {
         void removeExternalFileReferences (juce::ValueTree& state)
@@ -16,7 +47,9 @@ namespace pt
             {
                 auto slot = chain.getChild (i);
                 slot.removeProperty ("file", nullptr);
-                const auto extra = juce::JSON::parse (slot.getProperty ("state").toString());
+                const auto stateText = slot.getProperty ("state").toString();
+                if (! pt::namsafe::plausibleJson (stateText, 64 * 1024)) { slot.removeProperty ("state", nullptr); continue; }
+                const auto extra = juce::JSON::parse (stateText);
                 if (auto* obj = extra.getDynamicObject())
                 {
                     for (const char* key : { "namA", "namB", "namShaA", "namShaB", "irA", "irB", "irShaA", "irShaB" })
@@ -68,7 +101,7 @@ namespace pt
     bool PresetManager::saveTo (const juce::File& file, bool includeExternalReferences)
     {
         auto state = processor.captureState();
-        if (! includeExternalReferences) removeExternalFileReferences (state);
+        if (! includeExternalReferences) stripLocalReferences (state);
         state.setProperty ("presetName", file.getFileNameWithoutExtension(), nullptr);
         if (auto xml = state.createXml())
             if (xml->writeTo (file))
@@ -86,9 +119,16 @@ namespace pt
         return saveTo (folder().getChildFile (clean).withFileExtension ("ptpreset"), true);
     }
 
+    void PresetManager::stripLocalReferences (juce::ValueTree& state) { removeExternalFileReferences (state); }
+
     bool PresetManager::load (const juce::File& file)
     {
-        auto xml = juce::XmlDocument::parse (file);
+        // preset importati da altri: dimensione e annidamento controllati prima del parser XML
+        if (! file.existsAsFile() || file.getSize() > 8 * 1024 * 1024) return false;
+        juce::MemoryBlock data;
+        if (! file.loadFileAsData (data) || ! plausibleStateXml (static_cast<const char*> (data.getData()), data.getSize()))
+            return false;
+        auto xml = juce::parseXML (juce::String::fromUTF8 (static_cast<const char*> (data.getData()), (int) data.getSize()));
         if (xml == nullptr || ! xml->hasTagName ("PedalTrinityState")) return false;
         processor.restoreState (juce::ValueTree::fromXml (*xml));
         current = file.getFileNameWithoutExtension();

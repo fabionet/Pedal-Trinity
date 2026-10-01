@@ -4,6 +4,7 @@
 
 #include "RealMod.h"
 #include "Theme.h"
+#include "../engine/NamSecurity.h"
 #include <cstring>
 
 namespace pt::ui
@@ -261,7 +262,9 @@ namespace pt::ui
         if (side.existsAsFile())
         {
             if (side.getSize() > maxSidecarBytes) { e.error = side.getFileName() + ": file troppo grande"; return {}; }
-            const auto v = juce::JSON::parse (side.loadFileAsString());
+            const auto sideText = side.loadFileAsString();
+            if (! pt::namsafe::plausibleJson (sideText, (size_t) maxSidecarBytes)) { e.error = side.getFileName() + ": JSON anomalo"; return {}; }
+            const auto v = juce::JSON::parse (sideText);
             if (! v.isObject()) { e.error = side.getFileName() + ": JSON non valido"; return {}; }
             bool knobsFlag = true;
             if (auto err = parseSidecar (v, img.getBounds(), e.photo, crop, rotate, knobsFlag); err.isNotEmpty())
@@ -336,7 +339,11 @@ namespace pt::ui
         if (photoFile.getParentDirectory() != folder()) return "la foto non e' nella cartella RealPhotos";
         const auto side = photoFile.withFileExtension ("json");
         juce::var root;
-        if (side.existsAsFile() && side.getSize() <= maxSidecarBytes) root = juce::JSON::parse (side.loadFileAsString());
+        if (side.existsAsFile() && side.getSize() <= maxSidecarBytes)
+        {
+            const auto text = side.loadFileAsString();
+            if (pt::namsafe::plausibleJson (text, (size_t) maxSidecarBytes)) root = juce::JSON::parse (text);
+        }
         auto* obj = root.getDynamicObject();
         if (obj == nullptr) { obj = new juce::DynamicObject(); root = juce::var (obj); }
         auto* ctr = new juce::DynamicObject();

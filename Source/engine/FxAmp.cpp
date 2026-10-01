@@ -12,6 +12,7 @@
 */
 
 #include "FxCommon.h"
+#include "NamSecurity.h"
 #include "Families.h"
 #include "../dsp/Filters.h"
 
@@ -94,7 +95,10 @@ namespace pt::engine
             bool loadUserIR (const juce::File& f)
             {
                 const auto ext = f.getFileExtension().toLowerCase();
-                if (! f.existsAsFile() || (ext != ".wav" && ext != ".aif" && ext != ".aiff")
+                if (ext != ".wav" && ext != ".aif" && ext != ".aiff") return false;
+                // percorso dal preset: niente rete o file speciali, prima di qualsiasi accesso
+                if (! pt::namsafe::isSafeLocalFile (f.getFullPathName(), 32 * 1024 * 1024)) return false;
+                if (! f.existsAsFile()
                     || f.getSize() < 44 || f.getSize() > 32 * 1024 * 1024)
                     return false;
 
