@@ -7,6 +7,7 @@
 
 #include <juce_cryptography/juce_cryptography.h>
 #include <cmath>
+#include <filesystem>
 #include <regex>
 #include <set>
 #include "json.hpp"
@@ -185,9 +186,30 @@ namespace pt::namsafe
         return ext == ".nam" || ext == ".namb";
     }
 
+    bool plausibleJson (const juce::String& text, size_t maxBytes, int maxDepth)
+    {
+        const auto utf8 = text.toRawUTF8();
+        const size_t n = text.getNumBytesAsUTF8();
+        return n <= maxBytes && jsonDepth (utf8, n) <= maxDepth;
+    }
+
+    bool isSafeLocalFile (const juce::String& path, juce::int64 maxBytes)
+    {
+        if (path.isEmpty() || path.length() > 4096 || path.containsChar (0)) return false;
+        if (path.startsWith ("\\\\") || path.startsWith ("//") || path.startsWith ("\\??\\")) return false;   // rete / spazi speciali
+        if (! juce::File::isAbsolutePath (path)) return false;
+        std::error_code ec;
+        const std::filesystem::path p (path.toStdString());
+        const auto st = std::filesystem::status (p, ec);
+        if (ec || ! std::filesystem::is_regular_file (st)) return false;
+        const auto size = std::filesystem::file_size (p, ec);
+        return ! ec && size > 0 && (juce::int64) size <= maxBytes;
+    }
+
     std::string sha256Of (const juce::File& f)
     {
-        if (! f.existsAsFile()) return {};
+        // mai leggere un dispositivo o una FIFO: l'impronta resterebbe in lettura per sempre
+        if (! isSafeLocalFile (f.getFullPathName(), maxNamBytes)) return {};
         return juce::SHA256 (f).toHexString().toStdString();
     }
 
@@ -199,6 +221,9 @@ namespace pt::namsafe
         static const bool fastTanh = [] { nam::activations::Activation::enable_fast_tanh(); return true; }();
         juce::ignoreUnused (fastTanh);
         info = {};
+        if (! hasModelExtension (file)) fail ("sono ammessi solo file .nam o .namb");
+        if (! isSafeLocalFile (file.getFullPathName(), maxNamBytes))
+            fail ("percorso non ammesso: serve un file locale regolare (niente percorsi di rete o file speciali)");
         if (! file.existsAsFile()) fail ("il file non esiste o non e' un file regolare");
         if (! hasModelExtension (file)) fail ("sono ammessi solo file .nam o .namb");
         const bool binary = file.getFileExtension().toLowerCase() == ".namb";

@@ -8,7 +8,7 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
 
 | | |
 |---|---|
-| **Versione** | 1.1.2 beta |
+| **Versione** | 1.1.3 beta |
 | **Autore** | FabioNET |
 | **Licenza** | [GNU GPL v3](LICENSE) |
 | **Formati** | VST3 · LV2 · Standalone |
@@ -68,13 +68,13 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
 
 ### Linux (Ubuntu 22.04+, Debian 12+, Mint 21+)
 ```bash
-sudo apt install ./pedal-trinity_1.1.2-beta_amd64.deb
+sudo apt install ./pedal-trinity_1.1.3-beta_amd64.deb
 ```
 Installa `/usr/lib/vst3/Pedal Trinity.vst3`, `/usr/lib/lv2/Pedal Trinity.lv2` e l'app `pedal-trinity`
 (nel menu *Audio*). La guida si trova in `/usr/share/doc/pedal-trinity/`.
 
 ### Windows 10/11 (x64)
-Esegui `PedalTrinity-1.1.2-beta-Windows-x64-Setup.exe`. Il VST3 va in
+Esegui `PedalTrinity-1.1.3-beta-Windows-x64-Setup.exe`. Il VST3 va in
 `C:\Program Files\Common Files\VST3`, l'LV2 in `C:\Program Files\Common Files\LV2`.
 L'app standalone supporta i driver **ASIO** (selezionati automaticamente al primo avvio se presenti),
 WASAPI e DirectSound.
@@ -138,6 +138,15 @@ Pedal Trinity è un progetto indipendente. *Ibanez* e *Tube Screamer* sono march
 Corporation; *Fender* di Fender Musical Instruments Corporation.
 I nomi sono citati solo per indicare il suono di riferimento: nessuna affiliazione o approvazione.
 VST è un marchio di Steinberg Media Technologies GmbH. ASIO è un marchio e software di Steinberg Media Technologies GmbH.
+
+## Sicurezza e privacy
+
+* Nessuna connessione di rete, nessuna raccolta di dati o statistiche.
+* Modelli NAM, IR, foto personali, preset e stati dei progetti sono verificati prima dell'uso
+  (formato, dimensione, annidamento, valori finiti); i preset non possono far aprire percorsi di rete
+  o file speciali di sistema.
+* *Esporta su file* toglie dai preset i percorsi locali dei file (modelli NAM, IR).
+* Le foto personali REAL MOD restano sul proprio computer.
 
 ## Licenza
 

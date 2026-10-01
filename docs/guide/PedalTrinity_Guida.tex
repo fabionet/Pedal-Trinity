@@ -34,7 +34,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small\color{steel}\textbf{PEDAL TRINITY} \,·\, Guida all'uso}
-\fancyhead[R]{\small\color{steel}v1.1.2 beta}
+\fancyhead[R]{\small\color{steel}v1.1.3 beta}
 \fancyfoot[L]{\small\color{steel}© 2026 FabioNET \,·\, GNU GPL v3}
 \fancyfoot[R]{\small\color{steel}\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -62,7 +62,7 @@
       {{\heavy\fontsize{54}{58}\selectfont PEDAL TRINITY}\\[0.6em]
        {\Large\color{gold}Pedaliera virtuale fino a 100 pedali \,·\, \modelcount\ modelli}\\[2.2em]
        {\LARGE\bfseries Guida illustrata all'uso}\\[0.4em]
-       {\large Versione 1.1.2 beta}};
+       {\large Versione 1.1.3 beta}};
   \node[anchor=south west,text width=17cm,align=left,text=white] at ([xshift=2cm,yshift=2.2cm]current page.south west)
       {\large by \textbf{FabioNET}\\[0.3em]
        \color{white!70}Plugin VST3 \,·\, LV2 \,·\, Standalone \quad per Linux e Windows (ASIO)\\
@@ -110,13 +110,13 @@ informazioni disponibili per ogni modello (alta = schema di fabbrica verificato)
 \subsection{Linux (pacchetto .deb)}
 Per Ubuntu 22.04 o successivi, Debian 12, Linux Mint 21 e derivate (64 bit):
 \begin{tcolorbox}[colback=charcoal,colupper=white,boxrule=0pt,arc=2mm]
-\texttt{sudo apt install ./pedal-trinity\_1.1.2-beta\_amd64.deb}
+\texttt{sudo apt install ./pedal-trinity\_1.1.3-beta\_amd64.deb}
 \end{tcolorbox}
 Installa il VST3 in \texttt{/usr/lib/vst3}, l'LV2 in \texttt{/usr/lib/lv2}, l'applicazione
 \texttt{pedal-trinity} (menu \emph{Audio}) e questa guida in \texttt{/usr/share/doc/pedal-trinity/}.
 
 \subsection{Windows 10/11}
-Avvia \texttt{PedalTrinity-1.1.2-beta-Windows-x64-Setup.exe}: installa lo Standalone (con driver
+Avvia \texttt{PedalTrinity-1.1.3-beta-Windows-x64-Setup.exe}: installa lo Standalone (con driver
 \textbf{ASIO}), il VST3 in \texttt{C:\textbackslash Program Files\textbackslash Common Files\textbackslash VST3}
 e l'LV2 in \texttt{...\textbackslash Common Files\textbackslash LV2}.
 
@@ -395,13 +395,32 @@ Lo Standalone ascolta l'ingresso: con microfono e altoparlanti del portatile usa
 \end{tabularx}
 
 % ------------------------------------------------------------------
+\section{Sicurezza e privacy}
+\begin{itemize}
+  \item \textbf{Nessuna connessione}: Pedal Trinity non usa la rete, non raccoglie dati e non invia
+        statistiche. L'unico collegamento è il tasto del sito nel pannello INFO, che apre il browser.
+  \item \textbf{File verificati prima dell'uso}: modelli NAM e IR (vedi la sezione NAM), risposte
+        all'impulso dei simulatori di cassa (formato, frequenza, durata, valori finiti), foto personali
+        (solo JPEG/PNG veri, dimensioni lette prima di aprirle), preset e stati dei progetti (dimensione
+        e annidamento limitati, valori dei comandi riportati tra 0 e 1).
+  \item \textbf{Percorsi dei file}: un preset ricevuto da altri non può far aprire percorsi di rete
+        (\texttt{\textbackslash\textbackslash server\textbackslash\dots}) né file speciali di sistema: sono ammessi
+        solo file locali regolari.
+  \item \textbf{Preset esportati}: \emph{Esporta su file} toglie i percorsi del tuo computer (modelli
+        NAM, IR); chi riceve il preset ricarica i propri file. I preset salvati nella tua cartella e i
+        progetti della DAW li conservano, per ritrovarli.
+  \item \textbf{Foto personali}: restano nella cartella RealPhotos del tuo computer e non compaiono mai
+        nelle immagini della guida.
+\end{itemize}
+
+% ------------------------------------------------------------------
 \clearpage
 \section{Informazioni e licenza}
 \begin{minipage}[t]{0.5\linewidth}\vspace{0pt}
 \includegraphics[width=\linewidth]{../images/guide_info.jpg}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.46\linewidth}\vspace{0pt}
-Il tasto \textbf{INFO} mostra versione (\textbf{1.1.2 beta}), autore (\textbf{FabioNET}), il testo
+Il tasto \textbf{INFO} mostra versione (\textbf{1.1.3 beta}), autore (\textbf{FabioNET}), il testo
 completo della \textbf{GNU GPL v3} seguito dalle licenze dei componenti del NAM-A1A2 (MIT ed
 Eigen MPL 2.0), i crediti e apre questa guida.
 \end{minipage}
@@ -443,5 +462,5 @@ File NAM rifiutato & Il messaggio nel pannello di zoom indica il motivo: scarica
 Volume troppo alto/basso & Usa \ctl{OUT} e i \ctl{LEVEL} dei pedali; i livelli seguono quelli dei pedali reali. \\ \bottomrule
 \end{tabularx}
 \vfill
-\begin{center}\small\color{steel}Pedal Trinity 1.1.2 beta \,·\, © 2026 FabioNET \,·\, GNU General Public License v3\end{center}
+\begin{center}\small\color{steel}Pedal Trinity 1.1.3 beta \,·\, © 2026 FabioNET \,·\, GNU General Public License v3\end{center}
 \end{document}

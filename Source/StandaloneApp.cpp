@@ -2,7 +2,7 @@
     Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
 
     Applicazione Standalone personalizzata:
-      * finestra con titolo "Pedal Trinity 1.1.2 beta";
+      * finestra con titolo "Pedal Trinity 1.1.3 beta";
       * su Windows, al primo avvio, seleziona i driver ASIO se presenti;
       * ingresso audio attivo di default (e' un effetto per chitarra);
       * riga di comando:
@@ -29,6 +29,7 @@
 #include "engine/FxNam.h"
 #include "engine/NamSecurity.h"
 #include "gui/RealMod.h"
+#include "Presets.h"
 #include "gui/Assets.h"
 
 namespace
@@ -376,6 +377,94 @@ namespace
         tmp.deleteRecursively();
     }
 
+    /** Sicurezza e privacy di preset, progetti e percorsi dei file. */
+    void runSafetyTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using pt::namsafe::isSafeLocalFile;
+        const auto tmp = juce::File::getSpecialLocation (juce::File::tempDirectory)
+                             .getChildFile ("pt-safety-" + juce::String::toHexString (juce::Random::getSystemRandom().nextInt64()));
+        tmp.createDirectory();
+        const auto good = tmp.getChildFile ("ir.wav");
+        good.replaceWithText ("RIFF test");
+        int ok = 0;
+        ok += isSafeLocalFile (good.getFullPathName(), 1024) ? 1 : 0;
+        ok += ! isSafeLocalFile ("\\\\server\\share\\ir.wav", 1024) ? 1 : 0;      // rete (Windows)
+        ok += ! isSafeLocalFile ("//server/share/ir.wav", 1024) ? 1 : 0;              // rete
+        ok += ! isSafeLocalFile ("relativo/ir.wav", 1024) ? 1 : 0;                    // relativo
+        ok += ! isSafeLocalFile (tmp.getFullPathName(), 1024) ? 1 : 0;                // cartella
+        ok += ! isSafeLocalFile (good.getFullPathName(), 4) ? 1 : 0;                  // troppo grande
+       #if JUCE_LINUX || JUCE_MAC
+        ok += ! isSafeLocalFile ("/dev/zero", 1 << 30) ? 1 : 0;                       // dispositivo infinito
+       #else
+        ++ok;
+       #endif
+        report ("Sicurezza: percorsi dei file da preset e progetti", ok == 7, juce::String (ok) + "/7 casi corretti");
+        report ("Sicurezza: impronta mai calcolata su dispositivi", pt::namsafe::sha256Of (juce::File ("/dev/zero")).empty(), "/dev/zero ignorato");
+
+        // XML: annidamento eccessivo rifiutato prima del parser
+        juce::String deep;
+        for (int i = 0; i < 5000; ++i) deep << "<a>";
+        const juce::String normal = "<PedalTrinityState version=\"x\"><CHAIN><SLOT model=\"ds1\" p0=\"0.5\"/></CHAIN><UI w=\"1280\"/></PedalTrinityState>";
+        {
+            juce::String deepJson;
+            for (int i = 0; i < 100000; ++i) deepJson << "[";
+            report ("Sicurezza: JSON annidato all'eccesso rifiutato (stato NAM, foto)",
+                    ! pt::namsafe::plausibleJson (deepJson, 1 << 20) && pt::namsafe::plausibleJson ("{\"a\": [1, 2, {\"b\": 3}]}", 1024),
+                    "100000 livelli / 3 livelli");
+            pt::engine::Chain chain;                         // e il motore non va in crash ricevendolo da un preset
+            juce::ValueTree t ("CHAIN"), s ("SLOT");
+            s.setProperty ("model", "nama1a2", nullptr);
+            s.setProperty ("state", deepJson, nullptr);
+            t.appendChild (s, nullptr);
+            chain.fromValueTree (t);
+            report ("Sicurezza: preset con stato NAM anomalo caricato senza crash", chain.size() == 1, "stato ignorato");
+        }
+        report ("Sicurezza: XML annidato all'eccesso rifiutato, preset normale accettato",
+                ! pt::plausibleStateXml (deep.toRawUTF8(), (size_t) deep.getNumBytesAsUTF8())
+                    && pt::plausibleStateXml (normal.toRawUTF8(), (size_t) normal.getNumBytesAsUTF8()), "5000 livelli / 4 livelli");
+
+        // valori dei comandi: non finiti ignorati, fuori scala limitati a 0..1
+        {
+            pt::engine::Chain chain;
+            juce::ValueTree t ("CHAIN"), s ("SLOT");
+            s.setProperty ("model", "ds1", nullptr);
+            s.setProperty ("p0", 1.0e9, nullptr);
+            s.setProperty ("p1", std::nan (""), nullptr);
+            s.setProperty ("p2", -5.0, nullptr);
+            t.appendChild (s, nullptr);
+            chain.fromValueTree (t);
+            const auto* sl = chain.slot (0);
+            const bool fine = sl != nullptr && sl->fx != nullptr && sl->fx->p (0) == 1.0f && std::isfinite (sl->fx->p (1)) && sl->fx->p (2) == 0.0f;
+            report ("Sicurezza: valori dei comandi dei preset limitati a 0..1", fine, "1e9 -> 1, NaN ignorato, -5 -> 0");
+        }
+
+        // privacy: l'esportazione dei preset non contiene percorsi locali (NAM, IR)
+        {
+            PedalTrinityProcessor p;
+            juce::ValueTree t ("CHAIN"), s ("SLOT"), s2 ("SLOT");
+            s.setProperty ("model", "nama1a2", nullptr);
+            s.setProperty ("state", "{\"namA\": \"/home/utente/modelli/a.nam\", \"namShaA\": \"abc\", \"irA\": \"/home/utente/ir.wav\"}", nullptr);
+            s2.setProperty ("model", "irl1", nullptr);
+            s2.setProperty ("file", "/home/utente/cab.wav", nullptr);
+            t.appendChild (s, nullptr); t.appendChild (s2, nullptr);
+            p.chain.fromValueTree (t);
+            juce::ValueTree raw = p.captureState();
+            // simula i percorsi salvati (file non esistenti: il motore non li carica, l'esportazione li deve togliere)
+            auto ch = raw.getChildWithName ("CHAIN");
+            ch.getChild (0).setProperty ("state", s.getProperty ("state"), nullptr);
+            ch.getChild (1).setProperty ("file", "/home/utente/cab.wav", nullptr);
+            const auto out = tmp.getChildFile ("export.ptpreset");
+            pt::PresetManager::stripLocalReferences (raw);
+            const auto text = raw.toXmlString();
+            report ("Privacy: preset esportati senza percorsi locali dei file", ! text.contains ("/home/utente"), "percorsi NAM/IR rimossi");
+            // esportazione e reimportazione di un preset normale
+            const bool saved = p.presets.saveTo (out), loaded = saved && p.presets.load (out);
+            report ("Preset: esportazione e importazione con i nuovi controlli", saved && loaded && p.chain.size() == 2,
+                    juce::String (out.getSize()) + " byte");
+        }
+        tmp.deleteRecursively();
+    }
+
     int runSelfTest()
     {
         using namespace pt::engine;
@@ -486,6 +575,7 @@ namespace
 
         // 6. REAL MOD
         runRealModTests (report);
+        runSafetyTests (report);
 
         // 7. processore completo e bypass
         {

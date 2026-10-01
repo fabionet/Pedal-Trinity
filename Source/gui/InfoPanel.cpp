@@ -194,11 +194,16 @@ namespace pt::ui
         if (data.getSize() == 0)
             return false;
 
-        auto dir = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("PedalTrinity");
-        dir.createDirectory();
-        auto pdf = dir.getChildFile ("PedalTrinity_Guida_v1.1.2-beta.pdf");
-        if (pdf.getSize() != (juce::int64) data.getSize())
-            pdf.replaceWithData (data.getData(), data.getSize());
+        // cartella personale dell'utente (non /tmp, dove un altro utente potrebbe preparare il percorso in anticipo);
+        // il contenuto viene confrontato byte per byte e riscritto se diverso
+        auto dir = juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory).getChildFile ("PedalTrinity");
+        if (! dir.isDirectory() && ! dir.createDirectory()) return false;
+        auto pdf = dir.getChildFile (juce::String ("PedalTrinity_Guida_v") + pt::versionString + ".pdf").withFileExtension ("pdf");
+        pdf = dir.getChildFile (juce::File::createLegalFileName (pdf.getFileName().replaceCharacter (' ', '-')));
+        juce::MemoryBlock existing;
+        if (pdf.isSymbolicLink()) pdf.deleteFile();
+        if (! pdf.existsAsFile() || ! pdf.loadFileAsData (existing) || existing != data)
+            if (! pdf.replaceWithData (data.getData(), data.getSize())) return false;
         return pdf.startAsProcess();
     }
 }

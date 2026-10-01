@@ -3,6 +3,7 @@
 */
 
 #include "PluginProcessor.h"
+#include <cstring>
 #include "PluginEditor.h"
 
 namespace
@@ -135,7 +136,7 @@ void PedalTrinityProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 juce::ValueTree PedalTrinityProcessor::captureState() const
 {
     juce::ValueTree root ("PedalTrinityState");
-    root.setProperty ("version", "1.1.2-beta", nullptr);
+    root.setProperty ("version", "1.1.3-beta", nullptr);
     root.appendChild (const_cast<juce::AudioProcessorValueTreeState&> (apvts).copyState(), nullptr);
     root.appendChild (chain.toValueTree(), nullptr);
     root.appendChild (uiState.createCopy(), nullptr);
@@ -160,6 +161,11 @@ void PedalTrinityProcessor::getStateInformation (juce::MemoryBlock& destData)
 
 void PedalTrinityProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
+    // stato del progetto (anche di progetti ricevuti da altri): formato "VC2!" + lunghezza + XML,
+    // dimensione e annidamento controllati prima del parser
+    if (data == nullptr || sizeInBytes < 9 || sizeInBytes > 8 * 1024 * 1024) return;
+    const auto* bytes = static_cast<const char*> (data);
+    if (std::memcmp (bytes, "VC2!", 4) == 0 && ! pt::plausibleStateXml (bytes + 8, (size_t) sizeInBytes - 8)) return;
     if (auto xml = getXmlFromBinary (data, sizeInBytes))
     {
         if (xml->hasTagName ("PedalTrinityState"))

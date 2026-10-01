@@ -3,6 +3,7 @@
 */
 
 #include "Chain.h"
+#include <cmath>
 
 namespace pt::engine
 {
@@ -454,7 +455,11 @@ namespace pt::engine
             {
                 for (int k = 0; k < s->def->numControls; ++k)
                     if (st.hasProperty ("p" + juce::String (k)))
-                        s->fx->params[k].store ((float) st.getProperty ("p" + juce::String (k)));
+                    {
+                        // preset o progetto possono arrivare da altri: solo valori finiti, normalizzati 0..1
+                        const double v = (double) st.getProperty ("p" + juce::String (k));
+                        if (std::isfinite (v)) s->fx->params[k].store ((float) juce::jlimit (0.0, 1.0, v));
+                    }
                 const auto file = st.getProperty ("file").toString();
                 if (file.isNotEmpty()) s->fx->loadFile (file.toStdString());
                 const auto extra = st.getProperty ("state").toString();

@@ -12,6 +12,7 @@
 */
 
 #include "FxCommon.h"
+#include "NamSecurity.h"
 #include "Families.h"
 #include "../dsp/Filters.h"
 
@@ -63,8 +64,9 @@ namespace pt::engine
                 dry.setSize (2, maxBlock);
                 loaded = -1;
                 prepared = true;
-                if (! loadedFile.empty()) loadUserIR (juce::File (loadedFile));
-                else loadIfNeeded (true);
+                if (! loadedFile.empty() && ! loadUserIR (juce::File (loadedFile)))
+                    loadedFile.clear();
+                if (! userIR) loadIfNeeded (true);
             }
             void reset() override { conv.reset(); }
 
@@ -73,9 +75,8 @@ namespace pt::engine
             bool loadFile (const std::string& path) override
             {
                 const juce::File f (path);
-                if (! f.existsAsFile()) return false;
-                loadUserIR (f);
-                loadedFile = path;
+                if (! loadUserIR (f)) return false;
+                loadedFile = f.getFullPathName().toStdString();
                 return true;
             }
 
@@ -91,14 +92,49 @@ namespace pt::engine
             }
 
             /** Caricamento di un IR dell'utente (thread del messaggio). */
-            void loadUserIR (const juce::File& f)
+            bool loadUserIR (const juce::File& f)
             {
-                if (f.existsAsFile())
-                {
-                    conv.loadImpulseResponse (f, juce::dsp::Convolution::Stereo::yes, juce::dsp::Convolution::Trim::yes, 0,
-                                              juce::dsp::Convolution::Normalise::yes);
-                    userIR = true;
-                }
+                const auto ext = f.getFileExtension().toLowerCase();
+                if (ext != ".wav" && ext != ".aif" && ext != ".aiff") return false;
+                // percorso dal preset: niente rete o file speciali, prima di qualsiasi accesso
+                if (! pt::namsafe::isSafeLocalFile (f.getFullPathName(), 32 * 1024 * 1024)) return false;
+                if (! f.existsAsFile()
+                    || f.getSize() < 44 || f.getSize() > 32 * 1024 * 1024)
+                    return false;
+
+                juce::AudioFormatManager formats;
+                formats.registerBasicFormats();
+                std::unique_ptr<juce::AudioFormatReader> reader (formats.createReaderFor (f));
+                if (reader == nullptr || ! std::isfinite (reader->sampleRate)
+                    || reader->sampleRate < 8000.0 || reader->sampleRate > 384000.0
+                    || reader->numChannels < 1 || reader->numChannels > 2
+                    || reader->lengthInSamples < 1
+                    || reader->lengthInSamples > (juce::int64) (reader->sampleRate * 10.0))
+                    return false;
+
+                const int channels = (int) reader->numChannels;
+                const int samples = (int) reader->lengthInSamples;
+                juce::AudioBuffer<float> impulse (channels, samples);
+                if (! reader->read (&impulse, 0, samples, 0, true, channels > 1))
+                    return false;
+
+                float peak = 0.0f;
+                for (int ch = 0; ch < channels; ++ch)
+                    for (int i = 0; i < samples; ++i)
+                    {
+                        const float value = impulse.getSample (ch, i);
+                        if (! std::isfinite (value)) return false;
+                        peak = std::max (peak, std::abs (value));
+                    }
+                if (peak > 64.0f) return false;
+
+                conv.loadImpulseResponse (std::move (impulse), reader->sampleRate,
+                                          channels > 1 ? juce::dsp::Convolution::Stereo::yes
+                                                       : juce::dsp::Convolution::Stereo::no,
+                                          juce::dsp::Convolution::Trim::yes,
+                                          juce::dsp::Convolution::Normalise::yes);
+                userIR = true;
+                return true;
             }
 
         private:

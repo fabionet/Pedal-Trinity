@@ -14,13 +14,13 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")  # nessun redistributable VC++ richiesto
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "")
 
-project(PedalTrinity VERSION 1.1.2 LANGUAGES C CXX)
+project(PedalTrinity VERSION 1.1.3 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)        # NeuralAmpModelerCore richiede la libreria C++20
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(PT_VERSION_STRING "1.1.2-beta")
+set(PT_VERSION_STRING "1.1.3-beta")
 set(PT_JUCE_DIR "" CACHE PATH "Cartella dei sorgenti di JUCE 7 (vuoto = download automatico)")
 set(PT_ASIO_SDK_DIR "" CACHE PATH "Cartella dello Steinberg ASIO SDK (solo Windows)")
 set(PT_JUCE_GIT_SHA "4f43011b96eb0636104cb3e433894cda98243626")
