@@ -47,8 +47,13 @@ jobs:
         shell: pwsh
         run: |
           $p = Start-Process -FilePath "build\PedalTrinity_artefacts\Release\Standalone\Pedal Trinity.exe" `
-                             -ArgumentList "--selftest" -Wait -PassThru
+                             -ArgumentList "--selftest" -Wait -PassThru `
+                             -RedirectStandardOutput "selftest.log" -RedirectStandardError "selftest.err"
           Write-Host "Codice di uscita autotest: $($p.ExitCode)"
+          if (Test-Path "selftest.log") {
+            Select-String -Path "selftest.log" -Pattern "FALLITO" | ForEach-Object { Write-Host $_.Line }
+            Get-Content "selftest.log" -Tail 3
+          }
           if ($p.ExitCode -ne 0) { exit 1 }
 
       - name: Installer (Inno Setup)
