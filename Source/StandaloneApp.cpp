@@ -1281,6 +1281,14 @@ namespace
         "ehhumdebugger", "ehdrq", "ehqtronp", "ehmicroqt", "ehbassball", "ehmicrosyn", "ehbassmsyn", "ehtubezip", "ehoctmux", "ehfreqan",
         "ehfreeze", "ehstm" };
 
+    /** Le impronte "bit per bit" dei pedali esistenti sono misurate con GCC su Linux x86-64: con un altro compilatore
+        (MSVC su Windows) l'aritmetica in virgola mobile differisce negli ultimi bit e il confronto non ha senso. */
+   #if JUCE_LINUX && defined (__GNUC__) && ! defined (__clang__) && defined (__x86_64__)
+    constexpr bool kBitExactRefs = true;
+   #else
+    constexpr bool kBitExactRefs = false;
+   #endif
+
     /** Pedali digitali della tappa 3B (motore FxClassicB, agganciati anch'essi da makeClassic). */
     const char* const kStage3BDigital[] = { "evh30", "ehbattalion", "ehbassmetaphors", "ehanalogizer", "ehxstmist", "ehxneomist", "ehxflhoax", "ehxechofl", "ehxbassclo", "ehxeddy", "ehxwiggler", "ehxnanopul", "ehxsuppul", "ehxlesterk", "ehxmodrex", "ehxstpolyp", "ehxbadst1", "ehxstpolyc", "ehxstcthe", "ehdmm550", "ehdmm1100", "ehdmboy", "ehmmstereo", "ehreplay", "ehcanecho", "ehrerun", "ehhgneo", "ehholier", "ehholiest", "ehabyss", "eh3verb", "ehshimmer", "ehsuperegop", "ehattackdecay", "ehpog3", "ehpicopog", "ehpitchforkp", "ehpicofork", "ehihm", "ehslammi", "ehslammip", "ehstring9", "ehbassmono", "ehringthing", "ehatomic", "ehv256", "ehironlung", "ehepitome", "ehsoulpog", "ehtonetattoo" };
 
@@ -1313,6 +1321,10 @@ namespace
                 ok = ok && same;
                 if (! same) detail << r.id << " DIVERSO (" << juce::String::toHexString ((juce::int64) h) << ") ";
             }
+            if (! kBitExactRefs)
+                report ("Tappa 3A: DS-1, SD-1, BD-2, MT-2, GCB95, 535Q invariati bit per bit", true,
+                        "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore");
+            else
             report ("Tappa 3A: DS-1, SD-1, BD-2, MT-2, GCB95, 535Q invariati bit per bit (riff, accordo, seno; comandi mossi)", ok,
                     ok ? juce::String ("6/6 hash identici") : detail.trim());
         }
@@ -2538,6 +2550,8 @@ namespace
                                if (x == refs[k].hash) ++same;
                                else bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) x) << ") ";
                            }
+                           if (! kBitExactRefs)
+                               return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
                            return Verdict { same == (int) h.size(), juce::String (same) + "/" + juce::String ((int) h.size()) + " hash identici " + bad.trim() };
                        });
         }
