@@ -68,14 +68,16 @@ namespace pt::engine
         for (auto& s : model)
         {
             if (s->fx) s->fx->prepare (sr, maxBlock);
-            s->fade = s->enabled.load() ? 1.0f : 0.0f;
-            s->wasOff = ! s->enabled.load();
+            const bool on = s->enabled.load() && s->patched.load();
+            s->fade = on ? 1.0f : 0.0f;
+            s->wasOff = ! on;
         }
     }
 
     void Chain::runSlot (Slot& s, float* const* ch, int nch, int n)
     {
-        const bool on = s.enabled.load (std::memory_order_relaxed);
+        // pedale staccato dai cavi: come spento (dissolvenza senza click), il segnale lo salta
+        const bool on = s.enabled.load (std::memory_order_relaxed) && s.patched.load (std::memory_order_relaxed);
         if (! on && s.fade <= 0.0f) { s.wasOff = true; return; }
         if (on && s.wasOff) { s.fx->reset(); s.wasOff = false; }
 
@@ -368,6 +370,7 @@ namespace pt::engine
             if (s->isSplitter() && sp >= 0 && sp != index) return false;
             s->enabled.store (true);
             s->lane.store (model[(size_t) index]->lane.load());
+            s->patched.store (model[(size_t) index]->patched.load() || s->isSplitter());
             model[(size_t) index] = s;
         }
         publish();
@@ -400,6 +403,70 @@ namespace pt::engine
         }
     }
 
+    void Chain::setPatched (int index, bool on)
+    {
+        if (auto* s = slot (index))
+        {
+            if (s->isSplitter()) on = true;
+            if (s->patched.load() == on) return;
+            s->patched.store (on);
+            sendChangeMessage();
+        }
+    }
+
+    bool Chain::isPatched (int index) const
+    {
+        auto* s = slot (index);
+        return s == nullptr || s->patched.load();
+    }
+
+    void Chain::patchAll()
+    {
+        bool changed = false;
+        {
+            const juce::ScopedLock sl (modelLock);
+            for (auto& s : model)
+                if (! s->patched.load()) { s->patched.store (true); changed = true; }
+        }
+        if (changed) sendChangeMessage();
+    }
+
+    bool Chain::applyFromAudio (int index, int kind, int control, float value) noexcept
+    {
+        // stessa protezione di process(): l'istantanea non viene liberata finche' e' in uso
+        Snapshot* snap;
+        do
+        {
+            snap = active.load (std::memory_order_acquire);
+            inUse.store (snap, std::memory_order_release);
+        }
+        while (snap != active.load (std::memory_order_acquire));
+        bool ok = false;
+        if (snap != nullptr && juce::isPositiveAndBelow (index, (int) snap->slots.size()))
+        {
+            Slot& s = *snap->slots[(size_t) index];
+            if (s.fx != nullptr)
+            {
+                ok = true;
+                if (kind == 0) s.enabled.store (value >= 0.5f);
+                else if (kind == 1) s.enabled.store (! s.enabled.load());
+                else if (juce::isPositiveAndBelow (control, s.def->numControls) && std::isfinite (value))
+                    s.fx->params[control].store (juce::jlimit (0.0f, 1.0f, value));
+                else ok = false;
+            }
+        }
+        inUse.store (nullptr, std::memory_order_release);
+        return ok;
+    }
+
+    float Chain::readForMidi (int index, int control) const
+    {
+        auto* s = slot (index);
+        if (s == nullptr || s->fx == nullptr) return -1.0f;
+        if (control < 0) return s->enabled.load() ? 1.0f : 0.0f;
+        return juce::isPositiveAndBelow (control, s->def->numControls) ? s->fx->p (control) : -1.0f;
+    }
+
     void Chain::clear()
     {
         {
@@ -420,6 +487,7 @@ namespace pt::engine
             st.setProperty ("model", s->def != nullptr ? juce::String (s->def->id) : juce::String(), nullptr);
             st.setProperty ("on", s->enabled.load(), nullptr);
             if (s->lane.load() != 0) st.setProperty ("lane", s->lane.load(), nullptr);
+            if (! s->patched.load()) st.setProperty ("patched", false, nullptr);
             if (s->fx)
             {
                 for (int i = 0; i < s->def->numControls; ++i)
@@ -451,6 +519,7 @@ namespace pt::engine
             }
             s->enabled.store ((bool) st.getProperty ("on", true));
             s->lane.store (juce::jlimit (0, 1, (int) st.getProperty ("lane", 0)));
+            s->patched.store ((bool) st.getProperty ("patched", true) || s->isSplitter());
             if (s->fx)
             {
                 for (int k = 0; k < s->def->numControls; ++k)
@@ -466,8 +535,9 @@ namespace pt::engine
                 if (extra.isNotEmpty()) s->fx->restoreState (extra.toStdString());
                 s->fx->reset();
             }
-            s->fade = s->enabled.load() ? 1.0f : 0.0f;
-            s->wasOff = ! s->enabled.load();
+            const bool on = s->enabled.load() && s->patched.load();
+            s->fade = on ? 1.0f : 0.0f;
+            s->wasOff = ! on;
             fresh.push_back (s);
         }
         {

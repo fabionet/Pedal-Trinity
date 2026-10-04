@@ -38,6 +38,8 @@ namespace pt::ui
         /** Bocca di una presa jack in coordinate dello slot (false se lo slot e' vuoto). */
         bool jackPoint (bool output, int line, juce::Point<float>& out) const;
         float pedalScale() const { return view.imageScale(); }
+        /** Riquadro del pedale disegnato (coordinate dello slot), vuoto se lo slot non ha un pedale. */
+        juce::Rectangle<float> pedalBounds() const;
         /** Presa A "tipica" (pedale compatto) per uno slot con questi limiti, in coordinate dello slot. */
         static juce::Point<float> nominalJack (juce::Rectangle<int> slotBounds, bool output, int line = 0);
         static float nominalScale (juce::Rectangle<int> slotBounds);

@@ -1,0 +1,4267 @@
+{
+ "evh30": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "VOLUME",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "INTENSITY",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "INPUT LVL",
+    "role": "inlvl",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "-20 dB",
+     "-35 dB",
+     "-50 dB"
+    ],
+    "short": [
+     "-20",
+     "-35",
+     "-50"
+    ]
+   },
+   {
+    "label": "OUTPUT LVL",
+    "role": "outlvl",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "-20 dB",
+     "-35 dB"
+    ]
+   }
+  ],
+  "config": "type=b3chorus model=dc30 stages=1024 dly=3,12 rate=0.3,6 aa=9000 noise=0.0002 sat=1.3 comp=1",
+  "stereo": true,
+  "notes": "Chorus a BBD sul modello del Roland DC-30 (un solo comando INTENSITY): linea da 1024 stadi a clock reale con compander, LFO a triangolo 0,3-6 Hz con escursione del ritardo che diminuisce al crescere della velocita' (+-2 ms lento, +-0,7 ms veloce), TONE a mensola a 6 kHz da -16 a +12 dB, attenuatori d'ingresso -20/-35/-50 dB (sensibilita': pilotano piu' o meno il BBD) e d'uscita -20/-35 dB. Uscita MONO = dry + effetto, STEREO = dry - effetto.",
+  "control_notes": "Etichette INPUT LEVEL/OUTPUT LEVEL abbreviate; la levetta a 3 posizioni d'ingresso e' un selettore. Gamme di LFO e ritardo dalla scheda (stime); il selettore interno TRUE/BUFFERED non ha effetto nel plugin."
+ },
+ "ehbattalion": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "label": "VOL",
+    "role": "volume",
+    "kind": "knob",
+    "default": 0.75,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BASS",
+    "role": "bass",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0
+   },
+   {
+    "label": "LO MID",
+    "role": "lomid",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0
+   },
+   {
+    "label": "HI MID",
+    "role": "himid",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0
+   },
+   {
+    "label": "TREBLE",
+    "role": "treble",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0
+   },
+   {
+    "label": "COMPRESSOR",
+    "role": "comp",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GATE",
+    "role": "gate",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DRIVE",
+    "role": "drive",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DIST EQ",
+    "role": "order",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "PRE EQ",
+     "POST EQ",
+     "DRY EQ"
+    ],
+    "short": [
+     "PRE",
+     "POST",
+     "DRY"
+    ]
+   }
+  ],
+  "config": "type=b3battalion",
+  "stereo": false,
+  "notes": "Preamp per basso: compressore (COMPRESSOR = rapporto da 1:1 a 10:1, a zero escluso), distorsione MOSFET simulata dal motore Circuit (stadio a operazionale con DRIVE fino a x46, diodi MOSFET, TONE passa-basso, LEVEL) miscelata al pulito con BLEND, EQ attivo a 4 bande (mensola <200 Hz, picchi a 280 e 750 Hz, mensola >2 kHz, +-15 dB) prima della distorsione, dopo, o solo sul pulito (levetta PRE/POST/DRY EQ), gate con rilevatore all'ingresso e VOL finale.",
+  "control_notes": "Su 17 comandi reali ne restano 12: il pulsante COMPRESSOR ON e' sostituito dal pomello a zero, il PAD -10 dB e i comandi dell'uscita XLR (XLR VOL, XLR BYPASS, GND LIFT) non hanno effetto nel plugin. Gamme dell'EQ (+-15 dB) e dei comandi della distorsione stimate."
+ },
+ "ehbassmetaphors": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "label": "DRY OUT",
+    "role": "direct",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "EQ LEVEL",
+    "role": "eqlevel",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TREBLE",
+    "role": "treble",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BASS",
+    "role": "bass",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DISTORTION",
+    "role": "dist",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "VOLUME",
+    "role": "volume",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SQUASH",
+    "role": "squash",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "SQUASH"
+    ]
+   }
+  ],
+  "config": "type=b3bassmeta",
+  "stereo": false,
+  "notes": "Channel strip per basso con tre canali in parallelo: DRY, EQ (filtri attivi additivi: acuti passa-alto e bassi passa-basso a 2 poli, da 0 a +12 dB) e DISTORTION (operazionale e diodi al silicio dal motore Circuit), sommati e seguiti dal compressore livellatore SQUASH (6:1) e dal VOLUME master.",
+  "control_notes": "Frequenze dei filtri (120 Hz / 3 kHz) e circuito di distorsione stimati (non pubblicati); il footswitch della distorsione e' il pomello DISTORTION a zero; uscite DI/XLR non riprodotte."
+ },
+ "ehanalogizer": {
+  "family": "AnalogDelay",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "VOLUME",
+    "role": "volume",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPREAD",
+    "role": "spread",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "ms",
+    "lo": 3.5,
+    "hi": 65.0
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GAIN",
+    "role": "gain",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "db",
+    "lo": 0.0,
+    "hi": 26.0
+   }
+  ],
+  "config": "type=b3analogizer",
+  "stereo": false,
+  "notes": "Tone shaper: stadio di guadagno 0..+26 dB lineare ai livelli bassi e con saturazione morbida asimmetrica ad alti livelli, seguito da un BBD a clock reale (4096 stadi, 3,5-65 ms) miscelato col diretto: nella meta' bassa di SPREAD il pettine colora il timbro, in quella alta raddoppia; banda del BBD che si restringe con il ritardo.",
+  "control_notes": "Chip BBD e numero di stadi non identificati: 4096 stadi stimati."
+ },
+ "ehxstmist": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FLANGER",
+    "role": "flanger",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "CHORUS",
+    "role": "chorus",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3mistress model=stereo matrix=0.33",
+  "stereo": true,
+  "notes": "Flanger e chorus digitali con LFO comune: flanger 0,25-9 ms esponenziale con retroazione fissa 'maximum color' (0,8, limitata in morbido), chorus 10 +-4 ms; uscite stereo con LFO in controfase. RATE sotto ore 10 = Filter Matrix (LFO fermo, il pomello sposta il pettine), sopra = velocita' 0,05-6 Hz.",
+  "control_notes": "Etichette FLANGER DEPTH e CHORUS DEPTH abbreviate in FLANGER e CHORUS."
+ },
+ "ehxneomist": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3mistress model=neo matrix=0.42",
+  "stereo": false,
+  "notes": "Flanger digitale con Filter Matrix fino a ore 11 del RATE (stella), poi LFO 0,05-6 Hz; FEEDBACK aumenta colore (fino a 0,93, vicino all'auto-oscillazione oltre ore 3) e anche l'ampiezza dell'LFO, come da manuale."
+ },
+ "ehxflhoax": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FB SOURCE",
+    "role": "fbsource",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "WET",
+     "OFF",
+     "SWPT"
+    ],
+    "short": [
+     "WET",
+     "OFF",
+     "SWPT"
+    ]
+   },
+   {
+    "label": "AMOUNT",
+    "role": "amount",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RESPONSE",
+    "role": "response",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LIN",
+     "LOG"
+    ]
+   },
+   {
+    "label": "MOD MODE",
+    "role": "modmode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 4.0,
+    "choices": [
+     "0",
+     "90",
+     "180",
+     "270",
+     "DC"
+    ],
+    "short": [
+     "0",
+     "90",
+     "180",
+     "270",
+     "DC"
+    ]
+   },
+   {
+    "label": "MOD RATE",
+    "role": "modrate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.07,
+    "hi": 220.0
+   },
+   {
+    "label": "DELAY MODE",
+    "role": "dlymode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 4.0,
+    "choices": [
+     "0/180",
+     "DC/180",
+     "0/DC",
+     "90/180",
+     "DC/DC"
+    ],
+    "short": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ]
+   },
+   {
+    "label": "FIXED AMT",
+    "role": "fixamt",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "INVERT",
+    "role": "invert",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   },
+   {
+    "label": "SWEPT AMT",
+    "role": "swpamt",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PHASERS",
+    "role": "phbypass",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "BOTH ON",
+     "FIXED BYP",
+     "SWEPT BYP",
+     "BOTH BYP"
+    ],
+    "short": [
+     "ON",
+     "FIX",
+     "SWPT",
+     "BYP"
+    ]
+   }
+  ],
+  "config": "type=b3hoax",
+  "stereo": false,
+  "notes": "Falso flanger: phaser fisso (3 all-pass a 1 kHz, ~240 gradi) e phaser spazzato (6 all-pass, da 240 a 990 gradi a 1 kHz con AMOUNT e la modulante sinusoidale 0,07-220 Hz, risposta LIN/LOG), ciascuno seguito da una linea BBD 1-11 ms modulata con le fasi di DELAY MODE (DC = ritardo fisso dall'AMOUNT); INVERT aggiunge 180 gradi al ramo fisso; feedback dal wet o dal ramo spazzato (guadagno <= 0,8, limitato in morbido); BLEND dry/effetto.",
+  "control_notes": "Etichette abbreviate (FEEDBACK SOURCE, MODULATOR MODE/RATE, FIXED/SWEPT DELAY AMOUNT). Le due levette FIXED/BYPASS e SWEPT/BYPASS sono riunite nel selettore PHASERS (limite di 12 comandi). Numero di stadi e frequenza del phaser fisso stimati; uscite EFFECT e DIRECT non riprodotte (BLENDED)."
+ },
+ "ehxechofl": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "VOLUME",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 10.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TUNE",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.2,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "FILTER MATRIX",
+     "FLANGE",
+     "CHORUS + FLANGE",
+     "CHORUS",
+     "SLAP BACK",
+     "SLAP BACK + FILT. MATRIX"
+    ],
+    "short": [
+     "MTX",
+     "FLG",
+     "C+F",
+     "CHO",
+     "SLAP",
+     "S+M"
+    ]
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=b3bbdmulti model=echofl",
+  "stereo": true,
+  "notes": "Due linee BBD (1024 stadi con compander, filtro che segue il clock): FILTER MATRIX (pettine fermo su TUNE), FLANGE 0,4-10 ms, CHORUS 6-24 ms, SLAP BACK 40-160 ms (FEEDBACK = numero di eco), e le combinazioni CHORUS + FLANGE e SLAP BACK + FILT. MATRIX con una linea per effetto; LFO 0,1-10 Hz con fase opposta sulla seconda linea per le uscite stereo; BLEND OFF = solo effetto (vibrato).",
+  "control_notes": "BBD e gamme di ritardo per modo stimati (riedizione 2026 senza dati pubblicati)."
+ },
+ "ehxbassclo": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 6.0
+   },
+   {
+    "label": "BASS",
+    "role": "bass",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0
+   },
+   {
+    "label": "TREBLE",
+    "role": "treble",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0
+   },
+   {
+    "label": "X-OVER",
+    "role": "xover",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=b3chorus model=bassclone stages=1024 dly=4,14 rate=0.1,6 aa=7500 noise=0.0003 sat=1.1 pre=1 xover=220 bass=120 treble=2500",
+  "stereo": false,
+  "notes": "Small Clone per basso: BBD 1024 stadi 4-14 ms con pre/de-enfasi, DEPTH continuo e piu' ampio; X-OVER toglie i bassi dal ramo modulato (passa-alto 220 Hz, 4 poli), BASS a mensola 120 Hz +-12 dB solo sul dry, TREBLE a mensola 2,5 kHz +-12 dB sul mix (piatti a ore 12).",
+  "control_notes": "Frequenze di crossover e delle mensole stimate (non dichiarate)."
+ },
+ "ehxeddy": {
+  "family": "BBDChorus",
+  "category": "Vibrato / Rotary",
+  "controls": [
+   {
+    "label": "VIB/CHORUS",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "VIBRATO",
+     "CHORUS"
+    ]
+   },
+   {
+    "label": "ENV/EXP",
+    "role": "envmode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "RATE",
+     "DEPTH",
+     "BOTH"
+    ]
+   },
+   {
+    "label": "VOLUME",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SHAPE",
+    "role": "shape",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 12.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "ENVELOPE",
+    "role": "env",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3chorus model=eddy stages=1024 dly=1.5,9 rate=0.1,12 aa=8000 noise=0.0002 sat=1.2 comp=1",
+  "stereo": false,
+  "notes": "Vibrato/chorus a BBD (1024 stadi, 1,5-9 ms) con LFO a forma variabile (SHAPE: al centro sinusoide, ai lati forme asimmetriche a fronte rapido), TONE a bilanciere +-8 dB a 1,2 kHz sul wet, ENVELOPE bipolare (sopra ore 12 suonando forte crescono rate e/o profondita' secondo ENV/EXP, sotto calano); VIBRATO = solo wet, CHORUS = dry + wet.",
+  "control_notes": "La levetta ENV/EXP a 3 posizioni e' un selettore (posizione centrale = entrambi, stima); MOM. ENABLE interno omesso; gamme di rate e ritardo stimate."
+ },
+ "ehxwiggler": {
+  "family": "Tremolo",
+  "category": "Vibrato / Rotary",
+  "controls": [
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.5,
+    "hi": 12.0
+   },
+   {
+    "label": "INTENSITY",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "VOLUME",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TREM/VIB",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "TREMOLO",
+     "VIBRATO"
+    ]
+   },
+   {
+    "label": "VIB MODE",
+    "role": "vibmode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "LOOZ",
+     "HAMM",
+     "ACEY",
+     "WURL"
+    ],
+    "short": [
+     "LOOZ",
+     "HAMM",
+     "ACEY",
+     "WURL"
+    ]
+   }
+  ],
+  "config": "type=b3wiggler",
+  "stereo": false,
+  "notes": "Tremolo e vibrato con due triodi 12AX7 (stadio d'ingresso asimmetrico e stadio d'uscita a saturazione morbida): tremolo a polarizzazione con inviluppo morbido; vibrato in quattro voicing: LOOZ (ritardo modulato profondo con un filo d'ampiezza), HAMM (scanner a 9 prese tipo linea LC), ACEY (4 all-pass spazzati, vibrato a sfasamento), WURL (vibrato con forte modulazione d'ampiezza).",
+  "control_notes": "I quattro voicing non sono documentati da EHX: interpretazioni stimate dai nomi; gamma di RATE stimata."
+ },
+ "ehxnanopul": {
+  "family": "Tremolo",
+  "category": "Tremolo / Pan / Slicer",
+  "controls": [
+   {
+    "label": "VOL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.62,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SHAPE",
+    "role": "shape",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 30.0
+   },
+   {
+    "label": "WAVE",
+    "role": "wave",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "TRIANGLE",
+     "SQUARE"
+    ]
+   }
+  ],
+  "config": "type=b3pulsar model=nano",
+  "stereo": true,
+  "notes": "Tremolo/panner a VCA con LFO a forma variabile 0,05-30 Hz: triangolo da dente crescente a decrescente o impulso da stretto a largo (SHAPE); DEPTH pieno a ore 1, oltre la modulazione attraversa lo zero; VOL fino a +12 dB (tutto a sinistra = muto); uscita destra in controfase."
+ },
+ "ehxsuppul": {
+  "family": "Tremolo",
+  "category": "Tremolo / Pan / Slicer",
+  "controls": [
+   {
+    "label": "VOLUME",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.62,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RT. PHASE",
+    "role": "phase",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 360.0
+   },
+   {
+    "label": "WAVE",
+    "role": "wave",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SHAPE",
+    "role": "shape",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "XRATE",
+    "role": "range",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "SLOW",
+     "MEDIUM",
+     "FAST"
+    ],
+    "short": [
+     "SLOW",
+     "MED",
+     "FAST"
+    ]
+   },
+   {
+    "label": "WAVE INV",
+    "role": "invert",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=b3pulsar model=super",
+  "stereo": true,
+  "notes": "Tremolo/panner stereo: meta' sinistra di WAVE da sinusoide a triangolo a impulso (SHAPE = simmetria/larghezza), meta' destra RHYTHM con 9 ritmi a 8 passi scelti da SHAPE e lunghezza dell'impulso da WAVE; fase del canale destro 0-360 gradi, gamme di velocita' SLOW 16 s-3,5 Hz, MEDIUM 0,5-28 Hz, FAST 4-230 Hz; VOLUME fino a +12 dB.",
+  "control_notes": "I 4 pulsanti diventano XRATE (selettore) e WAVE INVERT (levetta); TAP DIVIDE, EXP MODE, preset e tap non riprodotti; i 9 ritmi sono stimati."
+ },
+ "ehxlesterk": {
+  "family": "Tremolo",
+  "category": "Vibrato / Rotary",
+  "controls": [
+   {
+    "label": "VOL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DRIVE",
+    "role": "drive",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BALANCE",
+    "role": "balance",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SLOW",
+    "role": "slow",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 3.2
+   },
+   {
+    "label": "FAST",
+    "role": "fast",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 1.55,
+    "hi": 24.8
+   },
+   {
+    "label": "SPEED",
+    "role": "speed",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SLOW",
+     "FAST"
+    ]
+   }
+  ],
+  "config": "type=leslie slow=0.1,0.8,3.2 fast=1.55,6.2,24.8",
+  "stereo": true,
+  "notes": "Stesso motore rotary del Lester G (tappa 3A: crossover 800 Hz, tromba con Doppler e direzionalita', rotore AM, due microfoni, overdrive valvolare) senza compressore e con accelerazione fissa; velocita' dal manuale: tromba SLOW 0,1-3,2 Hz, FAST 1,55-24,8 Hz.",
+  "control_notes": "Ingressi stereo sommati in mono prima della cassa; la velocita' (footswitch del reale) e' la levetta SPEED."
+ },
+ "ehxmodrex": {
+  "family": "Tremolo",
+  "category": "Tremolo / Pan / Slicer",
+  "controls": [
+   {
+    "label": "VOL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TEMPO",
+    "role": "tempo",
+    "kind": "knob",
+    "default": 0.635,
+    "units": "dial",
+    "lo": 10.0,
+    "hi": 500.0
+   },
+   {
+    "label": "MOD DIV",
+    "role": "moddiv",
+    "kind": "selector",
+    "default": 0.4444,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 9.0,
+    "choices": [
+     "OFF",
+     "1",
+     "1/2",
+     "3/8",
+     "1/4",
+     "1/4T",
+     "3/16",
+     "1/8",
+     "1/8T",
+     "1/16"
+    ],
+    "short": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9"
+    ]
+   },
+   {
+    "label": "MOD TYPE",
+    "role": "modtype",
+    "kind": "selector",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "VIB",
+     "FLN",
+     "CHR",
+     "PHS"
+    ],
+    "short": [
+     "VIB",
+     "FLN",
+     "CHR",
+     "PHS"
+    ]
+   },
+   {
+    "label": "MOD DEPTH",
+    "role": "moddepth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MOD FDBK",
+    "role": "modfb",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TREM DIV",
+    "role": "tremdiv",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 9.0,
+    "choices": [
+     "OFF",
+     "1",
+     "1/2",
+     "3/8",
+     "1/4",
+     "1/4T",
+     "3/16",
+     "1/8",
+     "1/8T",
+     "1/16"
+    ],
+    "short": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9"
+    ]
+   },
+   {
+    "label": "TREM DEPTH",
+    "role": "tremdepth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PAN DIV",
+    "role": "pandiv",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 9.0,
+    "choices": [
+     "OFF",
+     "1",
+     "1/2",
+     "3/8",
+     "1/4",
+     "1/4T",
+     "3/16",
+     "1/8",
+     "1/8T",
+     "1/16"
+    ],
+    "short": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9"
+    ]
+   },
+   {
+    "label": "FILT DIV",
+    "role": "filtdiv",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 9.0,
+    "choices": [
+     "OFF",
+     "1",
+     "1/2",
+     "3/8",
+     "1/4",
+     "1/4T",
+     "3/16",
+     "1/8",
+     "1/8T",
+     "1/16"
+    ],
+    "short": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9"
+    ]
+   },
+   {
+    "label": "FILT MODE",
+    "role": "filtmode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "LPF",
+     "HPF",
+     "BPF"
+    ],
+    "short": [
+     "LPF",
+     "HPF",
+     "BPF"
+    ]
+   },
+   {
+    "label": "FILT DEPTH",
+    "role": "filtdepth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3modrex",
+  "stereo": true,
+  "notes": "Quattro modulatori agganciati allo stesso tempo (10-500 BPM, contatore di battiti comune: le suddivisioni restano in fase fra loro) con 9 suddivisioni ciascuno (0 = sezione spenta), in serie FILTER -> MOD -> TREM -> PAN: filtro LPF/HPF/BPF spazzato fino a FILT DEPTH, MOD vibrato/flanger/chorus/phaser con DEPTH e FEEDBACK (LFO destro invertito, R INV), tremolo e panning (in mono un secondo tremolo a forma invertita).",
+  "control_notes": "Su 16 comandi reali ne restano 12: PAN DEPTH (fisso al 100%), RES del filtro (fissa, Q 2,2), i pulsanti SHAPE (LFO a triangolo per tutte le sezioni), R INV (acceso), LOCK, preset e tap non sono esposti; i pulsanti TYPE/MODE diventano selettori."
+ },
+ "ehxstpolyp": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "ENV",
+     "LFO",
+     "EXP"
+    ],
+    "short": [
+     "ENV",
+     "LFO",
+     "EXP"
+    ]
+   },
+   {
+    "label": "GAIN",
+    "role": "sens",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 12.0
+   },
+   {
+    "label": "START",
+    "role": "start",
+    "kind": "knob",
+    "default": 0.1,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "STOP",
+    "role": "stop",
+    "kind": "knob",
+    "default": 0.9,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FAST/SLOW",
+    "role": "speed",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "FAST/TRI",
+     "SLOW/SQR"
+    ]
+   }
+  ],
+  "config": "type=b3polyphase",
+  "stereo": true,
+  "notes": "Phaser a 6 stadi con fotoresistenze (3k-120k, 15n; LDR veloce in discesa e lenta in risalita) pilotate da LFO a triangolo o quadra, dall'inseguitore d'inviluppo (GAIN, FAST/SLOW) o dalla posizione EXP; START e STOP limitano lo sweep (START > STOP lo inverte); feedback fino a 0,85; OUTPUT 2 con sweep complementare.",
+  "control_notes": "Senza pedale d'espressione il modo EXP tiene lo sweep a meta' fra START e STOP. Numero di stadi stimato."
+ },
+ "ehxbadst1": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "BLEND",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.2,
+    "hi": 32.0
+   },
+   {
+    "label": "COLOR",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "NORMAL",
+     "VIBRATO"
+    ]
+   }
+  ],
+  "config": "type=b3badstone1",
+  "stereo": false,
+  "notes": "Bad Stone 'Mummy' a 6 all-pass con JFET accoppiati come resistenze variabili (in parallelo a 47k, 22n: tacche da ~150 Hz a ~5 kHz), LFO a triangolo 0,2-32 Hz, BLEND = quantita' di feedback (fino a 0,82), COLOR toglie il dry (vibrato).",
+  "control_notes": "Trimmer interni (BIAS FET, LFO DEPTH, WET/DRY) non esposti; valori di stadio stimati."
+ },
+ "ehxstpolyc": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TUNE/DELAY",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SWEEP RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.6667,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "FILTER MATRIX",
+     "FLANGE",
+     "CHORUS",
+     "DOUBLE TRACK"
+    ],
+    "short": [
+     "MTX",
+     "FLG",
+     "CHO",
+     "DBL"
+    ]
+   },
+   {
+    "label": "SWEEP FILT",
+    "role": "sweepf",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=b3bbdmulti model=stpoly",
+  "stereo": true,
+  "notes": "Big box anni '90: MN3009 (256 stadi) per FILTER MATRIX e FLANGE 0,4-10 ms, MN3008 (2048 stadi) per CHORUS 5-20 ms e DOUBLE TRACK 30-100 ms, compander, LFO 0,1-10 Hz; SWEEP FILTER acceso fa seguire al passa-basso il clock del BBD (suono piu' 'liquido'); OUTPUT 2 in controfase.",
+  "control_notes": "Etichetta SWEEP FILTER abbreviata; gamme di ritardo per modo stimate."
+ },
+ "ehxstcthe": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 8.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "CHR 1",
+     "CHR 2",
+     "VIBR"
+    ]
+   }
+  ],
+  "config": "type=b3chorus model=sct stages=1024 dly=5,15 rate=0.1,8 aa=7000 noise=0.0003 sat=1.2 pre=1",
+  "stereo": true,
+  "notes": "Chorus a BBD (1024 stadi, 5-15 ms, pre/de-enfasi) piu' vicino a una Small Clone modificata: CHR 1 profondita' preimpostata (DEPTH inattivo), CHR 2 profondita' dal DEPTH, VIBR solo wet; uscita STEREO in controfase (180 gradi).",
+  "control_notes": "La levetta a 3 posizioni e' un selettore; gamme stimate."
+ },
+ "ehdmm550": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GAIN",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.39,
+    "units": "db",
+    "lo": -13.0,
+    "hi": 20.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.3,
+    "hi": 8.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.25,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 30.0,
+    "hi": 630.0
+   }
+  ],
+  "config": "type=mmbbd model=dmm stages=8192 dly=30,630 comp=1 ctau=47,10 aa=3650:1.0,4800:0 rc=3680:1.58,7200:0,3750:0.62 pre=1330,2650 fblp=3390 fbhp=72 fbmax=1.0 noise=0.00035 sat=1.3 rate=0.3,8 swing=0.1 taper=lin",
+  "stereo": false,
+  "notes": "Stessa catena analogica del Deluxe Memory Man della tappa 3A (stadio GAIN -13..+20 dB comune a dry e wet, pre-enfasi, NE570, anti-alias e ricostruzione dello schema, feedback filtrato 72 Hz-3,4 kHz) con 2 x MN3005 (8192 stadi) a clock reale 30-630 ms e LFO a triangolo continuo sul clock (RATE 0,3-8 Hz, DEPTH +-10%).",
+  "control_notes": "Feedback limitato a 1 (anello sempre stabile). Tap tempo, divisioni, EXP MODE e loop effetti nel feedback non riprodotti; gamma del RATE stimata."
+ },
+ "ehdmm1100": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GAIN",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.39,
+    "units": "db",
+    "lo": -13.0,
+    "hi": 20.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.3,
+    "hi": 8.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.25,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 52.0,
+    "hi": 1100.0
+   }
+  ],
+  "config": "type=mmbbd model=dmm stages=16384 dly=52,1100 comp=1 ctau=47,10 aa=3650:1.0,4800:0 rc=3680:1.58,7200:0,3750:0.62 pre=1330,2650 fblp=3390 fbhp=72 fbmax=1.0 noise=0.00035 sat=1.3 rate=0.3,8 swing=0.1 taper=lin",
+  "stereo": false,
+  "notes": "Come il 550-TT con 4 x MN3005 (16384 stadi): 52-1100 ms a clock reale, con perdite di trasferimento proporzionali agli stadi (eco piu' scure ai tempi lunghi).",
+  "control_notes": "Feedback limitato a 1; tap, divisioni, EXP e loop effetti non riprodotti."
+ },
+ "ehdmboy": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GAIN",
+    "role": "gain",
+    "kind": "knob",
+    "default": 0.23,
+    "units": "db",
+    "lo": -6.0,
+    "hi": 20.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.2,
+    "hi": 8.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 34.0,
+    "hi": 700.0
+   }
+  ],
+  "config": "type=b3memory model=dboy stages=8192 dly=34,700 filter=4300 sat=0.75 fbmax=1.0",
+  "stereo": false,
+  "notes": "4 x BL3208 (8192 stadi) a clock reale 34-700 ms con compander SA571, binari a 9 V (saturazione morbida a 3,8 V), filtri che seguono il clock (eco sempre piu' scure ai tempi lunghi), GAIN -6..+20 dB su dry e wet, feedback filtrato e limitato a 1; DEPTH a scatto centrale: a sinistra LFO triangolo, a destra quadra (arrotondata), al centro spento.",
+  "control_notes": "Funzione secondaria LOW CUT del RATE, tap e EXP non riprodotti; gamma del RATE stimata."
+ },
+ "ehmmstereo": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "DELAY",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 30.0,
+    "hi": 300.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "ECHO/CHO",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "ECHO",
+     "CHORUS"
+    ]
+   }
+  ],
+  "config": "type=b3memory model=mmstereo stages=4096 dly=30,300 filter=3500 sat=1.5 fbmax=1.0",
+  "stereo": true,
+  "notes": "1 x MN3005 (4096 stadi) con NE570, eco 30-300 ms a clock reale e filtro che segue il clock; CHORUS usa lo stesso BBD a ritardi corti (4-25 ms dal DELAY) con LFO 0,8 Hz +-30%; OUTPUT = dry + eco in fase, STEREO OUTPUT = dry - eco (pseudo-stereo dell'originale).",
+  "control_notes": "Etichetta ECHO/CHORUS abbreviata; tempi e LFO del modo chorus stimati."
+ },
+ "ehreplay": {
+  "family": "Looper",
+  "category": "Tuner / Looper",
+  "controls": [
+   {
+    "label": "RECORD",
+    "role": "rec",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PITCH",
+    "role": "pitch",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "semitone",
+    "lo": -12.0,
+    "hi": 12.0
+   },
+   {
+    "label": "SINGLE/REP",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SINGLE SHOT",
+     "REPEAT"
+    ]
+   }
+  ],
+  "config": "type=b3replay maxs=2 fs=16000",
+  "stereo": false,
+  "notes": "Campionatore: RECORD (o il footswitch) avvia e ferma la registrazione, fino a 2 s a 16 kHz con 8 bit compandati (mu-law) e filtri anti-alias/ricostruzione; SINGLE SHOT riproduce il campione a ogni attacco del segnale d'ingresso (trigger), REPEAT lo ripete in loop; PITCH = velocita' di lettura +-1 ottava; il dry passa sempre.",
+  "control_notes": "Tempo di campionamento (1 o 2 s) e risoluzione incerti: 2 s a 8 bit scelti; ingressi EXT FREQUENCY e TRIGGER sostituiti dal trigger sugli attacchi."
+ },
+ "ehcanecho": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "ms",
+    "lo": 8.0,
+    "hi": 3000.0
+   },
+   {
+    "label": "FILTER",
+    "role": "filter",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FDBK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3echo model=canyon",
+  "stereo": false,
+  "notes": "Delay digitale 8 ms-3 s con glissato quando si gira DELAY; FILTER nell'anello: al centro spento, a sinistra passa-basso (stile analogico, 18 kHz-500 Hz), a destra passa-alto (20 Hz-2,5 kHz); FDBK al massimo = ripetizioni infinite (guadagno 1 con limitazione morbida).",
+  "control_notes": "TAP DIV e la pressione lunga del footswitch non riprodotti (le ripetizioni infinite sono a fine corsa del FDBK)."
+ },
+ "ehrerun": {
+  "family": "TapeEcho",
+  "category": "Eco a nastro",
+  "controls": [
+   {
+    "label": "FLUTTER",
+    "role": "flutter",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "LOW",
+     "MED",
+     "HIGH"
+    ],
+    "short": [
+     "LOW",
+     "MED",
+     "HIGH"
+    ]
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "ms",
+    "lo": 8.0,
+    "hi": 3000.0
+   },
+   {
+    "label": "SAT",
+    "role": "sat",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FDBK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3echo model=rerun",
+  "stereo": false,
+  "notes": "Eco a nastro digitale 8 ms-3 s: wow 0,55 Hz e flutter 6,8 Hz in tre livelli, saturazione delle ripetizioni (SAT) con banda che si restringe (7 kHz -> 3,5 kHz) e passa-alto 70 Hz nell'anello; FDBK al massimo = auto-oscillazione limitata in morbido.",
+  "control_notes": "Il pulsante FLUTTER (LED verde/arancio/rosso) e' un selettore a 3 posizioni; tap non riprodotto."
+ },
+ "ehhgneo": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "REV TYPE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "SPRING",
+     "HALL",
+     "PLATE"
+    ],
+    "short": [
+     "SPRG",
+     "HALL",
+     "PLAT"
+    ]
+   },
+   {
+    "label": "REVERB",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3verb model=neo",
+  "stereo": false,
+  "notes": "Motore di riverbero della tappa 3A: molla (2 molle dispersive, 2,2 s), hall FDN (3,5 s), plate di Dattorro (3 s); REVERB da 100% dry a 100% wet a potenza costante.",
+  "control_notes": "La levetta a 3 posizioni e' un selettore; tempi di decadimento stimati."
+ },
+ "ehholier": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "TYPE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "SPRING",
+     "HALL",
+     "FLERB",
+     "ROOM"
+    ],
+    "short": [
+     "SPRG",
+     "HALL",
+     "FLRB",
+     "ROOM"
+    ]
+   },
+   {
+    "label": "LENGTH",
+    "role": "length",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LONG",
+     "SHORT"
+    ]
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GATE THR",
+    "role": "gatethr",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GATE",
+    "role": "gate",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OFF",
+     "REVERB ONLY",
+     "REVERB + DIRECT"
+    ],
+    "short": [
+     "OFF",
+     "REV",
+     "R+D"
+    ]
+   },
+   {
+    "label": "GATE SPEED",
+    "role": "gatespeed",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SLOW",
+     "FAST"
+    ]
+   },
+   {
+    "label": "GATE REV",
+    "role": "gaterev",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=b3verb model=holier",
+  "stereo": false,
+  "notes": "Holy Grail con 8 preset (4 tipi x LONG/SHORT: molla 2,8/1,4 s, hall 4,5/1,8 s, flerb 3/1,5 s, room 1,2/0,5 s) e noise gate: soglia, sul solo riverbero o anche sul dry, rilascio SLOW 400 ms / FAST 60 ms, REVERSE = il gate si apre quando si smette di suonare (riverbero che sboccia dopo la nota).",
+  "control_notes": "Etichette GATE THRESHOLD e GATE REVERSE abbreviate; uscita REVERB ONLY non riprodotta; tempi stimati."
+ },
+ "ehholiest": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "INPUT GAIN",
+    "role": "gain",
+    "kind": "slider",
+    "default": 0.5,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "PRE-DELAY",
+    "role": "predelay",
+    "kind": "slider",
+    "default": 0.1,
+    "units": "ms",
+    "lo": 0.0,
+    "hi": 440.0
+   },
+   {
+    "label": "PRE FDBK",
+    "role": "prefb",
+    "kind": "slider",
+    "default": 0.0,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "DECAY",
+    "role": "decay",
+    "kind": "slider",
+    "default": 0.5,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "DAMPING",
+    "role": "damping",
+    "kind": "slider",
+    "default": 0.4,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "DIFFUSION",
+    "role": "diffusion",
+    "kind": "slider",
+    "default": 0.6,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "DRY",
+    "role": "direct",
+    "kind": "slider",
+    "default": 0.8,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "SPRING",
+    "role": "spring",
+    "kind": "slider",
+    "default": 0.0,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "REVERB",
+    "role": "level",
+    "kind": "slider",
+    "default": 0.5,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   }
+  ],
+  "config": "type=b3holiest",
+  "stereo": true,
+  "notes": "Riverbero stereo parametrico: FDN a 8 linee con DECAY 0,3-15 s, DAMPING (taglio 14 kHz-1,5 kHz) e DIFFUSION; molla simulata separata (2 molle dispersive) con livello SPRING; PRE-DELAY 0-100 ms nella prima meta' della corsa e 100-440 ms nella seconda, con feedback (fino a 0,9, limitato); INPUT GAIN 0,25-4x prima del convertitore.",
+  "control_notes": "Cursore PRESET BANK e deviatore PRESET/FREE omessi (preset non riprodotti); etichetta PRE-DELAY FEEDBACK abbreviata."
+ },
+ "ehabyss": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "A MIX",
+    "role": "amix",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "A PREDELAY",
+    "role": "apre",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "ms",
+    "lo": 0.0,
+    "hi": 1000.0
+   },
+   {
+    "label": "A TIME",
+    "role": "atime",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "A EQ LOW",
+    "role": "alow",
+    "kind": "slider",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0
+   },
+   {
+    "label": "A EQ HIGH",
+    "role": "ahigh",
+    "kind": "slider",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0
+   },
+   {
+    "label": "A TYPE",
+    "role": "atype",
+    "kind": "selector",
+    "default": 0.1111,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 9.0,
+    "choices": [
+     "ROOM",
+     "HALL",
+     "SPRING",
+     "PLATE",
+     "REVERSE",
+     "DYNAMIC",
+     "AUTOINF",
+     "SHIMMER",
+     "POLY",
+     "RESONANT"
+    ],
+    "short": [
+     "ROOM",
+     "HALL",
+     "SPRG",
+     "PLAT",
+     "REV",
+     "DYN",
+     "INF",
+     "SHIM",
+     "POLY",
+     "RES"
+    ]
+   },
+   {
+    "label": "B MIX",
+    "role": "bmix",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "B PREDELAY",
+    "role": "bpre",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "ms",
+    "lo": 0.0,
+    "hi": 1000.0
+   },
+   {
+    "label": "B TIME",
+    "role": "btime",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "B EQ LOW",
+    "role": "blow",
+    "kind": "slider",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0
+   },
+   {
+    "label": "B EQ HIGH",
+    "role": "bhigh",
+    "kind": "slider",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0
+   },
+   {
+    "label": "B TYPE",
+    "role": "btype",
+    "kind": "selector",
+    "default": 0.7778,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 9.0,
+    "choices": [
+     "ROOM",
+     "HALL",
+     "SPRING",
+     "PLATE",
+     "REVERSE",
+     "DYNAMIC",
+     "AUTOINF",
+     "SHIMMER",
+     "POLY",
+     "RESONANT"
+    ],
+    "short": [
+     "ROOM",
+     "HALL",
+     "SPRG",
+     "PLAT",
+     "REV",
+     "DYN",
+     "INF",
+     "SHIM",
+     "POLY",
+     "RES"
+    ]
+   }
+  ],
+  "config": "type=b3verb model=abyss",
+  "stereo": true,
+  "notes": "Due motori di riverbero stereo in parallelo (algoritmi della tappa 3A: room, hall, molla 6G15, plate, reverse, dinamico, auto-infinito, shimmer, poly, risonante), ciascuno con MIX, PRE-DELAY fino a 1 s, TIME (a fine corsa serbatoio quasi infinito con controllo automatico del livello d'ingresso) ed EQ a mensole 250 Hz / 3,5 kHz +-12 dB.",
+  "control_notes": "Gli algoritmi si scelgono col display nel reale: qui A TYPE e B TYPE. Cursori BLEND, blocchi FX, preset, routing serie e MIDI non riprodotti (12 comandi)."
+ },
+ "eh3verb": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "TYPE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "HALL",
+     "PLATE",
+     "SPRING"
+    ],
+    "short": [
+     "HALL",
+     "PLAT",
+     "SPRG"
+    ]
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DLY/SPRING",
+    "role": "predelay",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3verb model=3verb",
+  "stereo": false,
+  "notes": "Algoritmi dell'Oceans 11 (tappa 3A): hall e plate con TIME 0,4-20 s e infinito a fine corsa (serbatoio a 59 s con controllo automatico del livello), pre-delay fino a 1 s; molla 6G15 con DELAY/SPRING = lunghezza corta/media/lunga e TIME = decadimento; TONE 1,5-14 kHz.",
+  "control_notes": "Il pulsante TYPE e' un selettore a 3 posizioni."
+ },
+ "ehshimmer": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "SCENE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "INTERGALACTIC",
+     "OFF-WORLD",
+     "ETHERDUST"
+    ],
+    "short": [
+     "INTG",
+     "OFFW",
+     "ETHD"
+    ]
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "VOICE",
+    "role": "voice",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3shimmer",
+  "stereo": false,
+  "notes": "Riverbero FDN con ottave nell'anello: VOICE da plate pulito (0) a shimmer classico (ore 12) ad archi sintetizzati dalle parziali del banco di filtri (attacco lento ed ensemble); scene INTERGALACTIC (ottava sopra), OFF-WORLD (ottava sopra e sotto modulata), ETHERDUST (frammenti ripetuti di lunghezza casuale prima del riverbero); TIME 1-20 s, infinito a fine corsa; guadagno d'anello dello shimmer <= 0,55 con limitazione morbida e controllo del livello.",
+  "control_notes": "Funzioni secondarie (delay 0-950 ms, depth, rate) e modi di bypass non riprodotti; il pulsante SCENE e' un selettore; scene interpretate dalla scheda (stima)."
+ },
+ "ehsuperegop": {
+  "family": "Synth",
+  "category": "Synth",
+  "controls": [
+   {
+    "label": "DRY",
+    "role": "direct",
+    "kind": "knob",
+    "default": 0.75,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "EFFECT",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "ATTACK",
+    "role": "attack",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DECAY",
+    "role": "decay",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "THRESHOLD",
+    "role": "threshold",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LAYER",
+    "role": "layer",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GLISS",
+    "role": "gliss",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FX TYPE",
+    "role": "type",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": [
+     "FLANGE",
+     "PHASE",
+     "MOD",
+     "ROTARY",
+     "TREM 1",
+     "TREM 2",
+     "PITCH",
+     "FILTER",
+     "DETUNE",
+     "ECHO",
+     "DELAY"
+    ],
+    "short": [
+     "FLG",
+     "PHS",
+     "MOD",
+     "ROT",
+     "TRM1",
+     "TRM2",
+     "PIT",
+     "FILT",
+     "DET",
+     "ECHO",
+     "DLY"
+    ]
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 4.0,
+    "choices": [
+     "MOMENT",
+     "SUSTAIN",
+     "AUTO",
+     "LATCH",
+     "LIVE FX"
+    ],
+    "short": [
+     "MOM",
+     "SUS",
+     "AUTO",
+     "LAT",
+     "LIVE"
+    ]
+   },
+   {
+    "label": "FX ON",
+    "role": "fxon",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=b3superego",
+  "stereo": true,
+  "notes": "Congelamento: cattura 160 ms dopo l'attacco (soglia THRESHOLD), nuvola di 6 granuli di Hann, ATTACK = dissolvenza d'entrata 4 ms-4 s, DECAY = uscita 30 ms-10 s (fine corsa = infinito), LAYER = parte del congelato precedente nella nuova cattura, GLISS = glissato fra le note congelate. 11 effetti sul congelato (o sul diretto in LIVE FX): flanger Mistress con Filter Matrix, phaser Small Stone, MOD (vibrato a sinistra, chorus a destra), rotary, tremolo sinusoidale/quadro, pitch a gradi della scala, passa-basso risonante, detune, eco ed eco 'analogica' modulata.",
+  "control_notes": "Senza footswitch: MOMENT congela la prima nota e la tiene finche' si suona; SUSTAIN ricattura a ogni nota e sfuma quando si smette; AUTO ricattura a ogni nota e sfuma col DECAY; LATCH tiene ogni congelato. Il footswitch EFFECT e' la levetta FX ON; loop FX, EXP ed EXT non riprodotti; funzioni alternative di RATE/DEPTH per DETUNE, ECHO, DELAY e PITCH stimate."
+ },
+ "ehattackdecay": {
+  "family": "Tremolo",
+  "category": "Tremolo / Pan / Slicer",
+  "controls": [
+   {
+    "label": "POLY",
+    "role": "poly",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "MONO",
+     "POLY"
+    ]
+   },
+   {
+    "label": "HARMONIX",
+    "role": "drive",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "H.VOL",
+    "role": "hlevel",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SENS",
+    "role": "sens",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "ATTACK",
+    "role": "attack",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "ms",
+    "lo": 4.0,
+    "hi": 8000.0
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DECAY",
+    "role": "decay",
+    "kind": "knob",
+    "default": 0.85,
+    "units": "ms",
+    "lo": 4.0,
+    "hi": 8000.0
+   },
+   {
+    "label": "VOL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "H",
+    "role": "fuzz",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=b3attackdecay",
+  "stereo": false,
+  "notes": "Inviluppo di volume che riparte a ogni nota (SENS = soglia): ATTACK 4 ms-8 s (a zero niente attacco), DECAY 4 ms-8 s (-60 dB); POLY: ogni banda del banco di filtri ha il proprio inviluppo (come l'HOG2); fuzz Harmonix prima degli inviluppi (HARMONIX = guadagno, diodi asimmetrici, TONE, H.VOL), acceso dal footswitch H; BLEND dry/effetto.",
+  "control_notes": "Il footswitch HARMONIX e' la levetta H; preset 1-3, inviluppi continui, loop SEND/RETURN ed EXP/CV non riprodotti."
+ },
+ "ehpog3": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "INPUT GAIN",
+    "role": "gain",
+    "kind": "slider",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.5,
+    "hi": 3.0
+   },
+   {
+    "label": "MASTER VOL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DRY",
+    "role": "direct",
+    "kind": "slider",
+    "default": 0.8,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "-2 OCT",
+    "role": "oct2",
+    "kind": "slider",
+    "default": 0.0,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "-1 OCT",
+    "role": "oct1",
+    "kind": "slider",
+    "default": 0.5,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "+5TH",
+    "role": "fifth",
+    "kind": "slider",
+    "default": 0.0,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "+1 OCT",
+    "role": "up1",
+    "kind": "slider",
+    "default": 0.5,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "+2 OCT",
+    "role": "up2",
+    "kind": "slider",
+    "default": 0.0,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "ATTACK",
+    "role": "attack",
+    "kind": "slider",
+    "default": 0.0,
+    "units": "ms",
+    "lo": 0.0,
+    "hi": 3000.0
+   },
+   {
+    "label": "FILTER",
+    "role": "freq",
+    "kind": "slider",
+    "default": 1.0,
+    "units": "hz",
+    "lo": 100.0,
+    "hi": 20000.0
+   },
+   {
+    "label": "DETUNE",
+    "role": "detune",
+    "kind": "slider",
+    "default": 0.0,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "Q",
+    "role": "q",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3pog",
+  "stereo": false,
+  "notes": "Cinque voci dal banco di filtri complessi della tappa 3A con intonazione esatta (-2 e -1 ottava, quinta 3/2, +1 e +2 ottave), INPUT GAIN 0,5-3x prima del convertitore, ATTACK per nota fino a 3 s, filtro passa-basso a 2 poli 100 Hz-20 kHz con Q 0,6-8, DETUNE sulle ottave sopra (linee a detune lento), MASTER VOL.",
+  "control_notes": "Su 15 comandi reali + pan restano 12: ENV, SPREAD, i 6 pan, FOCUS, i modi LP/BP/HP del filtro (LP), i pulsanti DRY in ATTACK/FILTER/DETUNE (dry diretto), preset e MIDI non riprodotti; uscite L/R uguali."
+ },
+ "ehpicopog": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "SUB OCTAVE",
+    "role": "oct1",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "OCTAVE UP",
+    "role": "up1",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DRY",
+    "role": "direct",
+    "kind": "knob",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FILTER",
+    "role": "filter",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "TONE",
+     "LPF",
+     "HPF"
+    ],
+    "short": [
+     "TONE",
+     "LPF",
+     "HPF"
+    ]
+   }
+  ],
+  "config": "type=b3pog model=pico",
+  "stereo": false,
+  "notes": "Ottave -1/+1 dal banco di filtri come il Micro POG; FILTER: TONE (verde) = bilanciere su tutte le voci con mensole a ~300 Hz e ~800 Hz, LPF (rosso) = passa-basso risonante 150 Hz-9 kHz sulle sole ottave, HPF (arancio) = passa-alto 40 Hz-3 kHz sulle sole ottave; TONE regola il bilanciere o la frequenza.",
+  "control_notes": "Il pulsante FILTER (LED tricolore) e' un selettore a 3 posizioni."
+ },
+ "ehpitchforkp": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "DRY",
+    "role": "direct",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SHIFT 1",
+    "role": "shift1",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SHIFT 2",
+    "role": "shift2",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "S1 SHIFT",
+    "role": "int1",
+    "kind": "knob",
+    "default": 0.6667,
+    "units": "semitone",
+    "lo": -36.0,
+    "hi": 36.0
+   },
+   {
+    "label": "S1 DETUNE",
+    "role": "det1",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": -99.0,
+    "hi": 99.0
+   },
+   {
+    "label": "S2 SHIFT",
+    "role": "int2",
+    "kind": "knob",
+    "default": 0.3333,
+    "units": "semitone",
+    "lo": -36.0,
+    "hi": 36.0
+   },
+   {
+    "label": "S2 DETUNE",
+    "role": "det2",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": -99.0,
+    "hi": 99.0
+   },
+   {
+    "label": "X-MOD 1>2",
+    "role": "xmod12",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "X-MOD 2>1",
+    "role": "xmod21",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3fork model=plus",
+  "stereo": false,
+  "notes": "Due voci polifoniche +-3 ottave a semitoni con detune +-99 cent: le ottave esatte dal banco di filtri, il resto (+-6 semitoni) dallo shifter granulare sincronizzato; livelli DRY/SHIFT 1/SHIFT 2; X-MOD = modulazione ad anello di una voce con l'altra (portante normalizzata), 0-100%.",
+  "control_notes": "I parametri dei menu (VALUE + 8 pulsanti) sono esposti come pomelli: S1/S2 SHIFT (semitoni), S1/S2 DETUNE (cent, sommati all'intervallo come S2D2), X-MOD 1>2 e 2>1. AUX, EXP, USER, preset e LATCH non riprodotti."
+ },
+ "ehpicofork": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "VOL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SWEEP",
+    "role": "sweep",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 4.0
+   },
+   {
+    "label": "SHIFT",
+    "role": "shift",
+    "kind": "selector",
+    "default": 0.7778,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 9.0,
+    "choices": [
+     "DETUNE",
+     "m2",
+     "M2",
+     "M3",
+     "P4",
+     "P5",
+     "M6",
+     "1 OCT",
+     "2 OCT",
+     "3 OCT"
+    ],
+    "short": [
+     "DET",
+     "m2",
+     "M2",
+     "M3",
+     "P4",
+     "P5",
+     "M6",
+     "1OCT",
+     "2OCT",
+     "3OCT"
+    ]
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "UP",
+     "DOWN",
+     "DUAL"
+    ],
+    "short": [
+     "UP",
+     "DOWN",
+     "DUAL"
+    ]
+   }
+  ],
+  "config": "type=b3fork model=pico",
+  "stereo": false,
+  "notes": "Trasposizione polifonica continua (ottava dal banco + resto granulare, due percorsi incrociati) a 10 intervalli UP, DOWN o DUAL (coppie del manuale: detune, deep detune, M2+M6, M3+P5, P4 su + P5 giu', P5 su + ottava giu', ...); SWEEP = glissato dall'unisono all'intervallo fino a 4 s (al minimo spento); BLEND dry/wet, VOL.",
+  "control_notes": "Senza footswitch il glissato SWEEP parte quando si riprende a suonare dopo almeno 0,3 s di silenzio; il pulsante MODE e' un selettore; latch/momentaneo non riprodotti."
+ },
+ "ehihm": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "KEY",
+    "role": "key",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 6.0,
+    "choices": [
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "A",
+     "B"
+    ],
+    "short": [
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "A",
+     "B"
+    ]
+   },
+   {
+    "label": "KEY #/NAT",
+    "role": "sharp",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "#",
+     "NAT"
+    ]
+   },
+   {
+    "label": "MAJ/MIN",
+    "role": "minor",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "MAJ",
+     "MIN"
+    ]
+   },
+   {
+    "label": "POLY-OVR",
+    "role": "poly",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "INTELL",
+     "POLY"
+    ]
+   },
+   {
+    "label": "INTERVAL",
+    "role": "interval",
+    "kind": "selector",
+    "default": 0.3,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": [
+     "6 DN",
+     "4 DN",
+     "3 DN",
+     "3 UP",
+     "4 UP",
+     "5 UP",
+     "6 UP",
+     "7 UP",
+     "3+5 UP",
+     "3+7 UP",
+     "5+8 UP"
+    ],
+    "short": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9",
+     "10",
+     "11"
+    ]
+   },
+   {
+    "label": "MIX",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "VOL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3ihm",
+  "stereo": false,
+  "notes": "Intelligent: nota dal banco di filtri, armonie diatoniche (1 o 2 voci) nella tonalita' KEY/#/MAJ-MIN con TD-PSOLA (note fuori scala spostate in parallelo); Poly Override: trasposizione polifonica fissa (doubler, 4a, 3e e 2e maggiori/minori dalla levetta, 5a, ottave, 5a+ottava) dal banco di filtri e dallo shifter granulare.",
+  "control_notes": "Il pulsante POLY-OVERRIDE e' una levetta; MOMENT e intervalli secondari (menu) non riprodotti; le posizioni dell'INTERVAL mostrano la funzione del modo Intelligent."
+ },
+ "ehslammi": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "PEDAL",
+    "role": "pedal",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MAX BEND",
+    "role": "shift",
+    "kind": "selector",
+    "default": 0.8,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": [
+     "DETUNE",
+     "1/2 STEP",
+     "M2",
+     "M3",
+     "P4",
+     "P5",
+     "M6",
+     "m7",
+     "1 OCT",
+     "2 OCT",
+     "3 OCT"
+    ],
+    "short": [
+     "DET",
+     "1/2",
+     "M2",
+     "M3",
+     "P4",
+     "P5",
+     "M6",
+     "m7",
+     "1OCT",
+     "2OCT",
+     "3OCT"
+    ]
+   },
+   {
+    "label": "BEND",
+    "role": "dir",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "UP",
+     "DOWN"
+    ]
+   },
+   {
+    "label": "DRY VOL",
+    "role": "direct",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3slammi model=next",
+  "stereo": false,
+  "notes": "Bend polifonico continuo: dal tallone (unisono) alla punta (MAX BEND, fino a 3 ottave o dive bomb in giu'): due percorsi (ottava esatta dal banco di filtri + resto granulare) incrociati fra 4 e 8 semitoni, cosi' il passaggio d'ottava avviene sempre su un percorso muto; DRY VOL miscela il diretto.",
+  "control_notes": "PEDAL e' il bilanciere (primo comando, sensore d'inclinazione nel reale); rotelle e pulsante laterali resi come selettore/levetta/pomello; CALIBRATE omesso."
+ },
+ "ehslammip": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "BEND",
+    "role": "pedal",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SHIFT",
+    "role": "shift",
+    "kind": "selector",
+    "default": 0.8,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": [
+     "DETUNE",
+     "m2",
+     "M2",
+     "m3",
+     "M3",
+     "P4",
+     "P5",
+     "M6",
+     "1 OCT",
+     "2 OCT",
+     "3 OCT"
+    ],
+    "short": [
+     "DET",
+     "m2",
+     "M2",
+     "m3",
+     "M3",
+     "P4",
+     "P5",
+     "M6",
+     "1OCT",
+     "2OCT",
+     "3OCT"
+    ]
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PITCH MIX",
+    "role": "pitchmix",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DIR",
+    "role": "dir",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "UP",
+     "DOWN",
+     "DUAL"
+    ],
+    "short": [
+     "UP",
+     "DOWN",
+     "DUAL"
+    ]
+   },
+   {
+    "label": "PEDAL",
+    "role": "xfade",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "PITCH",
+     "X-FADE"
+    ]
+   }
+  ],
+  "config": "type=b3slammi model=plus",
+  "stereo": false,
+  "notes": "PITCH: il pedale piega dal tallone (PITCH MIX, mezzi toni fino allo SHIFT) alla punta (SHIFT), in su, in giu' o DUAL (seconda voce che piega insieme verso l'armonia della tabella del manuale); X-FADE: dal dry al trasposto (in DUAL dal tallone a PITCH MIX +-1 ottava); polifonico con i due percorsi del Next Step; BLEND dry/wet.",
+  "control_notes": "BEND e' il bilanciere (primo comando). Tabella delle seconde voci in DUAL ricostruita dal manuale (parzialmente leggibile): stima."
+ },
+ "ehstring9": {
+  "family": "Synth",
+  "category": "Synth",
+  "controls": [
+   {
+    "label": "DRY",
+    "role": "direct",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "EFFECT",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "CTRL 1",
+    "role": "ctrl1",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "CTRL 2",
+    "role": "ctrl2",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PRESET",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "SYMPHONIC",
+     "JUNE-O",
+     "PCM",
+     "FLOPPY",
+     "AARP",
+     "CREWMAN",
+     "ORCH FREEZE",
+     "SYNTH FREEZE",
+     "VOX FREEZE"
+    ],
+    "short": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9"
+    ]
+   }
+  ],
+  "config": "type=nine model=string9",
+  "stereo": false,
+  "notes": "Motore della serie 9 (tappa 3A: fondamentali dal banco di filtri, parziali con fase esatta) con ricette d'archi: attacco d'arco, ensemble, filtro; SYMPHONIC (ottava sotto sulle corde gravi), JUNE-O (CTRL 2 = 5 ottave, chorus), PCM (CTRL 2 = vibrato), FLOPPY (nastro, rumore e formanti), AARP (CTRL 1 = phaser), CREWMAN (CTRL 1 = apertura o chiusura del filtro), tre preset FREEZE (CTRL 2: meta' sinistra automatico, meta' destra manuale).",
+  "control_notes": "Freeze manuale senza footswitch: il congelato resta anche nelle pause e si rinnova solo con un accordo suonato dopo almeno 1 s di silenzio. DIP BYPASS MUTE e DRY OUTPUT non riprodotti."
+ },
+ "ehbassmono": {
+  "family": "Synth",
+  "category": "Basso",
+  "controls": [
+   {
+    "label": "DRY",
+    "role": "direct",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SYNTH",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SENS",
+    "role": "sens",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "CTRL",
+    "role": "ctrl",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TYPE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": [
+     "LASER",
+     "X-FADE",
+     "ACID",
+     "COSMIC",
+     "SUB",
+     "GROWL",
+     "WUB",
+     "UNISON",
+     "TWIN",
+     "SPECTRE",
+     "OBLIVION"
+    ],
+    "short": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9",
+     "10",
+     "11"
+    ]
+   }
+  ],
+  "config": "type=b3bassmono",
+  "stereo": false,
+  "notes": "Synth monofonico per basso: nota dalla banda piu' grave del banco di filtri (30-1500 Hz), fino a 5 oscillatori polyBLEP, filtro a 4 poli con inviluppo o LFO; 11 tipi come da manuale (LASER: CTRL = attacco e decadimento del filtro; X-FADE con dry nel filtro; ACID tipo 303; COSMIC con vibrato; SUB: CTRL = livello della sub-ottava; GROWL percussivo; WUB: CTRL = velocita' del filtro; UNISON 5 voci; TWIN gola; SPECTRE con nota aggiunta all'ottava; OBLIVION con modulazione ondeggiante).",
+  "control_notes": "Funzioni EXP non riproducibili (nota aggiunta di SPECTRE fissa all'ottava); timbri stimati."
+ },
+ "ehringthing": {
+  "family": "Synth",
+  "category": "Synth",
+  "controls": [
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "WAVE",
+    "role": "wave",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FILT/RATE",
+    "role": "filter",
+    "kind": "knob",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FINE/DEPTH",
+    "role": "fine",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "COARSE",
+    "role": "coarse",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "RM",
+     "UB",
+     "LB",
+     "PS"
+    ],
+    "short": [
+     "RM",
+     "UB",
+     "LB",
+     "PS"
+    ]
+   }
+  ],
+  "config": "type=b3ring",
+  "stereo": true,
+  "notes": "RM: modulatore ad anello con portante 0,1-2940 Hz (COARSE, FINE +-1 semitono) a 5 forme incrociabili (quadra -> sinusoide -> rampa giu', rampa su -> triangolo) e passa-basso; UB/LB: banda laterale singola con segnale analitico (Hilbert), banda scelta a sinistra e l'altra a destra, WAVE aggiunge 2a o 3a armonica alla portante; PS: pitch shift +-2 ottave a semitoni (FINE fra i passi) con modulazione di RATE/DEPTH.",
+  "control_notes": "Etichette FILTER/RATE e FINE/DEPTH abbreviate; accordatura automatica, ingresso MOD, EXP e preset non riprodotti; l'encoder MODE e' un selettore."
+ },
+ "ehatomic": {
+  "family": "Synth",
+  "category": "Synth",
+  "controls": [
+   {
+    "label": "VOL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "ATOMS",
+    "role": "atoms",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SHARP",
+     "SMOOTH"
+    ]
+   }
+  ],
+  "config": "type=b3atomic",
+  "stereo": false,
+  "notes": "Decomposizione spettrale: FFT di 2048 punti (Hann) ogni periodo di SPEED (da 1,5 s a 4 ms), si tengono gli ATOMS picchi piu' forti (1-48, frequenza e ampiezza interpolate) e li si risintetizza con oscillatori che conservano la fase quando un atomo prosegue; SHARP = cambio istantaneo, SMOOTH = glissato di frequenza e ampiezza su tutto il periodo. Con SPEED e ATOMS al massimo il suono si avvicina all'ingresso.",
+  "control_notes": "Tap tempo e modo a dinamica piatta non riprodotti; il pulsante MODE e' una levetta."
+ },
+ "ehv256": {
+  "family": "Synth",
+  "category": "Synth",
+  "controls": [
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BANDS",
+    "role": "bands",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 8.0,
+    "hi": 256.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GENDER",
+    "role": "gender",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PITCH",
+    "role": "pitch",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "VOX-ROBO 1",
+     "VOX-ROBO 2",
+     "VOX-ROBO 3",
+     "SINGLE DRONE",
+     "MAJOR DRONE",
+     "MINOR DRONE",
+     "TRANSPOSITION",
+     "INSTRUMENT CTRL",
+     "REFLEX-TUNE"
+    ],
+    "short": [
+     "RB1",
+     "RB2",
+     "RB3",
+     "SNG",
+     "MAJ",
+     "MIN",
+     "TRNS",
+     "INST",
+     "TUNE"
+    ]
+   },
+   {
+    "label": "MIC GAIN",
+    "role": "micgain",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "LO",
+     "MID",
+     "HI"
+    ],
+    "short": [
+     "LO",
+     "MID",
+     "HI"
+    ]
+   }
+  ],
+  "config": "type=b3vocoder model=v256",
+  "stereo": true,
+  "notes": "Vocoder a FFT (1024 punti, passo 256) con 8-256 bande logaritmiche 80 Hz-11 kHz: inviluppi del modulatore (voce) con rilascio ~40 ms applicati alla portante, GENDER sposta i formanti di +-6 semitoni, TONE inclina gli acuti; portanti: synth robot (impulso stretto, Do3) e drone d'organo singolo, maggiore (Do4) o minore (La4) +-1 ottava col PITCH (agli estremi muti); TRANSPOSITION (TD-PSOLA +-1 ottava), INSTRUMENT CTRL (la nota dello strumento sostituisce quella cantata), REFLEX-TUNE (correzione cromatica, BANDS = velocita').",
+  "control_notes": "Ingresso del plugin: in stereo L = voce (microfono), R = strumento; in mono la voce modula solo i synth interni e INSTRUMENT CTRL resta all'unisono. GENDER BENDER abbreviato; PHANTOM POWER, freeze, MIDI e preset non riprodotti."
+ },
+ "ehironlung": {
+  "family": "Synth",
+  "category": "Synth",
+  "controls": [
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GENDER",
+    "role": "gender",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIC GAIN",
+    "role": "micgain",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "LO",
+     "MID",
+     "HI"
+    ],
+    "short": [
+     "LO",
+     "MID",
+     "HI"
+    ]
+   }
+  ],
+  "config": "type=b3vocoder model=ironlung",
+  "stereo": true,
+  "notes": "Vocoder a FFT a 256 bande (stesso motore del V256): portante = strumento, modulatore = microfono; GENDER BENDER sposta i formanti di +-6 semitoni, TONE inclina gli acuti e oltre ore 12 aggiunge armoniche alla portante.",
+  "control_notes": "Ingresso del plugin: in stereo L = microfono, R = strumento; in mono il segnale e' portante e modulatore insieme (filtro di formanti con GENDER). Modo SPLIT del bypass non riprodotto."
+ },
+ "ehepitome": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "AMOUNT",
+    "role": "amount",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SHIMMER",
+    "role": "shimmer",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   },
+   {
+    "label": "REVERB",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.3333,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "SPRING",
+     "HALL",
+     "ROOM",
+     "FLERB"
+    ],
+    "short": [
+     "SPRG",
+     "HALL",
+     "ROOM",
+     "FLRB"
+    ]
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FLANGER",
+    "role": "flanger",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "CHORUS",
+    "role": "chorus",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SUB OCTAVE",
+    "role": "oct1",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "OCTAVE UP",
+    "role": "up1",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DRY",
+    "role": "direct",
+    "kind": "knob",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=b3epitome",
+  "stereo": true,
+  "notes": "Tre motori: Micro POG (ottave -1/+1 polifoniche dal banco di filtri) -> Stereo Electric Mistress digitale (flanger 'maximum color' e chorus, Filter Matrix sotto ore 10 del RATE) -> Holy Grail Plus (molla, hall, room, flerb; AMOUNT per tipo). SHIMMER: il riverbero prende solo le ottave e la Mistress va in fondo; con FLERB diventa un'eco con il POG nell'anello (ogni ripetizione cambia ottava, DRY = feedback del dry, guadagno d'anello <= 0,95).",
+  "control_notes": "I tre footswitch di sezione non sono riproducibili: ogni sezione si esclude col suo livello (ottave e profondita' a zero, BLEND a zero)."
+ },
+ "ehsoulpog": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "DRY",
+    "role": "direct",
+    "kind": "knob",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SUB OCTAVE",
+    "role": "oct1",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "OCTAVE UP",
+    "role": "up1",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "VOL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TREBLE",
+    "role": "treble",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DRIVE",
+    "role": "drive",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "NANO",
+     "ENHANCED"
+    ]
+   },
+   {
+    "label": "FX ORDER",
+    "role": "order",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SF>POG",
+     "POG>SF"
+    ]
+   },
+   {
+    "label": "SOUL FOOD",
+    "role": "sfon",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   },
+   {
+    "label": "POG",
+    "role": "pogon",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=b3soulpog",
+  "stereo": false,
+  "notes": "Soul Food (overdrive trasparente con ramo pulito, stessa netlist della tappa analogica nel motore Circuit) e Nano POG (ottave -1/+1 polifoniche dal banco di filtri) in ordine commutabile; MODE acceso: ottava sopra da un banco piu' fitto (5 bande/ottava) con l'aggiunta della seconda ottava (armoniche arricchite, polifonia migliore).",
+  "control_notes": "I due footswitch di sezione (SOUL FOOD e POG) sono levette con lo stesso nome; loop SEND/RETURN e DRY OUT non riprodotti."
+ },
+ "ehtonetattoo": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "label": "DELAY",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "ms",
+    "lo": 30.0,
+    "hi": 550.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BLEND",
+    "role": "blend",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GAIN",
+    "role": "gain",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "db",
+    "lo": 0.0,
+    "hi": 23.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.4,
+    "hi": 9.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OFF",
+     "LO",
+     "HI"
+    ],
+    "short": [
+     "OFF",
+     "LO",
+     "HI"
+    ]
+   },
+   {
+    "label": "TREBLE",
+    "role": "treble",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BASS",
+    "role": "bass",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "db",
+    "lo": -18.5,
+    "hi": 18.5
+   },
+   {
+    "label": "VOLUME",
+    "role": "volume",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DRIVE",
+    "role": "drive",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GATE THR",
+    "role": "gatethr",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SCOOP",
+    "role": "scoop",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OFF",
+     "LO",
+     "HI"
+    ],
+    "short": [
+     "OFF",
+     "LO",
+     "HI"
+    ]
+   }
+  ],
+  "config": "type=b3tonetattoo",
+  "stereo": false,
+  "notes": "Catena analogica: Metal Muff (due stadi a operazionale con diodi, BASS +-18,5 dB a 105 Hz, TREBLE, SCOOP -7,5/-11 dB a 1,2 kHz, dal motore Circuit) con noise gate (THRESHOLD a zero = escluso) -> Neo Clone (BBD 1024 stadi 6-18 ms, LFO 0,4-9 Hz, DEPTH basso/alto) -> Memory Toy (BBD 8192 stadi 30-550 ms con compander, GAIN 0..+23 dB su dry e ritardato, feedback limitato a 1).",
+  "control_notes": "Il pulsante GATE e' incluso nel pomello GATE THRESHOLD (a zero = gate spento, come da manuale); il pulsante DEPTH diventa un selettore OFF/LO/HI per poter escludere il chorus. Il footswitch del Metal Muff non ha posto (12 comandi): la distorsione e' sempre inserita."
+ }
+}

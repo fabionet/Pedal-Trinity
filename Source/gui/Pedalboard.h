@@ -54,6 +54,14 @@ namespace pt::ui
         void paint (juce::Graphics&) override;
         void resized() override;
 
+        //==================== autotest dei cavi staccabili
+        /** Collegamenti attuali, es. "I>0 0>2 2>O" (I = INPUT, O = OUTPUT, numeri = slot). */
+        juce::String describeCables() const;
+        /** Rilascia la spina del collegamento 'conn' nel punto p come farebbe il mouse; true se la catena cambia. */
+        bool dropPlugForTest (int conn, bool destEnd, juce::Point<float> p);
+        juce::Rectangle<int> slotArea (int slot) const;
+        juce::Rectangle<int> boardBounds() const { return boardRect; }
+
         bool isInterestedInDragSource (const SourceDetails&) override;
         void itemDragMove (const SourceDetails&) override;
         void itemDragExit (const SourceDetails&) override;
@@ -68,6 +76,22 @@ namespace pt::ui
             juce::Rectangle<int> bounds;
         };
         struct End { enum Kind { Input, Output, SlotIn, SlotOut } kind; int slot = -1; int line = 0; };
+        struct Conn { End a, b; };          // cavo: sorgente (uscita) -> destinazione (ingresso)
+
+        /** Cavi staccabili: dove finirebbe la spina rilasciata in p, e come cambierebbe la catena. */
+        struct Replug
+        {
+            enum Kind { Cancel, Unplug, Plug } kind = Cancel;
+            bool ok = false;
+            std::vector<int> unpatch;       // pedali che il cavo smette di attraversare
+            int patch = -1;                 // pedale che entra nella catena
+            juce::Rectangle<float> area;
+            juce::String hint;
+        };
+        Replug resolveReplug (const Conn&, bool destEnd, juce::Point<float>) const;
+        bool applyReplug (int conn, bool destEnd, juce::Point<float>);
+        int segmentOf (const End&) const;
+        int segmentOfSlot (int slot) const;
 
         void timerCallback() override;
         void layout();
@@ -88,6 +112,8 @@ namespace pt::ui
         std::vector<Cell> cells;
         CableOverlay overlay;
         std::vector<Cable> underCables;
+        std::vector<Conn> conns;
+        int heldConn = -1;                  // cavo tenuto in mano (non si disegna sotto la pedaliera)
         juce::TextButton pageLeft { "<" }, pageRight { ">" }, addA { "+" }, addB { "+" };
 
         juce::SharedResourcePointer<ThemeManager> themes;

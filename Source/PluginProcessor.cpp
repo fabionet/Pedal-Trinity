@@ -88,9 +88,10 @@ void PedalTrinityProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     outGain.setCurrentAndTargetValue (juce::Decibels::decibelsToGain (outParam->load()));
 }
 
-void PedalTrinityProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
+void PedalTrinityProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
+    midi.processBlock (midiMessages);       // pedaliera MIDI: anche con il bypass generale attivo
     const int numIn = getTotalNumInputChannels(), numOut = getTotalNumOutputChannels();
     const int n = buffer.getNumSamples();
     for (int c = numIn; c < numOut; ++c) buffer.clear (c, 0, n);
@@ -136,7 +137,7 @@ void PedalTrinityProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 juce::ValueTree PedalTrinityProcessor::captureState() const
 {
     juce::ValueTree root ("PedalTrinityState");
-    root.setProperty ("version", "1.1.3-beta", nullptr);
+    root.setProperty ("version", "1.2.0-beta", nullptr);
     root.appendChild (const_cast<juce::AudioProcessorValueTreeState&> (apvts).copyState(), nullptr);
     root.appendChild (chain.toValueTree(), nullptr);
     root.appendChild (uiState.createCopy(), nullptr);
@@ -155,7 +156,9 @@ void PedalTrinityProcessor::restoreState (const juce::ValueTree& root)
 
 void PedalTrinityProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    if (auto xml = captureState().createXml())
+    auto state = captureState();
+    state.appendChild (midi.toValueTree(), nullptr);        // assegnazioni MIDI: nel progetto, non nei preset
+    if (auto xml = state.createXml())
         copyXmlToBinary (*xml, destData);
 }
 
@@ -169,7 +172,11 @@ void PedalTrinityProcessor::setStateInformation (const void* data, int sizeInByt
     if (auto xml = getXmlFromBinary (data, sizeInBytes))
     {
         if (xml->hasTagName ("PedalTrinityState"))
-            restoreState (juce::ValueTree::fromXml (*xml));
+        {
+            const auto root = juce::ValueTree::fromXml (*xml);
+            restoreState (root);
+            midi.fromValueTree (root.getChildWithName ("MIDI"));
+        }
         else if (xml->hasTagName ("PedalTrinity"))
             migrateFromV1 (*xml);
     }

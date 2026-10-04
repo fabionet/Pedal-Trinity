@@ -104,3 +104,48 @@ indica guadagno di uscita). Stadi digitali (MDP/COSM): approssima con gli stessi
 Usa il colore reale del pedale di riferimento: es. arancione (236,110,30), giallo (240,200,30),
 azzurro BD (40,110,200), verde chiaro (140,200,80), rosa (230,110,160), viola (110,60,150),
 nero/grigio scuro (30,30,33), argento (196,199,204), bianco (225,225,220), rosso (200,40,40), blu CE (40,120,200).
+
+## Pedali a bilanciere e scatole di misura reale (stili `treadle` e `box`)
+Wah, volume ed espressione usano `style="treadle"` e un dizionario `look` (vedi `shaped_layout.py`):
+* il **primo comando** e' il bilanciere (`knob`, ruolo `freq` per i wah, `volume` per i volumi): nell'interfaccia
+  e' il `TreadleControl` (strip 254, anchor = tallone, top = punta), trascinabile in verticale; l'interruttore in
+  punta (on/off) e' la zona `foot`.
+* `look=dict(boss=True)`: pedali BOSS a bilanciere, stessa forma e misure della replica (`real_specs.json`).
+* altrimenti `look=dict(shape=..., dims=(larghezza, lunghezza, altezza) mm, place={etichetta: posizione}, leds=[...],
+  finish=..., rocker_colour=..., tread=(motivo, colore1, colore2), body_motif=...)`; forme `crybaby`, `junior`, `mini`,
+  `wide`, `dvx`, `dvp1`, `eb`, `morley`, `dearmond`. Posizioni: `("L"|"R", pct)` fiancata sinistra/destra vista dal
+  chitarrista (0 = tallone, 100 = punta; il comando sta su un'aletta che sporge dal fianco, perno verticale),
+  `("P", xf, pct)` pannello della carcassa larga, `("H", xf)` striscia del tallone; tipo facoltativo `knob`, `big`,
+  `button` (pulsante/kickswitch: levetta con strip 255, stato mostrato da un anello luminoso), `lever`, `foot`.
+* finiture: `crinkle paint gloss hammer chrome gold copper brushed raw smoked sparkle anodized rust`; motivi semplificati
+  della gomma/carcassa: `ribs grip studs dots stripes camo rings frame diamonds twin` (mai artwork o loghi reali).
+* `style="box"`: scatola di misura reale (es. wah fissi Q Zone) con `look=dict(dims=..., rows=[[...], ...])` come le
+  repliche a scatola.
+* `real=dict(code=..., name=...)`: replica REAL MOD di un pedale non BOSS (sigla e nome reali, senza il marchio del
+  produttore, filtrato da `real_catalog.NO_BRAND`).
+Wah a induttore (famiglia `Wah`, `type=inductor`): ruoli `freq q range voice fine level boost gain dist`
+(vedi `catalog_wah.py` e il commento di `InductorWahEffect` in `FxFilters.cpp`).
+
+## Pedali a scatola con la forma del pedale vero (MXR, Electro-Harmonix: `stomp_layout.py`)
+`catalog_mxr.py` e `catalog_ehx.py` usano `stomp_catalog.stomp(...)` (stile `box` con `look(...)` e `real=(sigla, nome)`):
+* `look(shape, dims, place, feet=, leds=, wedge=, extra=, finish=, gfx=, knob=, print=)`; forme `mxr`, `mxr_big`, `nano`,
+  `pico`, `xo`, `xo_wide` (pressofusi), `pie` (lamiera piegata a cuneo, `wedge=(h davanti, h dietro)` mm), `slab`, `tank`
+  (fondo pressofuso colorato e coperchio in lamiera), `tube` (serie a valvole, `extra=[("tubes", x%, y%, n)]`).
+* `place=[(etichetta, x%, y%, tipo[, alias]), ...]` posizioni del pedale vero (x 0 = sinistra, y 0 = bordo lontano), tipi
+  `knob big med small encoder lever button slider`; `feet=[(etichetta, x%, y%[, alias])]` (il primo e' l'effetto),
+  `leds=[(x%, y%, colore)]` (il primo e' quello di stato). I comandi del modello si assegnano per etichetta/alias, poi per
+  tipo; le posizioni senza comando diventano comandi fissi decorativi; le sovrapposizioni si risolvono spostando i comandi.
+* `gfx`: fondo, fasce/riquadri/diagonali/cerchi/raggiere (solo geometrie semplici: mai loghi, artwork, ritratti o firme),
+  posizione e carattere di nome, sigla e sottotitolo (`stomp_textures.py`); `print` = nome stampato sulla replica REAL MOD.
+* Parte funzionale: `sound_stage3_analog.json` / `sound_stage3_digital.json` (tappa 3A) e `sound_stage3b_analog.json` /
+  `sound_stage3b_digital.json` (tappa 3B) per id (etichette oltre 10 caratteri abbreviate); i comandi scritti nel catalogo
+  sono il segnaposto usato solo se l'id manca nei JSON.
+* Tappa 3B (`catalog_mxr_b.py`, `catalog_ehx_b.py`, priorita' B): `gfx["name_deco"] = dict(style=band|box|frame|lines,
+  col=, pad=mm)` disegna la decorazione attorno al blocco del nome dove `stomp_textures` lo piazza davvero (mai sopra
+  scritte o comandi: la fascia diventa riquadro, il margine si riduce). Il nome sta nella fascia libera piu' ampia tra i
+  comandi e il footswitch; un LED stimato che la chiude va accanto al footswitch dell'effetto.
+* Pedali a bilanciere della serie (wah, volume, pan, pitch a pedale, anche la serie 'Next Step' che oscilla tutta intera):
+  `stomp_catalog.rocker(..., treadle_look(shape, dims, leds=, finish=, rocker=, tread=), segnaposto, note,
+  place_spec=[(etichetta, "L"|"R", pct dal tallone, tipo), ...])` (stile `treadle`, forme di `shaped_layout.py`): il
+  bilanciere e' sempre il primo comando (dal JSON per etichetta/ruolo da bilanciere, altrimenti quello del segnaposto) e i
+  comandi del JSON prendono le posizioni di `place_spec` per somiglianza dell'etichetta.

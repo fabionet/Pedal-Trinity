@@ -201,7 +201,7 @@ vol a=taper(0,A)
 # comandi: 0 LEVEL L, 1 LEVEL C, 2 TONE L, 3 TONE C, 4 DRIVE L, 5 DRIVE C, 6 MODE (0 crunch, 1 lead)
 SD2_NET = """
 hpf R=1M C=47n;
-peak f=1050 Q=2.5 g=6;
+peak f=1095 Q=1.17 g=4.4;
 opni Rg=4.7k Cg=82n Rf=pot(4,250k,A)*sw(6,0,1)+pot(5,250k,A)*sw(6,1,0) Cf=68p rail=4.2;
 opinv Ri=15k Ci=68n Rf=sw(6,150k,1M) Cf=180p rail=4.2;
 dclip R=1k C=0 d=led;
@@ -485,8 +485,9 @@ MODELS = [
            outer("DRIVE", "drive", 0.6), inner("DRIVE CR", "drive2", 0.4),
            selector("MODE", "mode", ["CRUNCH", "LEAD"], 1, short=["CRN", "LEAD"])],
           SD2_NET,
-          "Canale Lead dal clone Aion Tachyon: gyrator a 1.05 kHz, GAIN 250kA (1-54x), invertente 66.7x che satura, "
-          "LED a massa, diodi 1:2 in retroazione, shelf dei bassi 100-282 Hz, tono 100n/10kB/27n. Il Crunch "
+          "Canale Lead dal clone Aion Tachyon: 4558 con gyrator 2SC3378 nella retroazione (ideale 1.05 kHz Q 2.5 "
+          "+6 dB; reale, per le perdite del transistor, gobba larga +4.4 dB a ~1.1 kHz, simulazione nodale), "
+          "GAIN 250kA (1-54x), invertente 66.7x che satura, LED a massa, diodi 1:2 in retroazione, shelf dei bassi 100-282 Hz, tono 100n/10kB/27n. Il Crunch "
           "(senza trace) e' modellato dalle specifiche con l'invertente a 10x.",
           accent=(20, 20, 20), subtitle="DUAL OVERDRIVE"),
 

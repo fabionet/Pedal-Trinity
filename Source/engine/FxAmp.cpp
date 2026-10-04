@@ -60,13 +60,17 @@ namespace pt::engine
             void prepare (double s, int maxBlock) override
             {
                 sr = s;
-                conv.prepare ({ sr, (juce::uint32) maxBlock, 2 });
                 dry.setSize (2, maxBlock);
                 loaded = -1;
                 prepared = true;
+                // l'IR si accoda PRIMA di conv.prepare(): prepare() esegue in modo sincrono i caricamenti in coda e
+                // costruisce subito il motore di convoluzione. Prima l'IR veniva accodato dopo e lo installava il
+                // thread di caricamento di juce::dsp::Convolution in un momento qualsiasi (con 50 ms di dissolvenza da
+                // un impulso unitario): l'inizio dell'uscita dipendeva dalla velocita' di quel thread
                 if (! loadedFile.empty() && ! loadUserIR (juce::File (loadedFile)))
                     loadedFile.clear();
                 if (! userIR) loadIfNeeded (true);
+                conv.prepare ({ sr, (juce::uint32) maxBlock, 2 });
             }
             void reset() override { conv.reset(); }
 

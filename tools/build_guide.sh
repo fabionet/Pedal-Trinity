@@ -21,10 +21,13 @@ mkdir -p "$TMP"
     --chain ns2,cs3,ed9,sd1,bd2,ds1,mc2w,hm2,fz2,gq7,aw3,ce2,dc2,bf2,ph1,dm2,dd3,rv6,re2,tu3
 "$APP" --screenshot "$TMP/dual.png" --theme pro --size 1920x1080 --view 6 --chain ns2,split=0.5,bd2,ir2,ds1@B,ir200@B
 "$APP" --screenshot "$TMP/stereo.png" --theme pro --size 1920x1080 --view 6 --chain cs3,split=1,ce5,ds1,dd8,rv6
-for t in pro tolex walnut green alu night; do
+for t in pro tolex walnut green alu night redtolex tweed diamond carbon maple ebony surf purple slate goldrails white neon; do
     "$APP" --screenshot "$TMP/theme_$t.png" --theme $t --size 1600x900 --view 6 --chain ed9,ds1,split=1,ce5,dd8,rv6
 done
 "$APP" --screenshot "$TMP/options.png" --theme pro --size 1600x900 --view 6 --options --chain ed9,ds1,ce5
+"$APP" --screenshot "$TMP/cables.png" --theme diamond --cablecolour 17 --size 1920x1080 --view 6 --chain ds1,ce2!,bd2,dd3,rv6,mt2
+"$APP" --screenshot "$TMP/learn.png" --theme pro --size 1280x760 --view 3 --learn --chain ds1,ce2,bd2
+"$APP" --screenshot "$TMP/midi.png" --theme pro --size 1280x760 --view 3 --midi --chain ds1,ce2,bd2
 "$APP" --screenshot "$TMP/zoom.png" --theme pro --size 1600x900 --view 3 --chain ed9,mc2w,gq7 --zoom 1
 "$APP" --screenshot "$TMP/realmod.png" --theme pro --size 1920x1080 --view 6 --real \
     --chain ds1,dd500,fv500h,rc30,od200,mt2

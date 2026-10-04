@@ -188,7 +188,11 @@ def main():
         geo = PG.geometry(m)
         has_image = os.path.exists(os.path.join(PEDALS, mid + ".png"))
         if has_image:
-            convert_image(mid)
+            if m["style"] in ("treadle", "box"):
+                # bilancieri e scatole di misura reale: render ridotto, dimensioni logiche dalla geometria
+                convert_image(mid, logical=(geo["imageW"], geo["imageH"]), max_side=1150)
+            else:
+                convert_image(mid)
         else:
             missing.append(mid)
         ctrl_lines = []

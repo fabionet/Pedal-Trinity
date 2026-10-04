@@ -21,7 +21,7 @@
 namespace pt
 {
     static constexpr const char* productName    = "Pedal Trinity";
-    static constexpr const char* versionString  = "1.1.3 beta";
+    static constexpr const char* versionString  = "1.2.0 beta";
     static constexpr const char* author         = "FabioNET";
     static constexpr const char* licenseName    = "GNU General Public License v3.0";
     static constexpr const char* homepage       = "https://github.com/fabionet/Pedal-Trinity";

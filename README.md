@@ -1,14 +1,17 @@
 # Pedal Trinity
 
-**Pedaliera virtuale fino a 100 pedali** con un catalogo di **220 modelli** ispirati all'intero catalogo
-BOSS (compatti, Waza Craft, Twin, serie 200/500, amp e IR simulator, selettori A/B, tuner, looper) più
-l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D regolabili sull'immagine.
+**Pedaliera virtuale fino a 100 pedali** con un catalogo di **505 modelli** ispirati all'intero catalogo
+BOSS (compatti, Waza Craft, Twin, serie 200/500, amp e IR simulator, selettori A/B, tuner, looper), ai wah
+**Cry Baby** (signature comprese, con emulazione del circuito a induttore), ai pedali di volume classici
+(Dunlop, Ernie Ball, Morley, DeArmond), alle **signature MXR** (Zakk Wylde, EVH, Dimebag, Slash, Kerry King, Bonamassa, Morello, Malmsteen, Rhoads...),
+all'intero catalogo **Electro-Harmonix** storico e attuale (tutte le Big Muff, Small Stone, Memory Man, POG,
+HOG, Holy Grail, serie 9, Micro Synth, vocoder, wah d'epoca e molti altri) e all'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D regolabili sull'immagine.
 
 ![Pedal Trinity](docs/images/screenshot.png)
 
 | | |
 |---|---|
-| **Versione** | 1.1.3 beta |
+| **Versione** | 1.2.0 beta |
 | **Autore** | FabioNET |
 | **Licenza** | [GNU GPL v3](LICENSE) |
 | **Formati** | VST3 · LV2 · Standalone |
@@ -21,21 +24,35 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
 * Slot **spostabili** a mano (trascinamento dall'intestazione o dal corpo del pedale, anche sulle celle libere)
   o con i tasti ◀ ▶, eliminabili, duplicabili; accensione dal footswitch.
 * **Cavi jack** disegnati tra i pedali, dal meter INPUT al primo pedale e dall'ultimo al meter OUTPUT:
-  attraversano gli slot vuoti e si sdoppiano in A/B dopo lo splitter.
+  attraversano gli slot vuoti e si sdoppiano in A/B dopo lo splitter. Sono **staccabili**: si prende una
+  spina con il mouse e la si infila in un altro pedale per continuare la catena da lì (i pedali in mezzo
+  vengono scavalcati), oppure la si lascia sulla pedana per staccare il pedale (il cavo si richiude da solo).
+  I pedali staccati restano sulla pedaliera, con la targhetta STACCATO, e sono salvati nei preset.
+* **MIDI**: una pedaliera o un controller MIDI comanda i pedali — footswitch, pomelli (anche con il pedale
+  d'espressione), INPUT/OUTPUT, bypass generale, preset successivo/precedente e Program Change. Tasto **MIDI**
+  nella barra per la mappatura con il tocco (tocchi un comando e muovi quello della pedaliera MIDI); elenco delle
+  assegnazioni con canale, modo degli interruttori (a scatto, momentaneo, finché premuto) e gamma dei pomelli;
+  dispositivi MIDI IN/OUT nello Standalone e **ritorno dello stato** sul MIDI OUT per i LED della pedaliera.
+  Le assegnazioni sono salvate nel progetto.
 * **Splitter SPL-3** in qualsiasi punto della catena: MONO, **DUAL** (due catene mono, A = L e B = R, su due file)
   o **STEREO** (i pedali a doppio jack elaborano A e B, un pedale mono riporta il segnale in mono come
   con i cavi veri). BALANCE e LEVEL A/B in ingresso, BALANCE / LEFT / RIGHT in uscita.
-* **Opzioni** (tasto con l'ingranaggio): **6 temi** della pedaliera — Pedana Pro (alluminio a lamelle con
+* **Opzioni** (tasto con l'ingranaggio): **18 temi** della pedaliera — Pedana Pro (alluminio a lamelle con
   tessuto a strappo, predefinito), Tolex e cromo, Noce e ottone, British Green, Alluminio spazzolato,
-  Studio notte — con pedali renderizzati senza sfondo e con la propria ombra; cavi visibili e colore dei cavi.
+  Studio notte, Tolex rosso, Tweed '59, Lamiera mandorlata, Fibra di carbonio, Acero chiaro, Ebano e
+  argento, Surf blu, Velluto viola, Ardesia, Guide oro, Tolex bianco, Neon notte — con pedali renderizzati
+  senza sfondo e con la propria ombra. **Pedana personalizzabile**: materiale di un altro tema, colore a
+  scelta o una propria immagine. Cavi visibili e **18 colori dei cavi**, compreso *Multicolore*.
   Il contrasto di testi e segni è verificato per ogni tema (WCAG 2.1).
 * **REAL MOD PEDALBOARD** (tasto rosso nella barra): la pedaliera si trasforma nelle **repliche fedeli
-  dei pedali reali** — 216 modelli BOSS con sigla e nome veri, forma e misure ufficiali (compatti, Twin,
+  dei pedali reali** — 501 modelli (216 BOSS, 44 wah Cry Baby, 15 pedali di volume, 16 MXR signature, 210 Electro-Harmonix) con sigla e nome veri, forma e misure ufficiali (compatti, Twin,
   serie 200/500, unità da pavimento, pedali di volume e wah a bilanciere, Rocker, box d'epoca) e comandi
   nella posizione reale; il bilanciere si trascina, i footswitch dei looper funzionano. Il suono non cambia;
   ripremendo il tasto tutto torna com'era. Si possono usare anche le **proprie foto** (cartella RealPhotos),
   appoggiate in rilievo sulla replica con i pomelli 3D allineati sopra quelli della foto (comando
   **Allinea pomelli sulla foto** nel pannello di zoom); le foto restano sul proprio computer.
+  Oltre alla lista **Classica** (repliche BOSS) si possono creare **liste personalizzate**, ognuna nella
+  propria cartella (`RealMod/<nome>`), con foto, allineamenti e nomi/sigle propri; si scelgono nelle Opzioni.
 * **NAM-A1A2 Model** (rosso sangue, contenitore grande): lettore di modelli **Neural Amp Modeler**
   (A1, A2-Lite / A2-Full, LSTM; file `.nam` e `.namb`) con due canali **A** e **B**, ciascuno con modello
   e **IR**. Sul pedale: INPUT, BASS / MIDDLE / TREBLE (tonestack del plugin NAM), OUTPUT, volumi NAM e IR
@@ -68,13 +85,13 @@ l'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D
 
 ### Linux (Ubuntu 22.04+, Debian 12+, Mint 21+)
 ```bash
-sudo apt install ./pedal-trinity_1.1.3-beta_amd64.deb
+sudo apt install ./pedal-trinity_1.2.0-beta_amd64.deb
 ```
 Installa `/usr/lib/vst3/Pedal Trinity.vst3`, `/usr/lib/lv2/Pedal Trinity.lv2` e l'app `pedal-trinity`
 (nel menu *Audio*). La guida si trova in `/usr/share/doc/pedal-trinity/`.
 
 ### Windows 10/11 (x64)
-Esegui `PedalTrinity-1.1.3-beta-Windows-x64-Setup.exe`. Il VST3 va in
+Esegui `PedalTrinity-1.2.0-beta-Windows-x64-Setup.exe`. Il VST3 va in
 `C:\Program Files\Common Files\VST3`, l'LV2 in `C:\Program Files\Common Files\LV2`.
 L'app standalone supporta i driver **ASIO** (selezionati automaticamente al primo avvio se presenti),
 WASAPI e DirectSound.
@@ -116,7 +133,7 @@ Source/
   gui/                slot, vista del pedale, comandi 3D, pannelli zoom e info
   Presets.cpp         preset utente/fabbrica
   StandaloneApp.cpp   app standalone (ASIO, --selftest, --screenshot)
-Resources/            render dei 220 pedali, filmstrip 3D dei comandi, licenza, guida PDF
+Resources/            render dei 505 pedali, filmstrip 3D dei comandi, licenza, guida PDF
 docs/research/        dossier tecnici con le fonti di ogni pedale
 docs/guide/           guida (LaTeX) generata da tools/build_guide.sh
 packaging/            .deb (Linux) e installer Inno Setup (Windows)
@@ -135,8 +152,12 @@ Il plugin incorpora le immagini: la compilazione richiede solo un compilatore C+
 
 Pedal Trinity è un progetto indipendente. *Ibanez* e *Tube Screamer* sono marchi di Hoshino Gakki Co.;
 *BOSS*, *Roland*, *Waza Craft* e le sigle dei pedali BOSS (DS-1, MT-2, GE-7, …) sono marchi di Roland
-Corporation; *Fender* di Fender Musical Instruments Corporation.
-I nomi sono citati solo per indicare il suono di riferimento: nessuna affiliazione o approvazione.
+Corporation; *Fender* di Fender Musical Instruments Corporation; *Dunlop*, *Cry Baby* e *MXR* di Dunlop
+Manufacturing, Inc.; *Ernie Ball* di Ernie Ball, Inc.; *Electro-Harmonix*, *Big Muff*, *Memory Man*, *POG* e *Holy Grail* di New Sensor
+Corporation; *Sovtek*, *Morley* e *DeArmond* dei rispettivi titolari.
+I nomi sono citati solo per indicare il suono di riferimento (e, in REAL MOD, per identificare il pedale
+replicato, senza loghi): nessuna affiliazione o approvazione. I nomi degli artisti delle versioni signature
+servono solo a identificare il modello di riferimento; le repliche non ne riproducono artwork, ritratti o firme.
 VST è un marchio di Steinberg Media Technologies GmbH. ASIO è un marchio e software di Steinberg Media Technologies GmbH.
 
 ## Sicurezza e privacy
@@ -146,7 +167,8 @@ VST è un marchio di Steinberg Media Technologies GmbH. ASIO è un marchio e sof
   (formato, dimensione, annidamento, valori finiti); i preset non possono far aprire percorsi di rete
   o file speciali di sistema.
 * *Esporta su file* toglie dai preset i percorsi locali dei file (modelli NAM, IR).
-* Le foto personali REAL MOD restano sul proprio computer.
+* Le foto personali REAL MOD e l'immagine della pedana restano sul proprio computer; i nomi delle liste
+  REAL MOD sono controllati (nessuna cartella fuori da `RealMod`), eliminare una lista la sposta nel cestino.
 
 ## Licenza
 

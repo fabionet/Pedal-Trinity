@@ -22,8 +22,10 @@ MT2_CTRL = lambda: [knob("LEVEL", "level"),
                     outer("LOW", "low", 0.5, "db", -15, 15), inner("HIGH", "high", 0.5, "db", -15, 15),
                     outer("MIDDLE", "mid", 0.5, "db", -15, 15), inner("MID FREQ", "midfreq", 0.5, "hz", 200, 5000),
                     knob("DIST", "gain", 0.6)]
-MT2_NOTE = ("Pre-EQ a gyrator 952 Hz, op-amp con DIST 250kA (2-252x), diodi 1SS133 a massa, gyrator fissi 4.9 kHz e "
-            "105 Hz, EQ attivo LOW 105 Hz / HIGH shelf / MIDDLE Wien 227-5386 Hz (schema di fabbrica, Electric Druid). ")
+MT2_NOTE = ("Pre-EQ a gyrator: gobba larga a 950 Hz (+36 dB) e passa-basso 677 Hz, op-amp con DIST 250kA (2-252x), "
+            "diodi 1SS133 a massa, gyrator fissi dopo il clipping (+10 dB a 4.9 kHz, +6 dB a 110 Hz: medie scavate), "
+            "EQ attivo LOW 105 Hz / HIGH mensola / MIDDLE Wien 227-5386 Hz (schema di fabbrica, Electric Druid; "
+            "risposta verificata con simulazione nodale). ")
 
 
 def hm2_net(mode=None):
@@ -41,15 +43,14 @@ def hm2_net(mode=None):
           series RL=10k d=ge;
           dclip R=10k C=1n d=si;
           hpf R=68k C=1u;
-          peak f=%s Q=3.7 g=lin(1,-18,18);
-          peak f=958 Q=3.4 g=lin(2,-14,14);
-          peak f=%s Q=3.8 g=lin(2,-14,14);
+          peak f=%s Q=log(1,0.0301,1.2456)+log(1,1.2456,0.0301) g=lin(1,-19.5,19.5);
+          peak f=%s Q=log(2,0.0139,0.7163)+log(2,0.7163,0.0139) g=lin(2,-23,23) rail=4;
           vol a=taper(0,A)*%s
-          """ % (s("11", "16"), s("220k", "330k"), s("86.7", "75"), s("1280", "1500"), s("1", "1.41"))
+          """ % (s("11", "16"), s("220k", "330k"), s("80", "70"), s("1180", "1350"), s("1", "1.41"))
 
 
-HM_CTRL = lambda: [knob("LEVEL", "level"), knob("LOW", "low", 0.5, "db", -18, 18),
-                   knob("HIGH", "high", 0.5, "db", -14, 14), knob("DIST", "gain", 0.7)]
+HM_CTRL = lambda: [knob("LEVEL", "level"), knob("LOW", "low", 0.5, "db", -19.5, 19.5),
+                   knob("HIGH", "high", 0.5, "db", -23, 23), knob("DIST", "gain", 0.7)]
 
 BLACK = (30, 30, 33)
 ORANGE = (236, 110, 30)
@@ -75,7 +76,7 @@ MODELS = [
 
     # ------------------------------------------------------------------ BOSS PD-1 Rocker Distortion
     model("pd1", "RK-1", "Treadle Grind", "BOSS PD-1 Rocker Distortion", "Distorsione", "Circuit",
-          (45, 45, 48),
+          (58, 58, 60),
           [knob("PEDAL", "level", 0.8), knob("DIST", "gain", 0.6)],
           """
           hpf R=1M C=47n;
@@ -88,21 +89,24 @@ MODELS = [
           "Distorsione a pedale basculante della serie Rocker: il pedale fa da volume, DIST regola il guadagno. "
           "Schema non disponibile: netlist plausibile stile DS-1 (transistor + op-amp + diodi Si a massa, "
           "passa-basso fisso 3.4 kHz). Il pedale e' reso come pomello PEDAL.",
-          accent=(200, 200, 205), subtitle="DISTORTION"),
+          accent=(200, 200, 205), subtitle="DISTORTION", style="treadle", look=dict(boss=True)),
 
     # ------------------------------------------------------------------ BOSS HM-2 Heavy Metal
     model("hm2", "SW-2", "Buzzsaw Black", "BOSS HM-2 Heavy Metal", "Distorsione", "Circuit",
           BLACK, HM_CTRL(), hm2_net(),
           "Due stadi a transistor in retroazione parallela (~22+21 dB, LPF 3.4 kHz), op-amp con diodi asimmetrici "
           "1:2 e DIST 250k a doppia funzione, coppia al germanio in serie (zona morta ~0.25 V), diodi Si a massa, "
-          "COLOR MIX a gyrator: LOW 87 Hz Q 3.7, HIGH 958 Hz + 1.28 kHz (service note 1983, D. Ross).",
+          "COLOR MIX a ponte (op-amp 3.3k/3.3k, pot 10k) con gyrator: LOW 87 Hz, HIGH due gyrator 958 Hz + 1.28 kHz "
+          "che a fine corsa danno una gobba larga +23 dB centrata a ~1.2 kHz (LOW +19.5 dB a ~80 Hz); la banda si "
+          "stringe salendo col guadagno come nel circuito (service note 1983, simulazione nodale, D. Ross).",
           accent=(236, 110, 30), subtitle="DISTORTION"),
 
     # ------------------------------------------------------------------ BOSS HM-2W (Waza Craft)
     model("hm2w", "SW-2W", "Buzzsaw Craft", "BOSS HM-2W Heavy Metal Waza Craft", "Distorsione", "Circuit",
           BLACK, HM_CTRL() + [toggle("MODE", "mode", ("S", "C"), 0)], hm2_net(mode=4),
           "Modo S = circuito HM-2 (service note 1983) con +3 dB di livello massimo. Modo C (valori non pubblicati, "
-          "stima): piu' guadagno sul secondo transistor e sull'op-amp, bassi spostati a 75 Hz e medio-alti a 1.5 kHz.",
+          "stima): piu' guadagno sul secondo transistor e sull'op-amp, bassi spostati a 70 Hz e medio-alti a 1.35 kHz. "
+          "COLOR MIX come l'HM-2: LOW fino a +-19.5 dB, HIGH fino a +-23 dB con banda larga.",
           accent=(236, 110, 30), subtitle="DISTORTION"),
 
     # ------------------------------------------------------------------ BOSS DF-2 Super Feedbacker & Distortion
@@ -139,7 +143,7 @@ MODELS = [
           dclip R=4.7k C=0 d=ge;
           bjt g=9 vp=3.6 vn=3.6 soft=2.5;
           lshelf f=60 Q=0.7 g=-15;
-          peak f=1060 Q=3.4 g=sw(3,0,12);
+          peak f=1060 Q=1.7 g=sw(3,0,12);
           hshelf f=3000 Q=0.7 g=sw(3,0,4);
           gain db=sw(3,0,4);
           opni Rg=1k+potr(2,250k,A) Cg=220n Rf=1M Cf=100p rail=3.6;
@@ -151,7 +155,8 @@ MODELS = [
           """,
           "Limitatore d'ingresso a diodi 1SS188FM (bassa soglia), pre-gain 2SC3378 (~9x), op-amp discreto molto "
           "concentrato sulle medie (723 Hz-1.6 kHz, fino a ~60 dB), 1SS133 a massa, tono attivo a inclinazione e "
-          "passa-basso 3.3 kHz. TURBO II: Sallen-Key risonante 1.06 kHz Q 3.4 + ramo acuti (schema di fabbrica).",
+          "passa-basso 3.3 kHz. TURBO II: Sallen-Key risonante 1.06 kHz (Q del polo 3.4, +12 dB) + ramo acuti "
+          "(schema di fabbrica).",
           accent=(20, 20, 20), subtitle="DISTORTION"),
 
     # ------------------------------------------------------------------ BOSS MZ-2 Digital Metalizer
@@ -160,39 +165,43 @@ MODELS = [
           [knob("LEVEL", "level"), knob("TONE", "tone"), knob("DRIVE", "drive", 0.6)],
           """
           hpf R=1M C=47n;
-          lshelf f=408 Q=0.7 g=-9;
+          hpf R=470k C=3.9n;
           opni Rg=4.7k Cg=100n Rf=270k Cf=100p rail=2.2;
           tap;
           lpf2 f=1030 Q=2.35;
-          mix wet=1 dry=0.4;
+          mix wet=0.59 dry=0.41;
           opni Rg=4.7k Cg=1u Rf=pot(2,250k,A)+1k Cf=100p rail=2.2;
-          lpf R=47k C=1n;
+          shelf1 R=10k Cs=15n Cp=47n;
           tonebm R1=47k C1=10n R2=10k C2=10n t=taper(1,B);
-          vol a=taper(0,A)*1.5
+          vol a=taper(0,A)*2.65
           """,
-          "Solo la sezione analogica (service note 1988): op-amp discreti a 5 V che tosano ai binari (primo stadio 58x "
-          "con pre-enfasi 408 Hz), Sallen-Key 1.03 kHz Q 2.35 in parallelo al ramo diretto, DRIVE 250kA. "
+          "Solo la sezione analogica (service note 1988): ingresso C3 3.9n su R6 470k (passa-alto 87 Hz), op-amp "
+          "discreti a 5 V che tosano ai binari (primo stadio 58x, 339 Hz-5.9 kHz), Sallen-Key 1.03 kHz Q 2.35 "
+          "sommato (4.7k/6.8k) al ramo diretto via Q15, DRIVE 250kA, mensola R22 47k / R23 15k + C12 10n. "
           "I modi digitali SGL/DOUB/CHO (raddoppio e chorus a 12 bit) non sono emulati: comando MODE omesso.",
           accent=(200, 40, 40), subtitle="DISTORTION"),
 
     # ------------------------------------------------------------------ BOSS PW-2 Power Driver
     model("pw2", "AM-2", "Amber Muscle", "BOSS PW-2 Power Driver", "Distorsione", "Circuit",
           (245, 160, 30),
-          [knob("LEVEL", "level"), knob("FAT", "fat", 0.5, "db", -15, 15),
-           knob("MUSCLE", "muscle", 0.5, "db", -15, 15), knob("DRIVE", "drive", 0.6)],
+          [knob("LEVEL", "level"), knob("FAT", "fat", 0.5, "db", -6.4, 6.4),
+           knob("MUSCLE", "muscle", 0.5, "db", -14.4, 14.4), knob("DRIVE", "drive", 0.6)],
           """
           hpf R=1M C=47n;
           bjt g=20 vp=3.5 vn=2.5 soft=2.5;
           opni Rg=470 Cg=4.7u Rf=pot(3,50k,A)+100 Cf=100p rail=2 railn=2.2;
           opinv Ri=10k Ci=0 Rf=32k Cf=0 rail=3.8;
-          peak f=41 Q=1.8 g=lin(1,-15,15);
-          peak f=1070 Q=6.7 g=lin(2,-15,15);
+          peak f=41 Q=log(1,0.965,0.0298)+log(1,0.0265,0.962) g=lin(1,-3.8,1.2)+lin(1,0,5.2)*lin(1,0,1);
+          peak f=955 Q=log(2,1.219,0.0219)+log(2,0.0161,1.009) g=lin(2,-9.7,5)+lin(2,0,9.4)*lin(2,0,1) rail=4.2;
           lpf R=10k C=2.2n;
-          vol a=taper(0,A)*0.3
+          vol a=taper(0,A)*0.315
           """,
           "Pre-gain 2SC2458 (~20x), op-amp discreto a JFET alimentato a 4.5 V con DRIVE 50kA (1.2-108x) che tosa ai "
-          "binari (niente diodi), invertente M5218 x3.2, FAT gyrator 41 Hz Q 1.8 e MUSCLE 1.07 kHz Q 6.7 "
-          "(traccia Schematic Heaven).",
+          "binari (niente diodi), invertente M5218 x3.2, EQ a ponte (M5218, 1.5k in ingresso, 3.3k//330p in "
+          "retroazione, pot 100kW) con gyrator a transistor: FAT ~41 Hz e MUSCLE ~955 Hz (centro reale piu' basso "
+          "dei 1.07 kHz ideali per la re del transistor), bande larghe che si stringono col guadagno. Ponte "
+          "asimmetrico: FAT +6.4 / -3.8 dB, MUSCLE +14.4 / -9.7 dB, piatto a ore 12 (traccia Schematic Heaven, "
+          "simulazione nodale).",
           accent=(20, 20, 20), subtitle="DISTORTION"),
 
     # ------------------------------------------------------------------ BOSS XT-2 Xtortion
@@ -201,19 +210,20 @@ MODELS = [
           [knob("LEVEL", "level"), knob("CONTOUR", "contour"), knob("PUNCH", "punch"), knob("DIST", "gain", 0.6)],
           """
           hpf R=1M C=47n;
-          peak f=1040 Q=2.6 g=lin(2,-8,14);
-          peak f=596 Q=4 g=lin(2,-4,8);
-          peak f=2970 Q=2.9 g=lin(2,3,6);
+          peak f=1040 Q=1.16 g=lin(2,-8,14);
+          peak f=596 Q=1.9 g=lin(2,-4,8);
+          peak f=2970 Q=2.05 g=lin(2,3,6);
           opni Rg=270 Cg=4.7u Rf=pot(3,50k,A)+100 Cf=47p rail=3.6;
           dclip R=2k C=33n d=si;
-          peak f=4000 Q=2.6 g=9;
-          peak f=37.5 Q=1.6 g=8;
+          peak f=4000 Q=1.49 g=9.6;
+          peak f=37.5 Q=1.01 g=8;
           peak f=900 Q=0.8 g=lin(1,-12,8);
           vol a=taper(0,A)*0.5
           """,
           "PUNCH a tre gyrator prima del guadagno (1.04 kHz Q 2.6, ~0.6 kHz, 2.97 kHz: tutto a sinistra acuti, a destra "
           "medie), op-amp 1.4-187x (DIST 50kA), diodi Si a massa con 2k/33n (2.4 kHz), gyrator fissi 4 kHz e 37.5 Hz, "
-          "CONTOUR scavo/gobba ~900 Hz (traccia A. Taber; guadagni dei gyrator fissi stimati).",
+          "CONTOUR scavo/gobba ~900 Hz (traccia A. Taber; guadagni dei gyrator fissi stimati). Picchi dei gyrator "
+          "con la larghezza di banda del circuito reale (Q del polo, non Q del picco RBJ).",
           accent=(235, 230, 225), subtitle="DISTORTION"),
 
     # ------------------------------------------------------------------ BOSS MD-2 Mega Distortion
@@ -224,20 +234,25 @@ MODELS = [
            outer("GAIN BOOST", "boost", 0.5), inner("DIST", "gain", 0.6)],
           """
           hpf R=100k C=39n;
-          opni Rg=2.2k+potr(3,15k,B) Cg=22u Rf=1M Cf=1.5n rail=3.6;
+          opni Rg=15k Cg=22u Rf=1M Cf=1.5n;
+          gain a=0.41707+-0.00006667*potr(3,2709,B)+-0.00006667*potr(3,1496,C);
+          opni Rg=6256+-1*potr(3,2709,B)+-1*potr(3,1496,C) Cg=100n Rf=8744+potr(3,2709,B)+potr(3,1496,C) Cf=0 rail=3.6;
           opni Rg=1k Cg=10u Rf=pot(4,100k,A)+1k Cf=470p rail=3.8;
           opinv Ri=10k Ci=0 Rf=22k Cf=0 rail=3.8;
           bjt g=35 vp=2.5 vn=3.5 soft=4;
-          gain db=-10;
-          shelf1 R=10k Cs=27n Cp=18n;
+          gain db=-10.1;
+          shelf1 R=10k Cs=27n Cp=10.1n;
           lpf R=56k C=220p;
-          hshelf f=3000 Q=0.7 g=lin(2,-12,12);
-          peak f=117 Q=4.1 g=lin(1,-15,15);
+          hshelf f=log(2,64.6,1635)+log(2,1635,64.6) Q=0.5 g=lin(2,-12,12);
+          peak f=117 Q=log(1,0.02035,0.8297)+log(1,0.8297,0.02035) g=lin(1,-15,15) rail=3.8;
           vol a=taper(0,A)*0.5
           """,
-          "Nessun diodo: op-amp discreto a JFET con GAIN BOOST (rete a T, guadagno forte sotto ~100 Hz), TL072 2-102x con "
-          "DIST, invertente x2.2 e stadio push-pull complementare 2SA1048/2SC2458 che taglia le due semionde in modo "
-          "diverso; BOTTOM gyrator 117 Hz Q 4.1 (traccia Schematic Heaven, mirosol).",
+          "Nessun diodo: op-amp discreto a JFET (1M||1n5) con GAIN BOOST nella rete a T verso massa (15k, 2k2+22u, "
+          "22k+100k+1u dall'uscita): il pomello alza solo i bassi (circa +19 -> +28 dB a 100 Hz, ~15 dB fissi a 1 kHz, "
+          "simulazione nodale); TL072 2-102x con DIST, invertente x2.2 e stadio push-pull complementare "
+          "2SA1048/2SC2458 che taglia le due semionde in modo diverso; partitore 22k/10k con mensola 10k+27n; "
+          "BOTTOM gyrator 117 Hz in un EQ a ponte (banda larga che si stringe col guadagno), TONE mensola "
+          "(traccia Schematic Heaven, mirosol).",
           accent=(20, 20, 20), subtitle="DISTORTION"),
 
     # ------------------------------------------------------------------ BOSS ST-2 Power Stack
@@ -350,7 +365,7 @@ MODELS = [
     model("fz2", "HZ-2", "Hyper Hive", "BOSS FZ-2 Hyper Fuzz", "Fuzz", "Circuit",
           (150, 175, 190),
           [knob("LEVEL", "level"),
-           outer("BASS", "bass", 0.5, "db", -15, 15), inner("TREBLE", "treble", 0.5, "db", -15, 15),
+           outer("BASS", "bass", 0.5, "db", -10.3, 10.3), inner("TREBLE", "treble", 0.5, "db", -11.7, 11.7),
            knob("GAIN", "gain", 0.6),
            selector("MODE", "mode", ["GAIN BOOST", "FUZZ I", "FUZZ II"], 1, short=["GB", "I", "II"])],
           """
@@ -367,13 +382,15 @@ MODELS = [
           gain db=sw(4,0,8.6,21.6);
           rail rail=3.6;
           mix wet=sw(4,0,1,1) dry=sw(4,1,0,0);
-          peak f=104 Q=3.1 g=lin(1,-15,15);
-          hshelf f=3200 Q=0.7 g=lin(2,-15,15);
+          peak f=104 Q=log(1,1.198,0.0705)+log(1,0.0705,1.198) g=lin(1,-10.3,10.3);
+          hshelf f=log(2,89.85,1576)+log(2,1576,89.85) Q=0.5 g=lin(2,-11.7,11.7) rail=3.8;
           vol a=taper(0,A)*sw(4,0,0.4,0.4)+sw(4,0.2,0,0)
           """,
           "Boost a op-amp discreto 2.5-36x (GAIN 50kA), passa-basso 482 Hz, coppia differenziale Superfuzz che "
           "raddrizza (ottava, transistor non appaiati), 1N914 a massa; FUZZ I piatto x2.7 con LPF 1.06 kHz, FUZZ II "
-          "x12 con scavo -15 dB a 1 kHz; BASS gyrator 104 Hz, TREBLE mensola 3.2 kHz; in GAIN BOOST il LEVEL e' "
+          "x12 con scavo -15 dB a 1 kHz; EQ a ponte (4558, 10k/10k, pot 50kB): BASS gyrator a op-amp 104 Hz +-10.3 dB "
+          "con banda larga che si stringe col guadagno, TREBLE mensola 3k3+15n +-11.7 dB (simulazione nodale); "
+          "in GAIN BOOST il LEVEL e' "
           "escluso (Aion Hypercube).",
           accent=(20, 20, 20), subtitle="OCTAVE FUZZ"),
 
@@ -471,8 +488,8 @@ MODELS = [
     # ------------------------------------------------------------------ BOSS HM-3 Hyper Metal
     model("hm3", "SW-3", "Hyper Saw", "BOSS HM-3 Hyper Metal", "Metal", "Circuit",
           BLACK,
-          [knob("LEVEL", "level"), knob("LOW", "low", 0.5, "db", -15, 15),
-           knob("HIGH", "high", 0.5, "db", -15, 15), knob("DIST", "gain", 0.7)],
+          [knob("LEVEL", "level"), knob("LOW", "low", 0.5, "db", -14.3, 14.3),
+           knob("HIGH", "high", 0.5, "db", -12.4, 12.4), knob("DIST", "gain", 0.7)],
           """
           lpf R=4.7k C=6.8n;
           hpf R=47k C=47n;
@@ -480,16 +497,19 @@ MODELS = [
           lpf R=10k C=10n;
           fbclip Rg=22k Cg=47n Rf=220k Cf=100p d=si up=2 dn=1 rail=3.6;
           dclip R=2.2k C=0 d=si;
-          shelf1 R=10k Cs=10n Cp=15n;
-          lpf R=3.3k C=10n;
-          peak f=86.7 Q=3.7 g=lin(1,-15,15);
-          peak f=890 Q=4.6 g=lin(2,-15,15);
-          peak f=5390 Q=4.1 g=lin(2,-12,12);
-          vol a=taper(0,A)
+          shelf1 R=10k Cs=26.32n Cp=53.36n;
+          opni Rg=3.288k Cg=10n Rf=6.712k Cf=0;
+          hshelf f=4609 Q=0.75 g=-2.8;
+          peak f=87 Q=log(1,0.0364,0.7759)+log(1,0.7759,0.0364) g=lin(1,-14.3,14.3);
+          peak f=890 Q=log(2,0.0715,1.3362)+log(2,1.3362,0.0715) g=lin(2,-8.2,8.2);
+          peak f=5390 Q=log(2,0.0914,1.1666)+log(2,1.1666,0.0914) g=lin(2,-12.3,12.3) rail=3.6;
+          vol a=taper(0,A)*1.23
           """,
           "Pre-filtro 72 Hz-5 kHz, op-amp 2-229x (DIST 50kA), passa-basso 1.59 kHz, secondo op-amp x11 con diodi "
-          "asimmetrici 2:1, 1SS133 a massa, mensola 1.6 kHz; LOW gyrator 87 Hz Q 3.7, HIGH due gyrator 890 Hz e "
-          "5.39 kHz (service note 1993).",
+          "asimmetrici 2:1, 1SS133 a massa; rete R14 10k||10n + 5.6k/47n verso massa = scavo di -7 dB centrato a "
+          "~1 kHz che restituisce gli acuti (zeri 605 Hz / 1.59 kHz, poli 199 Hz / 4.84 kHz); EQ a ponte 3.3k/3.3k "
+          "con 10n (lieve calo degli acuti) e gyrator a transistor: LOW 87 Hz fino a +-14 dB, HIGH 890 Hz (+-8 dB) "
+          "e 5.39 kHz (+-12 dB) insieme, banda che si stringe col guadagno (service note 1993, simulazione nodale).",
           accent=(240, 120, 30), subtitle="METAL DISTORTION"),
 
     # ------------------------------------------------------------------ BOSS ML-2 Metal Core
@@ -505,12 +525,12 @@ MODELS = [
           opni Rg=2.2k Cg=1u Rf=100k Cf=100p rail=3.8;
           dclip R=2.2k C=10n d=si;
           peak f=800 Q=0.8 g=-6;
-          peak f=70 Q=1.2 g=lin(1,-15,15);
+          peak f=70 Q=log(1,0.016,0.624)+log(1,0.624,0.016) g=lin(1,-15,15);
           hshelf f=3500 Q=0.7 g=lin(2,-15,15);
           vol a=taper(0,A)
           """,
           "Schema non disponibile (60 mA, forse con DSP, non verificato): netlist plausibile ad altissimo guadagno con "
           "due op-amp e diodi Si in cascata, passa-alto 106 Hz prima del clipping, scavo fisso a 800 Hz, LOW a 70 Hz "
-          "per i bassi da 7 corde e HIGH a mensola.",
+          "per i bassi da 7 corde (banda larga che si stringe col guadagno, come negli EQ a ponte BOSS) e HIGH a mensola.",
           accent=(200, 200, 205), subtitle="METAL DISTORTION"),
 ]

@@ -177,7 +177,9 @@ def _classify(item, ctrls, used, in_foot_row):
         return ("display", None)
     if u.startswith("BUTTON"):
         return ("button", s.split(":", 1)[1].strip() if ":" in s else "")
-    if u.startswith("KNOB"):
+    if u.startswith("KNOB") and ":" not in s and _match_control(s, ctrls, used) is not None:
+        pass                                # comando vero che si chiama "KNOB 1" (SY-200): non decorativo
+    elif u.startswith("KNOB"):
         return ("deco_knob", s.split(":", 1)[1].strip() if ":" in s else "")
     if u.startswith("SWITCH"):
         lab = s.split(":", 1)[1].strip() if ":" in s else ""
@@ -201,6 +203,79 @@ def _classify(item, ctrls, used, in_foot_row):
     if in_foot_row and ctrls[ci]["kind"] in ("toggle", "button"):
         return ("foot_ctrl", ci)
     return ("ctrl", ci)
+
+
+# ingombro dei comandi sul piano dei contenitori a scatola: (larghezza, altezza della fila, spostamento del centro)
+# in metri. Altezza = dalla scritta sotto il comando alla sommita' che, nella vista inclinata, copre il piano dietro.
+SMALL_R, SMALL_H = PL.KNOB_R["boss_inner"], PL.KNOB_H["boss_inner"]
+ITEM = {"knob": (0.0190, 0.0270, 0.0), "small": (0.0140, 0.0205, 0.0012), "concentric": (0.0200, 0.0315, 0.0),
+        "toggle": (0.0170, 0.0150, 0.0), "button": (0.0130, 0.0140, 0.0015), "led": (0.0070, 0.0070, 0.0),
+        "switch": (0.0130, 0.0110, 0.0), "slider": (0.0080, 0.0260, 0.0), "display": (0.0460, 0.0140, 0.0)}
+SLIDER_MIN_W = 0.0058
+ROW_GAP = 0.0015
+
+
+def _item_kind(typ, val, ctrls, small):
+    if typ in ("ctrl", "foot_ctrl"):
+        k = ctrls[val]["kind"]
+        if k == "slider":
+            return "slider"
+        if k == "toggle":
+            return "toggle"
+        if k == "button":
+            return "button"
+        return "small" if small else "knob"
+    return {"display": "display", "led": "led", "button": "button", "deco_knob": "small" if small else "knob",
+            "concentric": "concentric", "deco_switch": "switch", "deco_sliders": "slider"}[typ]
+
+
+def _item_width(typ, val, kind, W):
+    if kind == "display":
+        return 0.046 if W < 0.12 else 0.066
+    if typ == "deco_sliders":
+        return ITEM["slider"][0] * val
+    return ITEM[kind][0]
+
+
+DISPLAY_MIN_W = 0.030
+
+
+def _row_widths(row, ctrls, W, avail_w, small):
+    """Larghezze degli elementi di una fila; il display si restringe (fino a DISPLAY_MIN_W) per far posto ai comandi."""
+    kinds = [_item_kind(t, v, ctrls, small) for t, v in row]
+    widths = [_item_width(t, v, k, W) for (t, v), k in zip(row, kinds)]
+    over = sum(widths) + ROW_GAP * len(row) - avail_w
+    if over > 0:
+        for i, k in enumerate(kinds):
+            if k == "display":
+                cut = min(over, widths[i] - DISPLAY_MIN_W)
+                widths[i] -= cut
+                over -= cut
+    return kinds, widths
+
+
+def _fits(row, ctrls, W, avail_w, small):
+    kinds, widths = _row_widths(row, ctrls, W, avail_w, small)
+    if sum(widths) + ROW_GAP * len(row) <= avail_w:
+        return True
+    n_sl = sum(v if t == "deco_sliders" else 1 for t, v in row)
+    return all(k == "slider" for k in kinds) and n_sl * SLIDER_MIN_W <= avail_w
+
+
+def _wrap_rows(rows, ctrls, W, avail_w, small=False):
+    """Divide le file troppo larghe (i cursori si stringono fino al passo minimo prima di andare a capo)."""
+    out = []
+    for row in rows:
+        if _fits(row, ctrls, W, avail_w, small):
+            out.append(row); continue
+        k = 2
+        while True:
+            per = int(math.ceil(len(row) / k))
+            chunks = [row[i:i + per] for i in range(0, len(row), per)]
+            if all(_fits(ch, ctrls, W, avail_w, small) for ch in chunks) or per == 1:
+                out.extend(chunks); break
+            k += 1
+    return out
 
 
 def box_layout(r):
@@ -262,39 +337,99 @@ def box_layout(r):
                 foot_rows[-1].append(("foot_ctrl", i))
             else:
                 panel_rows.append([("ctrl", i)])
+    # comandi non citati nella scheda: una fila in fondo al pannello
+    left = [i for i, c in enumerate(ctrls) if i not in used]
+    for i in left:
+        for row in panel_rows:
+            if _fits(row + [("ctrl", i)], ctrls, W, W - 2 * MARGIN, False):
+                row.append(("ctrl", i)); break
+        else:
+            panel_rows.append([("ctrl", i)])
+    # LED non citato: in fondo alla prima fila (mai sopra un comando)
+    if not any(t == "led" for row in panel_rows for t, _ in row):
+        if panel_rows:
+            panel_rows[0].append(("led", None))
+        else:
+            panel_rows.append([("led", None)])
+    avail_w = W - 2 * MARGIN
+    base_rows = panel_rows
+    foot_rows = foot_rows[-2:]
 
-    # --- footswitch (davanti): una o due file
-    fz_total = 0.0
+    # --- spazio verticale: footswitch davanti, fascia del nome, file del pannello dietro.
+    # Se le file non ci stanno: zona dei footswitch piu' bassa, poi pomelli piccoli, poi file accorpate.
+    def heights(rows, small):
+        return [max(ITEM[_item_kind(t, v, ctrls, small)][1] for t, v in row) for row in rows]
+
+    y_back = D / 2 - MARGIN - 0.002
+    nrow = len(foot_rows)
+    if foot_rows:
+        fz = min(0.058 if nrow == 1 else 0.042, D * (0.40 if nrow == 1 else 0.26))
+        fz_min = min(fz, 0.030 if nrow == 1 else 0.028)
+    else:
+        fz = fz_min = 0.0
+
+    def front(fz):
+        if not foot_rows:
+            return -D / 2 + MARGIN + 0.022            # fascia del nome con il pulsante EFFECT
+        return -D / 2 + MARGIN + fz * nrow + 0.004 * (nrow - 1) + 0.0155   # + scritte e nome sopra i footswitch
+
+    small = False
+    panel_rows = _wrap_rows(base_rows, ctrls, W, avail_w, False)
+    while sum(heights(panel_rows, small)) > y_back - front(fz) and fz > fz_min + 1e-9:
+        fz = max(fz_min, fz - 0.002)
+    if sum(heights(panel_rows, small)) > y_back - front(fz):
+        small = True
+        panel_rows = _wrap_rows(base_rows, ctrls, W, avail_w, True)
+        while sum(heights(panel_rows, small)) > y_back - front(fz):
+            best = None
+            hs = heights(panel_rows, small)
+            for i in range(len(panel_rows) - 1):
+                merged = panel_rows[i] + panel_rows[i + 1]
+                if _fits(merged, ctrls, W, avail_w, True):
+                    gain = min(hs[i], hs[i + 1])
+                    if best is None or gain > best[0]:
+                        best = (gain, i, merged)
+            if best is None:
+                break
+            _, i, merged = best
+            panel_rows[i:i + 2] = [merged]
+    hs = heights(panel_rows, small)
+    avail_h = y_back - front(fz)
+    if sum(hs) > avail_h + 1e-9:
+        print("ATTENZIONE: %s - comandi troppo fitti (%.1f mm su %.1f)" % (r["id"], sum(hs) * 1000, avail_h * 1000))
+        hs = [h * avail_h / sum(hs) for h in hs]
+    extra = (avail_h - sum(hs)) / max(1, len(hs))
+    out["small_knobs"] = small
+
+    # --- footswitch
     twin = r["series"] == "twin"
     main = None
+    fz_total = fz * nrow + 0.004 * max(0, nrow - 1)
+    for ri, frow in enumerate(foot_rows):
+        fy = -D / 2 + MARGIN + fz_total - fz / 2 - ri * (fz + 0.004)
+        nf = len(frow)
+        pitch = (W - 2 * MARGIN) / nf
+        fw = min(pitch * (0.86 if twin else 0.62), 0.075 if twin else 0.040)
+        fd = fz * (0.92 if twin else 0.64)
+        for i, (typ, val) in enumerate(frow):
+            x = -W / 2 + MARGIN + pitch * (i + 0.5)
+            label = ctrls[val]["label"] if typ == "foot_ctrl" else val
+            part = dict(type="footswitch", kind="treadle_pad" if twin else "pad", x=x, y=fy, w=fw, d=fd, label=label)
+            out["parts"].append(part)
+            if typ == "foot_ctrl":
+                c = ctrls[val]
+                if c["kind"] == "button":
+                    out["controls"][val] = dict(x=x, y=fy, z=H + 0.007, strip="footbutton", r=min(fw, fd) * 0.5)
+                else:
+                    out["controls"][val] = dict(x=x, y=fy, z=H + 0.007, strip="footswitch", r=min(fw, fd) * 0.5,
+                                                led=(x, fy + fd / 2 + 0.0045, H))
+                    out["parts"].append(dict(type="led", x=x, y=fy + fd / 2 + 0.0045))
+                part["control"] = True
+                continue
+            key = _label_key(label)
+            if main is None and (key in MAIN_KEYS or key.endswith("ONOFF") or "EFFECT" in key or "BYPASS" in key):
+                main = part
     if foot_rows:
-        foot_rows = foot_rows[-2:]
-        fz = min(0.058 if len(foot_rows) == 1 else 0.042, D * (0.40 if len(foot_rows) == 1 else 0.26))
-        fz_total = fz * len(foot_rows) + 0.004 * (len(foot_rows) - 1)
-        for ri, frow in enumerate(foot_rows):
-            fy = -D / 2 + MARGIN + fz_total - fz / 2 - ri * (fz + 0.004)
-            nf = len(frow)
-            pitch = (W - 2 * MARGIN) / nf
-            fw = min(pitch * (0.86 if twin else 0.62), 0.075 if twin else 0.040)
-            fd = fz * (0.92 if twin else 0.64)
-            for i, (typ, val) in enumerate(frow):
-                x = -W / 2 + MARGIN + pitch * (i + 0.5)
-                label = ctrls[val]["label"] if typ == "foot_ctrl" else val
-                part = dict(type="footswitch", kind="treadle_pad" if twin else "pad", x=x, y=fy, w=fw, d=fd, label=label)
-                out["parts"].append(part)
-                if typ == "foot_ctrl":
-                    c = ctrls[val]
-                    if c["kind"] == "button":
-                        out["controls"][val] = dict(x=x, y=fy, z=H + 0.007, strip="footbutton", r=min(fw, fd) * 0.5)
-                    else:
-                        out["controls"][val] = dict(x=x, y=fy, z=H + 0.007, strip="footswitch", r=min(fw, fd) * 0.5,
-                                                    led=(x, fy + fd / 2 + 0.0045, H))
-                        out["parts"].append(dict(type="led", x=x, y=fy + fd / 2 + 0.0045))
-                    part["control"] = True
-                    continue
-                key = _label_key(label)
-                if main is None and (key in MAIN_KEYS or key.endswith("ONOFF") or "EFFECT" in key or "BYPASS" in key):
-                    main = part
         free = [p for p in out["parts"] if p["type"] == "footswitch" and not p.get("control")]
         if r["family"] == "Looper":
             rec = [p for p in out["parts"] if p["type"] == "footswitch" and "REC" in _label_key(p["label"])]
@@ -303,53 +438,38 @@ def box_layout(r):
         x, y, w, d = main["x"], main["y"], main["w"], main["d"]
         out["foot"] = [(x - w / 2, y - d / 2, H + 0.007), (x + w / 2, y - d / 2, H + 0.007),
                        (x + w / 2, y + d / 2, H + 0.007), (x - w / 2, y + d / 2, H + 0.007)]
+        out["name_y"] = max(p["y"] + p["d"] / 2 for p in out["parts"] if p["type"] == "footswitch") + 0.0110
+        out["name_x1"] = W / 2 - 0.008
     else:
-        # nessun footswitch (unita' da tavolo): interruttore EFFECT sul pannello
-        x, y = W / 2 - MARGIN - 0.012, -D / 2 + MARGIN + 0.012
-        out["parts"].append(dict(type="button", x=x, y=y, r=0.0065, label="EFFECT"))
+        # nessun footswitch (unita' da tavolo): interruttore EFFECT nella fascia del nome, a destra
+        x, y = W / 2 - MARGIN - 0.008, -D / 2 + MARGIN + 0.0095
+        out["parts"].append(dict(type="button", x=x, y=y, r=0.0060, label="EFFECT"))
         out["foot"] = [(x - 0.008, y - 0.008, H), (x + 0.008, y - 0.008, H), (x + 0.008, y + 0.008, H), (x - 0.008, y + 0.008, H)]
+        out["name_y"] = y
+        out["name_x1"] = x - 0.0060 - 0.0050
 
-    # comandi non citati nella scheda: una fila in fondo al pannello
-    left = [i for i, c in enumerate(ctrls) if out["controls"][i] is None and i not in used]
-    for k in range(0, len(left), 6):
-        panel_rows.append([("ctrl", i) for i in left[k:k + 6]])
-
-    # --- pannello (dietro): file dal retro verso il davanti
-    y_front = -D / 2 + MARGIN + fz_total + (0.012 if foot_rows else 0.004)
-    y_back = D / 2 - MARGIN - 0.003
-    n = max(1, len(panel_rows))
-    row_h = (y_back - y_front) / n
-    for ri, row in enumerate(panel_rows):
-        yc = y_back - row_h * (ri + 0.55)
-        widths = []
-        for typ, val in row:
-            if typ == "display":
-                w = 0.046 if W < 0.12 else 0.066
-            elif typ == "led":
-                w = 0.007
-            elif typ == "button":
-                w = 0.013
-            elif typ == "deco_sliders":
-                w = 0.0085 * val
-            elif typ in ("deco_knob", "concentric"):
-                w = 0.021
-            elif typ == "deco_switch":
-                w = 0.012
-            else:
-                kind = ctrls[val]["kind"]
-                w = 0.0095 if kind == "slider" else (0.012 if kind in ("toggle", "button") else 0.021)
-            widths.append(w)
+    # --- pannello: file dal retro verso il davanti
+    ytop = y_back
+    for row, h in zip(panel_rows, hs):
+        row_h = h + extra
+        yc = ytop - row_h / 2
+        ytop -= row_h
+        kinds, widths = _row_widths(row, ctrls, W, avail_w, small)
         total = sum(widths)
-        avail = W - 2 * MARGIN
-        scale = min(1.0, avail / total) if total > 0 else 1.0
-        gap = max(0.0015, (avail - total * scale) / max(1, len(row)))
+        if total + ROW_GAP * len(row) > avail_w:
+            # solo cursori (EQ): passo ridotto
+            scale = (avail_w - ROW_GAP * len(row)) / total
+            widths = [w * scale for w in widths]
+            total = sum(widths)
+        gap = max(ROW_GAP, (avail_w - total) / max(1, len(row)))
         x = -W / 2 + MARGIN + gap / 2
-        for (typ, val), w in zip(row, widths):
-            w *= scale
+        y_lo, y_hi = yc - row_h / 2, yc + row_h / 2
+        for (typ, val), w, kind in zip(row, widths, kinds):
             cx = x + w / 2
             x += w + gap
+            yk = yc + ITEM[kind][2]
             if typ == "display":
-                dh = min(row_h * 0.72, 0.030)
+                dh = max(0.010, min(row_h - 0.004, 0.030))
                 part = dict(type="display", x0=cx - w / 2, y0=yc - dh / 2, x1=cx + w / 2, y1=yc + dh / 2)
                 out["parts"].append(part)
                 if out["display"] is None:
@@ -359,32 +479,35 @@ def box_layout(r):
                 if out["led"] is None:
                     out["led"] = (cx, yc, H, 0.0020)
             elif typ == "button":
-                out["parts"].append(dict(type="button", x=cx, y=yc, r=0.0042, label=val))
+                out["parts"].append(dict(type="button", x=cx, y=yk, r=0.0042, label=val, w=w))
             elif typ == "deco_knob":
-                out["parts"].append(dict(type="knob", x=cx, y=yc, r=KR * 0.95, label=val))
+                rr = SMALL_R if small else KR * 0.95
+                out["parts"].append(dict(type="knob", x=cx, y=yk, r=rr, h=SMALL_H if small else 0.014, label=val, w=w))
             elif typ == "deco_switch":
-                out["parts"].append(dict(type="switch", x=cx, y=yc, label=val))
+                out["parts"].append(dict(type="switch", x=cx, y=yk, label=val, w=w))
             elif typ == "concentric":
                 co, cn = val
-                out["controls"][co] = dict(x=cx, y=yc, z=H, strip="boss_outer", r=PL.KNOB_R["boss_outer"], h=PL.KNOB_H["boss_outer"])
-                out["controls"][cn] = dict(x=cx, y=yc, z=H + PL.KNOB_H["boss_outer"], strip="boss_inner",
+                out["controls"][co] = dict(x=cx, y=yk, z=H, strip="boss_outer", r=PL.KNOB_R["boss_outer"], h=PL.KNOB_H["boss_outer"], w=w)
+                out["controls"][cn] = dict(x=cx, y=yk, z=H + PL.KNOB_H["boss_outer"], strip="boss_inner",
                                            r=PL.KNOB_R["boss_inner"], h=PL.KNOB_H["boss_inner"])
                 out.setdefault("kinds_override", {})[co] = "outer"
                 out["kinds_override"][cn] = "inner"
             elif typ == "deco_sliders":
                 for j in range(val):
                     sx = cx - w / 2 + (j + 0.5) * w / val
-                    out["parts"].append(dict(type="slider", x=sx, y0=yc - row_h * 0.30, y1=yc + row_h * 0.30))
+                    out["parts"].append(dict(type="slider", x=sx, y0=y_lo + 0.0045, y1=y_hi - 0.0080))
             else:
                 c = ctrls[val]
                 if c["kind"] == "slider":
-                    out["controls"][val] = dict(x=cx, y=yc - row_h * 0.30, z=H, y1=yc + row_h * 0.30, strip="slider", r=0.004)
+                    out["controls"][val] = dict(x=cx, y=y_lo + 0.0045, z=H, y1=y_hi - 0.0080, strip="slider", r=0.004, w=w)
                 elif c["kind"] == "toggle":
-                    out["controls"][val] = dict(x=cx, y=yc, z=H, strip="toggle")
+                    out["controls"][val] = dict(x=cx, y=yk, z=H, strip="toggle", w=w)
                 elif c["kind"] == "button":
-                    out["controls"][val] = dict(x=cx, y=yc, z=H, strip="button", r=0.0045)
+                    out["controls"][val] = dict(x=cx, y=yk, z=H, strip="button", r=0.0045, w=w)
+                elif small:
+                    out["controls"][val] = dict(x=cx, y=yk, z=H, strip="boss_small", r=SMALL_R, h=SMALL_H, w=w)
                 else:
-                    out["controls"][val] = dict(x=cx, y=yc, z=H, strip="boss", r=KR, h=KH)
+                    out["controls"][val] = dict(x=cx, y=yk, z=H, strip="boss", r=KR, h=KH, w=w)
     if out["led"] is None:
         out["led"] = (W / 2 - MARGIN - 0.004, D / 2 - MARGIN - 0.002, H, 0.0020)
     for i, c in enumerate(out["controls"]):
@@ -406,8 +529,10 @@ def treadle_layout(r):
                sliders=None, buttons=[], panel_y0=-D / 2, tread_y1=-D / 2, builder="treadle",
                body=dict(W=W, D=D, H=H), parts=[], display_z=H)
     base_h = H * 0.42
+    # comandi oltre al bilanciere: blocco sul retro piu' profondo (pomello + scritta sotto)
+    n_extra = len(ctrls) - 1
     # bilanciere: dal tallone (davanti) alla punta (dietro), inclinato di ~9 gradi
-    t0, t1 = -D / 2 + 0.012, D / 2 - 0.030
+    t0, t1 = -D / 2 + 0.012, D / 2 - (0.034 if n_extra > 0 else 0.030)
     ang = math.radians(9.0)
     z_heel = base_h + 0.012
     z_toe = z_heel + (t1 - t0) * math.tan(ang)
@@ -424,30 +549,44 @@ def treadle_layout(r):
     out["controls"][tr] = dict(x=0.0, y=t0 + 0.035, z=z_heel + 0.035 * math.tan(ang), y1=t1 - 0.026,
                                z1=z_toe - 0.026 * math.tan(ang), strip="treadle", r=(W - 0.02) / 2)
     others = [i for i in range(len(ctrls)) if out["controls"][i] is None]
-    # blocco comandi sul retro, dietro la punta del bilanciere (MIN VOL, TYPE, DRIVE...)
-    bz = base_h + 0.016
-    out["back_block"] = dict(y0=t1 + 0.002, y1=D / 2, z=bz)
-    by = (t1 + D / 2) / 2
+    # blocco comandi sul retro, dietro la punta del bilanciere (MIN VOL, TYPE, DRIVE...): piu' alto della punta,
+    # altrimenti nella vista inclinata la punta del bilanciere lo nasconderebbe e i pomelli finirebbero sopra di essa
     n = len(others)
+    bz = base_h + 0.016
+    if n:
+        bz = max(bz, z_toe + 0.004)
+    out["back_block"] = dict(y0=t1 + 0.002, y1=D / 2, z=bz)
+    # pomelli verso il retro (la sommita' proiettata resta sul blocco), scritte sotto; LED a sinistra
+    by = D / 2 - 0.016 if n else (t1 + D / 2) / 2
+    x0, x1 = -W / 2 + 0.016, W / 2 - 0.006
+    slot = (x1 - x0) / max(1, n)
     for j, i in enumerate(others):
         c = ctrls[i]
-        x = (-W / 2 + 0.014) + (W - 0.028) * ((j + 0.5) / max(1, n)) if n > 1 else W / 4
+        x = x0 + slot * (j + 0.5) if n > 1 else W / 4
         if c["kind"] == "toggle":
-            out["controls"][i] = dict(x=x, y=by, z=bz, strip="toggle")
+            out["controls"][i] = dict(x=x, y=by, z=bz, strip="toggle", w=slot)
         else:
-            out["controls"][i] = dict(x=x, y=by, z=bz, strip="boss", r=KR, h=KH)
+            out["controls"][i] = dict(x=x, y=by, z=bz, strip="boss", r=KR, h=KH, w=slot)
     # interruttore a punta (on/off) per wah e rocker, zona piccola in cima al bilanciere
     tip = t1 - 0.010
     out["foot"] = [(-W / 2 + 0.01, tip - 0.012, z_toe), (W / 2 - 0.01, tip - 0.012, z_toe),
                    (W / 2 - 0.01, tip + 0.008, z_toe), (-W / 2 + 0.01, tip + 0.008, z_toe)]
-    out["led"] = (-W / 2 + 0.008, by, bz, 0.0020) if n < 3 else (0.0, D / 2 - 0.004, bz, 0.0018)
-    out["frame"] = _frame(W, D, z_toe + 0.01)
+    out["led"] = (-W / 2 + 0.008, by + (0.004 if n else 0.0), bz, 0.0020)
+    # inquadratura come con il bilanciere lungo (dimensioni dell'immagine e piano delle foto personali invariati)
+    z_toe_frame = z_heel + (D / 2 - 0.030 - t0) * math.tan(ang)
+    out["frame"] = _frame(W, D, max(z_toe, z_toe_frame) + 0.01)
     out["jacks"] = (W, [(D / 2 - 0.04, base_h * 0.55), (D / 2 - 0.062, base_h * 0.55) if r.get("stereo") else None])
     return out
 
 
 def real_layout(r):
     s = r["series"]
+    if s == "shaped":
+        import shaped_layout          # wah e volume con la forma del pedale reale (Cry Baby, Ernie Ball, ...)
+        return shaped_layout.wah_layout(r)
+    if s == "stomp":
+        import stomp_layout           # MXR, Electro-Harmonix...: contenitore e comandi del pedale vero
+        return stomp_layout.stomp_layout(r)
     if s == "compact":
         return compact_layout(r)
     if s in ("treadle_volume", "treadle_wah", "rocker"):

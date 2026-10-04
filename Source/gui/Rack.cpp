@@ -33,7 +33,7 @@ namespace pt::ui
                 containsCurrent |= isCur;
                 juce::String text;
                 if (const auto* v = visualDef (&m); v != &m)
-                    text = juce::String (v->code) + "   " + v->name + "   (replica reale)";     // REAL MOD
+                    text = visualCode (&m) + "   " + visualName (&m) + "   (replica reale)";     // REAL MOD (nomi della lista)
                 else
                 {
                     text = juce::String (m.code) + "   " + m.name;
@@ -114,7 +114,7 @@ namespace pt::ui
             const auto removed = cb.removed;      // copia locale: niente 'this' nella lambda annidata (MSVC)
             juce::MessageManager::callAsync ([removed, idx] { if (removed) removed (idx); });
         };
-        power->onClick = [this] { if (auto* s = chain.slot (index)) chain.setEnabled (index, ! s->enabled.load()); };
+        power->onClick = [this] { if (auto* s = chain.slot (index)) { chain.setEnabled (index, ! s->enabled.load()); chain.notifyTouch (index, -1); } };
 
         selector.setTooltip ("Scegli il pedale per questo slot");
         selector.onChange = [this]
@@ -154,7 +154,7 @@ namespace pt::ui
         selector.clear (juce::dontSendNotification);
         *selector.getRootMenu() = buildModelMenu (d, chain.canPlaceSplitter (index));
         selector.setSelectedId (d == nullptr ? 1 : (int) (d - &model (0)) + 2, juce::dontSendNotification);
-        if (const auto* v = visualDef (d); v != nullptr) selector.setText (juce::String (v->code) + "  " + v->name, juce::dontSendNotification);
+        if (const auto* v = visualDef (d); v != nullptr) selector.setText (visualCode (d) + "  " + visualName (d), juce::dontSendNotification);
         else selector.setText ("- vuoto -", juce::dontSendNotification);
         left->setEnabled (neighbour (-1) >= 0);
         right->setEnabled (neighbour (1) >= 0);
@@ -191,6 +191,13 @@ namespace pt::ui
         for (int j = index + dir; j > sp && j < n; j += dir)
             if (chain.lane (j) == myLane) return j;
         return -1;
+    }
+
+    juce::Rectangle<float> SlotComponent::pedalBounds() const
+    {
+        auto* s = chain.slot (index);
+        if (s == nullptr || s->fx == nullptr || view.model() == nullptr) return {};
+        return view.pedalArea().translated ((float) view.getX(), (float) view.getY());
     }
 
     bool SlotComponent::jackPoint (bool output, int line, juce::Point<float>& out) const
@@ -286,6 +293,28 @@ namespace pt::ui
 
     void SlotComponent::paintOverChildren (juce::Graphics& g)
     {
+        // pedale staccato dai cavi: velo scuro e targhetta (il segnale lo salta)
+        if (auto* s = chain.slot (index); s != nullptr && s->fx != nullptr && ! s->patched.load() && ! s->isSplitter())
+        {
+            const auto& t = themes->current();
+            const auto r = view.pedalArea().translated ((float) view.getX(), (float) view.getY());
+            g.setColour (juce::Colours::black.withAlpha (0.4f));
+            g.fillRoundedRectangle (r, juce::jmin (r.getWidth(), r.getHeight()) * 0.06f);
+            // targhetta nella meta' bassa del pedale: il cavo che lo scavalca passa piu' in alto
+            const float h = juce::jlimit (34.0f, 48.0f, r.getHeight() * 0.12f);
+            const auto badge = juce::Rectangle<float> (juce::jmin (getWidth() - 8.0f, 200.0f), h).withCentre ({ r.getCentreX(), r.getY() + r.getHeight() * 0.7f });
+            g.setColour (t.header.withAlpha (0.94f));
+            g.fillRoundedRectangle (badge, 6.0f);
+            g.setColour (juce::Colour (0xffe0554b));
+            g.drawRoundedRectangle (badge, 6.0f, 1.5f);
+            g.setColour (t.text);
+            g.setFont (juce::Font (h * 0.4f, juce::Font::bold));
+            g.drawText ("STACCATO", badge.withTrimmedBottom (h * 0.42f), juce::Justification::centredBottom);
+            g.setColour (t.textDim);
+            g.setFont (juce::Font (h * 0.27f));
+            g.drawFittedText ("infila qui una spina per ricollegarlo", badge.withTrimmedTop (h * 0.58f).toNearestInt().reduced (4, 0),
+                              juce::Justification::centredTop, 1, 0.7f);
+        }
         if (dropHover)
         {
             g.setColour (themes->current().accent);
@@ -314,6 +343,11 @@ namespace pt::ui
         const int sp = chain.splitterIndex();
         if (chain.splitMode() == SplitMode::Dual && sp >= 0 && index > sp)
             m.addItem (6, chain.lane (index) == 0 ? "Sposta nella corsia B (uscita destra)" : "Sposta nella corsia A (uscita sinistra)");
+        if (hasFx && ! s->isSplitter())
+            m.addItem (7, s->patched.load() ? "Stacca dalla catena (il segnale lo salta)" : "Ricollega alla catena");
+        bool anyUnpatched = false;
+        for (int k = 0; k < chain.size(); ++k) anyUnpatched |= ! chain.isPatched (k);
+        if (anyUnpatched) m.addItem (8, "Ricollega tutti i pedali staccati");
         m.showMenuAsync (juce::PopupMenu::Options().withTargetComponent (&selector), [this] (int r)
         {
             auto* sl = chain.slot (index);
@@ -345,6 +379,8 @@ namespace pt::ui
             else if (r == 4) chain.insert (index + 1, {}, chain.lane (index));
             else if (r == 5) chain.setModel (index, {});
             else if (r == 6) chain.setLane (index, 1 - chain.lane (index));
+            else if (r == 7) chain.setPatched (index, ! chain.isPatched (index));
+            else if (r == 8) chain.patchAll();
         });
     }
 
@@ -422,7 +458,7 @@ namespace pt::ui
         auto* s = chain.slot (i);
         const ModelDef* d = s != nullptr ? s->def : nullptr;
         const ModelDef* v = visualDef (d);
-        title.setText (juce::String ("Slot ") + juce::String (i + 1) + "  -  " + (v != nullptr ? juce::String (v->code) + "  " + v->name : juce::String ("vuoto")),
+        title.setText (juce::String ("Slot ") + juce::String (i + 1) + "  -  " + (v != nullptr ? visualCode (d) + "  " + visualName (d) : juce::String ("vuoto")),
                        juce::dontSendNotification);
         juce::String text;
         if (d != nullptr)

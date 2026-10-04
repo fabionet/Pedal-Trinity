@@ -6,6 +6,7 @@
 #include "Theme.h"
 #include "../engine/NamSecurity.h"
 #include <cstring>
+#include <tuple>
 
 namespace pt::ui
 {
@@ -18,6 +19,38 @@ namespace pt::ui
         if (! themes->realMode()) return d;
         const auto* r = findRealModel (d->id);
         return r != nullptr ? r : d;
+    }
+
+    namespace
+    {
+        /** Sigla e nome della replica, con quelli personalizzati della lista REAL MOD in uso. */
+        bool labelsOf (const ModelDef* d, juce::String& code, juce::String& name)
+        {
+            const auto* v = visualDef (d);
+            if (v == nullptr) return false;
+            code = v->code; name = v->name;
+            if (v == d) return true;
+            juce::SharedResourcePointer<RealPhotos> photos;
+            juce::String c, n;
+            photos->labelsFor (*v, c, n);
+            if (c.isNotEmpty()) code = c;
+            if (n.isNotEmpty()) name = n;
+            return true;
+        }
+    }
+
+    juce::String visualCode (const ModelDef* d)
+    {
+        juce::String c, n;
+        labelsOf (d, c, n);
+        return c;
+    }
+
+    juce::String visualName (const ModelDef* d)
+    {
+        juce::String c, n;
+        labelsOf (d, c, n);
+        return n;
     }
 
     namespace
@@ -106,13 +139,99 @@ namespace pt::ui
         }
     }
 
+    juce::File RealPhotos::listsRoot()
+    {
+        return juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory).getChildFile ("PedalTrinity").getChildFile ("RealMod");
+    }
+
+    juce::File RealPhotos::folderFor (const juce::String& list)
+    {
+        if (list.isEmpty() || checkListName (list).isNotEmpty())
+            return juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory).getChildFile ("PedalTrinity").getChildFile ("RealPhotos");
+        return listsRoot().getChildFile (list);
+    }
+
     juce::File RealPhotos::folder()
     {
-        auto dir = juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory).getChildFile ("PedalTrinity").getChildFile ("RealPhotos");
+        juce::SharedResourcePointer<ThemeManager> themes;
+        auto list = themes->realList();
+        if (list.isNotEmpty() && ! folderFor (list).isDirectory()) list = {};      // cartella sparita: lista classica
+        auto dir = folderFor (list);
         if (! dir.isDirectory()) dir.createDirectory();
-        static bool listed = false;                      // una volta per sessione (thread dei messaggi)
-        if (! listed) { listed = true; writeList (dir); }
+        static juce::StringArray listed;                 // una volta per sessione e per cartella (thread dei messaggi)
+        if (! listed.contains (dir.getFullPathName())) { listed.add (dir.getFullPathName()); writeList (dir); }
         return dir;
+    }
+
+    juce::StringArray RealPhotos::lists()
+    {
+        juce::StringArray out;
+        for (const auto& f : listsRoot().findChildFiles (juce::File::findDirectories, false))
+            if (checkListName (f.getFileName()).isEmpty() && ! f.isSymbolicLink()) out.add (f.getFileName());
+        out.sortNatural();
+        return out;
+    }
+
+    juce::String RealPhotos::checkListName (const juce::String& name)
+    {
+        if (name.isEmpty() || name.length() > 40) return "il nome deve avere da 1 a 40 caratteri";
+        if (name.trim() != name || name.startsWithChar ('.') || name.endsWithChar ('.')) return "il nome non puo' iniziare o finire con spazi o punti";
+        for (auto c : name)
+        {
+            // lettere e cifre ASCII, lettere accentate latine (indipendente dalla lingua del sistema), spazio - _ .
+            const bool ascii = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == ' ' || c == '-' || c == '_' || c == '.';
+            const bool latin = c >= 0xC0 && c <= 0x24F && c != 0xD7 && c != 0xF7;
+            if (! (ascii || latin)) return "sono ammesse solo lettere, cifre, spazi e - _ .";
+        }
+        if (name.contains ("..")) return "il nome non puo' contenere \"..\"";
+        static const juce::StringArray reserved { "CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+                                                  "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
+        if (reserved.contains (name.upToFirstOccurrenceOf (".", false, false).toUpperCase())) return "nome riservato dal sistema";
+        return {};
+    }
+
+    juce::String RealPhotos::createList (const juce::String& name, const juce::String* copyFrom)
+    {
+        if (auto err = checkListName (name); err.isNotEmpty()) return err;
+        const auto dir = listsRoot().getChildFile (name);
+        if (dir.exists()) return "esiste gia' una lista con questo nome";
+        if (! dir.createDirectory()) return "impossibile creare la cartella " + dir.getFullPathName();
+        if (copyFrom != nullptr)
+        {
+            // copia solo foto, .json e crediti (file normali, entro i limiti), mai sottocartelle o collegamenti
+            const auto src = folderFor (*copyFrom);
+            for (const auto& f : src.findChildFiles (juce::File::findFiles, false))
+            {
+                const auto ext = f.getFileExtension().toLowerCase();
+                const bool photo = ext == ".jpg" || ext == ".jpeg" || ext == ".png";
+                const bool text = (ext == ".json" || ext == ".txt") && f.getFileName() != "ELENCO_FOTO.txt";
+                if (! (photo || text) || f.isSymbolicLink()) continue;
+                if (! pt::namsafe::isSafeLocalFile (f.getFullPathName(), photo ? maxPhotoBytes : maxSidecarBytes * 16)) continue;
+                f.copyFileTo (dir.getChildFile (f.getFileName()));
+            }
+        }
+        writeList (dir);
+        return {};
+    }
+
+    juce::String RealPhotos::renameList (const juce::String& from, const juce::String& to)
+    {
+        if (checkListName (from).isNotEmpty()) return "lista non valida";
+        if (auto err = checkListName (to); err.isNotEmpty()) return err;
+        const auto src = listsRoot().getChildFile (from), dst = listsRoot().getChildFile (to);
+        if (! src.isDirectory()) return "lista non trovata";
+        if (dst.exists() && dst != src) return "esiste gia' una lista con questo nome";
+        if (! src.moveFileTo (dst)) return "impossibile rinominare la cartella";
+        return {};
+    }
+
+    juce::String RealPhotos::deleteList (const juce::String& name)
+    {
+        if (checkListName (name).isNotEmpty()) return "lista non valida";
+        const auto dir = listsRoot().getChildFile (name);
+        if (! dir.isDirectory() || dir.getParentDirectory() != listsRoot()) return "lista non trovata";
+        if (! dir.moveToTrash()) return "impossibile spostare la cartella nel cestino";
+        return {};
     }
 
     void RealPhotos::writeList (const juce::File& dir)
@@ -127,8 +246,13 @@ namespace pt::ui
              << "Poi, nel programma: Opzioni -> Ricarica foto (con REAL MOD acceso).\n"
              << "Le foto restano sul tuo computer: usa foto tue o di cui hai i diritti.\n\n"
              << "Facoltativo, un file .json con lo stesso nome (es. ds1.json):\n"
-             << "  { \"crop\": [x, y, larghezza, altezza], \"rotate\": 90, \"knobs\": false }\n"
-             << "crop = ritaglio in pixel, rotate = 0/90/180/270, knobs = false nasconde i pomelli 3D.\n\n"
+             << "  { \"crop\": [x, y, larghezza, altezza], \"rotate\": 90, \"knobs\": false,\n"
+             << "    \"name\": \"Il mio distorsore\", \"code\": \"MY-1\" }\n"
+             << "crop = ritaglio in pixel, rotate = 0/90/180/270, knobs = false nasconde i pomelli 3D,\n"
+             << "name / code = nome e sigla mostrati nei menu (facoltativi).\n"
+             << "I pomelli si allineano sulla foto dal pannello di zoom: \"Allinea pomelli sulla foto\".\n\n"
+             << "Liste: Opzioni -> REAL MOD -> Nuova lista crea altre cartelle come questa (RealMod/<nome>),\n"
+             << "ognuna con le sue foto; i pedali senza foto mostrano la replica.\n\n"
              << juce::String ("NOME FILE").paddedRight (' ', 22) << juce::String ("OPPURE").paddedRight (' ', 22) << "PEDALE\n";
         for (int i = 0; i < numRealModels(); ++i)
         {
@@ -231,18 +355,64 @@ namespace pt::ui
         return out;
     }
 
+    juce::File RealPhotos::photoFileFor (const ModelDef& real)
+    {
+        if (! isEnabled()) return {};
+        juce::SharedResourcePointer<ThemeManager> themes;
+        const auto now = juce::Time::getMillisecondCounter();
+        if (! dirIndex.valid || dirIndex.list != themes->realList() || now - dirIndex.stamp > 1500)
+        {
+            dirIndex = {};
+            dirIndex.valid = true;
+            dirIndex.list = themes->realList();
+            dirIndex.stamp = now;
+            dirIndex.dir = folder();
+            for (const auto& f : dirIndex.dir.findChildFiles (juce::File::findFiles, false))
+                dirIndex.files[f.getFileName()] = f;                      // solo file della cartella, niente sottocartelle
+        }
+        for (auto stem : { juce::String (real.id), juce::String (real.code) })
+            for (auto ext : { ".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG" })
+            {
+                const auto it = dirIndex.files.find (stem + ext);
+                if (it != dirIndex.files.end() && it->second.existsAsFile()) return it->second;
+            }
+        return {};
+    }
+
+    void RealPhotos::labelsFor (const ModelDef& real, juce::String& code, juce::String& name)
+    {
+        code = name = {};
+        const auto file = photoFileFor (real);
+        if (! file.existsAsFile()) return;
+        const auto side = file.withFileExtension ("json");
+        if (! side.existsAsFile()) return;
+        const auto key = side.getFullPathName() + "|" + juce::String (side.getSize()) + "|" + juce::String (side.getLastModificationTime().toMilliseconds());
+        auto& l = labels[real.id];
+        if (l.key != key)
+        {
+            l = {};
+            l.key = key;
+            if (side.getSize() <= maxSidecarBytes)
+            {
+                const auto text = side.loadFileAsString();
+                if (pt::namsafe::plausibleJson (text, (size_t) maxSidecarBytes))
+                {
+                    Photo p;
+                    juce::Rectangle<int> crop;
+                    int rot = 0;
+                    bool knobs = true;
+                    if (parseSidecar (juce::JSON::parse (text), { 0, 0, maxSide, maxSide }, p, crop, rot, knobs).isEmpty())
+                        { l.code = p.code; l.name = p.name; }
+                }
+            }
+        }
+        code = l.code; name = l.name;
+    }
+
     RealPhotos::Photo RealPhotos::forModel (const ModelDef& real)
     {
         if (! isEnabled()) return {};
-        const auto dir = folder();
-        juce::File file;
-        for (auto stem : { juce::String (real.id), juce::String (real.code) })
-            for (auto ext : { ".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG" })
-                if (! file.existsAsFile())
-                {
-                    const auto f = dir.getChildFile (stem + ext);
-                    if (f.existsAsFile() && f.getParentDirectory() == dir) file = f;     // niente percorsi fuori cartella
-                }
+        const auto file = photoFileFor (real);
         auto& e = cache[real.id];
         if (! file.existsAsFile()) { e = {}; return {}; }
         const auto key = file.getFullPathName() + "|" + juce::String (file.getSize()) + "|" + juce::String (file.getLastModificationTime().toMilliseconds());
@@ -300,6 +470,17 @@ namespace pt::ui
         if (r == 0 || r == 90 || r == 180 || r == 270) rotate = (int) r;
         else return "rotate ammette solo 0, 90, 180, 270";
         knobs = (bool) v.getProperty ("knobs", true);
+        for (auto [key, maxLen, dest] : { std::tuple<const char*, int, juce::String*> { "name", 40, &photo.name },
+                                          std::tuple<const char*, int, juce::String*> { "code", 16, &photo.code } })
+            if (v.hasProperty (key))
+            {
+                const auto& x = v.getProperty (key, {});
+                if (! x.isString()) return juce::String ("\"") + key + "\" deve essere un testo";
+                auto text = x.toString().trim();
+                if (text.length() > maxLen) return juce::String ("\"") + key + "\" troppo lungo";
+                for (auto ch : text) if (ch < 32 || ch == 127) return juce::String ("\"") + key + "\" contiene caratteri non ammessi";
+                *dest = text;
+            }
         if (const auto* l = v.getProperty ("led", {}).getArray(); l != nullptr)
         {
             const double lu = l->size() == 2 ? number ((*l)[0]) : -1.0, lv = l->size() == 2 ? number ((*l)[1]) : -1.0;
@@ -336,7 +517,7 @@ namespace pt::ui
                                             bool hasLed, float ledU, float ledV)
     {
         // solo accanto a una foto della cartella RealPhotos; conserva crop e rotate gia' presenti
-        if (photoFile.getParentDirectory() != folder()) return "la foto non e' nella cartella RealPhotos";
+        if (photoFile.getParentDirectory() != folder()) return "la foto non e' nella cartella della lista REAL MOD in uso";
         const auto side = photoFile.withFileExtension ("json");
         juce::var root;
         if (side.existsAsFile() && side.getSize() <= maxSidecarBytes)
@@ -366,5 +547,5 @@ namespace pt::ui
         return it != cache.end() ? it->second.error : juce::String();
     }
 
-    void RealPhotos::reload() { cache.clear(); }
+    void RealPhotos::reload() { cache.clear(); labels.clear(); dirIndex = {}; }
 }

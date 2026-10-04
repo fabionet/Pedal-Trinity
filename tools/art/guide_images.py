@@ -51,10 +51,10 @@ main.resize((main.width // 2, main.height // 2), Image.LANCZOS).save(os.path.joi
 
 # ---- panoramica: tasti della barra (coordinate logiche a 1280x760)
 ov = annotate(main, [
-    ("A", (294, 25), (294, 72)), ("B", (430, 25), (430, 72)), ("C", (585, 25), (585, 72)),
-    ("D", (855, 25), (855, 72)), ("E", (973, 25), (973, 72)), ("F", (1092, 25), (1092, 72)),
+    ("A", (280, 25), (280, 72)), ("B", (500, 25), (500, 72)), ("C", (608, 25), (608, 72)),
+    ("D", (826, 25), (826, 72)), ("E", (940, 25), (940, 72)), ("F", (1048, 25), (1048, 72)),
     ("G", (50, 250), (50, 190)), ("H", (1230, 250), (1230, 190)), ("I", (1240, 25), (1240, 72)),
-    ("J", (1186, 25), (1186, 115))])
+    ("J", (1186, 25), (1186, 115)), ("K", (1139, 25), (1110, 115))])
 save(ov, "guide_overview.jpg")
 
 # ---- dettaglio di uno slot (primo slot, vista 3 a 1280x760)
@@ -72,18 +72,28 @@ save(load("zoom.png"), "guide_zoom.jpg", 86)
 save(load("nam.png"), "guide_nam.jpg", 86)
 save(load("realmod.png"), "guide_realmod.jpg", 84)
 save(load("dual.png"), "guide_dual.jpg", 84)
-save(load("options.png").crop((290, 110, 1310, 790)), "guide_options.jpg", 86)
-# mosaico dei sei temi (2 x 3), con il nome sotto ciascuno
+save(load("options.png").crop((276, 56, 1324, 844)), "guide_options.jpg", 86)
+save(load("cables.png"), "guide_cables.jpg", 84)
+save(load("learn.png"), "guide_midilearn.jpg", 86)
+save(load("midi.png").crop((116, 6, 1164, 754)), "guide_midi.jpg", 86)
+# mosaico dei 18 temi (6 x 3), con il nome sotto ciascuno
 names = [("pro", "Pedana Pro"), ("tolex", "Tolex e cromo"), ("walnut", "Noce e ottone"),
-         ("green", "British Green"), ("alu", "Alluminio spazzolato"), ("night", "Studio notte")]
-tw, th = 800, 450
-sheet = Image.new("RGB", (tw * 3, (th + 40) * 2), (18, 18, 20))
+         ("green", "British Green"), ("alu", "Alluminio spazzolato"), ("night", "Studio notte"),
+         ("redtolex", "Tolex rosso"), ("tweed", "Tweed '59"), ("diamond", "Lamiera mandorlata"),
+         ("carbon", "Fibra di carbonio"), ("maple", "Acero chiaro"), ("ebony", "Ebano e argento"),
+         ("surf", "Surf blu"), ("purple", "Velluto viola"), ("slate", "Ardesia"),
+         ("goldrails", "Guide oro"), ("white", "Tolex bianco"), ("neon", "Neon notte")]
+cols = 6
+tw, th = 480, 270
+rows = (len(names) + cols - 1) // cols
+sheet = Image.new("RGB", (tw * cols, (th + 34) * rows), (18, 18, 20))
 d = ImageDraw.Draw(sheet)
+SMALL = ImageFont.truetype(F.path, 20) if hasattr(F, "path") else F
 for k, (tid, label) in enumerate(names):
     im = load("theme_%s.png" % tid).resize((tw, th), Image.LANCZOS)
-    x, y = (k % 3) * tw, (k // 3) * (th + 40)
+    x, y = (k % cols) * tw, (k // cols) * (th + 34)
     sheet.paste(im, (x, y))
-    d.text((x + tw // 2, y + th + 20), label, font=F, fill=GOLD, anchor="mm")
+    d.text((x + tw // 2, y + th + 17), label, font=SMALL, fill=GOLD, anchor="mm")
 save(sheet, "guide_themes.jpg", 84)
 save(load("stereo.png"), "guide_stereo.jpg", 84)
 info = load("info.png")

@@ -127,13 +127,13 @@ MODELS = [
           accent=(20, 40, 70), subtitle="POLY SHIFTER"),
 
     model("xs100", "XP-100", "Poly Transposer Pro", "BOSS XS-100 Poly Shifter", "Pitch / Ottave", "Pitch",
-          (30, 30, 33),
+          (31, 156, 222),
           [knob("PEDAL", "shift", 0.5, "semitone", -24, 24), knob("BALANCE", "balance", 1.0),
            toggle("TUNE DOWN", "tunedown", ("OFF", "ON"), 0)],
           "type=shifter range=24",
           "Versione da pavimento del poly shifter con pedale d'espressione integrato (stile whammy): PEDAL = "
           "trasposizione continua +-2 ottave, BALANCE dal menu; TUNE DOWN solo di pannello (boss.info).",
-          accent=(104, 172, 214), subtitle="POLY SHIFTER"),
+          accent=(104, 172, 214), subtitle="POLY SHIFTER", style="treadle", look=dict(boss=True)),
 
     # ================================================================== SYNTH
     model("syb3", "BZ-3", "Low Synth", "BOSS SYB-3 Bass Synthesizer", "Basso", "Synth",

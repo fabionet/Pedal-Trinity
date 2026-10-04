@@ -49,23 +49,27 @@ MODELS = [
           """
           hpf R=1M C=47n;
           hpf R=100k C=sw(6,15n,10n);
-          peak f=952 Q=2.8 g=sw(6,38,34);
+          peak f=950 Q=sw(6,0.223,0.28) g=sw(6,36.2,32.3);
+          hshelf f=10k Q=0.53 g=11.6;
           lpf R=220k C=100p rail=3.8;
           gain db=-6; lpf R=5k C=47n;
           hpf R=100k C=33n;
           opni Rg=1k Cg=10u Rf=pot(5,250k,A)*sw(6,1,1.4)+1k Cf=47p rail=3.8;
           dclip R=2.2k C=0 d=si;
           shelf1 R=4.7k Cs=15n Cp=32n;
-          peak f=4894 Q=2.2 g=sw(6,12.7,10);
-          peak f=105 Q=4 g=sw(6,18,14);
-          peak f=105 Q=1.4 g=lin(1,-15,15);
-          hshelf f=5000 Q=0.7 g=lin(2,-15,15);
-          peak f=log(4,227,5386) Q=1.1 g=lin(3,-15,15);
-          vol a=taper(0,A)*0.5
+          peak f=4900 Q=sw(6,0.80,0.92) g=sw(6,10.1,7.7);
+          peak f=110 Q=sw(6,1.54,1.73) g=sw(6,5.9,3.9);
+          peak f=105 Q=log(1,0.016,0.624)+log(1,0.624,0.016) g=lin(1,-15,15);
+          hshelf f=log(2,64.6,1635)+log(2,1635,64.6) Q=0.5 g=lin(2,-15,15) rail=3.8;
+          peak f=log(4,227,5386) Q=0.6 g=lin(3,-15,15) rail=3.8;
+          vol a=taper(0,A)*0.37
           """,
-          "Pre-EQ a gyrator a 952 Hz (+38 dB), secondo op-amp con DIST 250kA (2-252x), diodi 1SS133 a massa, "
-          "gyrator fissi a 4.9 kHz e 105 Hz, EQ attivo: LOW 105 Hz, HIGH shelf, MIDDLE semi-parametrico "
-          "a ponte di Wien 227-5386 Hz (service note MT-2). Modo C: piu' guadagno, bassi piu' stretti.",
+          "Pre-EQ: op-amp con gyrator a transistor nella retroazione (risonanza larga a 950 Hz, +36 dB, Q del polo "
+          "~2.8 / sqrt(guadagno)), divisore -6 dB con passa-basso 677 Hz; secondo op-amp con DIST 250kA (2-252x), "
+          "diodi 1SS133 a massa e mensola -10 dB; gyrator fissi dopo il clipping +10 dB a 4.9 kHz e +6 dB a 110 Hz "
+          "(simulazione nodale con 2SC3378 reale, coerente con le curve LTspice di Electric Druid); EQ attivo: LOW "
+          "105 Hz, HIGH mensola del 1° ordine (~0.7-2 kHz), MIDDLE a ponte di Wien 227-5386 Hz, +-15 dB (service "
+          "note MT-2). Modo C: piu' guadagno, bassi piu' stretti.",
           accent=(240, 120, 30), subtitle="DISTORTION"),
 
     # ------------------------------------------------------------------ BOSS GE-7

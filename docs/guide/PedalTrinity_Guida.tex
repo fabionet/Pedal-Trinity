@@ -34,7 +34,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small\color{steel}\textbf{PEDAL TRINITY} \,·\, Guida all'uso}
-\fancyhead[R]{\small\color{steel}v1.1.3 beta}
+\fancyhead[R]{\small\color{steel}v1.2.0 beta}
 \fancyfoot[L]{\small\color{steel}© 2026 FabioNET \,·\, GNU GPL v3}
 \fancyfoot[R]{\small\color{steel}\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -62,7 +62,7 @@
       {{\heavy\fontsize{54}{58}\selectfont PEDAL TRINITY}\\[0.6em]
        {\Large\color{gold}Pedaliera virtuale fino a 100 pedali \,·\, \modelcount\ modelli}\\[2.2em]
        {\LARGE\bfseries Guida illustrata all'uso}\\[0.4em]
-       {\large Versione 1.1.3 beta}};
+       {\large Versione 1.2.0 beta}};
   \node[anchor=south west,text width=17cm,align=left,text=white] at ([xshift=2cm,yshift=2.2cm]current page.south west)
       {\large by \textbf{FabioNET}\\[0.3em]
        \color{white!70}Plugin VST3 \,·\, LV2 \,·\, Standalone \quad per Linux e Windows (ASIO)\\
@@ -110,13 +110,13 @@ informazioni disponibili per ogni modello (alta = schema di fabbrica verificato)
 \subsection{Linux (pacchetto .deb)}
 Per Ubuntu 22.04 o successivi, Debian 12, Linux Mint 21 e derivate (64 bit):
 \begin{tcolorbox}[colback=charcoal,colupper=white,boxrule=0pt,arc=2mm]
-\texttt{sudo apt install ./pedal-trinity\_1.1.3-beta\_amd64.deb}
+\texttt{sudo apt install ./pedal-trinity\_1.2.0-beta\_amd64.deb}
 \end{tcolorbox}
 Installa il VST3 in \texttt{/usr/lib/vst3}, l'LV2 in \texttt{/usr/lib/lv2}, l'applicazione
 \texttt{pedal-trinity} (menu \emph{Audio}) e questa guida in \texttt{/usr/share/doc/pedal-trinity/}.
 
 \subsection{Windows 10/11}
-Avvia \texttt{PedalTrinity-1.1.3-beta-Windows-x64-Setup.exe}: installa lo Standalone (con driver
+Avvia \texttt{PedalTrinity-1.2.0-beta-Windows-x64-Setup.exe}: installa lo Standalone (con driver
 \textbf{ASIO}), il VST3 in \texttt{C:\textbackslash Program Files\textbackslash Common Files\textbackslash VST3}
 e l'LV2 in \texttt{...\textbackslash Common Files\textbackslash LV2}.
 
@@ -134,7 +134,8 @@ e l'LV2 in \texttt{...\textbackslash Common Files\textbackslash LV2}.
 \num{G} & \textbf{INPUT}: meter d'ingresso e fader del guadagno (da $-18$ a $+18$ dB); la presa jack porta il segnale al primo pedale. \\
 \num{H} & \textbf{OUTPUT}: meter d'uscita (mono, oppure L/R con lo splitter attivo) e fader del volume; con lo splitter in DUAL o STEREO anche i pomelli BALANCE, LEFT e RIGHT. Tutti automatizzabili nella DAW. \\
 \num{I} & \textbf{INFO}: licenza, autore, versione, crediti e apertura di questa guida. \\
-\num{J} & \textbf{Opzioni} (ingranaggio): tema della pedaliera, cavi jack visibili e colore dei cavi (vedi sezione \ref{sec:opzioni}). \\
+\num{K} & \textbf{MIDI}: mappatura MIDI con il tocco per comandare i pedali da una pedaliera MIDI esterna (sezione \ref{sec:midi}). \\
+\num{J} & \textbf{Opzioni} (ingranaggio): tema della pedaliera, pedana personalizzata, cavi jack visibili e colore dei cavi, liste REAL MOD, impostazioni MIDI (vedi sezione \ref{sec:opzioni}). \\
 \end{tabularx}
 
 \subsection*{Il segnale e i cavi}
@@ -144,6 +145,7 @@ primo pedale, da un pedale all'altro e dall'ultimo pedale al meter OUTPUT. Ogni 
 pedale compare il suo cavo; gli slot vuoti (e le celle libere in fondo) vengono attraversati dal cavo
 senza modificare il segnale. Nella vista a 18 il cavo che va a capo passa sotto la pedaliera.
 Senza splitter la catena è \textbf{mono}, come con cavi singoli veri: i pedali stereo usano solo le prese A.
+I cavi si possono \textbf{staccare e ricollegare a mano} (sezione \ref{sec:cavi}).
 
 \clearpage
 \section{Gli slot}
@@ -219,6 +221,36 @@ mandate A/B quando lo splitter è nel primo slot. Le due catene rientrano nel li
 \small Splitter in STEREO: chorus e delay stereo con i cavi A e B; il distorsore mono usa solo la presa A.
 \end{center}
 
+\subsection{Cavi staccabili}\label{sec:cavi}
+All'inizio ogni pedale è già collegato: i cavi vanno dal meter INPUT al primo pedale, da un pedale
+all'altro e dall'ultimo pedale al meter OUTPUT. Come su una pedaliera vera puoi \textbf{prendere una
+spina con il mouse} (il puntatore diventa una mano), sfilarla dalla presa e portarla altrove: il cavo
+segue il mouse e il pedale su cui stai per infilarla si illumina di \textbf{verde} (collegamento
+possibile) o di \textbf{rosso} (non possibile, con il motivo scritto accanto al puntatore).
+\begin{itemize}
+  \item \textbf{Su un altro pedale}: la spina si infila in quel pedale e la catena continua da lì.
+        Se il pedale era staccato rientra nella catena nel suo posto; se è più avanti, i pedali in
+        mezzo vengono \emph{scavalcati} dal cavo (restano sulla pedaliera ma il segnale non li attraversa).
+        La spina che esce da un pedale (a destra) si infila nell'uscita di un altro pedale, quella che
+        entra (a sinistra) nell'ingresso.
+  \item \textbf{Sui meter}: la spina d'ingresso sul meter OUTPUT scavalca tutti i pedali dopo il cavo;
+        quella d'uscita sul meter INPUT scavalca tutti quelli prima.
+  \item \textbf{Sulla pedana libera}: il pedale a quell'estremità viene \textbf{staccato}: si scurisce,
+        il LED si spegne e mostra la targhetta \textsc{staccato}; il cavo si richiude da solo tra il pedale
+        precedente e il successivo, così il suono non si interrompe.
+  \item \textbf{Fuori dalla pedaliera} (o su un punto non valido): la spina torna al suo posto.
+\end{itemize}
+Il segnale scorre sempre da sinistra a destra: un cavo non può tornare indietro verso un pedale che
+viene prima (per riordinare i pedali trascinali dall'intestazione). Lo splitter SPL-3 non si stacca né
+si scavalca, e con lo splitter in DUAL ogni cavo resta nella sua corsia. Per ricollegare un pedale
+staccato infila una spina nel pedale, oppure usa il menu del tasto destro sull'intestazione dello slot:
+\emph{Ricollega alla catena} o \emph{Ricollega tutti i pedali staccati} (c'è anche \emph{Stacca dalla
+catena}). I pedali staccati sono salvati nei preset e nei progetti.
+\begin{center}
+\includegraphics[width=\linewidth]{../images/guide_cables.jpg}\\[0.2em]
+\small Il chorus AQ-2 è staccato: il cavo va direttamente dal DX-1 al CD-2 (tema Lamiera mandorlata, cavi Multicolore).
+\end{center}
+
 % ------------------------------------------------------------------
 \clearpage
 \section{Opzioni e temi}\label{sec:opzioni}
@@ -227,25 +259,85 @@ ricordate per le volte successive e sono comuni a tutte le istanze del plugin e 
 (file \texttt{Options.settings} nella cartella \texttt{PedalTrinity} delle impostazioni).
 \begin{center}\includegraphics[width=0.8\linewidth]{../images/guide_options.jpg}\end{center}
 \begin{itemize}
-  \item \textbf{Tema della pedaliera}: la superficie su cui poggiano i pedali e la tavolozza coordinata
-        di barra, pannelli e pulsanti. I pedali sono renderizzati senza sfondo, con la loro ombra, e si
-        appoggiano davvero sulla pedana scelta:
+  \item \textbf{Tema della pedaliera} (18 temi, l'elenco scorre): la superficie su cui poggiano i pedali
+        e la tavolozza coordinata di barra, pannelli e pulsanti. I pedali sono renderizzati senza
+        sfondo, con la loro ombra, e si appoggiano davvero sulla pedana scelta:
         \begin{itemize}
           \item \textbf{Pedana Pro} (predefinito): guide in alluminio anodizzato nero a lamelle rivestite di
                 tessuto a strappo, con viti a vista;
-          \item \textbf{Tolex e cromo}: tolex nero goffrato, profilo crema e angolari cromati;
-          \item \textbf{Noce e ottone}: tavole di noce venato con finitura a olio e viti in ottone;
-          \item \textbf{British Green}: tolex verde in tinta con gli amplificatori d'epoca, profilo oro;
-          \item \textbf{Alluminio spazzolato}: lamelle in alluminio naturale, accento azzurro acciaio;
-          \item \textbf{Studio notte}: moquette scura, l'aspetto originale ad alto contrasto.
+          \item \textbf{Tolex e cromo}, \textbf{Tolex rosso}, \textbf{Tolex bianco}, \textbf{British Green}
+                e \textbf{Surf blu}: tolex goffrato dei combo d'epoca con profilo e angolari;
+          \item \textbf{Tweed '59}: tela tweed a spina di pesce con profilo in cuoio cucito;
+          \item \textbf{Noce e ottone}, \textbf{Acero chiaro} ed \textbf{Ebano e argento}: tavole di legno venato;
+          \item \textbf{Alluminio spazzolato} e \textbf{Guide oro}: lamelle di metallo spazzolato con fessure;
+          \item \textbf{Lamiera mandorlata}: lamiera antiscivolo da palco con le mandorle in rilievo;
+          \item \textbf{Fibra di carbonio}: trama 2$\times$2 sotto vernice lucida;
+          \item \textbf{Ardesia}: lastra di pietra scura a strati con bordo smussato;
+          \item \textbf{Studio notte}, \textbf{Velluto viola} e \textbf{Neon notte}: moquette scure da studio e da club.
         \end{itemize}
-  \item \textbf{Cavi jack}: mostra o nasconde i cavi e ne sceglie il colore (nero, grafite, rosso
-        vintage, blu notte, tweed crema).
+  \item \textbf{Pedana}: puoi tenere la tavolozza di un tema e cambiare solo il piano dei pedali.
+        \emph{Quella del tema} è la scelta normale; in alternativa il \textbf{materiale di un altro tema}
+        (per esempio barra e pannelli di \emph{Pedana Pro} con la pedana in noce), un
+        \textbf{colore personalizzato} del materiale (\emph{Colore\dots}, con il selettore che applica
+        il colore mentre lo scegli; \emph{Colore originale} lo annulla) oppure una \textbf{tua immagine}
+        (\emph{Immagine\dots}: JPEG o PNG fino a 25 MB e 8000$\times$8000 pixel, adattata alla pedana con
+        bordo e vignettatura). I segni sulla pedana (celle libere) diventano chiari o scuri in base al
+        colore scelto, per restare leggibili.
+  \item \textbf{Cavi jack}: mostra o nasconde i cavi e ne sceglie il colore tra 18: nero, grafite,
+        rosso vintage, blu notte, tweed crema, rosso fuoco, arancio, giallo, verde lime, verde bosco,
+        azzurro, viola, rosa, bianco, oro, argento, tessuto nero e oro e \textbf{Multicolore} (ogni cavo
+        di un colore diverso, comodo per seguire il percorso). I cavi si staccano e si ricollegano
+        a mano (sezione \ref{sec:cavi}).
+  \item \textbf{REAL MOD}: accende la modalità e sceglie la \textbf{lista} di pedali (sezione \ref{sec:realmod}).
 \end{itemize}
 Barra, pannelli e intestazioni degli slot restano scuri in ogni tema, così i testi sono sempre
 leggibili: l'autotest verifica per ogni tema il contrasto secondo le linee guida WCAG 2.1
 (testo almeno 4,5:1, accenti e segni sulla pedana almeno 3:1).
 \begin{center}\includegraphics[width=\linewidth]{../images/guide_themes.jpg}\end{center}
+
+% ------------------------------------------------------------------
+\section{MIDI: pedaliera esterna}\label{sec:midi}
+Con una pedaliera o un controller MIDI puoi accendere e spegnere i pedali, girarne i pomelli (anche con
+un pedale d'espressione), regolare INPUT e OUTPUT, escludere tutta la pedaliera e cambiare preset.
+Ogni funzione di ogni pedale si assegna a un messaggio MIDI: \textbf{Control Change} (CC), \textbf{nota}
+o \textbf{Program Change}, su un canale preciso o su tutti.
+
+\textbf{Mappatura con il tocco.} Premi il tasto \textbf{MIDI} nella barra: compare la barra della
+mappatura. \textbf{Tocca} il comando da assegnare (gira un po' un pomello, premi un footswitch o il tasto
+di accensione dello slot, muovi il fader INPUT o OUTPUT) e poi \textbf{muovi o premi} il comando della
+pedaliera MIDI: l'assegnazione è fatta e puoi passare subito al comando successivo. \textbf{Fine}
+chiude la mappatura, \textbf{Assegnazioni\dots} apre l'elenco. Se il footswitch MIDI manda anche il
+rilascio (interruttore momentaneo), Pedal Trinity se ne accorge e ogni pressione accende o spegne il pedale.
+\begin{center}\includegraphics[width=0.9\linewidth]{../images/guide_midilearn.jpg}\end{center}
+
+\textbf{Impostazioni e assegnazioni} (da \emph{Assegnazioni\dots} o da \emph{Opzioni} $\rightarrow$
+\emph{Impostazioni e assegnazioni MIDI\dots}):
+\begin{itemize}
+  \item \textbf{Dispositivi MIDI} (Standalone): i dispositivi \textbf{MIDI IN} da ascoltare (anche più di
+        uno) e il dispositivo \textbf{MIDI OUT} per il ritorno dello stato. Nel plugin il MIDI passa dalla
+        DAW: manda alla traccia di Pedal Trinity il MIDI della pedaliera e collega l'uscita MIDI del plugin
+        alla pedaliera per il ritorno dello stato.
+  \item \textbf{Rimanda lo stato sul MIDI OUT}: ogni funzione assegnata rimanda il proprio valore sullo
+        stesso messaggio, così LED e display della pedaliera MIDI restano allineati anche quando cambi
+        qualcosa con il mouse o carichi un preset.
+  \item \textbf{Program Change senza assegnazione}: carica il preset con quel numero (prima quelli di
+        fabbrica, poi i tuoi, nell'ordine del menu \emph{Preset}).
+  \item \textbf{Elenco delle assegnazioni}: per ogni assegnazione il messaggio, la funzione, il
+        \textbf{canale} (o tutti) e, per gli interruttori, il \textbf{modo}: \emph{segue il valore}
+        (interruttori a scatto: 127 acceso, 0 spento), \emph{ogni pressione accende/spegne} (interruttori
+        momentanei) o \emph{acceso solo finché è premuto}; per pomelli, INPUT e OUTPUT la \textbf{gamma}
+        minima e massima (con il minimo più alto del massimo il verso si inverte). \textsf{X} elimina
+        l'assegnazione, \emph{Cancella tutte} le elimina tutte.
+  \item \textbf{Impara: preset +, preset -, bypass}: assegnano il footswitch MIDI che premi subito dopo
+        al preset successivo, al precedente o al bypass generale.
+  \item \textbf{Ultimo messaggio ricevuto}: mostra cosa arriva dalla pedaliera MIDI, utile per controllare
+        canale e numeri.
+\end{itemize}
+\begin{center}\includegraphics[width=0.9\linewidth]{../images/guide_midi.jpg}\end{center}
+Le assegnazioni seguono la \textbf{posizione} dello slot (\emph{Slot 3} resta lo slot 3 anche se cambi il
+pedale che contiene) e sono salvate con il \textbf{progetto} della DAW (e alla chiusura dello
+Standalone), non nei preset: cambiando preset la pedaliera MIDI continua a comandare gli stessi slot.
+I messaggi sugli slot sono applicati direttamente nel thread audio, senza ritardo.
 
 % ------------------------------------------------------------------
 \section{Preset}
@@ -277,6 +369,59 @@ lo stato completo viene salvato anche nel progetto.
         STOP e CLEAR (e UNDO dove presente) completano i comandi; il display mostra stato e durata.
 \end{itemize}
 
+\subsection{Wah e pedali di volume a bilanciere}
+I wah e i pedali di volume ed espressione hanno la forma del pedale vero, con il \textbf{bilanciere}:
+si trascina in verticale sul pedale (verso la punta = tacco alzato, suono più acuto o volume più alto) e
+la barra a LED accanto mostra la posizione; per accenderlo o spegnerlo si clicca sulla punta. Con un
+pedale d'espressione MIDI il bilanciere si comanda con il piede (sezione \ref{sec:midi}). I comandi che
+sul pedale vero stanno sulle \textbf{fiancate} (Q, BOOST, RANGE, VOLUME, MIN VOL\dots) sono sulle
+alette laterali, nella stessa posizione e dallo stesso lato.
+
+\textbf{Wah a induttore} (44 modelli in stile Cry Baby, signature comprese: Hendrix, Slash, Hammett,
+Dimebag, Zakk Wylde, Van Halen, Bonamassa, Buddy Guy, Cantrell, Morello e altri, più 95Q, 535Q, Mini,
+Junior, Q Zone, 105Q per basso). Il suono è calcolato dal \textbf{circuito vero}: induttore, condensatori
+di accordo, resistenza della Q, i due transistor con il loro punto di lavoro e il potenziometro con la sua
+curva. Ne escono il picco risonante (circa 415 Hz al tallone e 2,2 kHz in punta nel GCB95, +19 dB come
+dichiarato da Dunlop), la coda sui bassi tipica del wah e la leggera saturazione con i segnali forti.
+I comandi dei modelli più ricchi agiscono sui componenti: Q variabile, RANGE a 6 posizioni del 535Q,
+BOOST fino a +17 dB, FINE TUNE e voci delle signature. I valori non pubblicati sono stimati dalle
+gamme dichiarate nei manuali.
+
+\textbf{Volume}: Volume X (DVP1, DVP3, DVP4, DVP5), Ernie Ball (VP Jr 25K e 250K, MVP, Tuner),
+Morley ottici e DeArmond storico, oltre ai volume BOSS: curva del potenziometro del modello e, dove c'è,
+il volume minimo regolabile.
+
+\subsection{Signature MXR ed Electro-Harmonix}
+Il catalogo comprende tutte le 16 \textbf{signature MXR} (Zakk Wylde Overdrive e Black Label Chorus, EVH 5150
+Overdrive, Phase 90, Flanger, Chorus e 5150 Iconic, Dime Distortion, Slash Octave Fuzz, Dookie Drive, Kerry King
+10-band EQ, Bonamassa, Morello, Gales, Malmsteen, Randy Rhoads) e 210 pedali \textbf{Electro-Harmonix},
+cioè il catalogo storico e attuale, ciascuno con la forma del proprio contenitore (scatola MXR, grandi scatole a cuneo
+degli anni '70, XO, Nano, serie 9) e i comandi nelle posizioni reali:
+\begin{itemize}
+  \item \textbf{tutte le Big Muff storiche}, emulate transistor per transistor dagli schemi (Triangle, Ram's
+        Head, Violet, Red/Black, Op-Amp, Civil War, Black Russian, NYC, Little, Bass, Deluxe), più Muff Fuzz,
+        Double Muff e Metal Muff;
+  \item drive, boost e compressori (LPB-1, Screaming Bird, Soul Food, East River Drive, Hot Tubes, OD Glove,
+        English Muff'n a valvole, Black Finger, Soul Preacher\dots), filtri e synth analogici (Doctor Q, Q-Tron,
+        Bassballs, Micro Synth con i suoi cursori, Octave Multiplexer, Frequency Analyzer, Tube Zipper);
+  \item modulazioni con i circuiti veri: Small Stone (celle OTA), Electric Mistress, Small Clone, Polychorus e
+        Memory Man con la linea di ritardo analogica a clock, Poly Phase con optocoppie, Good Vibes (Uni-Vibe),
+        Lester G (Leslie), Stereo Pulsar;
+  \item delay e riverberi (Deluxe Memory Man, Memory Boy/Toy, Canyon, Grand Canyon, 16 Second, Holy Grail,
+        Holy Grail Plus e Max, Cathedral, Oceans 11 e 12) e il looper 720;
+  \item pitch e synth digitali: POG, POG2 e Micro POG (ottave polifoniche), HOG e HOG2 (10 armoniche),
+        Pitch Fork, Superego, Mono Synth, Ravish (sitar), Voice Box e la \textbf{serie 9} (B9 e C9 organi, KEY9
+        piano elettrico, MEL9 nastri, SYNTH9, BASS9, STRING9);
+  \item i Big Muff più recenti (Big Muff Pi 2, Wicker, Germanium 4, Deluxe Bass), i wah e i filtri d'epoca
+        (Crying Tone, Queen Triggered Wah, Talking Pedal, Zipper, Riddle), i vocoder V256 e Iron Lung, POG3,
+        Slammi, Intelligent Harmony Machine, i multi-effetto (Epitome, Soul POG, Tone Tattoo, Battalion) e le
+        utility (Silencer, Switchblade, Tri Parallel Mixer, Super Switcher).
+\end{itemize}
+Il pitch polifonico è intonato entro circa un cent (latenza da 1 a 21 ms secondo la nota e l'intervallo).
+Alcuni pedali digitali con molti comandi sono semplificati per stare nei 12 comandi del pedale virtuale
+(per esempio inviluppi e filtri dell'HOG, preset del POG2): i comandi reali non modellati restano disegnati
+ma fissi. I valori non pubblicati sono stimati dalle specifiche e segnati nelle note di ciascun pedale.
+
 % ------------------------------------------------------------------
 \section{REAL MOD PEDALBOARD}\label{sec:realmod}
 Il tasto rosso \textbf{REAL MOD PEDALBOARD}, accanto a \emph{Preset}, trasforma la pedaliera: ogni
@@ -299,15 +444,34 @@ la sua sigla e il suo nome (DS-1 \emph{Distortion}, DD-500 \emph{Digital Delay},
   \item I pedali originali di Pedal Trinity (ED-9, NAM-A1A2, IRL-1/2, SPL-3) restano come sono.
 \end{itemize}
 \textbf{Foto personali.} Se hai delle foto dei tuoi pedali puoi usarle al posto delle repliche: nel
-pannello \emph{Opzioni} premi \emph{Cartella foto personali\dots} e copia lì le foto scattate
+pannello \emph{Opzioni} premi \emph{Apri cartella} e copia lì le foto scattate
 dall'alto, chiamate con l'identificativo o con la sigla del pedale (\texttt{ds1.jpg} oppure
 \texttt{DS-1.jpg}, anche \texttt{.png}: la cartella contiene \texttt{ELENCO\_FOTO.txt} con i nomi di tutti i
-216 pedali); poi premi \emph{Ricarica foto}. Il programma ritaglia il
+501 pedali); poi premi \emph{Ricarica foto}. Il programma ritaglia il
 pedale dallo sfondo, lo appoggia sul piano della replica con fronte, bordi, luce e ombra (effetto
 rilievo) e lascia i comandi regolabili sopra. Un file facoltativo con lo stesso nome e
 estensione \texttt{.json} permette di correggere il ritaglio e la rotazione e di nascondere i pomelli
 3D quando la foto ha già i suoi:
 \texttt{\{ "crop": [x, y, larghezza, altezza], "rotate": 90, "knobs": false \}}.
+
+\textbf{Liste di pedali.} La lista \textbf{Classica (repliche BOSS)} è quella descritta sopra, con la
+cartella \texttt{RealPhotos}. Nel pannello \emph{Opzioni}, alla voce \emph{Lista}, puoi crearne altre,
+ognuna \textbf{personalizzabile} e salvata nella \textbf{propria cartella} (\texttt{RealMod/<nome della lista>}
+nella cartella delle impostazioni di Pedal Trinity), con le sue foto, i suoi allineamenti dei pomelli
+e i suoi nomi:
+\begin{itemize}
+  \item \textbf{Nuova\dots} crea una lista vuota: finché non metti le foto nella sua cartella i pedali
+        mostrano le repliche;
+  \item \textbf{Duplica\dots} crea una nuova lista copiando foto, file \texttt{.json} e crediti della lista in uso;
+  \item \textbf{Rinomina\dots} ed \textbf{Elimina} agiscono sulla lista personalizzata in uso (la cartella
+        eliminata finisce nel cestino, quindi si può recuperare); la lista classica non si rinomina né si elimina;
+  \item \textbf{Apri cartella} apre la cartella della lista in uso (con il suo \texttt{ELENCO\_FOTO.txt}),
+        \textbf{Ricarica foto} rilegge le foto dopo averle cambiate.
+\end{itemize}
+Nel file \texttt{.json} di una foto puoi indicare anche il \textbf{nome} e la \textbf{sigla} da mostrare nei
+menu, nell'intestazione dello slot e nello zoom: \texttt{\{ "name": "Il mio distorsore", "code": "MY-1" \}}
+(fino a 40 e 16 caratteri). I nomi delle liste ammettono lettere (anche accentate), cifre, spazi e
+\texttt{- \_ .}, fino a 40 caratteri. Cambiare lista cambia solo l'aspetto: il suono e i preset restano identici.
 
 \textbf{Pomelli sulla foto.} Il file \texttt{.json} può indicare dove si trova ogni pomello nella foto
 (\texttt{"controls": \{"TONE": [u, v, r], \dots\}}, centro e raggio in frazioni della foto) e il LED
@@ -409,8 +573,11 @@ Lo Standalone ascolta l'ingresso: con microfono e altoparlanti del portatile usa
   \item \textbf{Preset esportati}: \emph{Esporta su file} toglie i percorsi del tuo computer (modelli
         NAM, IR); chi riceve il preset ricarica i propri file. I preset salvati nella tua cartella e i
         progetti della DAW li conservano, per ritrovarli.
-  \item \textbf{Foto personali}: restano nella cartella RealPhotos del tuo computer e non compaiono mai
-        nelle immagini della guida.
+  \item \textbf{Foto personali e immagine della pedana}: restano nelle cartelle del tuo computer
+        (RealPhotos e le cartelle delle liste in RealMod) e non compaiono mai nelle immagini della guida.
+        L'immagine della pedana è controllata come le foto (solo JPEG/PNG veri, file locali, dimensioni
+        limitate). I nomi delle liste REAL MOD sono controllati (niente \texttt{..}, barre o nomi riservati
+        del sistema): una lista non può uscire dalla cartella RealMod; eliminare una lista la sposta nel cestino.
 \end{itemize}
 
 % ------------------------------------------------------------------
@@ -420,7 +587,7 @@ Lo Standalone ascolta l'ingresso: con microfono e altoparlanti del portatile usa
 \includegraphics[width=\linewidth]{../images/guide_info.jpg}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.46\linewidth}\vspace{0pt}
-Il tasto \textbf{INFO} mostra versione (\textbf{1.1.3 beta}), autore (\textbf{FabioNET}), il testo
+Il tasto \textbf{INFO} mostra versione (\textbf{1.2.0 beta}), autore (\textbf{FabioNET}), il testo
 completo della \textbf{GNU GPL v3} seguito dalle licenze dei componenti del NAM-A1A2 (MIT ed
 Eigen MPL 2.0), i crediti e apre questa guida.
 \end{minipage}
@@ -459,8 +626,10 @@ Nessun suono nello Standalone & Controlla ingresso/uscita in \emph{Options} e ch
 Suono in ritardo & Riduci il buffer; su Windows usa ASIO. \\
 Carico CPU alto & Molti pedali a guadagno (sovracampionamento 4×) e riverberi pesano: spegni gli slot che non usi. \\
 File NAM rifiutato & Il messaggio nel pannello di zoom indica il motivo: scarica di nuovo il modello dalla fonte originale (per esempio TONE3000). Il \texttt{.namb} contiene un solo modello: per lo SLIM usa il \texttt{.nam} A2. \\
-Volume troppo alto/basso & Usa \ctl{OUT} e i \ctl{LEVEL} dei pedali; i livelli seguono quelli dei pedali reali. \\ \bottomrule
+Volume troppo alto/basso & Usa \ctl{OUT} e i \ctl{LEVEL} dei pedali; i livelli seguono quelli dei pedali reali. \\
+La pedaliera MIDI non risponde & Nello Standalone attiva il dispositivo in \emph{MIDI IN} (pannello MIDI); nel plugin manda il MIDI alla traccia di Pedal Trinity. Controlla canale e numeri con \emph{Ultimo messaggio ricevuto}. \\
+Un pedale non si sente & Se mostra \textsc{staccato} il cavo lo scavalca: infila una spina nel pedale o usa \emph{Ricollega tutti i pedali staccati} (tasto destro sull'intestazione dello slot). \\ \bottomrule
 \end{tabularx}
 \vfill
-\begin{center}\small\color{steel}Pedal Trinity 1.1.3 beta \,·\, © 2026 FabioNET \,·\, GNU General Public License v3\end{center}
+\begin{center}\small\color{steel}Pedal Trinity 1.2.0 beta \,·\, © 2026 FabioNET \,·\, GNU General Public License v3\end{center}
 \end{document}

@@ -1,0 +1,5286 @@
+{
+ "kfk1": {
+  "family": "Circuit",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "slider",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "31.25 Hz",
+    "role": "b0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "62.5 Hz",
+    "role": "b1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "125 Hz",
+    "role": "b2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "250 Hz",
+    "role": "b3",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "500 Hz",
+    "role": "b4",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "1 kHz",
+    "role": "b5",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "2 kHz",
+    "role": "b6",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "4 kHz",
+    "role": "b7",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "8 kHz",
+    "role": "b8",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "16 kHz",
+    "role": "b9",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=470k C=100n; gain db=lin(11,-12,12) rail=8.5; peak f=31.25 Q=log(1,0.09618,0.7709)+log(1,0.7709,0.09618) g=lin(1,-7.511,7.511)+4.489*lin(1,-1,1)*lin(1,-1,1)*lin(1,-1,1) rail=8.5; peak f=62.5 Q=log(2,0.09618,0.7709)+log(2,0.7709,0.09618) g=lin(2,-7.511,7.511)+4.489*lin(2,-1,1)*lin(2,-1,1)*lin(2,-1,1) rail=8.5; peak f=125 Q=log(3,0.09618,0.7709)+log(3,0.7709,0.09618) g=lin(3,-7.511,7.511)+4.489*lin(3,-1,1)*lin(3,-1,1)*lin(3,-1,1) rail=8.5; peak f=250 Q=log(4,0.09618,0.7709)+log(4,0.7709,0.09618) g=lin(4,-7.511,7.511)+4.489*lin(4,-1,1)*lin(4,-1,1)*lin(4,-1,1) rail=8.5; peak f=500 Q=log(5,0.09618,0.7709)+log(5,0.7709,0.09618) g=lin(5,-7.511,7.511)+4.489*lin(5,-1,1)*lin(5,-1,1)*lin(5,-1,1) rail=8.5; peak f=1000 Q=log(6,0.09618,0.7709)+log(6,0.7709,0.09618) g=lin(6,-7.511,7.511)+4.489*lin(6,-1,1)*lin(6,-1,1)*lin(6,-1,1) rail=8.5; peak f=2000 Q=log(7,0.09618,0.7709)+log(7,0.7709,0.09618) g=lin(7,-7.511,7.511)+4.489*lin(7,-1,1)*lin(7,-1,1)*lin(7,-1,1) rail=8.5; peak f=4000 Q=log(8,0.09618,0.7709)+log(8,0.7709,0.09618) g=lin(8,-7.511,7.511)+4.489*lin(8,-1,1)*lin(8,-1,1)*lin(8,-1,1) rail=8.5; peak f=8000 Q=log(9,0.09618,0.7709)+log(9,0.7709,0.09618) g=lin(9,-7.511,7.511)+4.489*lin(9,-1,1)*lin(9,-1,1)*lin(9,-1,1) rail=8.5; hshelf f=9000 Q=0.6 g=lin(10,-7.511,7.511)+4.489*lin(10,-1,1)*lin(10,-1,1)*lin(10,-1,1) rail=8.5; vol db=lin(0,-12,12); hpf R=100k C=1u; rail rail=7.1",
+  "stereo": false,
+  "notes": "Ten Band EQ a 18 V (versione Kerry King dell'M108): buffer d'ingresso 470k con GAIN, nove sezioni a gyrator a ottava 31,25 Hz-8 kHz +-12 dB e mensola a 16 kHz, VOLUME d'uscita, binari +-8.5 V. Ogni sezione e' tradotta dalla topologia non invertente a gyrator (R 10k, slider 10k, ramo serie con Q 1.8): Q RBJ = Q_gyr/sqrt(G) agli estremi e piu' larga a basso guadagno (legge fittata con l'analisi nodale), guadagno a S lungo la corsa. Valori dei gyrator, Q e gamme di GAIN/VOLUME (+-12 dB) stimati (manuale: +-12 dB per banda).",
+  "control_notes": "Dodici cursori nell'ordine del pedale (VOLUME, 10 bande, GAIN); la doppia uscita non cambia il suono."
+ },
+ "evhmhg": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "OUTPUT",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -7.0,
+    "hi": 7.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "BASS SHIFT",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "55 Hz",
+     "80 Hz"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -5.0,
+    "hi": 5.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -6.0,
+    "hi": 6.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GATE",
+    "role": "threshold",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "BOOST",
+    "role": "boost",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "BOOST"
+    ],
+    "short": [
+     "OFF",
+     "BST"
+    ]
+   }
+  ],
+  "config": "hpf R=740k C=22n; gain db=sw(7,0,3); bjt g=3+taper(5,A)*40 vp=4.2 vn=2.6 soft=2; hpf R=100k C=22n; lpf R=10k C=1.5n; bjt g=12 vp=3.6 vn=2.2 soft=2; hpf R=470k C=2.2n; lpf R=47k C=1n; bjt g=8 vp=3.2 vn=2.4 soft=2; hpf R=220k C=4.7n; lpf R=22k C=1n; gain db=sw(7,0,3); bjt g=5 vp=3 vn=2.4 soft=1.8; lpf R=10k C=2.7n; lshelf f=sw(2,55,80) Q=0.6 g=lin(1,-7,7); peak f=700 Q=0.7 g=lin(3,-5,5); hshelf f=3500 Q=0.6 g=lin(4,-6,6); gate thr=taper(6,A)*0.04 atk=0.5 rel=70 hold=25 floor=60; vol a=taper(0,A)*0.45; rail rail=1.41",
+  "stereo": false,
+  "notes": "Distorsione ad alto guadagno progettata con Van Halen (2015): stessa piattaforma dell'EVH 5150 (ingresso 740k, uscita 1k) con un quarto stadio di guadagno a saturazione morbida asimmetrica, BOOST che aggiunge +3 dB nel preamp e +3 dB nello stadio finale (manuale Dunlop), EQ BASS +-7 dB (mensola con BASS SHIFT 55/80 Hz), MID +-5 dB a 700 Hz, TREBLE +-6 dB a 10 kHz e noise gate a soglia. Tipo e numero degli stadi, filtri interstadio stimati (schema non pubblicato).",
+  "control_notes": "Il pulsante BOOST e' reso come selettore a 2 posizioni (un solo deviatore per pedale: BASS SHIFT)."
+ },
+ "csp265": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HI",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LO",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "HI CUT",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "HI CUT"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; opni Rg=4.7k Cg=1u Rf=pot(1,220k,A)+4.7k Cf=220p rail=3.8; hpf R=100k C=100n; cebias g=6 vsw=7 q=0.38 s=0.05 k=2; hpf R=100k C=100n; lpf R=sw(4,1k,6.8k) C=10n; lshelf f=180 Q=0.6 g=lin(3,-12,12) rail=4; hshelf f=2500 Q=0.6 g=lin(2,-12,12) rail=4; vol a=taper(0,A)*0.6; rail rail=4.4",
+  "stereo": false,
+  "notes": "Concetto Tube Driver con un FET al posto della valvola: preamp a op-amp non invertente (DRIVE 220kA, primo clipping ai binari), stadio a JFET a legge quasi quadratica polarizzato fuori centro (saturazione morbida e asimmetrica, armoniche pari), HI CUT che abbassa il passa-basso prima dell'EQ (da ~16 kHz a ~2.3 kHz) ed EQ attivo HI/LO tipo Baxandall +-12 dB. Componenti non pubblicati: valori stimati.",
+  "control_notes": "Il pulsante HI CUT e' reso come levetta."
+ },
+ "tbm1": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "mid",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PRESENCE",
+    "role": "presence",
+    "default": 0.0,
+    "units": "db",
+    "lo": 0.0,
+    "hi": 7.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=700k C=22n; bjt g=2+taper(4,A)*45 vp=3.6 vn=2.4 soft=2; hpf R=470k C=4.7n; lpf R=22k C=470p; bjt g=14 vp=3.4 vn=2.2 soft=2; hpf R=100k C=22n; lshelf f=90 Q=0.6 g=lin(1,-24,5); peak f=500 Q=0.8 g=lin(2,-7,7); hshelf f=2200 Q=0.7 g=lin(3,-7,7)+-14*lin(3,1,0)*lin(2,1,0)*lin(2,1,0)*lin(2,1,0); gain db=-2; bjt g=1.5 vp=3.4 vn=3 soft=2.5; vol a=taper(0,A)*0.3; peak f=4000 Q=0.7 g=lin(5,0,7); rail rail=1.41",
+  "stereo": false,
+  "notes": "Amp in a box della testata 50 W di Morello: preamp a due stadi saturati (GAIN), EQ interattivo con le gamme del manuale Dunlop (BASS +4/-21 dB a 50 Hz, MIDDLE +-7 dB a 500 Hz, TREBLE +-7 dB a 5 kHz che diventa +7/-21 dB con MIDDLE al minimo), stadio di recupero, VOLUME prima del loop e PRESENCE +7 dB a 4 kHz sull'uscita. Uno stack passivo Marshall (FMV) non raggiunge queste gamme: EQ reso con mensole/campana equivalenti e termine di interazione TREBLE-MIDDLE. Stadi e valori stimati (schema non pubblicato).",
+  "control_notes": "Il loop effetti (SEND/RETURN) non cambia il suono senza pedali nel loop ed e' omesso."
+ },
+ "eg74": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OUTPUT",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=470k C=22n; fbclip Rg=4.7k Cg=100n Rf=51k+pot(2,1M,A) Cf=51p d=si up=1 dn=1 rail=4.2; tonets R7=1k C4=220n P=20k t=taper(0,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(1,A)*4.5; rail rail=4.4",
+  "stereo": false,
+  "notes": "Overdrive a op-amp con diodi in retroazione (struttura Tube Screamer): DRIVE 21-47 dB a 1 kHz come da manuale Dunlop (Rf 51k + 1M A, Rg 4k7 con 100n: gobba dei medi spostata a ~340 Hz per i medi 'bilanciati'), tono attivo TS e buffer d'uscita a bassa impedenza. Topologia e valori stimati."
+ },
+ "yjm308": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=10n; opni Rg=4.7k+potr(1,500k,A) Cg=47n Rf=1M Cf=0 rail=3.6; lpf R=1+div(1M,4.7k+potr(1,500k,A)) C=159n; dclip R=10k C=1n d=si; vol a=taper(0,A)*5.6; rail rail=4.4",
+  "stereo": false,
+  "notes": "Famiglia DOD 250 (erede del DOD YJM308): op-amp non invertente con Rf 1M e GAIN 500k in serie a 4k7 e 47n nel ramo verso massa (guadagno 3-214), banda limitata dal prodotto guadagno-banda (1 MHz, stima), coppia 1N914 verso massa dopo 10k con 1n e LEVEL passivo. Valori del DOD 250 (stima)."
+ },
+ "rr104": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "OUTPUT",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=10n; opni Rg=4.7k+potr(1,1M,A) Cg=47n Rf=1M Cf=0 rail=3.6; lpf R=1+div(1M,4.7k+potr(1,1M,A)) C=159n; dclip R=10k C=1n d=ge; vol a=taper(0,A)*8; rail rail=4.4",
+  "stereo": false,
+  "notes": "Distortion+ (ElectroSmash/Aion): op-amp 741 non invertente con Rf 1M e DISTORTION 1M A + 4k7 + 47n verso massa (guadagno 2-214), banda limitata dal 741 (GBW 1 MHz), due diodi al germanio verso massa dopo 10k con 1n, OUTPUT 10kA. Valori del Distortion+ standard (la scelta dei componenti 'abbinati' all'esemplare di Rhoads non e' pubblicata)."
+ },
+ "bmreverse": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "TONE BYP",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "TONE",
+     "BYPASS"
+    ],
+    "short": null
+   }
+  ],
+  "config": "fbinv Ri=39k Ci=1u Rf=470k Cf=470p Rb=47.39k A=5.551m*par(15k,470k,potr(2,100k,B)+par(pot(2,100k,B)+1k,15.53k)) Ahf=5.551m*par(15k,470k,potr(2,100k,B)+par(pot(2,100k,B)+1k,8.759k)) fp=89 rail=4.05 railn=3.72 soft=4; hpf R=100k C=100n; gain a=div(pot(2,100k,B)+1k,101k); fbinv Ri=8.2k+par(potr(2,100k,B),pot(2,100k,B)+1k) Ci=100n Rf=470k Cf=470p Cd=1u d=si Rb=47.39k A=77.15 Ahf=29.25 fp=89 rail=4.05 railn=3.72 soft=4; fbinv Ri=8.2k Ci=100n Rf=470k Cf=470p Cd=1u d=si Rb=47.39k A=72.69 Ahf=36.28 fp=910 rail=4.05 railn=3.72 soft=4; tap n=7; nodal R.i.a=10 R.a.l=39k C.l.0=10n C.a.h=4n R.h.0=22k R.l.w=pot(1,100k,B) R.w.h=potr(1,100k,B) C.w.b=100n R.b.0=91.99k E.b.0.x=-4.356 R.x.c=10k R.c.b=390k OUT.c=1 rail=2.55 railn=5.28; tap n=6; recall n=7; gain a=0.6; nodal R.i.w=14.54k C.w.b=100n R.b.0=91.99k E.b.0.x=-4.356 R.x.c=10k R.c.b=390k OUT.c=1 rail=2.55 railn=5.28; mix n=6 wet=sw(3,0,1) dry=sw(3,1,0); hpf R=100k C=1u; vol a=taper(0,B); rail rail=4.4",
+  "stereo": false,
+  "notes": "Big Muff V6 'reverse logo' (scheda EH-3034, uguale al V3 tone bypass): 4 x 2N5088, ingresso 1u/39k, collettori 15k, emettitori 100R, coppie 1N914 in serie a 1u, retroazioni 470p, SUSTAIN 100kB con 1k, tono 39k/10n - 4n/22k (notch ~1.1 kHz) risolto per nodi con Q4 (10k/2k2, 390k). TONE BYPASS: Q4 preso direttamente dal collettore di Q3 (piu' medi; sorgente con la resistenza d'uscita di Q3, livello del ramo tarato sul dato di Kit Rae: +8 dB RMS sul riff rispetto al tono a ore 12). Valori del foglio Aion/Kit Rae; beta 500 e polarizzazione calcolate (stima).",
+  "control_notes": "Etichette abbreviate (max 10 caratteri): TONE BYP = TONE BYPASS."
+ },
+ "littlemuffop": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=10n; opinv Ri=10k Rf=100k Cf=100p rail=3.6; hpf R=10k C=1u; fbinv Ri=10k Rf=1M Cf=100p d=ge A=2e5 Ahf=200 fp=20 rail=3.6 soft=8; hpf R=100k C=100n; vol a=taper(0,A)*3.5; rail rail=4.4",
+  "stereo": false,
+  "notes": "Little Muff Pi / Muff Fuzz a operazionale (replica PedalPCB Mini Muffin): doppio 4558, primo stadio invertente a guadagno fisso (x10, stima: R2/R3 non riportati), secondo stadio invertente con 1M e due 1N34A in antiparallelo in retroazione (clipping al germanio morbido), condensatore d'uscita 100n e VOLUME A100k. Guadagni e piccoli condensatori stimati.",
+  "control_notes": "Un solo comando VOLUME come sull'originale."
+ },
+ "micrometal": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "TOP BOOST",
+    "role": "boost",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "HIGH",
+     "OFF",
+     "LOW"
+    ],
+    "short": [
+     "HIGH",
+     "OFF",
+     "LOW"
+    ]
+   }
+  ],
+  "config": "hpf R=1M C=22n; opni Rg=1k Cg=4.7u Rf=pot(2,100k,A)+1k Cf=100p rail=3.8; dclip R=2.2k C=4.7n d=si; hpf R=10k C=100n; opni Rg=2.2k Cg=1u Rf=47k Cf=220p rail=3.8; dclip R=1k C=10n d=si; peak f=750 Q=0.8 g=lin(1,-15,15); peak f=4500 Q=2.5 g=sw(3,15,0,8); vol a=taper(0,A)*1.5; rail rail=4.4",
+  "stereo": false,
+  "notes": "Micro Metal Muff: nucleo del Metal Muff (buffer, due stadi 4558 con clipping a diodi al silicio verso massa, valori del metalmuff 3A) con un solo controllo dei medi +-15 dB (TONE) e TOP BOOST a deviatore: picco stretto sugli acuti a due livelli (HIGH/LOW). Livelli del Top Boost e frequenze stimati.",
+  "control_notes": "Il pomello TONE agisce sui medi (+-15 dB, manuale EHX); levetta a 3 posizioni resa come selettore."
+ },
+ "pocketmetal": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "SCOOP",
+    "role": "mode",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "HIGH",
+     "LOW",
+     "OFF"
+    ],
+    "short": [
+     "HIGH",
+     "LOW",
+     "OFF"
+    ]
+   }
+  ],
+  "config": "hpf R=1M C=22n; opni Rg=1k Cg=4.7u Rf=pot(1,100k,A)+1k Cf=100p rail=3.8; dclip R=2.2k C=4.7n d=si; hpf R=10k C=100n; opni Rg=2.2k Cg=1u Rf=47k Cf=220p rail=3.8; dclip R=1k C=10n d=si; peak f=750 Q=0.7 g=sw(2,-14,-7,0); vol a=taper(0,A)*1.6; rail rail=4.4",
+  "stereo": false,
+  "notes": "Pocket Metal Muff: nucleo del Metal Muff (due stadi 4558 con diodi al silicio verso massa) senza EQ regolabile, con SCOOP a deviatore: incavo fisso dei medi a 750 Hz di -14 dB (HIGH) o -7 dB (LOW). Profondita' e frequenza dello scoop stimate.",
+  "control_notes": "Levetta a 3 posizioni resa come selettore."
+ },
+ "nanometal": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GATE",
+    "role": "threshold",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -14.0,
+    "hi": 14.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=22n; opni Rg=1k Cg=4.7u Rf=pot(2,100k,A)+1k Cf=100p rail=3.8; dclip R=2.2k C=4.7n d=si; hpf R=10k C=100n; opni Rg=2.2k Cg=1u Rf=47k Cf=220p rail=3.8; dclip R=1k C=10n d=si; lshelf f=120 Q=0.6 g=lin(5,-14,14); peak f=750 Q=0.8 g=lin(4,-15,15); hshelf f=3500 Q=0.6 g=lin(3,-10,10); gate thr=taper(1,A)*0.06 atk=0.5 rel=60 hold=25 floor=60; vol a=taper(0,A)*1.5; rail rail=4.4",
+  "stereo": false,
+  "notes": "Nano Metal Muff: nucleo del Metal Muff (due stadi 4558 con diodi al silicio verso massa) con EQ attivo BASS +-14, MID +-15, TREBLE +-10 dB (manuale EHX) e noise gate a soglia (GATE tutto a sinistra = escluso). Frequenze dell'EQ e tempi del gate stimati."
+ },
+ "bmwicker": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "TONE SW",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "ON",
+     "OFF"
+    ],
+    "short": [
+     "ON",
+     "OFF"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "WICKER",
+    "role": "voice",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "fbinv Ri=39k Ci=1u Rf=470k Cf=sw(4,470p,0) Rb=46.9k A=5.661m*par(10k,470k,potr(2,100k,B)+par(pot(2,100k,B)+560,19.98k)) Ahf=5.661m*par(10k,470k,potr(2,100k,B)+par(pot(2,100k,B)+560,10.58k)) fp=1372 rail=4.05 railn=4.00 soft=4; hpf R=100k C=470n; gain a=div(pot(2,100k,B)+560,100.6k); fbinv Ri=10k+par(potr(2,100k,B),pot(2,100k,B)+560) Ci=1u Rf=470k Cf=sw(4,470p,0) Cd=1u d=si Rb=46.9k A=37.58 Ahf=28.1 fp=1372 rail=4.05 railn=4.00 soft=4; fbinv Ri=10k Ci=1u Rf=470k Cf=sw(4,470p,0) Cd=2.2u d=si Rb=46.9k A=50.75 Ahf=29.94 fp=1025 rail=4.05 railn=4.00 soft=4; tap n=7; nodal R.i.a=10 R.a.l=27k C.l.0=10n C.a.h=3.3n R.h.0=27k R.l.w=pot(1,100k,B) R.w.h=potr(1,100k,B) C.w.b=470n R.b.0=92.04k E.b.0.x=-4.323 R.x.c=10k R.c.b=470k OUT.c=1 rail=2.16 railn=5.80; tap n=6; recall n=7; gain a=0.6; nodal R.i.w=9.792k C.w.b=470n R.b.0=92.04k E.b.0.x=-4.323 R.x.c=10k R.c.b=470k OUT.c=1 rail=2.16 railn=5.80; mix n=6 wet=sw(3,0,1) dry=sw(3,1,0); hpf R=100k C=1u; vol a=taper(0,B); rail rail=4.4",
+  "stereo": false,
+  "notes": "Big Muff with Tone Wicker (PCB EC-D47): 4 x BC550C, emettitori 120R, collettori 10k, R7 560R, coppie 1N914 in serie a 1u (Q2) e 2u2 (Q3), tono 27k/10n - 3n3/27k (notch ~1.4 kHz), recupero 10k/2k2 con 470k. WICKER scollega le tre retroazioni da 470p (C2/C5/C8: suono piu' aspro e aperto), TONE OFF esclude il tone stack (Q4 pilotato dal collettore di Q3, livello tarato come il V6: stima). Valori Aion/Kit Rae; beta stimata.",
+  "control_notes": "La levetta TONE (ON/OFF) e' resa come selettore 'TONE SW' (un solo deviatore per pedale: WICKER)."
+ },
+ "bmdlxbass": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GATE",
+    "role": "threshold",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HPF",
+    "role": "hpf",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 115.0,
+    "hi": 1000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LPF",
+    "role": "lpf",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 60.0,
+    "hi": 10000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "INPUT",
+    "role": "pad",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "0 dB",
+     "-10 dB"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "CROSSOVER",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "gain db=sw(7,0,-10); tap n=5; tap n=4; hpf2 f=log(5,115,1000) Q=0.707; mix n=4 wet=sw(8,0,1) dry=sw(8,1,0); fbinv Ri=39k Ci=100n Rf=470k Cf=470p Rb=67.62k A=2.154m*par(12k,470k,potr(3,100k,B)+par(pot(3,100k,B)+1k,27.41k)) Ahf=2.154m*par(12k,470k,potr(3,100k,B)+par(pot(3,100k,B)+1k,11.31k)) fp=816 rail=3.85 railn=4.28 soft=4; hpf R=100k C=100n; gain a=div(pot(3,100k,B)+1k,101k); fbinv Ri=10k+par(potr(3,100k,B),pot(3,100k,B)+1k) Ci=100n Rf=470k Cf=470p Cd=47n d=si Rb=67.62k A=23.98 Ahf=11.86 fp=816 rail=3.85 railn=4.28 soft=4; fbinv Ri=10k Ci=100n Rf=470k Cf=470p Cd=47n d=si Rb=67.62k A=22.71 Ahf=9.36 fp=827 rail=3.85 railn=4.28 soft=4; nodal R.i.a=10 R.a.l=11.5k C.l.0=10n C.a.h=3.9n R.h.0=22k R.l.w=pot(2,100k,B) R.w.h=potr(2,100k,B) C.w.b=100n R.b.0=92.71k E.b.0.x=-3.537 R.x.c=10k R.c.b=470k OUT.c=1 rail=1.94 railn=6.00; hpf R=100k C=100n; gate thr=taper(4,A)*0.08 atk=0.5 rel=60 hold=30 floor=60; tap n=3; recall n=5; tap n=4; lpf2 f=log(6,60,10000) Q=0.707; mix n=4 wet=sw(8,0,1) dry=sw(8,1,0); gain a=lin(1,1.2,0); mix n=3 wet=1 dry=taper(1,B); vol a=taper(0,B); rail rail=4.4",
+  "stereo": false,
+  "notes": "Deluxe Bass Big Muff (Pisani/Tuzman/Maisano): nucleo Bass Big Muff a 4 transistor (valori del bmbassxo: Black Russian con passa-basso del tono 11k5), pad d'ingresso 0/-10 dB, CROSSOVER inseribile (passa-alto 2o ordine 115 Hz-1 kHz prima della distorsione, passa-basso 2o ordine 60 Hz-10 kHz sul pulito), noise gate sul ramo distorto e BLEND pulito/distorto prima del VOLUME. Gamme del crossover (dichiarate per il Deluxe Bass Big Muff Pi 2) e gate stimati; l'uscita DI non e' modellata.",
+  "control_notes": "Il footswitch CROSSOVER e' reso come selettore; uscite DIRECT/DI omesse."
+ },
+ "bmsovdlx": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GATE",
+    "role": "threshold",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDS LEVEL",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDS FREQ",
+    "role": "midfreq",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 310.0,
+    "hi": 5000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "WICKER",
+    "role": "voice",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MIDS Q",
+    "role": "q",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "HIGH",
+     "LOW"
+    ],
+    "short": [
+     "HI",
+     "LO"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "MIDS",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "tap n=5; fbinv Ri=39k Ci=100n Rf=470k Cf=sw(7,470p,0) Rb=65.03k A=2.151m*par(12k,470k,potr(3,100k,B)+par(pot(3,100k,B)+1k,27.26k)) Ahf=2.151m*par(12k,470k,potr(3,100k,B)+par(pot(3,100k,B)+1k,11.32k)) fp=734 rail=3.82 railn=4.32 soft=4; hpf R=100k C=100n; gain a=div(pot(3,100k,B)+1k,101k); fbinv Ri=10k+par(potr(3,100k,B),pot(3,100k,B)+1k) Ci=100n Rf=470k Cf=sw(7,470p,0) Cd=47n d=si Rb=65.03k A=23.96 Ahf=11.78 fp=734 rail=3.82 railn=4.32 soft=4; fbinv Ri=10k Ci=100n Rf=470k Cf=sw(7,470p,0) Cd=47n d=si Rb=65.03k A=22.84 Ahf=11.12 fp=839 rail=3.82 railn=4.32 soft=4; nodal R.i.a=10 R.a.l=20k C.l.0=10n C.a.h=3.9n R.h.0=22k R.l.w=pot(2,100k,B) R.w.h=potr(2,100k,B) C.w.b=100n R.b.0=91.88k E.b.0.x=-3.536 R.x.c=10k R.c.b=470k OUT.c=1 rail=1.93 railn=6.01; hpf R=100k C=100n; peak f=log(6,310,5000) Q=sw(8,2.2,0.7) g=lin(5,-10,10)*sw(9,0,1); gate thr=taper(4,A)*0.08 atk=0.5 rel=60 hold=30 floor=60; mix n=5 wet=taper(1,B) dry=lin(1,0.18,0); vol a=taper(0,B); rail rail=4.4",
+  "stereo": false,
+  "notes": "Sovtek Deluxe Big Muff (Maisano/Pisani): nucleo Green Russian / Civil War a 4 transistor (emettitori 390R, collettori 12k, diodi in serie a 47n, tono 20k/10n - 3n9/22k, notch ~1.7 kHz) con WICKER (retroazioni 470p scollegate), sezione MIDS +-10 dB 310 Hz-5 kHz con Q alto/basso inserita dal footswitch MIDS, noise gate e BLEND pulito/distorto. Nucleo come il Civil War (EHX/Kit Rae); EQ, gate e blend stimati.",
+  "control_notes": "Il footswitch MIDS e' reso come selettore; il buffer d'ingresso interno resta su UNBUFFERED (fabbrica)."
+ },
+ "bmgerm4": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "OD VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OD TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OD BIAS",
+    "role": "bias",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OD GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DS VOLUME",
+    "role": "level2",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DS VOLTS",
+    "role": "volts",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DS BIAS",
+    "role": "bias2",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DS GAIN",
+    "role": "gain2",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "OVERDRIVE",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "DISTORTION",
+    "role": "mode2",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "hpf R=200k C=100n; tap n=0; cebias g=5+taper(7,A)*60 vsw=lin(5,2.5,8.5) q=lin(6,0.08,0.75) s=0.05 k=3; lpf R=10k C=2.2n; hpf R=47k C=1u; cebias g=4 vsw=lin(5,2.5,8.5) q=0.5 s=0.06 k=2; hpf R=100k C=47n; gain a=taper(4,A)*0.35; mix n=0 wet=sw(9,0,1) dry=sw(9,1,0); tap n=1; cebias g=2+taper(3,A)*25 vsw=8 q=lin(2,0.2,0.8) s=0.05 k=2.5; hpf R=47k C=1u; cebias g=3 vsw=8 q=0.5 s=0.05 k=2; lpf R=log(1,40k,2k) C=4.7n; hpf R=100k C=47n; gain a=taper(0,A)*1.3; mix n=1 wet=sw(8,0,1) dry=sw(8,1,0); rail rail=4.4",
+  "stereo": false,
+  "notes": "Due circuiti indipendenti di Bob Myer a due transistor al germanio NOS NKT275 ciascuno (nessuna parentela col Big Muff a 4 stadi), in serie con la DISTORTION prima dell'OVERDRIVE: DISTORTION = fuzz a due stadi con GAIN, BIAS (punto di lavoro del primo transistor) e VOLTS (alimentazione ridotta: meno escursione, suono da batteria scarica); OVERDRIVE = booster a due stadi con GAIN, BIAS e TONE a un pomello. Ogni sezione si inserisce col proprio footswitch. Valori dei componenti non pubblicati: stimati.",
+  "control_notes": "I due footswitch OVERDRIVE / DISTORTION sono resi come levetta e selettore. Etichette: OD = sezione OVERDRIVE, DS = sezione DISTORTION."
+ },
+ "bmhwplugin": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "TONE BYP",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "TONE",
+     "BYPASS"
+    ],
+    "short": [
+     "TONE",
+     "BYP"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "WICKER",
+    "role": "voice",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "fbinv Ri=33k Ci=100n Rf=470k Cf=sw(4,470p,0) Rb=29.86k A=5.874m*par(12k,470k,potr(2,100k,B)+par(pot(2,100k,B)+560,15.35k)) Ahf=5.874m*par(12k,470k,potr(2,100k,B)+par(pot(2,100k,B)+560,8.774k)) fp=105 rail=4.05 railn=4.15 soft=4; hpf R=100k C=100n; gain a=div(pot(2,100k,B)+560,100.6k); fbinv Ri=8.2k+par(potr(2,100k,B),pot(2,100k,B)+560) Ci=100n Rf=470k Cf=sw(4,470p,0) Cd=100n d=si Rb=29.86k A=66.4 Ahf=28.44 fp=105 rail=4.05 railn=4.15 soft=4; fbinv Ri=8.2k Ci=100n Rf=470k Cf=sw(4,470p,0) Cd=100n d=si Rb=29.86k A=63.05 Ahf=36.86 fp=800 rail=4.05 railn=4.15 soft=4; tap n=7; nodal R.i.a=10 R.a.l=33k C.l.0=10n C.a.h=4n R.h.0=33k R.l.w=pot(1,100k,B) R.w.h=potr(1,100k,B) C.w.b=100n R.b.0=87.66k E.b.0.x=-4.224 R.x.c=12k R.c.b=470k OUT.c=1 rail=2.11 railn=5.86; tap n=6; recall n=7; gain a=0.6; nodal R.i.w=11.7k C.w.b=100n R.b.0=87.66k E.b.0.x=-4.224 R.x.c=12k R.c.b=470k OUT.c=1 rail=2.11 railn=5.86; mix n=6 wet=sw(3,0,1) dry=sw(3,1,0); hpf R=100k C=100n; vol a=taper(0,B); rail rail=4.4",
+  "stereo": true,
+  "notes": "Big Muff Hardware Plugin: circuito analogico Violet Ram's Head 1973 (valori del bmvioletrh: 33k d'ingresso, collettori 12k, R7 560R, diodi in serie a 100n, tono 33k/10n - 4n/33k, recupero 12k/2k7) duplicato in stereo, con WICKER e TONE BYPASS a pulsante (ramo di bypass come il V6, livello stimato); i comandi motorizzati e l'interfaccia USB non cambiano il suono. Valori come la Violet Ram's Head (dichiarazione EHX); beta stimata.",
+  "control_notes": "Pulsanti TONE BYPASS (selettore 'TONE BYP') e WICKER (levetta); HEADPHONE LVL, DIRECT MONITOR e PANIC agiscono solo su cuffia/USB e sono omessi."
+ },
+ "bmpi2": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=117k C=100n; opni Rg=10k Cg=1u Rf=pot(1,500k,A)+1k Cf=47p rail=3.9; lpf R=4.7k C=4.7n; hpf R=10k C=1u; fbinv Ri=10k Rf=150k Cf=330p d=si A=2e5 Ahf=300 fp=30 rail=3.9 soft=8; nodal R.i.a=100 R.a.l=39k C.l.0=10n C.a.h=4n R.h.0=22k R.l.w=pot(2,100k,B) R.w.h=potr(2,100k,B) R.w.0=100k OUT.w=1; opni Rg=10k Cg=1u Rf=47k Cf=100p rail=3.9; hpf R=100k C=1u; vol a=taper(0,A)*1.6; rail rail=4.4",
+  "stereo": false,
+  "notes": "Big Muff Pi 2 (progetto di Bob Myer di fine anni '70 ricostruito da JHS): due doppi op-amp: preamp non invertente con SUSTAIN (x1-500, clipping ai binari: suono piu' dinamico e 'crispy'), filtro 4k7/4n7, stadio invertente con coppia di diodi al silicio in retroazione (150k con 330p), tono Big Muff 39k/10n - 4n/22k su 100kB e recupero x5.7. EHX dichiara solo '2 dual op-amps': struttura interna e valori stimati."
+ },
+ "bmpi2bass": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "BASS BOOST",
+    "role": "bass",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "ON",
+     "OFF"
+    ],
+    "short": null
+   }
+  ],
+  "config": "tap n=5; hpf R=117k C=100n; opni Rg=10k Cg=1u Rf=pot(2,500k,A)+1k Cf=47p rail=3.9; lpf R=4.7k C=4.7n; hpf R=10k C=1u; fbinv Ri=10k Rf=150k Cf=330p d=si A=2e5 Ahf=300 fp=30 rail=3.9 soft=8; nodal R.i.a=100 R.a.l=39k C.l.0=10n C.a.h=4n R.h.0=22k R.l.w=pot(3,100k,B) R.w.h=potr(3,100k,B) R.w.0=100k OUT.w=1; opni Rg=10k Cg=1u Rf=47k Cf=100p rail=3.9; hpf R=100k C=1u; lshelf f=100 Q=0.6 g=sw(4,8,0); mix n=5 wet=taper(1,B) dry=lin(1,2,0); vol a=taper(0,A)*2.2; rail rail=4.4",
+  "stereo": false,
+  "notes": "Bass Big Muff Pi 2: nucleo a due doppi op-amp del Big Muff Pi 2 (SUSTAIN, diodi in retroazione, tono Big Muff) con BASS BOOST (mensola +8 dB sotto ~100 Hz sul distorto) e BLEND pulito/distorto (0 = tutto pulito). Valori stimati (EHX dichiara solo la struttura a due doppi op-amp).",
+  "control_notes": "Levetta BASS BOOST: ON in alto, OFF in basso."
+ },
+ "bmpi2wick": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "TONE SW",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "ON",
+     "OFF"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "WICKER",
+    "role": "voice",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OFF",
+     "HALF",
+     "FULL"
+    ],
+    "short": [
+     "OFF",
+     "HALF",
+     "FULL"
+    ]
+   }
+  ],
+  "config": "hpf R=117k C=100n; opni Rg=10k Cg=1u Rf=pot(2,500k,A)+1k Cf=47p rail=3.9; lpf R=4.7k C=sw(4,4.7n,2.2n,0.1n); hpf R=10k C=1u; fbinv Ri=10k Rf=150k Cf=sw(4,330p,150p,0) d=si A=2e5 Ahf=300 fp=30 rail=3.9 soft=8; tap n=7; nodal R.i.a=100 R.a.l=39k C.l.0=10n C.a.h=4n R.h.0=22k R.l.w=pot(1,100k,B) R.w.h=potr(1,100k,B) R.w.0=100k OUT.w=1; tap n=6; recall n=7; gain a=0.35; mix n=6 wet=sw(3,0,1) dry=sw(3,1,0); opni Rg=10k Cg=1u Rf=47k Cf=100p rail=3.9; hpf R=100k C=1u; vol a=taper(0,A)*1.6; rail rail=4.4",
+  "stereo": false,
+  "notes": "Big Muff Pi 2 with Tone Wicker: nucleo a due doppi op-amp del Big Muff Pi 2 con WICKER a tre posizioni che apre i filtri degli acuti (retroazione 330p -> 150p -> nessuna, passa-basso 4k7 con 4n7 -> 2n2 -> escluso) e TONE OFF che esclude il tone stack (livello allineato a ore 12). Valori stimati.",
+  "control_notes": "La levetta TONE (ON/OFF) e' resa come levetta 'TONE SW'; WICKER a 3 posizioni come selettore."
+ },
+ "bmpi2dlx": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GATE",
+    "role": "threshold",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDS LEVEL",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDS FREQ",
+    "role": "midfreq",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 310.0,
+    "hi": 5000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "WICKER",
+    "role": "voice",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OFF",
+     "HALF",
+     "FULL"
+    ],
+    "short": [
+     "OFF",
+     "HALF",
+     "FULL"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "MIDS Q",
+    "role": "q",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "HIGH",
+     "LOW"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MIDS",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "tap n=5; hpf R=117k C=100n; opni Rg=10k Cg=1u Rf=pot(3,500k,A)+1k Cf=47p rail=3.9; lpf R=4.7k C=sw(7,4.7n,2.2n,0.1n); hpf R=10k C=1u; fbinv Ri=10k Rf=150k Cf=sw(7,330p,150p,0) d=si A=2e5 Ahf=300 fp=30 rail=3.9 soft=8; nodal R.i.a=100 R.a.l=39k C.l.0=10n C.a.h=4n R.h.0=22k R.l.w=pot(2,100k,B) R.w.h=potr(2,100k,B) R.w.0=100k OUT.w=1; opni Rg=10k Cg=1u Rf=47k Cf=100p rail=3.9; hpf R=100k C=1u; peak f=log(6,310,5000) Q=sw(8,2.2,0.7) g=lin(5,-10,10)*sw(9,0,1); gate thr=taper(4,A)*0.08 atk=0.5 rel=60 hold=30 floor=60; mix n=5 wet=taper(1,B) dry=lin(1,2,0); vol a=taper(0,A)*1.6; rail rail=4.4",
+  "stereo": false,
+  "notes": "Deluxe Big Muff Pi 2: nucleo a due doppi op-amp del Big Muff Pi 2 con BLEND pulito/distorto, noise gate, WICKER a tre posizioni e sezione MIDS parametrica +-10 dB 310 Hz-5 kHz (Q alto/basso) inserita dal footswitch MIDS. Gamma dei MIDS presa dal Deluxe Big Muff (stima); valori stimati.",
+  "control_notes": "Il footswitch MIDS e' reso come selettore; ingresso EXP/CV omesso."
+ },
+ "bmpi2dlxb": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GATE",
+    "role": "threshold",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HPF",
+    "role": "hpf",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 115.0,
+    "hi": 1000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LPF",
+    "role": "lpf",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 60.0,
+    "hi": 10000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "INPUT",
+    "role": "pad",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "0 dB",
+     "-10 dB"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "CROSSOVER",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "gain db=sw(7,0,-10); tap n=5; tap n=4; hpf2 f=log(5,115,1000) Q=0.707; mix n=4 wet=sw(8,0,1) dry=sw(8,1,0); hpf R=117k C=100n; opni Rg=10k Cg=1u Rf=pot(3,500k,A)+1k Cf=47p rail=3.9; lpf R=4.7k C=4.7n; hpf R=10k C=1u; fbinv Ri=10k Rf=150k Cf=330p d=si A=2e5 Ahf=300 fp=30 rail=3.9 soft=8; nodal R.i.a=100 R.a.l=39k C.l.0=10n C.a.h=4n R.h.0=22k R.l.w=pot(2,100k,B) R.w.h=potr(2,100k,B) R.w.0=100k OUT.w=1; opni Rg=10k Cg=1u Rf=47k Cf=100p rail=3.9; hpf R=100k C=1u; gate thr=taper(4,A)*0.08 atk=0.5 rel=60 hold=30 floor=60; tap n=3; recall n=5; tap n=4; lpf2 f=log(6,60,10000) Q=0.707; mix n=4 wet=sw(8,0,1) dry=sw(8,1,0); gain a=lin(1,2,0); mix n=3 wet=1 dry=taper(1,B); vol a=taper(0,A)*2.2; rail rail=4.4",
+  "stereo": false,
+  "notes": "Deluxe Bass Big Muff Pi 2: nucleo a due doppi op-amp del Big Muff Pi 2 con pad 0/-10 dB, CROSSOVER (passa-alto 2o ordine 115 Hz-1 kHz sul distorto, passa-basso 2o ordine 60 Hz-10 kHz sul pulito, gamme dal manuale EHX), noise gate e BLEND pulito/distorto. Struttura del nucleo e gate stimati; l'uscita DI non e' modellata.",
+  "control_notes": "Il footswitch CROSSOVER e' reso come selettore; uscite DIRECT/DI omesse."
+ },
+ "bmlittle70": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "fbinv Ri=39k Ci=1u Rf=470k Cf=470p Rb=47.39k A=5.551m*par(15k,470k,30k+par(70k+1k,15.53k)) Ahf=5.551m*par(15k,470k,30k+par(70k+1k,8.759k)) fp=89 rail=4.05 railn=3.72 soft=4; hpf R=100k C=100n; gain a=div(70k+1k,101k); fbinv Ri=8.2k+par(30k,70k+1k) Ci=100n Rf=470k Cf=470p Cd=1u d=si Rb=47.39k A=77.15 Ahf=29.25 fp=89 rail=4.05 railn=3.72 soft=4; fbinv Ri=8.2k Ci=100n Rf=470k Cf=470p Cd=1u d=si Rb=47.39k A=72.69 Ahf=36.28 fp=910 rail=4.05 railn=3.72 soft=4; nodal R.i.a=10 R.a.l=39k C.l.0=10n C.a.h=4n R.h.0=22k R.l.w=50k R.w.h=50k C.w.b=100n R.b.0=91.99k E.b.0.x=-4.356 R.x.c=10k R.c.b=390k OUT.c=1 rail=2.55 railn=5.28; hpf R=100k C=1u; vol a=taper(0,B); rail rail=4.4",
+  "stereo": false,
+  "notes": "Little Big Muff a transistor (EH3034, 1979): stessa scheda del V6 (4 x 2N5088, collettori 15k, diodi in serie a 1u, tono 39k/10n - 4n/22k) con resistenze fisse al posto di TONE (equivalente a ore 12) e SUSTAIN (equivalente al 70 %); resta solo il VOLUME. Valori delle resistenze fisse non documentati: stimati.",
+  "control_notes": "Un solo comando VOLUME come sull'originale."
+ },
+ "bmdeluxe78": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "tap n=5; hpf R=56k C=150n; opinv Ri=56k Rf=330k Cf=0 rail=3.6; gain a=taper(2,B)*0.999+0.001; opni Rg=62k Cg=10n Rf=560k Cf=0 rail=3.6; hpf R=8.2k C=1u; fbinv Ri=8.2k Rf=470k Cf=330p d=si up=3 dn=3 A=2e5 Ahf=200 fp=8 rail=3.6 soft=8; nodal R.i.a=10 R.a.l=5.6k C.l.0=120n C.a.h=150n R.h.0=1.2k R.l.w=pot(1,10k,B) R.w.h=potr(1,10k,B) R.w.0=47k OUT.w=1; hpf R=100k C=100n; mix n=5 wet=taper(3,B) dry=lin(3,2.2,0); vol a=taper(0,A)*1.8; rail rail=4.4",
+  "stereo": false,
+  "notes": "Deluxe Big Muff di fine anni '70 (Howard Davis): nucleo del Big Muff a op-amp V4 (stessa netlist del bmopamp: 4558 x5.9, SUSTAIN 10kB, 4558 x10, 741 con 3+3 1N914, tono 5k6/120n - 150n/1k2) con BLEND che miscela il pulito (versione 'blend' citata da Kit Rae). Funzioni deluxe e livelli del blend non documentati: stimati.",
+  "control_notes": "Comandi stimati (pagina Kit Rae in costruzione): VOLUME, TONE, SUSTAIN e BLEND della versione 'blend'."
+ },
+ "ehlpb2ube": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE L",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE R",
+    "role": "gain2",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VOLUME L",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VOLUME R",
+    "role": "level2",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "INPUT",
+    "role": "pad",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LO",
+     "HI"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=22n; gain a=sw(4,1,0.3); chgain l=taper(0,A)*4+0.05 r=taper(1,A)*4+0.05; triode Rp=100k Rk=1.5k B=250 byp=1; hpf R=470k C=22n; gain a=0.18; triode Rp=100k Rk=1.5k B=250 byp=1; hpf R=470k C=47n; chgain l=taper(2,A)*0.05 r=taper(3,A)*0.05; rail rail=9",
+  "stereo": true,
+  "notes": "Preamp a valvole stereo: due canali indipendenti, ciascuno con un doppio triodo 12AX7WB ad alta tensione (due stadi a catodo comune 100k/1k5 bypassato, modello di Koren) con DRIVE prima del primo triodo e VOLUME d'uscita; INPUT LO = livello strumento, HI = linea (attenuazione di ~10 dB, stima). Il canale sinistro usa DRIVE/VOLUME L, il destro DRIVE/VOLUME R. Tensioni, partitori e attenuazione HI stimati; il collegamento in serie dei due canali (cavetto esterno) non e' modellato.",
+  "control_notes": "Levetta INPUT LEVEL resa come 'INPUT' (LO/HI); in mono si sente il canale sinistro."
+ },
+ "ehlpb3": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "toggle",
+    "label": "MAX",
+    "role": "range",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "20 dB",
+     "33 dB"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "Q",
+    "role": "q",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LOW",
+     "HIGH"
+    ],
+    "short": [
+     "LOW",
+     "HIGH"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "BOOST",
+    "role": "level",
+    "default": 0.75,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID LVL",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PRE-GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "db",
+    "lo": 0.0,
+    "hi": 20.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID FREQ",
+    "role": "midfreq",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 240.0,
+    "hi": 3300.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=100n; gain db=lin(5,0,20) rail=13.5; lshelf f=240 Q=0.6 g=lin(7,-15,15) rail=13.5; peak f=log(6,240,3300) Q=sw(1,0.7,2) g=lin(3,-15,15) rail=13.5; hshelf f=3200 Q=0.6 g=lin(4,-15,15) rail=13.5; vol a=taper(2,A)*sw(0,1,4.47); rail rail=13.5",
+  "stereo": false,
+  "notes": "Preamp pulito a op-amp con binari +-15 V: PRE-GAIN 0-20 dB, EQ attivo con BASS a mensola sotto 240 Hz, MID semiparametrico 240 Hz-3,3 kHz (Q LOW larga / HIGH stretta) e TREBLE a mensola sopra 3,2 kHz (piatti a ore 12), stadio d'uscita con guadagno massimo complessivo 20 o 33 dB (MAX) e BOOST come volume; nessun clipping (uscita fino a +22 dBu). Frequenze dal manuale EHX; gamme dei tagli/esaltazioni (+-15 dB) e Q stimati.",
+  "control_notes": "Il selettore interno BYPASS MODE non cambia il suono ed e' omesso; mini-levetta Q resa come selettore."
+ },
+ "ehaxis": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FUZZ",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=40k C=100n; bjt g=100 vp=2.0 vn=6.0 soft=2.5; tap n=0; hpf R=30k C=100n; bjt g=100 vp=2.0 vn=6.0 soft=2.5; hpf R=50k C=3.3n; tap n=1; recall n=0; hpf R=50k C=3.3n; mix n=1 wet=lin(1,1,0) dry=taper(1,B); vol a=taper(0,A)*0.6; rail rail=4.4",
+  "stereo": false,
+  "notes": "Fuzz a due transistor al silicio (2N5133) in cascata tipo Mosrite Fuzzrite: emettitori bypassati (guadagno ~100 per stadio), collettori polarizzati in basso (escursione asimmetrica ~2 V verso la saturazione, ~6 V verso l'interdizione), uscite dei due stadi prese con 3n3 ai capi del pot FUZZ: il cursore miscela il segnale meno saturo e invertito di Q1 con quello di Q2 (cancellazioni a meta' corsa, suono sottile). Polarizzazione e guadagni stimati dal layout effectslayouts."
+ },
+ "ehknockout": {
+  "family": "Circuit",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LOW",
+    "role": "low",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRY",
+    "role": "dry",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HIGH",
+    "role": "high",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=390k C=100n; tap n=0; lpf2 f=85 Q=0.555; lpf2 f=85 Q=0.802; lpf2 f=85 Q=2.247; lpf R=10k C=187n; gain a=taper(0,B)*3.2; rail rail=4; rail rail=4; tap n=1; recall n=0; hpf2 f=6500 Q=0.518; hpf2 f=6500 Q=0.707; hpf2 f=6500 Q=1.932; gain a=taper(2,B)*6; rail rail=4; mix n=1 wet=1 dry=1; mix n=0 wet=1 dry=taper(1,B)*2; rail rail=4.4",
+  "stereo": false,
+  "notes": "Reissue XO dell'Attack Equalizer: diretto (DRY) + passa-basso Butterworth a 7 poli a 85 Hz (LOW) + passa-alto a 6 poli a 6,5 kHz (HIGH) con guadagno elevato nei rami filtrati, ingresso 390k; stessa netlist dell'ehattackeq (3A) con i comandi rinominati come sulla ristampa. Circuito della reissue non documentato: assunto uguale."
+ },
+ "ehhotwax": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "HT VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HT DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "CR VOL",
+    "role": "level2",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "CR DRIVE",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "HOT TUBES",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "CRAYON",
+    "role": "mode2",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "hpf R=2.2M C=22n; tap n=0; tap n=1; fbclip Rg=4.7k Cg=10u Rf=pot(3,500k,A)+4.7k Cf=100p d=si2 up=1 dn=1 rail=4; lpf R=10k C=2.2n; hpf R=10k C=10u; gain a=taper(2,A)*2.5; mix n=1 wet=sw(8,0,1) dry=sw(8,1,0); tap n=2; hpf R=120k C=100n; opni Rg=20k Cg=4.7u Rf=75k Cf=47p rail=3.8; fbinv Ri=8.2k+potr(1,2M,C) Ci=100n Rf=150k Cf=27p Rb=1.8M A=22 rail=3.9 railn=3.3 soft=2; fbinv Ri=3k Ci=150n Rf=200k Rb=2.2M A=22 rail=3.9 railn=3.3 soft=2; fbinv Ri=430k Ci=220n Rf=1M A=22 rail=3.9 railn=3.3 soft=2; hpf R=47k C=4.7u; gain a=taper(0,A)*0.3; mix n=2 wet=sw(7,0,1) dry=sw(7,1,0); lshelf f=120 Q=0.6 g=lin(4,-12,12) rail=4; hshelf f=2500 Q=0.6 g=lin(5,-12,12) rail=4; mix n=0 wet=taper(6,B)*sw(7,0,1)+taper(6,B)*sw(8,0,1)+-1*taper(6,B)*sw(7,0,1)*sw(8,0,1) dry=1+-1*taper(6,B)*sw(7,0,1)+-1*taper(6,B)*sw(8,0,1)+taper(6,B)*sw(7,0,1)*sw(8,0,1); rail rail=4.4",
+  "stereo": false,
+  "notes": "Doppio overdrive: buffer 2,2M, sezione Crayon (op-amp con GAIN e 1N4148 in retroazione, valori dell'ehcrayon) il cui VOL pilota la sezione Hot Tubes (inverter CMOS CD4049UBE, valori dell'ehhottubes senza il tono tipo Big Muff), EQ BASS/TREBLE comune tipo Baxandall (+-12 dB, stima) e BLEND col pulito; con entrambe le sezioni spente esce il segnale pulito. Le sezioni sono quelle dei pedali singoli (3A); EQ e blend stimati.",
+  "control_notes": "I due footswitch HOT TUBES / CRAYON sono resi come levetta e selettore; etichette HT = HOT TUBES, CR = CRAYON."
+ },
+ "ehbasssoulfood": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "PAD",
+    "role": "pad",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "-10 dB",
+     "0 dB"
+    ],
+    "short": null
+   }
+  ],
+  "config": "gain db=sw(4,-10,0); tap n=5; hpf R=1M C=100n; tap n=0; lpf R=15k C=100n; gain a=lin(1,1,0.12); tap n=1; recall n=0; opni Rg=2k Cg=82n+27n Rf=pot(1,100k,B)+680 Cf=390p rail=8.3; hpf R=10k C=1u; dclip R=1k C=0 d=sch; gain a=lin(1,0.5,1.6); mix n=1 wet=1 dry=1; lpf R=27k C=1.5n; hshelf f=1400 Q=0.5 g=lin(3,-8,0)+taper(3,A)*18 rail=8.3; hpf R=10k C=1u; mix n=5 wet=taper(2,B) dry=lin(2,1,0); vol a=taper(0,B)*2.5; rail rail=8.5",
+  "stereo": false,
+  "notes": "Soul Food per basso: pad d'ingresso -10/0 dB, circuito Soul Food (Klon semplificato a 18 V, valori dell'ehsoulfood 3A: ramo pulito passa-basso che cala col DRIVE, ramo di guadagno con Schottky, TREBLE attivo) e BLEND col basso pulito prima del VOL master. Eventuali ritocchi per il basso non documentati: stessi valori (stima).",
+  "control_notes": "Il deviatore interno Buffer/True bypass non cambia il suono ed e' omesso."
+ },
+ "ehoverlord": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRY",
+    "role": "dry",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BOOST",
+    "role": "boost",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "INPUT LVL",
+    "role": "pad",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "HI",
+     "NORM",
+     "LO"
+    ],
+    "short": [
+     "HI",
+     "NORM",
+     "LO"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "BOOST SW",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=22n; tap n=0; gain db=sw(7,6,0,-10); tap n=1; fbclip Rg=4.7k Cg=47n Rf=pot(5,500k,A)+10k Cf=51p d=si up=1 dn=1 rail=4; gain a=0.5; mix n=1 wet=sw(8,0,1) dry=sw(8,1,0); hpf R=100k C=47n; bjt g=2+taper(6,A)*28 vp=3.2 vn=1.6 soft=1.6; hpf R=220k C=10n; lpf R=22k C=1n; bjt g=6 vp=3 vn=1.8 soft=1.7; hpf R=470k C=4.7n; bjt g=3 vp=3 vn=2.1 soft=1.8; lpf R=10k C=3.3n; lshelf f=100 Q=0.6 g=lin(3,-12,12); peak f=750 Q=0.7 g=lin(2,-12,12); hshelf f=3000 Q=0.6 g=lin(1,-12,12); gain a=0.6; mix n=0 wet=lin(4,1,0) dry=taper(4,B)*6.5; vol a=taper(0,A); rail rail=4.4",
+  "stereo": true,
+  "notes": "Overdrive/distorsione stereo a JFET: INPUT LVL a 3 posizioni (HI +6 / NORM / LO -10 dB, stima), BOOST = overdrive 'da pedale' a op-amp con diodi in retroazione inserito dal footswitch davanti ai tre stadi JFET a saturazione morbida asimmetrica (GAIN sul primo, filtri interstadio come l'ehtortion), EQ attivo BASS/MID/TREBLE, DRY che dissolve dal 100 % effetto al 100 % pulito e VOL. Guadagni, frequenze e livelli stimati (schema non pubblicato).",
+  "control_notes": "Il footswitch BOOST e' reso come levetta 'BOOST SW'; il deviatore interno BOOST INDEPENDENT resta in posizione normale."
+ },
+ "ehsprucegoose": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "LIFT",
+    "role": "boost",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "0 dB",
+     "+9 dB",
+     "+21 dB"
+    ],
+    "short": [
+     "0",
+     "+9",
+     "+21"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=680k C=47n; gain db=sw(2,0,9,21) rail=4.2; opni Rg=10k Cg=100n Rf=pot(1,100k,A)+10k Cf=100p rail=4.2; hpf R=10k C=1u; fbclip Rg=4.7k Cg=100n Rf=22k Cf=1n d=si up=2 dn=2 rail=4.2; lshelf f=150 Q=0.6 g=lin(3,-12,12) rail=4.2; lpf R=log(4,22k,500) C=10n; hpf R=100k C=1u; vol a=taper(0,A)*1.6; rail rail=4.4",
+  "stereo": false,
+  "notes": "Overdrive ispirato al Marshall Bluesbreaker con boost d'ingresso LIFT 0/+9/+21 dB (manuale EHX): primo stadio a op-amp con GAIN, secondo stadio con due coppie di diodi al silicio in serie nella retroazione (rottura naturale), BASS attivo a mensola (piatto a ore 12) e TREBLE passa-basso, uscita maggiorata. Valori EHX non pubblicati: struttura e componenti del Bluesbreaker (stima).",
+  "control_notes": "Levetta LIFT a 3 posizioni resa come selettore."
+ },
+ "ehhellmelter": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "NORM/BURN",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "NORM",
+     "BURN"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID LVL",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HIGH",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LOW",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID FREQ",
+    "role": "midfreq",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 250.0,
+    "hi": 2500.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRY LVL",
+    "role": "dry",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GATE",
+    "role": "threshold",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "BOOST",
+    "role": "boost",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "hpf R=1M C=47n; tap n=0; gain db=sw(9,0,9); opni Rg=4.7k Cg=100n Rf=pot(1,470k,A)+4.7k Cf=47p rail=sw(2,4,6.5); dclip R=2.2k C=10n d=si up=sw(2,1,2) dn=sw(2,1,2); hpf R=10k C=470n; opni Rg=3.3k Cg=1u Rf=33k Cf=470p rail=sw(2,4,6.5); dclip R=1k C=22n d=si up=sw(2,1,2) dn=sw(2,1,2); gain a=sw(2,1,0.6); lshelf f=110 Q=0.7 g=lin(5,-15,15); peak f=log(6,250,2500) Q=1.2 g=lin(3,-15,15); hshelf f=1800 Q=0.7 g=lin(4,-15,15); gate thr=taper(8,A)*0.06 atk=0.5 rel=60 hold=25 floor=60; gain a=sw(9,1,1.4); mix n=0 wet=1 dry=taper(7,A)*4; vol a=taper(0,A)*1.4; rail rail=6",
+  "stereo": false,
+  "notes": "Distorsione 'chainsaw' (riferimento storico HM-2): due stadi a op-amp con DISTORTION e diodi verso massa, NORM = coppie di 1N914 con binari a 9 V, BURN = due diodi in serie per verso e binari piu' alti (convertitore interno, stima: meno compressione, piu' attacco), EQ attivo LOW / MID LVL + MID FREQ / HIGH (HIGH piu' basso di un normale treble), noise gate, DRY LVL col pulito e footswitch BOOST (+9 dB di guadagno e volume). Valori EHX non pubblicati: frequenze, binari e gate stimati.",
+  "control_notes": "Il footswitch BOOST e' reso come selettore; il trimmer interno BOOST LEVEL e' fisso (+3 dB, stima)."
+ },
+ "ehbassblogger": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "FUZZ/DRIVE",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "FUZZ",
+     "DRIVE"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=1u; tap n=0; fbclip Rg=10k Cg=1u Rf=pot(2,500k,A)+10k Cf=100p d=si up=1 dn=1 rail=4; gain a=sw(3,0,0.35); tap n=1; recall n=0; bjt g=5+taper(2,A)*150 vp=1.8 vn=1.2 soft=3; lpf R=10k C=2.2n; gain a=sw(3,1,0)*taper(0,A)*1.6; mix n=1 wet=1 dry=1; lshelf f=500 Q=0.5 g=lin(1,6,-6); hshelf f=500 Q=0.5 g=lin(1,-9,9); hpf R=100k C=1u; rail rail=4.4",
+  "stereo": false,
+  "notes": "Overdrive/fuzz per basso a due circuiti: DRIVE = op-amp con diodi al silicio in retroazione a guadagno d'uscita unitario (VOLUME inattivo), FUZZ = stadio a transistor ad alto guadagno con saturazione asimmetrica e VOLUME master; TONE comune a bilico (scuro/brillante) intorno a 500 Hz. Componenti non pubblicati: valori stimati.",
+  "control_notes": "L'uscita DRY passante non e' modellata."
+ },
+ "ehtriboro": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "TYPE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OVERDRIVE",
+     "DISTORTION",
+     "FUZZ"
+    ],
+    "short": [
+     "OD",
+     "DIST",
+     "FUZZ"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS/GATE",
+    "role": "bass",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREB/TONE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "CONTOUR",
+    "role": "voice",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "hpf R=2.2M C=22n; tap n=1; hpf R=10k C=47n; peak f=800 Q=0.8 g=6; mix n=1 wet=sw(5,0,1) dry=sw(5,1,0); tap n=2; fbclip Rg=4.7k Cg=47n Rf=pot(2,500k,A)+10k Cf=100p d=si up=1 dn=1 rail=4; lshelf f=120 Q=0.6 g=lin(3,-12,12); hshelf f=2500 Q=0.6 g=lin(4,-12,12); gain a=sw(0,2,0,0); tap n=3; recall n=2; opni Rg=2.2k Cg=1u Rf=pot(2,1M,A)+2.2k Cf=47p rail=4; dclip R=2.2k C=4.7n d=si; lshelf f=120 Q=0.6 g=lin(3,-12,12); hshelf f=2500 Q=0.6 g=lin(4,-12,12); gain a=sw(0,0,1.5,0); mix n=3 wet=1 dry=1; tap n=3; recall n=2; bjt g=10+taper(2,A)*300 vp=1.6 vn=1.2 soft=3; gate thr=taper(3,A)*0.05 atk=0.5 rel=50 hold=20 floor=70; lpf2 f=log(4,300,6000) Q=2.5; gain a=sw(0,0,0,0.8); mix n=3 wet=1 dry=1; vol a=taper(1,A)*1.2; rail rail=4.4",
+  "stereo": false,
+  "notes": "Drive digitale a tre algoritmi resi con stadi equivalenti: OVERDRIVE = clipping morbido a diodi in retroazione (dal compressore Platform), DISTORTION = op-amp ad alto guadagno con diodi verso massa, FUZZ = transistor ad altissimo guadagno con noise gate (BASS/GATE) e passa-basso risonante (TREB/TONE); in OD/DIST i due pomelli sono un EQ Baxandall bassi/acuti. CONTOUR = taglio dei bassi ed esaltazione dei medi prima degli algoritmi. Algoritmi DSP EHX non pubblicati: modello equivalente, valori stimati.",
+  "control_notes": "CONTOUR e' la funzione secondaria del pulsante TYPE (tenuto 2 s), resa come selettore. Etichette abbreviate: TREB/TONE = TREBLE/TONE."
+ },
+ "ehmainframe": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "FILTER",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "HPF",
+     "BPF",
+     "LPF"
+    ],
+    "short": [
+     "HPF",
+     "BPF",
+     "LPF"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FILT PEAK",
+    "role": "res",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FILT FREQ",
+    "role": "freq",
+    "default": 1.0,
+    "units": "hz",
+    "lo": 40.0,
+    "hi": 12000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BIT DEPTH",
+    "role": "bits",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SMPL RATE",
+    "role": "rate",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=2M C=22n; tap n=0; crush rate=log(6,48000,110) bits=lin(5,24,1) fs=1.5 env=1; tap n=1; hpf2 f=log(3,40,12000) Q=log(2,0.6,12); gain a=sw(0,1,0,0); tap n=2; recall n=1; bpf f=log(3,40,12000) Q=log(2,0.6,12); gain a=sw(0,0,1,0); mix n=2 wet=1 dry=1; tap n=2; recall n=1; lpf2 f=log(3,40,12000) Q=log(2,0.6,12); gain a=sw(0,0,0,1); mix n=2 wet=1 dry=1; mix n=0 wet=taper(4,B) dry=lin(4,1,0); vol a=taper(1,A)*6; rail rail=4.4",
+  "stereo": false,
+  "notes": "Bit crusher / riduttore di frequenza di campionamento: campionamento e tenuta da 48 kHz a 110 Hz senza filtro anti-aliasing (SMPL RATE) e quantizzazione da 24 a 1 bit (BIT DEPTH) con scala che segue l'inviluppo (modo 'con inviluppo' del manuale: stessa risoluzione per segnali forti e deboli; il modo a livelli fissi fa da gate), filtro risonante HPF/BPF/LPF di 2o ordine 40 Hz-12 kHz (FILT FREQ, FILT PEAK) dopo il crusher, BLEND col segnale diretto e VOL. Verso dei pomelli dalle gamme del manuale (24 -> 1 bit, 48 kHz -> 110 Hz), scala di quantizzazione e gamma del filtro stimate.",
+  "control_notes": "Preset, espressione e funzioni secondarie (guadagno d'ingresso, 4o ordine, crushing a inviluppo, Sample Rate Tuning) omessi. Etichette abbreviate: FILT PEAK = FILTER PEAK, FILT FREQ = FILTER FREQ, SMPL RATE = SAMPLE RATE."
+ },
+ "ehsatisplus": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "gain",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "FAT/NORM",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "FAT",
+     "NORM"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BIAS",
+    "role": "bias",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "gain a=taper(1,A); hpf R=30k C=sw(2,100n,22n); cebias g=90 vsw=3.5 q=lin(4,-0.08,0.70) s=0.035 k=3; lpf R=18k C=1.5n; bjt g=6 vp=3.4 vn=2.2 soft=2.5 inv=1; hpf R=100k C=sw(2,22n,4.7n); lshelf f=700 Q=0.5 g=lin(3,6,-6); hshelf f=700 Q=0.5 g=lin(3,-6,6); vol a=taper(0,A)*0.4; rail rail=4.4",
+  "stereo": false,
+  "notes": "Circuito del Satisfaction (Jordan Boss Tone: NPN con retroazione 2 x 560k, PNP accoppiato direttamente, uscita su 4n7) con BIAS sul primo transistor (stadio con punto di lavoro: a ore 12 come l'originale, antiorario verso l'interdizione = fuzz strozzato/gated, orario verso la saturazione = suono 'svuotato'), FAT che allarga i condensatori d'accoppiamento (100n/22n invece di 22n/4n7: piu' bassi) e TONE a bilico attivo +-6 dB intorno a 700 Hz (piatto a ore 12). Con NORM e BIAS/TONE a ore 12 coincide con l'ehsatisfaction (dichiarazione EHX). FAT e tilt stimati."
+ },
+ "ehflatiron": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FILTER",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=22n; nodal O.i.m.o=1 R.o.m=pot(1,100k,A) C.o.m=100p R.m.x=47 C.x.0=2.2u R.m.y=560 C.y.0=4.7u OUT.o=1 rail=4; lpf R=pot(1,100k,A)+43 C=3.7n; dclip R=1k C=0 d=si; lpf R=1.5k+potr(2,100k,C) C=3.3n; hpf R=100k C=22n; vol a=taper(0,A)*2; rail rail=4.4",
+  "stereo": false,
+  "notes": "Versione EHX del RAT 2: op-amp non invertente con DRIVE 100k A in retroazione (100p) e due rami verso massa 47R+2u2 / 560R+4u7 (fino a ~67 dB alle medie), banda limitata dal prodotto guadagno-banda dell'op-amp (1 MHz, stima), coppia di diodi al silicio verso massa dopo 1k (clipping duro simmetrico), FILTER passa-basso 1k5 + 100k con 3n3 (orario = piu' acuti, al contrario del RAT) e VOL. Valori del RAT 2 (stima: schema EHX non pubblicato)."
+ },
+ "ehrippedspeaker": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RIP",
+    "role": "bias",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FUZZ",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; gain a=taper(3,A)*1.5+0.01; hpf R=22k C=100n; cebias g=70 vsw=7 q=0.5+0.55*lin(1,-1,1)+0.25*lin(1,-1,1)*lin(1,-1,1)*lin(1,-1,1) s=0.03 k=4; lpf R=10k C=2.2n; hpf R=47k C=220n; bjt g=2.5 vp=3 vn=3 soft=2; lshelf f=800 Q=0.5 g=lin(2,7,-7); hshelf f=800 Q=0.5 g=lin(2,-7,7); hpf R=100k C=1u; vol a=taper(0,A)*0.6; rail rail=4.4",
+  "stereo": false,
+  "notes": "Fuzz a transistor che imita il cono strappato: FUZZ = guadagno d'ingresso, RIP = punto di lavoro del transistor (a ore 12 escursione simmetrica e suono piu' aperto; verso i due estremi il punto di lavoro va oltre l'interdizione o in saturazione: clipping asimmetrico sulla semionda superiore o inferiore e, agli estremi, suono strozzato/gated/sputter), stadio d'uscita attivo (100 ohm) con TONE a bilico +-7 dB intorno a 800 Hz (piatto a ore 12). Schema non pubblicato: struttura dal manuale EHX, valori stimati."
+ },
+ "ehlizardqueen": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OCTAVE",
+    "role": "octave",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BALANCE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=100n; fbinv Ri=10k Ci=100n Rf=1M d=si A=60 rail=3 railn=3 soft=3; hpf R=47k C=1u; tap n=0; rect g=2 mix=1 vk=0.05; lpf R=10k C=1n; hshelf f=1200 Q=0.6 g=lin(2,-10,8); gain a=taper(1,B)*lin(2,0.8,1.6); tap n=1; recall n=0; lpf R=log(2,15k,3k) C=4.7n; mix n=1 wet=lin(1,1,0.45) dry=1; bjt g=2 vp=2.5 vn=2.5 soft=2.5; vol a=taper(0,A)*1.5; rail rail=4.4",
+  "stereo": false,
+  "notes": "Octave fuzz a guadagno fisso (prototipo JHS/EHX): fuzz a un transistor a basso guadagno con diodo in retroazione collettore-base (stile Bazz Fuss) seguito da un raddrizzatore a transistor complementari (stile PushMe PullYou) che genera l'ottava superiore dosata da OCTAVE; BALANCE (pot 1k + 10u) sposta il carattere da SHADOW (scuro e morbido) a SUN (brillante e graffiante), piu' efficace con OCTAVE alto. Valori dal prototipo JHS, non dalla produzione EHX (stima)."
+ },
+ "ehlizardking": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OCTAVE",
+    "role": "octave",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "SUN/SHADOW",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SUN",
+     "SHADOW"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=1u; tap n=5; lshelf f=100 Q=0.6 g=sw(2,4,0); hshelf f=3000 Q=0.6 g=sw(2,4,0); tap n=4; recall n=5; hpf R=10k C=sw(2,2.2u,220n); fbinv Ri=10k Ci=1u Rf=1M d=si A=60 rail=3 railn=3 soft=3; tap n=0; rect g=2 mix=1 vk=0.05; lpf R=10k C=2.2n; gain a=taper(1,B)*1.4; tap n=1; recall n=0; mix n=1 wet=lin(1,1,0.45) dry=1; peak f=800 Q=0.8 g=sw(2,6,0); lpf R=log(4,40k,1k) C=10n; gain a=0.9; mix n=4 wet=taper(3,B) dry=lin(3,1,0); vol a=taper(0,A)*3; rail rail=4.4",
+  "stereo": false,
+  "notes": "Octave fuzz per basso (circuito del Lizard Queen ricalibrato): ramo pulito parallelo, fuzz Bazz Fuss + raddrizzatore d'ottava (OCTAVE), TONE passa-basso sul fuzz (tutto orario = aperto), BLEND pulito/fuzz e SUN/SHADOW: SUN = fuzz con piu' medi e pulito con piu' acuti e bassi, SHADOW = pulito invariato e fuzz piu' stretto (meno bassi). Valori stimati."
+ },
+ "ehgraphicfuzz": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "slider",
+    "label": "OVERDRIVE",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "DYNAMICS",
+    "role": "dynamics",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "SUSTAIN",
+    "role": "release",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "125 Hz",
+    "role": "b0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "250 Hz",
+    "role": "b1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "500 Hz",
+    "role": "b2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "1 kHz",
+    "role": "b3",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "2 kHz",
+    "role": "b4",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "4 kHz",
+    "role": "b5",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "FUZZ",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "ON",
+     "OFF"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=200k C=47n; tap n=0; tap n=1; opni Rg=1k Cg=4.7u Rf=pot(0,24k,B)+10 Cf=100p rail=4; dclip R=2.2k C=4.7n d=si; gain a=1.4; envvca src=0 atk=2 rel=log(2,100,10000) ref=0.05 pw=1 gmax=4 depth=taper(1,B); mix n=1 wet=sw(10,1,0) dry=sw(10,0,1); peak f=125 Q=log(3,0.05837,0.6489)+log(3,0.6489,0.05837) g=lin(3,-8.028,8.028)+6.972*lin(3,-1,1)*lin(3,-1,1)*lin(3,-1,1) rail=4; peak f=250 Q=log(4,0.05837,0.6489)+log(4,0.6489,0.05837) g=lin(4,-8.028,8.028)+6.972*lin(4,-1,1)*lin(4,-1,1)*lin(4,-1,1) rail=4; peak f=500 Q=log(5,0.05837,0.6489)+log(5,0.6489,0.05837) g=lin(5,-8.028,8.028)+6.972*lin(5,-1,1)*lin(5,-1,1)*lin(5,-1,1) rail=4; peak f=1000 Q=log(6,0.05837,0.6489)+log(6,0.6489,0.05837) g=lin(6,-8.028,8.028)+6.972*lin(6,-1,1)*lin(6,-1,1)*lin(6,-1,1) rail=4; peak f=2000 Q=log(7,0.05837,0.6489)+log(7,0.6489,0.05837) g=lin(7,-8.028,8.028)+6.972*lin(7,-1,1)*lin(7,-1,1)*lin(7,-1,1) rail=4; peak f=4000 Q=log(8,0.05837,0.6489)+log(8,0.6489,0.05837) g=lin(8,-8.028,8.028)+6.972*lin(8,-1,1)*lin(8,-1,1)*lin(8,-1,1) rail=4; vol a=taper(9,B)*0.4; rail rail=4.4",
+  "stereo": false,
+  "notes": "Fuzz con controllo dinamico ed EQ grafico: OVERDRIVE = stadio a op-amp con 28 dB di gamma di guadagno e diodi al silicio verso massa, DYNAMICS = VCA comandato dall'inviluppo del segnale d'ingresso (giu': fuzz a livello costante, su: il volume segue la pennata), SUSTAIN = rilascio dell'inviluppo 100 ms-10 s (manuale), EQ grafico a 6 bande (125 Hz-4 kHz, +-15 dB) a gyrator con legge Q/guadagno ricavata dall'analisi nodale, VOLUME; FUZZ OFF lascia solo l'EQ. Topologia interna stimata (schema non trovato).",
+  "control_notes": "Undici comandi a cursore/levetta come la reissue; il mini-interruttore ON-FUZZ-OFF e' reso come levetta 'FUZZ' (ON/OFF)."
+ },
+ "ehcockfightplus": {
+  "family": "Circuit",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BIAS",
+    "role": "bias",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "CRY/TALK",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "CRY",
+     "TALK"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "FUZZ",
+    "role": "fuzz",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "PRE",
+     "X",
+     "POST"
+    ],
+    "short": [
+     "PRE",
+     "X",
+     "POST"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "BOT",
+    "role": "bass",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=2.2M C=10n; tap n=1; tap n=0; bjt g=2+taper(3,A)*80 vp=lin(2,0.6,2.6) vn=lin(2,0.4,1.8) soft=2.2; lpf R=log(1,22k,1.2k) C=10n; gain a=0.08; mix n=0 wet=sw(6,1,0,0) dry=sw(6,0,1,1); tap n=0; bpf f=log(0,350,2200) Q=4.5; gain a=sw(5,5,0); tap n=2; recall n=0; formant v1=0 v2=2 v3=6 pos=taper(0,B) q=7; gain a=sw(5,0,8); mix n=2 wet=1 dry=1; tap n=0; bjt g=2+taper(3,A)*80 vp=lin(2,0.6,2.6) vn=lin(2,0.4,1.8) soft=2.2; lpf R=log(1,22k,1.2k) C=10n; gain a=0.08; mix n=0 wet=sw(6,0,0,1) dry=sw(6,1,1,0); tap n=3; recall n=1; lpf2 f=160 Q=0.7; gain a=taper(7,B)*1.1; mix n=3 wet=1 dry=1; vol a=taper(4,A)*9; rail rail=4.4",
+  "stereo": false,
+  "notes": "Cock Fight a bilanciere: stessa netlist dell'ehcockfight (3A) con la frequenza comandata dal bilanciere invece che da FREQ: passa-banda risonante 350-2200 Hz (CRY) o filtro a formanti OO-AH-EE (TALK), fuzz a due transistor (DRIVE, TONE, BIAS) prima (PRE) o dopo (POST) il filtro o escluso (X), BOT che reintegra i bassi e VOL. Schema non pubblicato: topologia dal manuale EHX, valori stimati.",
+  "control_notes": "Il primo comando e' il bilanciere (PEDAL); mini-levetta FUZZ PRE/X/POST resa come selettore."
+ },
+ "ehbenderroyale": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "FAT",
+    "role": "voice",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "ON",
+     "OFF"
+    ],
+    "short": [
+     "ON",
+     "OFF"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "CLIP",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "Ge",
+     "LED"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FUZZ",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BIAS",
+    "role": "bias",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1.1M C=47n; tap n=0; hpf R=100k C=sw(0,100n,10n); gain a=taper(5,A)*1.5+0.02; cebias g=40 vsw=7 q=lin(7,0.03,0.97) s=0.03 k=4; lpf R=10k C=2.2n; hpf R=47k C=sw(0,1u,100n); cebias g=12 vsw=sw(1,5,6) q=sw(1,0.42,0.3) s=sw(1,0.08,0.04) k=2; lshelf f=220 Q=0.6 g=lin(6,-14,0); hshelf f=2000 Q=0.6 g=lin(3,-10,10); gain a=0.5; mix n=0 wet=taper(4,B) dry=lin(4,1,0); vol a=taper(2,A)*1.2; rail rail=4.4",
+  "stereo": false,
+  "notes": "Fuzz a 3 transistor tipo Tone Bender MkIII: coppia d'ingresso al silicio (FUZZ = guadagno, BIAS = punto di lavoro: al centro normale, ai lati crunch/sputter) che pilota un transistor al germanio polarizzato da un diodo (CLIP Ge = clipping bilanciato e morbido, LED = polarizzazione piu' alta e suono piu' ruvido), FAT che allarga gli accoppiamenti (piu' bassi e medio-bassi), BASS passivo stile Tone Bender, TREBLE attivo a mensola +-10 dB e BLEND pulito/fuzz. Struttura dalla scheda EHX, valori stimati (riferimento MkIII, Aion Phobos).",
+  "control_notes": "Mini-levetta FAT resa come selettore (un solo deviatore per pedale: CLIP)."
+ },
+ "ehpercolator": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "BALANCE",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HARMONICS",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BIAS",
+    "role": "bias",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "DRIVE/FUZZ",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "DRIVE",
+     "FUZZ"
+    ],
+    "short": null
+   }
+  ],
+  "config": "gain a=taper(1,A); hpf R=70k C=1u; cebias g=8 vsw=6 q=lin(2,0.55,-0.15) s=0.06 k=2.5; hpf R=20k C=1u; bjt g=25 vp=3.5 vn=3 soft=2.2; lpf R=20k C=1n; tap n=1; dclip R=10k C=0 d=ge up=1 dn=2; mix n=1 wet=sw(3,0,1) dry=sw(3,1,0); hpf R=50k C=1u; vol a=taper(0,A)*1.5; rail rail=4.4",
+  "stereo": false,
+  "notes": "Rilettura dell'Interfax HP-1 Harmonic Percolator (riferimento Aion Particle): HARMONICS = attenuatore d'ingresso 100kA (Zin 70k), Q1 PNP al germanio a basso guadagno con BIAS (basso = overdrive morbido; salendo il punto di lavoro scende verso l'interdizione: raddrizzamento a semionda, timbro d'ottava, e infine fuzz gated; l'illusione di ottava inferiore del pedale vero non e' riprodotta), Q2 NPN al silicio, coppia di diodi al germanio asimmetrica 1:2 verso massa (FUZZ) o sollevata (DRIVE), BALANCE 50kA d'uscita. Valori dell'HP-1 originale, non della versione EHX (stima); trimmer interno a ore 12.",
+  "control_notes": "Il trimmer interno TRIM resta a ore 12 (fabbrica)."
+ },
+ "ehwhitefinger": {
+  "family": "Circuit",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "POST GAIN",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "SQUASH",
+    "role": "attack",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "LAMP/LED",
+    "role": "source",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LAMP",
+     "LED"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "COMPRESS",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PRE GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=22n; gain a=log(5,0.25,4); cebias g=10 vsw=34 q=0.45 s=0.05 k=2; hpf R=470k C=22n; gain db=-20; comp thr=log(4,0.3,0.012)+log(4,0.3,0.012)*sw(2,0,1)*sw(1,0,1) ratio=lin(4,2,10)*lin(3,0.7,1.5) knee=10 atk=sw(2,1,0)*sw(1,25,140)+sw(2,0,3) rel=sw(2,350,120)*log(3,2,0.5) lag=sw(2,70,0) dlp=sw(2,1800,0); gain db=lin(4,0,14); cebias g=8 vsw=34 q=0.45 s=0.05 k=2; hpf R=470k C=47n; vol a=taper(0,A)*1.6; rail rail=9",
+  "stereo": false,
+  "notes": "Compressore ottico 'passivo' come il Black Finger ma con preamplificatori a FET a 40 V (ampia dinamica): PRE GAIN dosa il segnale verso la soglia fissa del partitore resistenza + fotoresistenza (COMPRESS), sorgente luminosa LED (veloce, piatta) o lampada (attacco lento, inerzia termica, comprime meno gli acuti), SQUASH allunga l'attacco con la lampada e in LED riduce la compressione, SENSITIVITY rende la compressione piu' drammatica e percussiva (rapporto piu' alto, rilascio piu' rapido), recupero a FET a guadagno fisso e POST GAIN. Stessa struttura e costanti della netlist ehblackfinger (3A); FET, SENSITIVITY e tensioni stimati.",
+  "control_notes": "I due commutatori rotativi SQUASH e LAMP/LED sono resi come selettore e levetta. Etichette abbreviate: SENS = SENSITIVITY."
+ },
+ "ehplatform": {
+  "family": "Circuit",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "KNEE",
+    "role": "knee",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "HARD",
+     "SOFT"
+    ],
+    "short": [
+     "HARD",
+     "SOFT"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "LIMITER",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "COMP",
+     "LIMIT"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RELEASE",
+    "role": "release",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRV VOL",
+    "role": "level2",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "gain",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SWELL",
+    "role": "swell",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "DRIVE SW",
+    "role": "drive",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "hpf R=1M C=22n; tap n=0; comp thr=sw(1,0.0178,0)+sw(1,0,1)*log(5,1,0.0178) ratio=sw(1,1,0)*log(5,1.2,20)+sw(1,0,60) knee=sw(0,1,12) atk=log(3,0.5,100) rel=log(4,40,2000); gain db=sw(1,17.5,0)+-17.5*sw(1,1,0)*inv(log(5,1.2,20))+sw(1,0,1)*lin(5,0,17.5); tap n=1; fbclip Rg=4.7k Cg=47n Rf=pot(8,500k,A)+1k Cf=100p d=si up=1 dn=1 rail=4; lpf R=log(7,47k,1.5k) C=4.7n; gain a=taper(6,A)*2; mix n=1 wet=sw(10,0,1) dry=sw(10,1,0); atkvca src=0 trig=0.01 time=taper(9,A)*3000; vol a=taper(2,A)*8; rail rail=4.4",
+  "stereo": true,
+  "notes": "Compressore/limiter stereo con overdrive e swell (percorso: compressore -> overdrive -> swell): in modo compressore soglia fissa -35 dB e SUSTAIN = rapporto 1.2-20:1, in modo limiter rapporto ~60:1 e SUSTAIN = soglia; ATTACK 0.5-100 ms, RELEASE 40 ms-2 s, KNEE duro/morbido (1/12 dB), guadagno di recupero automatico, overdrive inseribile (DRIVE, TONE passa-basso, DRV VOL), SWELL = dissolvenza in entrata a ogni nuova nota (0 = escluso). Soglia e funzioni dal manuale EHX; tempi, recupero e drive stimati. Il rivelatore e' per canale (nel pedale la catena laterale somma L e R).",
+  "control_notes": "Pulsanti KNEE e LIMITER resi come selettore e levetta; il footswitch DRIVE come selettore 'DRIVE SW'. Etichette: VOL = master, DRV VOL = VOL della sezione drive."
+ },
+ "ehpicoplatform": {
+  "family": "Circuit",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "TYPE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "COMP",
+     "LIMIT"
+    ],
+    "short": [
+     "COMP",
+     "LIM"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=2.2M C=22n; tap n=0; comp thr=sw(0,0.0178,0)+sw(0,0,1)*log(2,1,0.0178) ratio=sw(0,1,0)*log(2,1.2,20)+sw(0,0,60) knee=6 atk=log(3,0.5,100) rel=300; gain db=sw(0,17.5,0)+-17.5*sw(0,1,0)*inv(log(2,1.2,20))+sw(0,0,1)*lin(2,0,17.5); mix n=0 wet=taper(4,B) dry=lin(4,1,0); vol a=taper(1,A)*8; rail rail=4.4",
+  "stereo": false,
+  "notes": "Compressore/limiter digitale (piattaforma NYC+DSP) con le leggi della Platform: compressore a soglia fissa -35 dB con SUSTAIN = rapporto, limiter con SUSTAIN = soglia, ATTACK 0.5-100 ms, rilascio fisso (300 ms, stima), BLEND secco/compresso (compressione parallela) e VOL. Tempi e recupero stimati.",
+  "control_notes": "Il pulsante TYPE e' reso come selettore."
+ },
+ "ehtonecorset": {
+  "family": "Circuit",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "PAD",
+    "role": "pad",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "PAD"
+    ],
+    "short": null
+   }
+  ],
+  "config": "gain db=sw(4,0,-10); tap n=0; comp thr=log(1,0.15,0.008) ratio=lin(1,2,12) knee=8 atk=log(3,1,60) rel=log(3,40,800); gain db=lin(1,2,24); mix n=0 wet=taper(2,B) dry=lin(2,1,0); vol a=taper(0,A)*4.5; rail rail=4.4",
+  "stereo": false,
+  "notes": "Compressore/sustainer analogico con compressione parallela: PAD -10 dB d'ingresso, SUSTAIN che abbassa la soglia (da -16 a -42 dBV) e alza il rapporto (2-12:1) con il recupero di guadagno, ATTACK che regola insieme attacco (1-60 ms) e recupero (40-800 ms: il manuale lo descrive come la velocita' di recupero), BLEND pulito/compresso e VOL (uscita 100 ohm). Topologia del VCA non pubblicata: tempi e soglie stimati."
+ },
+ "ehbasspreacher": {
+  "family": "Compressor",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "FAST",
+     "MED",
+     "SLOW"
+    ],
+    "short": [
+     "FAST",
+     "MED",
+     "SLOW"
+    ]
+   }
+  ],
+  "config": "type=sustainer topo=ff attack=2,50 release=400 maxgain=21 thr=-6,-24 ratio=2,12 knee=8 tone=4000",
+  "stereo": false,
+  "notes": "Compressore/sustainer per basso (Soul Preacher tarato per basso): riduzione massima ~21 dB con recupero fino al volume pieno (manuale EHX), sensibilita' -10..+2 dBu, ATTACK FAST (~2 ms, comprime subito) / MED (~10 ms) / SLOW (~50 ms, lascia passare i transitori). Tempi e soglie stimati.",
+  "control_notes": "Levetta ATTACK a 3 posizioni resa come selettore."
+ },
+ "ehsteelleather": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "EFFECT LVL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RESPONSE",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; tap n=0; hpf R=10k C=10n; bpf f=1600 Q=1.4; tap n=1; envvca src=1 atk=0.5 rel=40 ref=log(1,0.03,0.002) pw=1.5 gmax=4 gmin=0; gain a=taper(0,A)*1.5; mix n=0 wet=1 dry=1; rail rail=4.4",
+  "stereo": false,
+  "notes": "Espansore d'attacco per basso: una banda stretta intorno a 1,6 kHz (lo 'schiocco' della nota) passa per un espansore (forte piu' forte, piano piu' piano: guadagno proporzionale all'inviluppo della banda alla potenza 1.5, soglia da RESPONSE: basso = solo le note forti, alto = tutte), e l'effetto si somma al segnale pulito che resta costante (EFFECT LEVEL da 0 = solo pulito). Banda, rapporto e tempi stimati (circuito non pubblicato).",
+  "control_notes": "Etichette abbreviate: EFFECT LVL = EFFECT LEVEL."
+ },
+ "ehtubeeq": {
+  "family": "Circuit",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "FREQUENCY",
+    "role": "freq",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 80.0,
+    "hi": 5000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BP GAIN",
+    "role": "mid",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.77,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "Q",
+    "role": "q",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.77,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=22n; gain a=0.5; triode Rp=100k Rk=1.5k B=250 byp=1; hpf R=470k C=22n; gain db=-33; tap n=0; lshelf f=200 Q=0.6 g=lin(4,-20,6); hshelf f=2500 Q=0.6 g=lin(2,-20,6); tap n=1; recall n=0; envf mode=1 flo=log(0,80,5000) fhi=log(0,80,5000) q=log(3,0.7,40) sens=0 bpn=1 drive=1.5; gain a=lin(1,0.1,4); mix n=1 wet=1 dry=1; gain a=0.5; triode Rp=100k Rk=1.5k B=250 byp=1; hpf R=470k C=47n; gain db=-22; rail rail=9",
+  "stereo": false,
+  "notes": "Equalizzatore a valvole (2 x 12AX7WA): triodo d'ingresso, stack passivo a mensola BASS/TREBLE (a zero ogni banda scende di ~20 dB, al massimo +6 dB, stima) sommato a un passa-banda attivo parametrico (FREQUENCY 80 Hz-5 kHz, Q fino a ~40 vicino all'auto-oscillazione, BP GAIN da ~-20 dB = OFF a +12 dB), triodo di recupero. Ordine degli stadi, gamme e livelli stimati (schema non pubblicato); il pedale d'espressione/CV non e' modellato.",
+  "control_notes": "Etichette abbreviate: BP GAIN = BANDPASS GAIN; assegnazione dei pomelli superiori stimata."
+ },
+ "ehsilencer": {
+  "family": "Circuit",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "THRESHOLD",
+    "role": "threshold",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RELEASE",
+    "role": "decay",
+    "default": 0.4,
+    "units": "ms",
+    "lo": 8.0,
+    "hi": 4000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "REDUCTION",
+    "role": "range",
+    "default": 0.75,
+    "units": "db",
+    "lo": 4.0,
+    "hi": -70.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=2M C=22n; gate thr=taper(0,A)*0.1 atk=0.3 rel=log(1,8,4000) hold=10 fdb=lin(2,4,-70); rail rail=4.4",
+  "stereo": false,
+  "notes": "Noise gate analogico a rivelatore d'inviluppo: THRESHOLD (tutto antiorario = sempre aperto), RELEASE 8 ms-4 s e REDUCTION = guadagno a gate chiuso da +4 dB (tutto antiorario) a -70 dB (tutto orario), come da manuale EHX. Senza nulla nel loop il gate agisce sul segnale d'ingresso (jack RETURN con interruttore). Soglia e attacco stimati.",
+  "control_notes": "Il loop SEND/RETURN non e' modellato (nel plugin il gate agisce sull'ingresso)."
+ },
+ "ehsignalpad": {
+  "family": "Volume",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "volume",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "",
+  "stereo": false,
+  "notes": "Attenuatore passivo: potenziometro VOLUME collegato come il volume di una chitarra (1M logaritmico, stima), mai amplificazione; il footswitch lo inserisce/esclude. Il carico capacitivo del cavo a valle non e' modellato."
+ },
+ "ehswitchblade": {
+  "family": "Circuit",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "A/B",
+    "role": "select",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "A",
+     "B"
+    ],
+    "short": [
+     "A",
+     "B"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "A+B",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "pan mode=0 g=1; chgain l=sw(0,1,0)+sw(1,0,1)+-1*sw(0,1,0)*sw(1,0,1) r=sw(0,0,1)+sw(1,0,1)+-1*sw(0,0,1)*sw(1,0,1)",
+  "stereo": true,
+  "notes": "Selettore di canale passivo: l'ingresso va a OUT A (canale sinistro del plugin), a OUT B (destro) o a entrambi (A+B, che rende inattivo A/B); commutazione meccanica senza elettronica nel percorso. Le resistenze di scarica (100k per uscita, stima) caricano appena il pickup e non sono modellate.",
+  "control_notes": "I footswitch A/B e A+B sono resi come selettore e levetta; l'uscita TUNER non e' modellata."
+ },
+ "ehswitchbladepro": {
+  "family": "Circuit",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "A LEVEL",
+    "role": "levelA",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRY LEVEL",
+    "role": "dry",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "B LEVEL",
+    "role": "levelB",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "SER/PAR",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SERIES",
+     "PARALLEL"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "A/B",
+    "role": "select",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "A",
+     "B"
+    ],
+    "short": [
+     "A",
+     "B"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "A+B",
+    "role": "both",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "hpf R=2.2M C=22n; gain a=lin(1,0,2)+sw(3,1,0)*sw(5,1,0)*sw(4,1,0)*lin(0,0,2)+sw(3,1,0)*sw(5,1,0)*sw(4,0,1)*lin(2,0,2)+sw(3,1,0)*sw(5,0,1)*lin(0,0,2)*lin(2,0,2)+sw(3,0,1)*sw(5,1,0)*sw(4,1,0)*lin(0,0,2)+sw(3,0,1)*sw(5,1,0)*sw(4,0,1)*lin(2,0,2)+sw(3,0,1)*sw(5,0,1)*lin(0,0,2)+sw(3,0,1)*sw(5,0,1)*lin(2,0,2); rail rail=2.1",
+  "stereo": false,
+  "notes": "Switcher/mixer attivo a due loop: buffer d'ingresso 2,2M (headroom 4,2 Vpp), livelli dei ritorni A e B e del DRY con guadagno unitario a ore 12 e +6 dB a fondo corsa (manuale), SERIES = loop in cascata, PARALLEL = loop sommati; A/B sceglie il loop attivo, A+B li usa entrambi. Nel plugin i loop sono vuoti e valgono come collegamenti diretti (stima), quindi il pedale fa da mixer di livello del segnale; mute e relè non cambiano il suono a regime.",
+  "control_notes": "I footswitch A/B e A+B sono resi come selettori; selettori interni PHASE A/B omessi (a loop vuoti annullerebbero il segnale). Etichette abbreviate: SER/PAR = SERIES/PARALLEL."
+ },
+ "ehtriparallel": {
+  "family": "Circuit",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "RETURN 1",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SEND 1",
+    "role": "send",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "EQ 1",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RETURN 2",
+    "role": "level2",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SEND 2",
+    "role": "send2",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "EQ 2",
+    "role": "tone2",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RETURN 3",
+    "role": "level3",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SEND 3",
+    "role": "send3",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "EQ 3",
+    "role": "tone3",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MASTER VOL",
+    "role": "volume",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRY VOL",
+    "role": "dry",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "PHASE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 7.0,
+    "choices": [
+     "000",
+     "00R",
+     "0R0",
+     "0RR",
+     "R00",
+     "R0R",
+     "RR0",
+     "RRR"
+    ],
+    "short": [
+     "000",
+     "00R",
+     "0R0",
+     "0RR",
+     "R00",
+     "R0R",
+     "RR0",
+     "RRR"
+    ]
+   }
+  ],
+  "config": "hpf R=2.2M C=22n; tap n=0; gain a=lin(10,0,2); tap n=1; recall n=0; lshelf f=700 Q=0.5 g=lin(2,6,-6); hshelf f=700 Q=0.5 g=lin(2,-6,6); gain a=lin(1,0,2)*lin(0,0,2)*sw(11,1,1,1,1,-1,-1,-1,-1); mix n=1 wet=1 dry=1; tap n=1; recall n=0; lshelf f=700 Q=0.5 g=lin(5,6,-6); hshelf f=700 Q=0.5 g=lin(5,-6,6); gain a=lin(4,0,2)*lin(3,0,2)*sw(11,1,1,-1,-1,1,1,-1,-1); mix n=1 wet=1 dry=1; tap n=1; recall n=0; lshelf f=700 Q=0.5 g=lin(8,6,-6); hshelf f=700 Q=0.5 g=lin(8,-6,6); gain a=lin(7,0,2)*lin(6,0,2)*sw(11,1,-1,1,-1,1,-1,1,-1); mix n=1 wet=1 dry=1; tap n=1; vol a=lin(9,0,2); rail rail=4.4",
+  "stereo": false,
+  "notes": "Mixer attivo a tre loop in parallelo: buffer d'ingresso che alimenta tre mandate (SEND), tre ritorni (RETURN) con EQ a manopola singola (bilico +-6 dB intorno a 700 Hz, piatto al centro: stima) e fase 0/180, somma con il DRY e MASTER VOL. Nel plugin i loop sono vuoti e valgono come collegamenti diretti (stima), quindi il pedale miscela tre copie equalizzate del segnale e il diretto. Livelli: unitari a ore 12, +6 dB a fondo corsa (stima).",
+  "control_notes": "Le tre levette PHASE sono riunite in un selettore a 8 combinazioni (R = 180 gradi su canale 1/2/3); i footswitch CH 1-3 (logica di muting) non sono modellati: canali sempre attivi."
+ },
+ "ehsuperswitcher": {
+  "family": "Circuit",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "BOOST",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": 0.0,
+    "hi": 20.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "BOOST SW",
+    "role": "boost",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "TUNER",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "hpf R=2M C=22n; gain db=sw(1,0,1)*lin(0,0,20); gain a=sw(2,1,0); rail rail=4.4",
+  "stereo": true,
+  "notes": "Switcher programmabile a 8 loop a relè: nel plugin i loop sono tutti spenti (un loop attivo senza nulla collegato interromperebbe il segnale), quindi restano il buffer d'ingresso (2M) e il boost pulito stereo dopo il loop 8 (BOOST 0..+20 dB, inserito dal footswitch BOOST) e il TUNER che muta le uscite. Preset, MIDI, tap e uscite di controllo non cambiano il suono.",
+  "control_notes": "Footswitch BOOST e TUNER resi come levetta 'BOOST SW' e selettore; pulsanti L1-L8, PC/CC, display e VALUE omessi."
+ },
+ "ehchillswitch": {
+  "family": "Circuit",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "ENGAGE",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "THRU",
+     "FX"
+    ],
+    "short": [
+     "THRU",
+     "FX"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "MOMENTARY",
+    "role": "select",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "RELEASED",
+     "PRESSED"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=2.2M C=22n; gain a=sw(0,1,0)*sw(1,0,1)+sw(0,0,1)*sw(1,1,0); rail rail=4.4",
+  "stereo": false,
+  "notes": "Selettore di linea momentaneo a commutazione silenziosa: senza nulla nel loop funziona da kill switch. ENGAGE FX: footswitch premuto = muto; ENGAGE THRU: premuto = segnale, rilasciato = muto. Commutazione istantanea (rampa di un blocco, niente click), buffer 2,2M / 220 ohm.",
+  "control_notes": "Il footswitch momentaneo e' reso come levetta MOMENTARY (rilasciato/premuto); SEND (FSW/ON) agisce solo sul loop esterno ed e' omesso."
+ },
+ "ehvolume": {
+  "family": "Circuit",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "volume",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "HI-Z/LO-Z",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LO-Z",
+     "HI-Z"
+    ],
+    "short": null
+   }
+  ],
+  "config": "vol a=taper(0,A); hshelf f=3000 Q=0.6 g=sw(1,-3,0)",
+  "stereo": false,
+  "notes": "Pedale del volume passivo a potenziometro (tallone = muto, curva logaritmica, stima): HI-Z = elemento da 250k per strumenti passivi, LO-Z = 25k per tastiere e strumenti attivi; con un pickup passivo il carico di 25k toglie un po' di acuti (mensola -3 dB sopra ~3 kHz, stima del carico sul pickup).",
+  "control_notes": "Il primo comando e' il bilanciere (VOLUME); pulsante HI-Z/LO-Z reso come levetta."
+ },
+ "ehnextvolume": {
+  "family": "Volume",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "volume",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "",
+  "stereo": false,
+  "notes": "Pedale del volume attivo senza parti in movimento: buffer d'ingresso 1M, attenuatore elettronico comandato dal sensore d'inclinazione (calibrazione punta/tallone), uscita bufferizzata 1k; nel plugin il bilanciere comanda il volume con legge logaritmica.",
+  "control_notes": "Il primo comando e' il bilanciere (VOLUME); BYPASS VOLUME agisce solo in bypass e CALIBRATE non cambia il suono: omessi. L'uscita DIRECT non e' modellata."
+ },
+ "ehnextpan": {
+  "family": "Circuit",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PAN",
+    "role": "pan",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.6666666666666666,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "VOLUME",
+     "BLEND",
+     "PAN",
+     "STEREO"
+    ],
+    "short": [
+     "VOL",
+     "BLND",
+     "PAN",
+     "ST"
+    ]
+   }
+  ],
+  "config": "pan mode=sw(1,0,1,2,3) pos=taper(0,B) g=taper(0,A); rail rail=4.4",
+  "stereo": true,
+  "notes": "Pan / blend / volume stereo attivo senza parti in movimento: MODE VOLUME (ingresso sinistro, volume), BLEND (punta = solo ingresso sinistro, tallone = solo destro), PAN (punta = solo uscita sinistra, tallone = solo destra) e STEREO (volume uguale sui due canali); leggi a potenza costante per pan e blend e logaritmica per il volume (stima: leggi non dichiarate). Nel pedale il modo e' scelto dai jack inseriti.",
+  "control_notes": "Il primo comando e' il bilanciere (PAN); MODE sostituisce il rilevamento dei jack; CALIBRATE omesso."
+ },
+ "ehzipper": {
+  "family": "Circuit",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "RANGE",
+    "role": "sens",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "Q",
+    "role": "peak",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "LP/BP",
+    "role": "filter",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LP",
+     "BP"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "1",
+     "2"
+    ],
+    "short": [
+     "1",
+     "2"
+    ]
+   }
+  ],
+  "config": "hpf R=47k C=50n; gain db=10; rail rail=4; envf mode=sw(2,0,1) flo=180 fhi=2800 q=log(1,0.8,10) sens=lin(0,0,16) atk=sw(3,3,25) rel=sw(3,110,220) half=1 bpn=0.7; gain db=sw(2,-10,4); hpf R=10k C=1u; rail rail=4.4",
+  "stereo": false,
+  "notes": "Envelope follower anni '70 'piu' sofisticato del Doctor Q': rivelatore a semionda con due tempi d'attacco (levetta ATTACK 1 = rapido, 2 = lento, stima), filtro attivo a variabili di stato con uscite LP o BP e Q regolabile (0.8-10), RANGE = ampiezza dello sweep 180 Hz-2.8 kHz. Circuito non verificato: struttura del Doctor Q (3A) con Q variabile, valori stimati.",
+  "control_notes": "Funzione della levetta ATTACK (1/2) non documentata: resa come tempo d'attacco rapido/lento."
+ },
+ "ehytrig": {
+  "family": "Circuit",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "UP-DOWN",
+    "role": "sweep",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "RANGE",
+    "role": "range",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LO",
+     "HI"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=47k C=50n; tap n=0; gain db=6; sweep3 src=0 trig=0.015 start=log(0,1414,177)*sw(1,1,2.6) stop=log(0,177,1414)*sw(1,1,2.6) rate=250 res=0.6 drive=1.5 comp=0.5; gain db=4; hpf R=10k C=1u; rail rail=4.4",
+  "stereo": false,
+  "notes": "Filtro innescato dall'attacco della nota: a ogni nuova nota un generatore di rampa porta un passa-basso risonante a 3 poli da una frequenza all'altra in ~250 ms con forma fissa (non segue l'inviluppo come il Doctor Q); UP-DOWN = profondita' e verso intorno a 500 Hz (LO) / 1.3 kHz (HI): a ore 12 fermo, orario sweep in salita fino a 3 ottave (177 Hz -> 1.4 kHz in LO), antiorario in discesa. Circuito non verificato: funzionamento dalla scheda EDB, valori stimati."
+ },
+ "ehqueenwah": {
+  "family": "Circuit",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "Q",
+    "role": "peak",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RANGE",
+    "role": "range",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "WAH",
+     "TRIGGERED"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "LP/BP",
+    "role": "filter",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LP",
+     "BP"
+    ],
+    "short": [
+     "LP",
+     "BP"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "hpf R=470k C=47n; tap n=0; tap n=1; bpf f=log(0,300,2500)*log(2,0.6,1.6) Q=log(1,1.5,12); gain a=sw(4,0,1)*1.6; tap n=2; recall n=1; lpf2 f=log(0,300,2500)*log(2,0.6,1.6) Q=log(1,0.8,10); gain a=sw(4,1,0)*0.6; mix n=2 wet=1 dry=1; gain a=sw(3,1,0); tap n=3; recall n=0; envf mode=sw(4,0,1) flo=180*log(2,0.6,1.6) fhi=log(0,500,3500)*log(2,0.6,1.6) q=log(1,1.5,12) sens=12 atk=4 rel=180 bpn=0.6; gain a=sw(3,0,1)*1.6; mix n=3 wet=1 dry=1; lshelf f=120 Q=0.6 g=sw(5,0,8); hshelf f=3000 Q=0.6 g=sw(6,0,8); gain db=11; rail rail=4.4",
+  "stereo": false,
+  "notes": "Wah a pedale con filtro risonante a op-amp (uscite LP o BP, Q regolabile) comandato dal bilanciere (WAH) o da un inviluppo innescato dalla pennata (TRIGGERED, il bilanciere fissa il punto d'arrivo), RANGE che sposta la gamma (x0.6-x1.6) e levette di esaltazione BASS/TREBLE (+8 dB). Dati scarsi (forum EHX, elenco dei modelli): circuito, gamme e tempi stimati.",
+  "control_notes": "Il primo comando e' il bilanciere (PEDAL); levette rese come levetta (MODE) e selettori."
+ },
+ "ehcrytone": {
+  "family": "Circuit",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "TONE RANGE",
+    "role": "voice",
+    "default": 0.3333333333333333,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "LP",
+     "LOW MID",
+     "HIGH MID",
+     "HIGH"
+    ],
+    "short": [
+     "LP",
+     "LMID",
+     "HMID",
+     "HIGH"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "WAH",
+     "REVERSE",
+     "VOLUME"
+    ],
+    "short": [
+     "WAH",
+     "REV",
+     "VOL"
+    ]
+   }
+  ],
+  "config": "hpf R=470k C=47n; tap n=0; tap n=1; bpf f=sw(1,250,300,450,700)*sw(2,1,0,0)*log(0,1,5.5)+sw(1,250,300,450,700)*sw(2,0,1,0)*log(0,5.5,1)+sw(1,250,300,450,700)*sw(2,0,0,1)*2.3 Q=4; gain a=sw(1,0,1,1,1)*6.3; tap n=2; recall n=1; lpf2 f=sw(1,250,300,450,700)*sw(2,1,0,0)*log(0,1,5.5)+sw(1,250,300,450,700)*sw(2,0,1,0)*log(0,5.5,1)+sw(1,250,300,450,700)*sw(2,0,0,1)*2.3 Q=3; gain a=sw(1,1,0,0,0)*2.2; mix n=2 wet=1 dry=1; gain a=sw(2,1,1,0); tap n=3; recall n=0; gain a=sw(2,0,0,1)*taper(0,A); mix n=3 wet=1 dry=1; rail rail=4.4",
+  "stereo": false,
+  "notes": "Wah attivo a op-amp (senza induttore) con selettore di gamma a 4 voci (passa-basso risonante 250 Hz-1,4 kHz, passa-banda medio-basso 300 Hz-1,65 kHz, medio-alto 450 Hz-2,5 kHz, alto 700 Hz-3,9 kHz), MODE WAH (tallone = scuro), REVERSE (punta = scuro) o VOLUME (il bilanciere fa da pedale del volume). Circuito non verificato: gamme e Q stimati dalle descrizioni del forum EHX.",
+  "control_notes": "Il primo comando e' il bilanciere (PEDAL); il comando SWEEP RANGE elencato da EDB coincide con TONE RANGE (stima) ed e' omesso."
+ },
+ "ehnscrytone": {
+  "family": "Circuit",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; bpf f=log(0,350,2200) Q=5; gain db=17; hpf R=10k C=1u; rail rail=4.4",
+  "stereo": false,
+  "notes": "Wah senza parti in movimento: passa-banda risonante comandato elettronicamente dal sensore d'inclinazione (tallone scuro, punta brillante), stesso suono dichiarato del Wailer Wah. Gamma 350 Hz-2,2 kHz, Q 5 e guadagno al picco +8 dB stimati (valori non pubblicati).",
+  "control_notes": "Il primo comando e' il bilanciere (PEDAL); CALIBRATE non cambia il suono ed e' omesso."
+ },
+ "ehnscrybass": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FUZZ",
+    "role": "gain",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LPF VOL",
+    "role": "level",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=1u; tap n=0; bpf f=log(0,180,1100) Q=4; gain db=8; tap n=1; recall n=0; bjt g=200 vp=1.4 vn=1.4 soft=3; lpf R=10k C=4.7n; gain a=taper(1,A)*0.03; mix n=1 wet=1 dry=1; tap n=1; recall n=0; lpf2 f=194 Q=0.707; gain a=taper(2,A)*2; mix n=1 wet=1 dry=1; gain db=10; rail rail=4.4",
+  "stereo": false,
+  "notes": "Wah per basso senza parti in movimento: passa-banda risonante 180 Hz-1,1 kHz (risonanza accordata per il basso) con fuzz in parallelo miscelato dalla rotella FUZZ (al massimo anche un aumento di volume) e ramo passa-basso del 2o ordine fisso a 194 Hz (manuale) con livello LPF VOL. Gamma del wah e fuzz stimati.",
+  "control_notes": "Il primo comando e' il bilanciere (PEDAL); CALIBRATE omesso."
+ },
+ "ehnstalk": {
+  "family": "Circuit",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FUZZ LEVEL",
+    "role": "gain",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; tap n=0; bjt g=150 vp=1.5 vn=1.5 soft=3; lpf R=10k C=3.3n; gain a=taper(1,A)*0.04; mix n=0 wet=1 dry=1; formant v1=0 v2=2 v3=6 pos=taper(0,B) q=6; gain db=16; rail rail=4.4",
+  "stereo": false,
+  "notes": "Wah a formanti vocali senza parti in movimento (copia del PUE Talker secondo EDB): passa-banda delle formanti mossi insieme dal sensore (tallone OO, centro AH, punta EE; valori di Peterson-Barney) e fuzz fisso miscelato davanti al filtro con FUZZ LEVEL. Il pedale usa due formanti: qui la terza e' debole (modello comune dell'ehstm). Frequenze non pubblicate: stima.",
+  "control_notes": "Il primo comando e' il bilanciere (PEDAL); CALIBRATE omesso."
+ },
+ "ehtalkped": {
+  "family": "Circuit",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=470k C=47n; bjt g=1+taper(1,A)*60 vp=2 vn=1.6 soft=2.5; lpf R=10k C=4.7n; formant v1=2 v2=4 v3=6 pos=taper(0,B) q=8; gain db=4; rail rail=4.4",
+  "stereo": false,
+  "notes": "Talking Pedal anni '70: stadio di sustain/saturazione regolabile (SUSTAIN, stima) seguito da due filtri risonanti comandati da un potenziometro doppio nel bilanciere e accordati sulle formanti vocali (qui A -> E -> I dal tallone alla punta: con un pot doppio monotono O e U non sono raggiungibili). Circuito non verificato: filtri resi con il blocco a formanti, valori stimati.",
+  "control_notes": "Il primo comando e' il bilanciere (PEDAL)."
+ },
+ "ehriddle": {
+  "family": "Circuit",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "LP",
+     "BP",
+     "HP"
+    ],
+    "short": [
+     "LP",
+     "BP",
+     "HP"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.3,
+    "units": "ms",
+    "lo": 2.0,
+    "hi": 1500.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DECAY",
+    "role": "decay",
+    "default": 0.4,
+    "units": "ms",
+    "lo": 20.0,
+    "hi": 1500.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "START",
+    "role": "start",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 40.0,
+    "hi": 3000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "STOP",
+    "role": "stop",
+    "default": 0.7,
+    "units": "hz",
+    "lo": 80.0,
+    "hi": 5000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "Q",
+    "role": "peak",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "DISTORTION",
+    "role": "drive",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "hpf R=710k C=47n; tap n=0; tap n=1; bjt g=2+taper(7,A)*40 vp=1.5 vn=1.3 soft=2.5; gain a=0.15; mix n=1 wet=sw(8,0,1) dry=sw(8,1,0); envf mode=sw(1,0,1,2) flo=log(4,40,3000) fhi=log(5,80,5000) q=log(6,0.7,14) sens=log(7,2,60) atk=log(2,2,1500) rel=log(3,20,1500) bpn=0.7 src=0; gain db=sw(1,6,12,6); mix n=0 wet=taper(0,B) dry=lin(0,1,0); rail rail=4.4",
+  "stereo": false,
+  "notes": "Envelope filter multimodo: l'inviluppo del segnale pulito (SENSITIVITY) muove un filtro a variabili di stato LP/BP/HP con Q regolabile da START (40 Hz-3 kHz) a STOP (80 Hz-5 kHz, anche sotto START per sweep verso il basso), ATTACK = velocita' verso STOP (lento = suono 'ad arco'), DECAY = ritorno verso START; distorsione analogica inseribile col footswitch (intensita' da SENSITIVITY) e BLEND secco/effetto. Gamme dal manuale EHX; topologia e tempi stimati.",
+  "control_notes": "Il footswitch DISTORTION e' reso come selettore; il trimmer interno DISTORTION LEVEL e' fisso. Etichette abbreviate: SENS = SENSITIVITY."
+ },
+ "ehblurst": {
+  "family": "Circuit",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RESONANCE",
+    "role": "res",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RANGE",
+    "role": "range",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RATE",
+    "role": "rate",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "SHAPE",
+    "role": "wave",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "TRIANGLE",
+     "RAMP UP",
+     "RAMP DOWN"
+    ],
+    "short": [
+     "TRI",
+     "UP",
+     "DOWN"
+    ]
+   }
+  ],
+  "config": "hpf R=2.2M C=22n; tap n=0; lfovcf fmin=60 fmax=6000 center=taper(3,B) span=1+-0.78*lin(3,-1,1)*lin(3,-1,1) rate=log(4,0.1,12) shape=sw(5,0,1,2) res=taper(2,B) kmax=4.2 drive=1.2; gain db=14; mix n=0 wet=taper(1,B) dry=lin(1,1,0); vol a=taper(0,A)*7; rail rail=4.4",
+  "stereo": false,
+  "notes": "Filtro passa-basso analogico a 4 poli con risonanza (fino quasi all'auto-oscillazione, il filtrato perde volume come nei ladder) modulato da un LFO a controllo digitale: RATE 0.1-12 Hz, SHAPE triangolo / dente di sega salente / discendente, RANGE con fermo centrale (al centro la corsa piu' ampia 60 Hz-6 kHz, verso LO piu' stretta e piu' bassa, verso HI piu' stretta e piu' alta), BLEND e VOLUME. Gamme di frequenza e dell'LFO stimate.",
+  "control_notes": "TAP tempo, TAP DIVIDE ed EXP MODE agiscono solo con il footswitch TAP o un pedale d'espressione e sono omessi (velocita' da RATE)."
+ },
+ "ehdeepfreeze": {
+  "family": "Circuit",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "LATCH",
+     "MOMENT",
+     "AUTO"
+    ],
+    "short": [
+     "LTCH",
+     "MOM",
+     "AUTO"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "DRY",
+    "role": "dry",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "EFFECT",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SPEED",
+    "role": "time",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "tap n=0; freeze len=180 fin=log(3,15,2000) auto=sw(0,0,0,1) trig=0.02; gain a=taper(2,A)*3; mix n=0 wet=1 dry=taper(1,B)*2; rail rail=4.4",
+  "stereo": false,
+  "notes": "Sustainer digitale (motore Superego): cattura ~180 ms di suono e li prolunga a grani sovrapposti; SPEED = tempo di dissolvenza in entrata del congelato (15 ms-2 s), EFFECT e DRY = livelli del congelato e del diretto, MODE LATCH/MOMENT (nel plugin il footswitch cattura all'accensione) o AUTO (a ogni nuova nota la cattura riparte). Algoritmo DSP EHX non pubblicato: modello equivalente (blocco freeze della 3A).",
+  "control_notes": "GLISS (glissato tra le note congelate) e la stratificazione LAYER non sono modellati; SPEED/LAYER reso come 'SPEED'."
+ },
+ "ehswello": {
+  "family": "Circuit",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "FILTER",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OFF",
+     "LP LO Q",
+     "LP HI Q"
+    ],
+    "short": [
+     "OFF",
+     "LOQ",
+     "HIQ"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "VOL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 20.0,
+    "hi": 4000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FREQ",
+    "role": "freq",
+    "default": 0.6,
+    "units": "hz",
+    "lo": 150.0,
+    "hi": 12000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MOD",
+    "role": "depth",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=2.2M C=22n; tap n=0; atkvca src=0 trig=0.01 time=log(2,20,4000); tap n=1; sweep3 src=0 trig=0.01 fc=log(3,150,12000) mod=lin(4,-1,1) oct=4 rate=log(2,20,4000) res=sw(0,0,0.45,0.85) drive=1.5 comp=0.5; gain a=sw(0,0,1,1); mix n=1 wet=1 dry=sw(0,1,0,0); vol a=taper(1,A)*6; rail rail=4.4",
+  "stereo": false,
+  "notes": "Swell d'attacco: a ogni nuova nota il volume riparte da zero e sale in ATTACK (20 ms-4 s: swell lento / effetto reverse), seguito da un passa-basso risonante (FILTER: escluso / Q bassa / Q alta) con frequenza FREQ e MOD bipolare legata all'attacco (a destra sweep verso l'alto fino a FREQ, a sinistra verso il basso da FREQ, fino a 4 ottave, alla velocita' di ATTACK; al centro fermo). Nel pedale l'inviluppo e' polifonico per nota: qui e' monofonico (si riavvia a ogni attacco). Gamme stimate.",
+  "control_notes": "Il pulsante FILTER a 3 stati e' reso come selettore; le Q dei due stati sono fisse."
+ }
+}
