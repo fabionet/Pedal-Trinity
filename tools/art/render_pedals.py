@@ -228,7 +228,8 @@ def build_boss(m, lay):
     tr = rounded_box("treadle", PL.W - 0.0006, length, thick, 0.007, 0.0039, PEDAL, tm, z0=-thick)
     tr.location = (0, (PL.TREAD_Y0 + ty1) / 2, (PL.TREAD_H_FRONT + PL.TREAD_H_BACK) / 2)
     tr.rotation_euler = (ang, 0, 0)
-    r_back = min(-0.0215, ty1 - 0.020)
+    # gomma: sui pedali corti (pannello a due file) lascia ~24 mm sopra di se' per nome, sottotitolo e sigla
+    r_back = min(-0.0215, ty1 - 0.024)
     ry0 = -length / 2 + (-0.0615 - PL.TREAD_Y0) / (ty1 - PL.TREAD_Y0) * length
     ry1 = -length / 2 + (r_back - PL.TREAD_Y0) / (ty1 - PL.TREAD_Y0) * length
     rb = rounded_box("rubber", PL.W - 0.008, ry1 - ry0, 0.0022, 0.004, 0.0008, PEDAL, MAT_RUBBER, (0, (ry0 + ry1) / 2, 0))
@@ -337,9 +338,10 @@ def build_real_box(r, lay):
         elif t == "knob":
             # pomello reale senza comando corrispondente: modellato (fisso)
             add_knob_base(part["x"], part["y"], H)
-            cylinder("deco_knob", part["r"], 0.0140, PEDAL, MAT_KNOB, (part["x"], part["y"], H + 0.001), seg=48, edge=0.0012)
+            kh = part.get("h", 0.0140)
+            cylinder("deco_knob", part["r"], kh, PEDAL, MAT_KNOB, (part["x"], part["y"], H + 0.001), seg=48, edge=min(0.0012, part["r"] * 0.2))
             rounded_box("deco_ptr", 0.0012, part["r"] * 0.9, 0.0004, 0.0003, 0.0, PEDAL, MAT_POINTER,
-                        (part["x"], part["y"] + part["r"] * 0.45, H + 0.0151))
+                        (part["x"], part["y"] + part["r"] * 0.45, H + kh + 0.0011))
         elif t == "switch":
             rounded_box("sw_slot", 0.009, 0.0032, 0.0006, 0.0008, 0.0, PEDAL, MAT_BLACKMETAL, (part["x"], part["y"], H))
             rounded_box("sw_cap", 0.0035, 0.0026, 0.0030, 0.0006, 0.0004, PEDAL, MAT_FOOT, (part["x"] - 0.0022, part["y"], H + 0.0005))
@@ -347,7 +349,7 @@ def build_real_box(r, lay):
             rounded_box("sl_cap", 0.0060, 0.0030, 0.0070, 0.0008, 0.0006, PEDAL, MAT_FOOT, (part["x"], (part["y0"] + part["y1"]) / 2, H))
     for k, c in enumerate(r["controls"]):
         p = lay["controls"][k]
-        if p["strip"] in ("boss", "boss_outer"):
+        if p["strip"] in ("boss", "boss_outer", "boss_small"):
             add_knob_base(p["x"], p["y"], H)
         elif p["strip"] == "button":
             cylinder("btn_ring", p["r"] * 1.25, 0.0008, PEDAL, MAT_BLACKMETAL, (p["x"], p["y"], H), seg=40)
@@ -395,6 +397,321 @@ def build_real_treadle(r, lay):
     add_toggles(r, lay, blk["z"])
     lx, ly, lz, lr = lay["led"]
     add_led(lx, ly, lz, lr)
+    add_side_jacks(W, lay["jacks"][1])
+
+
+# ------------------------------------------------------------------ pedali sagomati (wah Cry Baby, volume...)
+LED_TINT = {"red": (0.25, 0.01, 0.01), "green": (0.02, 0.18, 0.03), "blue": (0.02, 0.05, 0.25), "white": (0.55, 0.55, 0.52),
+            "yellow": (0.30, 0.22, 0.01), "orange": (0.32, 0.09, 0.01)}
+_LED_MATS = {}
+
+
+def led_mat(colour):
+    if colour not in _LED_MATS:
+        m = principled("led_" + str(colour), LED_TINT.get(colour, LED_TINT["red"]), 0.0, 0.08, spec=0.9)
+        set_in(bsdf_of(m), "Transmission Weight", 0.4)
+        _LED_MATS[colour] = m
+    return _LED_MATS[colour]
+
+
+def add_led_c(x, y, z, r, colour):
+    cylinder("led_bezel", r * 1.45, 0.0012, PEDAL, MAT_CHROME, (x, y, z), seg=40, edge=0.0003)
+    bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=32, v_segments=16, radius=r)
+    for v in bm.verts: v.co.z = max(v.co.z, 0.0) * 0.8
+    mesh_obj("led_dome", bm, PEDAL, [led_mat(colour)], (x, y, z + 0.0010))
+
+
+def profile_pts(w, d, rh, rt, seg=10):
+    """Contorno in pianta con raggi diversi al tallone (y < 0) e in punta (y > 0)."""
+    rh = min(rh, w / 2 - 1e-4, d / 2 - 1e-4); rt = min(rt, w / 2 - 1e-4, d / 2 - 1e-4)
+    pts = []
+    for cx, cy, r, a0 in [(w / 2 - rt, d / 2 - rt, rt, 0), (-w / 2 + rt, d / 2 - rt, rt, 90),
+                          (-w / 2 + rh, -d / 2 + rh, rh, 180), (w / 2 - rh, -d / 2 + rh, rh, 270)]:
+        for i in range(seg + 1):
+            a = math.radians(a0 + 90.0 * i / seg)
+            pts.append((cx + r * math.cos(a), cy + r * math.sin(a)))
+    return pts
+
+
+def prism(name, pts, h, edge, coll, mat, location=(0, 0, 0), z0=0.0, bevel_seg=4):
+    bm = bmesh.new()
+    bot = [bm.verts.new((x, y, z0)) for x, y in pts]; top = [bm.verts.new((x, y, z0 + h)) for x, y in pts]
+    bm.faces.new(list(reversed(bot))); bm.faces.new(top)
+    for i in range(len(pts)):
+        j = (i + 1) % len(pts); bm.faces.new([bot[i], bot[j], top[j], top[i]])
+    ob = mesh_obj(name, bm, coll, [mat], location)
+    if edge > 0:
+        bv = ob.modifiers.new("bevel", "BEVEL"); bv.width = edge; bv.segments = bevel_seg
+        bv.limit_method = "ANGLE"; bv.angle_limit = math.radians(50); bv.harden_normals = True
+    ob.modifiers.new("wn", "WEIGHTED_NORMAL").keep_sharp = True
+    return ob
+
+
+def finish_mat(name, finish, img, x0, x1, y0, y1):
+    """Materiale con la serigrafia img e la finitura del pedale vero (crinkle, cromo, oro, rame...)."""
+    P = {"crinkle": (0.15, 0.62, 0.15), "paint": (0.15, 0.38, 0.3), "gloss": (0.1, 0.22, 0.9), "hammer": (0.45, 0.42, 0.2),
+         "chrome": (1.0, 0.07, 0.0), "gold": (1.0, 0.18, 0.0), "copper": (1.0, 0.30, 0.0), "brushed": (0.9, 0.30, 0.0),
+         "raw": (0.8, 0.55, 0.0), "smoked": (1.0, 0.14, 0.0), "sparkle": (0.55, 0.32, 0.5), "anodized": (0.65, 0.32, 0.1),
+         "rust": (0.35, 0.62, 0.0)}
+    met, rough, coat = P.get(finish, P["paint"])
+    flake = 0.35 if finish == "sparkle" else 0.0
+    m = textured(name, img, x0, x1, y0, y1, met, rough, coat, flake)
+    nt = m.node_tree; b = bsdf_of(m)
+    if finish in ("crinkle", "hammer", "raw", "rust"):
+        tc = nt.nodes.new("ShaderNodeTexCoord")
+        tx = nt.nodes.new("ShaderNodeTexNoise"); tx.inputs["Detail"].default_value = 8.0
+        tx.inputs["Scale"].default_value = {"crinkle": 2600.0, "hammer": 380.0, "raw": 1500.0, "rust": 900.0}[finish]
+        bp = nt.nodes.new("ShaderNodeBump")
+        bp.inputs["Strength"].default_value = {"crinkle": 0.55, "hammer": 0.45, "raw": 0.3, "rust": 0.35}[finish]
+        bp.inputs["Distance"].default_value = 0.0002
+        nt.links.new(tc.outputs["Object"], tx.inputs["Vector"]); nt.links.new(tx.outputs["Fac"], bp.inputs["Height"])
+        nt.links.new(bp.outputs["Normal"], b.inputs["Normal"])
+    if finish == "brushed":
+        set_in(b, "Anisotropic", 0.6)
+    return m
+
+
+def rubber_mat(name, img, x0, x1, y0, y1, kind):
+    """Gomma del bilanciere: colore/motivo dalla serigrafia, rilievo secondo il tipo (nervature, grip, borchie)."""
+    m = textured(name, img, x0, x1, y0, y1, 0.0, 0.75, 0.0)
+    nt = m.node_tree; b = bsdf_of(m)
+    set_in(b, "Specular IOR Level", 0.3)
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    if kind in ("ribs", "twin", "dots", "stripes", "camo", "rings", "frame", "diamonds"):
+        tx = nt.nodes.new("ShaderNodeTexWave"); tx.wave_type = "BANDS"; tx.bands_direction = "Y"
+        tx.inputs["Scale"].default_value = 420.0; strength, dist = 0.35, 0.0004
+    elif kind == "studs":
+        tx = nt.nodes.new("ShaderNodeTexVoronoi"); tx.inputs["Scale"].default_value = 260.0; strength, dist = 0.5, 0.0005
+    else:
+        tx = nt.nodes.new("ShaderNodeTexNoise"); tx.inputs["Detail"].default_value = 6.0
+        tx.inputs["Scale"].default_value = 1800.0; strength, dist = 0.35, 0.0003
+    bp = nt.nodes.new("ShaderNodeBump")
+    bp.inputs["Strength"].default_value = strength; bp.inputs["Distance"].default_value = dist
+    nt.links.new(tc.outputs["Object"], tx.inputs["Vector"])
+    nt.links.new(tx.outputs["Distance" if kind == "studs" else "Fac"], bp.inputs["Height"])
+    nt.links.new(bp.outputs["Normal"], b.inputs["Normal"])
+    return m
+
+
+CAP_COLOURS = {"DISTORTION": (0.45, 0.02, 0.02), "BG/DEEP": (0.45, 0.02, 0.02), "FUZZ": (0.02, 0.25, 0.04)}
+
+
+def build_wah(r, lay):
+    """Wah e volume sagomati: vasca con il contorno del pedale vero, bilanciere inclinato con gomma e targhetta,
+    alette laterali con i comandi delle fiancate, pannello della carcassa larga, LED e prese."""
+    lk = r["look"]
+    b, rk = lay["base"], lay["rocker"]
+    W, D, bh = b["W"], b["D"], b["h"]
+    tex = lambda suffix: os.path.join(TEX, r["id"] + suffix)
+    fin = lk.get("finish", "paint")
+    bmat = finish_mat("base_" + r["id"], fin, tex("_base.png"), -W / 2, W / 2, -D / 2, D / 2)
+    prism("base", profile_pts(W, D, b["r_heel"], b["r_toe"]), bh, 0.003, PEDAL, bmat)
+    # bilanciere
+    L, rw = rk["length"], rk["w"]
+    rmat = finish_mat("rocker_" + r["id"], lk.get("rocker_finish") or fin, tex("_rocker.png"), -rw / 2, rw / 2, -L / 2, L / 2)
+    plate_kind = rk["kind"] == "plate"
+    tr = prism("rocker", profile_pts(rw, L, 0.010 if plate_kind else 0.008, max(0.008, b["r_toe"] * 0.85)), rk["t"],
+               0.0025 if plate_kind else 0.0038, PEDAL, rmat, z0=-rk["t"])
+    tr.location = (rk["xc"], (rk["y0"] + rk["y1"]) / 2, (rk["z0"] + rk["z1"]) / 2)
+    tr.rotation_euler = (rk["angle"], 0, 0)
+    import shaped_layout as SLY
+    ins = SLY.rubber_inset(rk)
+    ry0, ry1 = SLY.rubber_span(rk)
+    tw = rw - 2 * ins
+    kind = (lk.get("tread") or ("ribs",))[0]
+    rub = rubber_mat("rubber_" + r["id"], tex("_tread.png"), -tw / 2, tw / 2, -(ry1 - ry0) / 2, (ry1 - ry0) / 2, kind)
+    rb = prism("rubber", profile_pts(tw, ry1 - ry0, 0.005, 0.005), 0.0024, 0.0009, PEDAL, rub, (0, (ry0 + ry1) / 2, 0))
+    rb.parent = tr
+    pt = lay["plate"]
+    pmat = textured("plate_" + r["id"], tex("_plate.png"), -pt["w"] / 2, pt["w"] / 2, -pt["d"] / 2, pt["d"] / 2, 0.55, 0.3, 0.3)
+    pp = prism("plate", profile_pts(pt["w"], pt["d"], 0.002, 0.002), 0.0012, 0.0004, PEDAL, pmat, (0, pt["y"], 0))
+    pp.parent = tr
+    if rk["trim"]:
+        for sgn in (-1, 1):
+            t = rounded_box("trim", 0.003, L * 0.92, 0.0016, 0.001, 0.0005, PEDAL, MAT_CHROME, (sgn * (rw / 2 - 0.0018), 0, 0))
+            t.parent = tr
+    if plate_kind:
+        # cerniera della pedana al tallone
+        cylinder("hinge_rod", 0.0035, W * 0.84, PEDAL, MAT_CHROME, (-W * 0.42, rk["y0"] + 0.006, rk["z0"] - 0.003), seg=24,
+                 rotation=(0, math.pi / 2, 0))
+    if rk["toe_cap"]:
+        rounded_box("toe_cap", W * 0.62, (D / 2 - rk["y1"]) * 0.75, 0.007, 0.004, 0.002, PEDAL, MAT_CHROME,
+                    (0, (rk["y1"] + D / 2) / 2, bh))
+    # perno del bilanciere (dadi cromati sui fianchi, dove non ci sono alette)
+    yh = rk["y0"] + 0.45 * (rk["y1"] - rk["y0"])
+    for sgn in (-1, 1):
+        side = "L" if sgn < 0 else "R"
+        if lk["shape"] == "wide" and sgn > 0:
+            continue
+        if any(p["side"] == side and p["y0"] - 0.006 <= yh <= p["y1"] + 0.006 for p in lay["pods"]):
+            continue
+        cylinder("axle", 0.0042, 0.0022, PEDAL, MAT_CHROME, (sgn * (W / 2 - 0.0004), yh, bh * 0.82), seg=6,
+                 rotation=(0, sgn * math.pi / 2, 0), edge=0.0003)
+    # pannello della carcassa larga
+    pn = lay.get("panel")
+    if pn:
+        pm = finish_mat("panel_" + r["id"], fin, tex("_panel.png"), pn["x0"], pn["x1"], pn["y0"], pn["y1"])
+        pts = [(x + (pn["x0"] + pn["x1"]) / 2, y + (pn["y0"] + pn["y1"]) / 2)
+               for x, y in profile_pts(pn["x1"] - pn["x0"], pn["y1"] - pn["y0"], 0.008, 0.010)]
+        # coordinate della texture = coordinate del pedale: oggetto all'origine
+        prism("panel", pts, pn["z"] - bh + 0.001, 0.003, PEDAL, pm, (0, 0, 0), z0=bh - 0.001)
+    # alette laterali
+    for k, pod in enumerate(lay["pods"]):
+        w, d = pod["x1"] - pod["x0"], pod["y1"] - pod["y0"]
+        pmat2 = finish_mat("pod_%s_%d" % (r["id"], k), fin, tex("_pod%d.png" % k), -w / 2, w / 2, -d / 2, d / 2)
+        prism("pod", profile_pts(w, d, 0.003, 0.003), pod["z"], 0.0015, PEDAL, pmat2,
+              ((pod["x0"] + pod["x1"]) / 2, (pod["y0"] + pod["y1"]) / 2, 0))
+    # comandi: dadi, levette, pulsanti, footswitch
+    for k, c in enumerate(r["controls"]):
+        p = lay["controls"][k]
+        st = p["strip"]
+        if st in ("boss", "boss_small"):
+            add_knob_base(p["x"], p["y"], p["z"])
+        elif st == "toggle":
+            cylinder("toggle_nut", 0.0026, 0.0016, PEDAL, MAT_NICKEL, (p["x"], p["y"], p["z"]), seg=6, edge=0.0002)
+            cylinder("toggle_collar", 0.0017, 0.0048, PEDAL, MAT_CHROME, (p["x"], p["y"], p["z"]), seg=32, edge=0.0003)
+        elif st == "button" and p.get("part") == "foot":
+            z = p["z"] - 0.009
+            cylinder("fs_nut", p["r"] * 1.30, 0.0030, PEDAL, MAT_NICKEL, (p["x"], p["y"], z), seg=6, edge=0.0004)
+            cylinder("fs_cap", p["r"], 0.0060, PEDAL, MAT_CHROME, (p["x"], p["y"], z + 0.0030), seg=64, edge=0.0014)
+        elif st == "button":
+            z = p["z"] - 0.004
+            cylinder("btn_ring", p["r"] * 1.30, 0.0012, PEDAL, MAT_CHROME, (p["x"], p["y"], z), seg=40, edge=0.0003)
+            col = CAP_COLOURS.get(c["label"].upper(), (0.02, 0.02, 0.021))
+            cap = principled("cap_%s_%d" % (r["id"], k), col, 0.0, 0.45, coat=0.3)
+            cylinder("btn_cap", p["r"], 0.0034, PEDAL, cap, (p["x"], p["y"], z + 0.0006), seg=40, edge=0.0010)
+    for part in lay["parts"]:
+        if part["type"] == "led":
+            add_led_c(part["x"], part["y"], part["z"], 0.0018, part.get("colour") or "red")
+        elif part["type"] == "display":
+            rounded_box("screen", part["x1"] - part["x0"], part["y1"] - part["y0"], 0.0006, 0.0008, 0.0002, PEDAL, MAT_SCREEN,
+                        ((part["x0"] + part["x1"]) / 2, (part["y0"] + part["y1"]) / 2, bh))
+    add_side_jacks(W, lay["jacks"][1])
+
+
+# ------------------------------------------------------------------ pedali a scatola (MXR, Electro-Harmonix...)
+MAT_GLASS = principled("glass", (0.92, 0.94, 0.95), 0.0, 0.04, spec=0.6)
+set_in(bsdf_of(MAT_GLASS), "Transmission Weight", 0.92)
+MAT_TUBE_INNER = principled("tube_inner", (0.30, 0.30, 0.31), 1.0, 0.35)
+MAT_SOCKET = principled("socket", (0.03, 0.03, 0.03), 0.0, 0.5)
+MAT_SLIDER_CAP = principled("slider_cap", (0.80, 0.80, 0.78), 0.0, 0.45, coat=0.2)
+
+
+def wedge_box(name, w, d, zf, zb, corner, edge, mat, seg=10, bevel_seg=6, z0=0.0):
+    """Scatola con il piano inclinato (zf davanti, zb dietro): contenitori a cuneo in lamiera e pressofusi."""
+    bm = bmesh.new()
+    pts = rounded_rect_pts(w, d, corner, seg)
+    bot = [bm.verts.new((x, y, z0)) for x, y in pts]
+    top = [bm.verts.new((x, y, zf + (y + d / 2) / d * (zb - zf))) for x, y in pts]
+    bm.faces.new(list(reversed(bot))); bm.faces.new(top)
+    for i in range(len(pts)):
+        j = (i + 1) % len(pts); bm.faces.new([bot[i], bot[j], top[j], top[i]])
+    ob = mesh_obj(name, bm, PEDAL, [mat])
+    if edge > 0:
+        bv = ob.modifiers.new("bevel", "BEVEL"); bv.width = edge; bv.segments = bevel_seg
+        bv.limit_method = "ANGLE"; bv.angle_limit = math.radians(50); bv.harden_normals = True
+    ob.modifiers.new("wn", "WEIGHTED_NORMAL").keep_sharp = True
+    return ob
+
+
+def round_footswitch(x, y, z, kind="round"):
+    """Footswitch a pressione tondo (MXR, Electro-Harmonix): dado esagonale, ghiera filettata, pulsante cromato."""
+    cylinder("fs_nut", 0.0074, 0.0026, PEDAL, MAT_NICKEL, (x, y, z), seg=6, edge=0.0004)
+    cylinder("fs_collar", 0.0060, 0.0058, PEDAL, MAT_CHROME, (x, y, z + 0.0024), seg=48, edge=0.0004)
+    if kind == "soft":
+        cylinder("fs_cap", 0.0058, 0.0040, PEDAL, MAT_FOOT, (x, y, z + 0.0080), seg=48, edge=0.0016)
+    else:
+        cylinder("fs_cap", 0.0050, 0.0040, PEDAL, MAT_CHROME, (x, y, z + 0.0080), seg=48, edge=0.0016)
+
+
+def build_stomp(r, lay):
+    """Contenitori MXR / Electro-Harmonix: scocca pressofusa arrotondata o lamiera a cuneo con la serigrafia
+    proiettata dall'alto, footswitch tondi cromati, LED colorati, prese sui fianchi, valvole e comandi fissi."""
+    lk = r["look"]
+    b = lay["base"]
+    W, D = b["W"], b["D"]
+    zf, zb = lay["top"]
+    fin = lk.get("finish", "paint")
+    img = os.path.join(TEX, r["id"] + "_top.png")
+    mat = finish_mat("stomp_" + r["id"], fin, img, -W / 2, W / 2, -D / 2, D / 2)
+    if b["kind"] == "tank":
+        # fondo pressofuso colorato e coperchio in lamiera (Big Muff russi 'Civil War')
+        bc = srgb(tuple(lk.get("body") or r["colour"]))
+        base = principled("tank_" + r["id"], bc, 0.25, 0.5, 0.1)
+        hb = min(zf, zb) * 0.62
+        rounded_box("tank_base", W, D, hb, b["corner"] + 0.002, 0.004, PEDAL, base)
+        for sgn in (-1, 1):
+            rounded_box("tank_rib", 0.004, D * 0.82, hb * 0.7, 0.0015, 0.0012, PEDAL, base, (sgn * (W / 2 + 0.0012), 0, hb * 0.15))
+        wedge_box("chassis", W - 0.004, D - 0.004, zf, zb, b["corner"], b["edge"], mat, z0=hb - 0.006)
+    else:
+        wedge_box("chassis", W, D, zf, zb, b["corner"], b["edge"], mat, bevel_seg=6 if b["kind"] == "die" else 3)
+        if lk.get("body"):
+            # fondo di colore diverso (es. lamiera piegata con fondello scuro)
+            base = principled("bottom_" + r["id"], srgb(tuple(lk["body"])), 0.3, 0.45, 0.1)
+            rounded_box("bottom", W + 0.0008, D + 0.0008, min(zf, zb) * 0.22, b["corner"], 0.0012, PEDAL, base)
+    for k, c in enumerate(r["controls"]):
+        p = lay["controls"][k]
+        st = p["strip"]
+        if st in ("boss", "boss_small", "ts_big", "ts_small", "boss_outer"):
+            add_knob_base(p["x"], p["y"], p["z"])
+        elif st == "toggle":
+            cylinder("toggle_nut", 0.0026, 0.0016, PEDAL, MAT_NICKEL, (p["x"], p["y"], p["z"]), seg=6, edge=0.0002)
+            cylinder("toggle_collar", 0.0017, 0.0048, PEDAL, MAT_CHROME, (p["x"], p["y"], p["z"]), seg=32, edge=0.0003)
+        elif st == "button":
+            z = p["z"] - 0.003
+            cylinder("btn_ring", p["r"] * 1.30, 0.0012, PEDAL, MAT_CHROME, (p["x"], p["y"], z), seg=40, edge=0.0003)
+            cap = principled("cap_%s_%d" % (r["id"], k), (0.02, 0.02, 0.021), 0.0, 0.45, coat=0.3)
+            cylinder("btn_cap", p["r"], 0.0030, PEDAL, cap, (p["x"], p["y"], z + 0.0006), seg=40, edge=0.0010)
+    for part in lay["parts"]:
+        t = part["type"]
+        z = part.get("z", zb)
+        if t == "footswitch":
+            round_footswitch(part["x"], part["y"], z, part.get("kind", "round"))
+        elif t == "led":
+            add_led_c(part["x"], part["y"], z, 0.0014 if part.get("small") or part.get("tiny") else 0.0018,
+                      part.get("colour") or "red")
+        elif t == "knob":
+            add_knob_base(part["x"], part["y"], z)
+            kh = part.get("h", 0.0140)
+            col = (0.82, 0.82, 0.80) if part.get("spec") == "encoder" and lk.get("white_encoder") else (0.018, 0.018, 0.019)
+            km = principled("deco_knob_%s_%s" % (r["id"], part["label"]), col, 0.0, 0.45, coat=0.2)
+            cylinder("deco_knob", part["r"], kh, PEDAL, km, (part["x"], part["y"], z + 0.001), seg=48,
+                     edge=min(0.0012, part["r"] * 0.2))
+            rounded_box("deco_ptr", 0.0012, part["r"] * 0.9, 0.0004, 0.0003, 0.0, PEDAL, MAT_POINTER,
+                        (part["x"], part["y"] + part["r"] * 0.45, z + kh + 0.0011))
+        elif t == "switch":
+            cylinder("sw_nut", 0.0026, 0.0016, PEDAL, MAT_NICKEL, (part["x"], part["y"], z), seg=6, edge=0.0002)
+            cylinder("sw_collar", 0.0017, 0.0048, PEDAL, MAT_CHROME, (part["x"], part["y"], z), seg=32, edge=0.0003)
+            lever = cylinder("sw_lever", 0.0009, 0.0090, PEDAL, MAT_CHROME, (part["x"], part["y"], z + 0.0045), seg=16,
+                             rotation=(math.radians(-18), 0, 0))
+        elif t == "button":
+            cylinder("btn_ring", part["r"] * 1.30, 0.0012, PEDAL, MAT_CHROME, (part["x"], part["y"], z), seg=40, edge=0.0003)
+            cylinder("btn_cap", part["r"], 0.0030, PEDAL, MAT_FOOT, (part["x"], part["y"], z + 0.0006), seg=40, edge=0.0010)
+        elif t == "slider":
+            ym = (part["y0"] + part["y1"]) / 2
+            rounded_box("sl_cap", 0.0062, 0.0040, 0.0075, 0.0010, 0.0007, PEDAL, MAT_SLIDER_CAP, (part["x"], ym, z))
+        elif t == "display":
+            rounded_box("screen", part["x1"] - part["x0"], part["y1"] - part["y0"], 0.0006, 0.0008, 0.0002, PEDAL, MAT_SCREEN,
+                        ((part["x0"] + part["x1"]) / 2, (part["y0"] + part["y1"]) / 2, z))
+        elif t == "tubes":
+            n = part["n"]
+            gw, gd, gh = part["w"], part["d"], part["h"]
+            rounded_box("tube_plate", gw, gd, 0.002, 0.004, 0.001, PEDAL, MAT_BLACKMETAL, (part["x"], part["y"], z))
+            for q in range(n):
+                tx = part["x"] + (q - (n - 1) / 2) * 0.024
+                cylinder("tube_socket", 0.0105, 0.004, PEDAL, MAT_SOCKET, (tx, part["y"], z + 0.002), seg=40, edge=0.0008)
+                cylinder("tube_inner", 0.0055, gh * 0.55, PEDAL, MAT_TUBE_INNER, (tx, part["y"], z + 0.008), seg=24)
+                cylinder("tube_glass", 0.0092, gh - 0.006, PEDAL, MAT_GLASS, (tx, part["y"], z + 0.006), seg=48, edge=0.004)
+            # gabbia di protezione: quattro montanti e due anelli
+            for sx in (-1, 1):
+                for sy in (-1, 1):
+                    cylinder("cage_post", 0.0012, gh, PEDAL, MAT_CHROME,
+                             (part["x"] + sx * (gw / 2 - 0.002), part["y"] + sy * (gd / 2 - 0.002), z), seg=12)
+            for zz in (gh * 0.55, gh):
+                for sy in (-1, 1):
+                    rb_ = cylinder("cage_bar", 0.0010, gw - 0.004, PEDAL, MAT_CHROME,
+                                   (part["x"] - gw / 2 + 0.002, part["y"] + sy * (gd / 2 - 0.002), z + zz), seg=10,
+                                   rotation=(0, math.pi / 2, 0))
     add_side_jacks(W, lay["jacks"][1])
 
 
@@ -471,13 +788,23 @@ for m in models:
     scene.render.resolution_x = PG.RES_X
     scene.render.resolution_y = PG.RES_Y
     # i contenitori grandi si renderizzano a risoluzione ridotta (lato lungo al massimo ~2400 px)
-    scene.render.resolution_percentage = min(100, int(2400 * 100 / max(PG.RES_X, PG.RES_Y)))
+    # i pedali sagomati (wah/volume) finiscono a 1150 px sul lato lungo: render a ~1500 px
+    cap = 1500 if (lay.get("builder") in ("wah", "stomp") or (not REAL and m["style"] in ("treadle", "box"))) else 2400
+    scene.render.resolution_percentage = min(100, int(cap * 100 / max(PG.RES_X, PG.RES_Y)))
     cd.ortho_scale = PG.X1 - PG.X0
     cam.location = Vector((0.0, PG.VC / COS, 0.0)) - direction * 1.0
-    if REAL and lay["builder"] == "box":
+    if lay.get("builder") in ("box", "treadle", "wah", "stomp") and not REAL:
+        import shaped_layout          # modalita' normale: forma del pedale vero, scritte Pedal Trinity
+        rm = shaped_layout.as_shaped(m)
+        {"box": build_real_box, "treadle": build_real_treadle, "wah": build_wah, "stomp": build_stomp}[lay["builder"]](rm, lay)
+    elif REAL and lay["builder"] == "stomp":
+        build_stomp(m, lay)
+    elif REAL and lay["builder"] == "box":
         build_real_box(m, lay)
     elif REAL and lay["builder"] == "treadle":
         build_real_treadle(m, lay)
+    elif REAL and lay["builder"] == "wah":
+        build_wah(m, lay)
     elif m["style"] == "ts":
         build_ts(m, lay)
     elif m["style"] == "nam":

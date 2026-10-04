@@ -22,6 +22,8 @@
           STEREO una catena stereo: i pedali stereo elaborano A e B, un pedale
                  mono prende solo A e riporta il segnale in mono finche' un
                  pedale stereo non lo riallarga;
+      - i pedali staccati con i cavi (patched = false) restano sulla pedaliera
+        ma il segnale passa oltre, come se non ci fossero;
       - all'uscita il segnale mono va su L e R; con lo splitter attivo si
         applicano BALANCE e livelli LEFT/RIGHT d'uscita.
 */
@@ -46,6 +48,7 @@ namespace pt::engine
         std::unique_ptr<Effect> fx;
         std::atomic<bool> enabled { true };
         std::atomic<int> lane { 0 };            // 0 = A, 1 = B (conta solo dopo lo splitter in DUAL)
+        std::atomic<bool> patched { true };     // collegato con i cavi: false = staccato dalla catena (il segnale lo salta)
         // stato usato solo dal thread audio
         float fade = 1.0f;
         bool wasOff = false;
@@ -96,6 +99,22 @@ namespace pt::engine
         void setEnabled (int index, bool on);
         void setParam (int index, int control, float value);
         void setLane (int index, int lane);
+        /** Cavi: un pedale staccato resta sulla pedaliera ma il segnale lo salta (lo splitter non si stacca). */
+        void setPatched (int index, bool patched);
+        bool isPatched (int index) const;
+        /** Ricollega tutti i pedali staccati (catena completa come all'inizio). */
+        void patchAll();
+
+        //======================== MIDI (thread audio, senza lock e senza allocazioni)
+        /** Comando MIDI su uno slot: kind 0 = acceso/spento (value >= 0.5 acceso), 1 = inverte l'acceso,
+            2 = valore del comando 'control' (0..1). false se lo slot non esiste. */
+        bool applyFromAudio (int slotIndex, int kind, int control, float value) noexcept;
+        /** Lettura dal thread dei messaggi dello stato di uno slot (per il ritorno MIDI): -1 se assente. */
+        float readForMidi (int slotIndex, int control) const;
+
+        /** Comando toccato a mano nell'interfaccia (slot, comando; -1 = footswitch): per la mappatura MIDI. */
+        std::function<void (int slot, int control)> onUserTouch;
+        void notifyTouch (int slotIndex, int control) { if (onUserTouch) onUserTouch (slotIndex, control); }
         void clear();
 
         /** Indice dello splitter, -1 se assente. */

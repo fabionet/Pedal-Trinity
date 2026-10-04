@@ -20,7 +20,7 @@ namespace
         {
             setClickingTogglesState (true);
             setTooltip ("REAL MOD PEDALBOARD: mostra le repliche dei pedali reali con i loro nomi "
-                        "(o le tue foto dalla cartella RealPhotos). Ripremi per tornare ai pedali originali.");
+                        "(o le tue foto della lista scelta nelle Opzioni). Ripremi per tornare ai pedali originali.");
             setMouseCursor (juce::MouseCursor::PointingHandCursor);
         }
         void paintButton (juce::Graphics& g, bool over, bool down) override
@@ -156,6 +156,12 @@ PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcess
     realButton->onClick = [this] { themes->setRealMode (realButton->getToggleState()); };
     addAndMakeVisible (*realButton);
 
+    midiButton.setClickingTogglesState (true);
+    midiButton.setTooltip ("Mappatura MIDI: tocca un pomello o un footswitch e muovi il comando della pedaliera MIDI "
+                           "(impostazioni e assegnazioni: \"Assegnazioni...\" nella barra della mappatura o Opzioni -> MIDI)");
+    midiButton.onClick = [this] { setMidiLearn (midiButton.getToggleState()); };
+    addAndMakeVisible (midiButton);
+
     optionsButton = std::make_unique<GearButton>();
     optionsButton->onClick = [this] { showOptions (true); };
     addAndMakeVisible (*optionsButton);
@@ -173,6 +179,7 @@ PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcess
     const int w = (int) processor.uiState.getProperty ("w", 1280), h = (int) processor.uiState.getProperty ("h", 760);
 
     processor.chain.addChangeListener (this);
+    processor.midi.addChangeListener (this);
     themes->addChangeListener (this);
     applyTheme();
 
@@ -185,6 +192,10 @@ PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcess
 PedalTrinityEditor::~PedalTrinityEditor()
 {
     saveUiState();
+    processor.midi.setLearning (false);
+    processor.midi.removeChangeListener (this);
+    learnBar.reset();
+    midiPanel.reset();
     processor.chain.removeChangeListener (this);
     themes->removeChangeListener (this);
     optionsPanel.reset();
@@ -241,22 +252,24 @@ void PedalTrinityEditor::resized()
     const bool wide = getWidth() >= 1500;
     logo.setBounds (bar.getX() + 6, 2, 184, 30);
     bar.removeFromLeft (192);
-    presetButton.setBounds (bar.removeFromLeft (wide ? 240 : 170).reduced (0, 3));
+    presetButton.setBounds (bar.removeFromLeft (wide ? 240 : 156).reduced (0, 3));
     bar.removeFromLeft (wide ? 10 : 6);
     realButton->setBounds (bar.removeFromLeft (wide ? 118 : 96).reduced (0, 3));
     bar.removeFromLeft (wide ? 10 : 6);
 
-    const int gap = wide ? 10 : 7;
-    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 290, wide ? 546 : 490));
+    const int gap = wide ? 10 : 6;
+    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 290, wide ? 610 : 530));
     infoButton.setBounds (right.removeFromRight (60).reduced (0, 3));
     right.removeFromRight (6);
     optionsButton->setBounds (right.removeFromRight (36).reduced (0, 3));
+    right.removeFromRight (6);
+    midiButton.setBounds (right.removeFromRight (wide ? 54 : 46).reduced (0, 3));
     right.removeFromRight (gap);
     zoomIn.setBounds (right.removeFromRight (30).reduced (0, 3));
-    zoomLabel.setBounds (right.removeFromRight (wide ? 90 : 78));
+    zoomLabel.setBounds (right.removeFromRight (wide ? 90 : 64));
     zoomOut.setBounds (right.removeFromRight (30).reduced (0, 3));
     right.removeFromRight (gap);
-    addButton.setBounds (right.removeFromRight (wide ? 96 : 86).reduced (0, 3));
+    addButton.setBounds (right.removeFromRight (wide ? 96 : 80).reduced (0, 3));
     right.removeFromRight (gap);
     for (int i = 3; i >= 0; --i) viewButtons[i].setBounds (right.removeFromRight (34).reduced (1, 3));
 
@@ -273,6 +286,8 @@ void PedalTrinityEditor::resized()
     if (zoomPanel) zoomPanel->setBounds (getLocalBounds());
     if (infoPanel) infoPanel->setBounds (getLocalBounds());
     if (optionsPanel) optionsPanel->setBounds (getLocalBounds());
+    if (midiPanel) midiPanel->setBounds (getLocalBounds());
+    if (learnBar) learnBar->setBounds (rackArea().removeFromTop (44).reduced (60, 0));
     saveUiState();
 }
 
@@ -280,6 +295,11 @@ void PedalTrinityEditor::resized()
 void PedalTrinityEditor::changeListenerCallback (juce::ChangeBroadcaster* source)
 {
     if (source == &themes.getObject()) applyTheme();
+    else if (source == &processor.midi)
+    {
+        // la mappatura puo' essere chiusa anche da altrove (pannello MIDI)
+        if (midiButton.getToggleState() != processor.midi.isLearning()) setMidiLearn (processor.midi.isLearning());
+    }
     else refresh();
 }
 
@@ -450,11 +470,50 @@ void PedalTrinityEditor::showInfo (bool shouldShow)
     infoPanel->grabKeyboardFocus();
 }
 
+void PedalTrinityEditor::showMidi (bool shouldShow)
+{
+    if (! shouldShow) { midiPanel.reset(); return; }
+    midiPanel = std::make_unique<pt::ui::MidiPanel> (processor.midi);
+    const juce::Component::SafePointer<PedalTrinityEditor> safeThis (this);
+    midiPanel->onClose = [safeThis]
+    {
+        juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->showMidi (false); });
+    };
+    midiPanel->onStartTouchLearn = [safeThis]
+    {
+        juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) { safeThis->showMidi (false); safeThis->setMidiLearn (true); } });
+    };
+    midiPanel->setBounds (getLocalBounds());
+    addAndMakeVisible (*midiPanel);
+    midiPanel->grabKeyboardFocus();
+}
+
+void PedalTrinityEditor::setMidiLearn (bool on)
+{
+    midiButton.setToggleState (on, juce::dontSendNotification);
+    if (processor.midi.isLearning() != on) processor.midi.setLearning (on);
+    if (! on) { learnBar.reset(); return; }
+    if (learnBar == nullptr)
+    {
+        learnBar = std::make_unique<pt::ui::MidiLearnBar> (processor.midi);
+        const juce::Component::SafePointer<PedalTrinityEditor> safeThis (this);
+        learnBar->onDone = [safeThis] { juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->setMidiLearn (false); }); };
+        learnBar->onShowList = [safeThis] { juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->showMidi (true); }); };
+        addAndMakeVisible (*learnBar);
+    }
+    learnBar->setBounds (rackArea().removeFromTop (44).reduced (60, 0));
+    learnBar->toFront (false);
+}
+
 void PedalTrinityEditor::showOptions (bool shouldShow)
 {
     if (! shouldShow) { optionsPanel.reset(); return; }
     optionsPanel = std::make_unique<pt::ui::OptionsPanel>();
     const juce::Component::SafePointer<PedalTrinityEditor> safeThis (this);
+    optionsPanel->onMidi = [safeThis]
+    {
+        juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) { safeThis->showOptions (false); safeThis->showMidi (true); } });
+    };
     optionsPanel->onClose = [safeThis]
     {
         juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->showOptions (false); });

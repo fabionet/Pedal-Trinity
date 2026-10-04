@@ -9,6 +9,7 @@
 #include "gui/Pedalboard.h"
 #include "gui/InfoPanel.h"
 #include "gui/OptionsPanel.h"
+#include "gui/MidiPanel.h"
 
 class PedalTrinityEditor : public juce::AudioProcessorEditor,
                            public juce::DragAndDropContainer,
@@ -23,6 +24,10 @@ public:
 
     void showInfo (bool shouldShow);
     void showOptions (bool shouldShow);
+    /** Impostazioni e assegnazioni MIDI. */
+    void showMidi (bool shouldShow);
+    /** Mappatura MIDI con il tocco (tasto MIDI della barra). */
+    void setMidiLearn (bool on);
     void showZoom (int slotIndex);
     void startZoomAlign() { if (zoomPanel) zoomPanel->startAlign(); }
     void setView (int pedalsVisible);
@@ -53,6 +58,9 @@ private:
     std::unique_ptr<pt::ui::ZoomPanel> zoomPanel;
     std::unique_ptr<pt::ui::InfoPanel> infoPanel;
     std::unique_ptr<pt::ui::OptionsPanel> optionsPanel;
+    std::unique_ptr<pt::ui::MidiPanel> midiPanel;
+    std::unique_ptr<pt::ui::MidiLearnBar> learnBar;
+    juce::TextButton midiButton { "MIDI" };
     std::unique_ptr<juce::Button> optionsButton, realButton;
     juce::SharedResourcePointer<pt::ui::ThemeManager> themes;
     juce::TooltipWindow tooltips { this, 500 };

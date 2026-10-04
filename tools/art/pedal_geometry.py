@@ -88,8 +88,12 @@ def body_rect(lay):
     if lay.get("builder") == "treadle":
         t = lay["treadle"]
         z_back, z_front = lay["back_block"]["z"], t["z0"]
+    elif lay.get("builder") == "wah":
+        z_back, z_front = lay["rocker"]["z1"], lay["rocker"]["z0"]
     elif lay.get("builder") == "box":
         z_back = z_front = b["H"]
+    elif lay.get("builder") == "stomp":
+        z_front, z_back = lay["top"]
     else:
         z_back, z_front = PL.PANEL_H, PL.TREAD_H_FRONT
     a = proj(-W / 2, D / 2, z_back)

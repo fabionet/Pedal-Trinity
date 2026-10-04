@@ -11,7 +11,7 @@ OUT="${2:-$ROOT/dist}"
 ART="$BUILD/PedalTrinity_artefacts/Release"
 
 PKG="pedal-trinity"
-VERSION="1.1.3~beta-1"
+VERSION="1.2.0~beta-1"
 ARCH="$(dpkg --print-architecture)"
 MAINTAINER="FabioNET <19152770+fabionet@users.noreply.github.com>"
 
@@ -84,7 +84,7 @@ License: GPL-3+
  On Debian systems, the complete text of the GNU General Public License
  version 3 can be found in "/usr/share/common-licenses/GPL-3".
 EOF
-printf '%s (%s) unstable; urgency=medium\n\n  * Sicurezza: preset, progetti e percorsi dei file verificati; privacy.\n  * Pomelli 3D allineati sulle foto personali, comando Allinea pomelli.\n  * Cartella RealPhotos con ELENCO_FOTO.txt dei nomi accettati.\n  * REAL MOD PEDALBOARD: 216 repliche 3D dei pedali reali e foto personali.\n  * Pedaliera fino a 100 slot, catalogo di 220 pedali.\n  * Splitter SPL-3 (mono / dual mono / stereo), cavi jack, meter INPUT/OUTPUT.\n  * NAM-A1A2 Model: lettore Neural Amp Modeler (A1, A2, .nam/.namb)\n    con verifica di sicurezza dei file.\n  * Emulazione dei circuiti analogici, preset di fabbrica e utente.\n  * Viste 3/6/9/18, zoom del pedale, finestra da 1280x760 a 2560x1440.\n  * Formati VST3, LV2 e Standalone.\n\n -- %s  %s\n' \
+printf '%s (%s) unstable; urgency=medium\n\n  * 226 pedali nuovi: tutte le signature MXR e il catalogo Electro-Harmonix (Big Muff, Memory Man, POG, serie 9...).\n  * 59 pedali nuovi: wah Cry Baby (anche signature) a induttore emulato e pedali di volume.\n  * Wah e volume a bilanciere anche in modalita normale.\n  * MIDI: mappatura con il tocco, assegnazioni, MIDI IN/OUT e ritorno dello stato.\n  * Cavi staccabili, 18 temi, pedana personalizzabile, liste REAL MOD.\n  * Pedali metal ricalibrati, grafiche dei pedali corrette.\n  * Sicurezza: preset, progetti e percorsi dei file verificati; privacy.\n  * Pomelli 3D allineati sulle foto personali, comando Allinea pomelli.\n  * Cartella RealPhotos con ELENCO_FOTO.txt dei nomi accettati.\n  * REAL MOD PEDALBOARD: repliche 3D dei pedali reali e foto personali.\n  * Pedaliera fino a 100 slot, catalogo di pedali.\n  * Splitter SPL-3 (mono / dual mono / stereo), cavi jack, meter INPUT/OUTPUT.\n  * NAM-A1A2 Model: lettore Neural Amp Modeler (A1, A2, .nam/.namb)\n    con verifica di sicurezza dei file.\n  * Emulazione dei circuiti analogici, preset di fabbrica e utente.\n  * Viste 3/6/9/18, zoom del pedale, finestra da 1280x760 a 2560x1440.\n  * Formati VST3, LV2 e Standalone.\n\n -- %s  %s\n' \
     "$PKG" "$VERSION" "$MAINTAINER" "$(date -R)" | gzip -9n > "$D/usr/share/doc/$PKG/changelog.Debian.gz"
 
 # --- dipendenze: librerie collegate (dpkg-shlibdeps) + librerie X11 caricate a runtime da JUCE
@@ -117,9 +117,9 @@ Recommends: libjack-jackd2-0 | libjack0
 Suggests: carla, ardour
 Maintainer: $MAINTAINER
 Homepage: https://github.com/fabionet/Pedal-Trinity
-Description: pedaliera per chitarra con 220 pedali emulati (VST3/LV2/Standalone)
+Description: pedaliera per chitarra con 505 pedali emulati (VST3/LV2/Standalone)
  Pedal Trinity e' una pedaliera virtuale fino a 100 slot con un catalogo di
- 220 modelli originali ispirati ai pedali compatti per chitarra: overdrive,
+ 505 modelli originali ispirati ai pedali per chitarra: overdrive, wah,
  distorsori, fuzz, modulazioni BBD, delay, riverberi, pitch, dinamica, EQ,
  simulatori di amplificatore, cabinet IR, splitter A/B e utilita'.
  Gli stadi analogici sono emulati dalla circuitazione (clipper a diodi,
@@ -131,7 +131,7 @@ Description: pedaliera per chitarra con 220 pedali emulati (VST3/LV2/Standalone)
 EOF
 
 mkdir -p "$OUT"
-DEB="$OUT/${PKG}_1.1.3-beta_${ARCH}.deb"   # niente "~": GitHub lo rinomina negli allegati
+DEB="$OUT/${PKG}_1.2.0-beta_${ARCH}.deb"   # niente "~": GitHub lo rinomina negli allegati
 dpkg-deb --root-owner-group -Zxz --build "$D" "$DEB"
 echo "Creato: $DEB"
 dpkg-deb --info "$DEB" | sed -n '1,20p'

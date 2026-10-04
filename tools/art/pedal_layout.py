@@ -22,9 +22,10 @@ NAM_ROW2 = 0.0005          # seconda fila: abbastanza sotto la prima da non copr
 # enclosure tipo Tube Screamer
 TS_W, TS_D, TS_H = 0.074, 0.125, 0.046
 
-KNOB_R = {"ts_big": 0.0096, "ts_small": 0.0076, "boss": 0.0073, "boss_outer": 0.0079, "boss_inner": 0.0049}
-KNOB_H = {"ts_big": 0.0160, "ts_small": 0.0145, "boss": 0.0150, "boss_outer": 0.0100, "boss_inner": 0.0075}
-STRIP_ID = {"ts_big": 0, "ts_small": 1, "boss": 2, "boss_outer": 3, "boss_inner": 4, "slider": 5, "toggle": 6, "button": 255,
+KNOB_R = {"ts_big": 0.0096, "ts_small": 0.0076, "boss": 0.0073, "boss_outer": 0.0079, "boss_inner": 0.0049, "boss_small": 0.0049}
+KNOB_H = {"ts_big": 0.0160, "ts_small": 0.0145, "boss": 0.0150, "boss_outer": 0.0100, "boss_inner": 0.0075, "boss_small": 0.0075}
+# "boss_small": pomello piccolo (stessa filmstrip del pomello interno dei concentrici) per i piani affollati
+STRIP_ID = {"ts_big": 0, "ts_small": 1, "boss": 2, "boss_outer": 3, "boss_inner": 4, "boss_small": 4, "slider": 5, "toggle": 6, "button": 255,
             "footswitch": 255, "footbutton": 253, "treadle": 254}
 
 ROW_X = {1: [0.0], 2: [-0.0135, 0.0135], 3: [-0.022, 0.0, 0.022], 4: [-0.0255, -0.0085, 0.0085, 0.0255]}
@@ -32,6 +33,21 @@ ROW_X = {1: [0.0], 2: [-0.0135, 0.0135], 3: [-0.022, 0.0, 0.022], 4: [-0.0255, -
 
 # variante "pannello profondo" (pedali con due file di comandi, come le serie 200/500)
 TALL_PANEL_Y0, TALL_TREAD_Y1 = -0.010, -0.012
+# file dei pomelli: la seconda abbastanza in basso perche' la sommita' dei suoi pomelli (che nell'immagine sale)
+# non copra le scritte della prima; levetta un po' piu' in alto per la sua scritta sopra i pomelli
+TALL_ROW1, TALL_ROW2, TALL_TOGGLE_Y = 0.0405, 0.0110, 0.0590
+
+# looper e accordatori: fila dei comandi e display (sopra la sommita' proiettata dei pomelli)
+DISPLAY_ROW_Y, DISPLAY_Y0, DISPLAY_Y1 = 0.035, 0.0495, 0.0610
+
+# la sommita' di un pomello alto h, vista dalla camera inclinata, copre il pannello fino a h*tan(22 gradi)
+# dietro il suo centro: e' la zona da lasciare libera da scritte
+TILT_TAN = math.tan(math.radians(22.0))
+
+
+def knob_shadow(h):
+    """Profondita' (m) del pannello coperta dietro il pomello dalla sua sommita' nell'immagine."""
+    return h * TILT_TAN
 
 
 def tread_top_z(y, y1=TREAD_Y1):
@@ -56,6 +72,10 @@ def group_positions(controls):
 def pedal_layout(m):
     """Restituisce il layout completo del modello m (dizionario del catalogo)."""
     style = m.get("style", "boss")
+    if style in ("treadle", "box"):
+        # pedali a bilanciere e scatole di misura reale: forma del pedale vero (shaped_layout.py)
+        import shaped_layout
+        return shaped_layout.normal_layout(m)
     ctrls = m["controls"]
     out = dict(style=style, controls=[None] * len(ctrls), led=None, toggle=None, display=None,
                sliders=None, buttons=[], panel_y0=PANEL_Y0, tread_y1=TREAD_Y1)
@@ -86,6 +106,7 @@ def pedal_layout(m):
             out["controls"][idx[id(c)]] = dict(x=x, y=-0.0535, z=top + 0.009, strip="footswitch", r=0.0085,
                                                 led=(x, -0.0372, top + 0.0012))
         out["display"] = (-0.037, 0.045, 0.037, 0.068)
+        out["display_z"] = top            # il display e' sul piano superiore (non alla quota dei compatti)
         out["led"] = (-0.022, -0.0372, top, 0.0024)          # LED del canale A (quello del B e' nel footswitch B)
         out["panel_y0"], out["tread_y1"] = -NAM_D / 2, -NAM_D / 2
         out["foot"] = [(-0.001, -0.070, top), (0.001, -0.070, top), (0.001, -0.069, top), (-0.001, -0.069, top)]
@@ -114,24 +135,25 @@ def pedal_layout(m):
         # eventuali pomelli oltre ai cursori: non previsti in questo stile
     else:
         n = len(groups)
-        if family == "Looper":
-            rows = [(0.028, groups)]
-            out["display"] = (-0.030, 0.042, 0.030, 0.060)
-        elif family == "Tuner":
-            rows = [(0.028, groups)]           # comandi in basso, display in alto
-            out["display"] = (-0.030, 0.040, 0.030, 0.060)
+        if family in ("Looper", "Tuner"):
+            # comandi in basso (etichette sul pannello, non sul bordo), display in alto lasciando a destra
+            # lo spazio del LED: il display parte sopra la sommita' dei pomelli, che nell'immagine sale
+            rows = [(DISPLAY_ROW_Y, groups)]
+            out["display"] = (-0.030, DISPLAY_Y0, 0.0205, DISPLAY_Y1)
         elif n <= 4:
             rows = [(0.036, groups)]
         elif n <= 6:
-            rows = [(0.041, groups[:3]), (0.0135, groups[3:])]
+            rows = [(TALL_ROW1, groups[:3]), (TALL_ROW2, groups[3:])]
             out["panel_y0"], out["tread_y1"] = TALL_PANEL_Y0, TALL_TREAD_Y1
         else:
-            rows = [(0.041, groups[:4]), (0.0135, groups[4:8])]
+            rows = [(TALL_ROW1, groups[:4]), (TALL_ROW2, groups[4:8])]
             out["panel_y0"], out["tread_y1"] = TALL_PANEL_Y0, TALL_TREAD_Y1
         for y, g in rows:
             xs = ROW_X.get(len(g), ROW_X[4])
             if family == "Looper":
                 xs = [0.024, 0.024 - 0.0165][:len(g)]
+            elif family == "Tuner" and toggles:
+                xs = [-0.0135]             # pomello a sinistra, levetta a destra (fuori dal display)
             for x, grp in zip(xs, g):
                 if len(grp) == 2:
                     o, inn = grp
@@ -145,21 +167,25 @@ def pedal_layout(m):
         # pulsanti (looper): fila in alto a sinistra del display
         for k, c in enumerate(buttons):
             bx = -0.027 + k * 0.0115
-            out["controls"][idx[id(c)]] = dict(x=bx, y=0.028, z=top, strip="button", r=0.0042)
+            out["controls"][idx[id(c)]] = dict(x=bx, y=DISPLAY_ROW_Y, z=top, strip="button", r=0.0042)
 
     # LED e levetta
     if sliders:
         out["led"] = (0.0265, 0.0103, tread_top_z(0.0103), 0.0024)   # LED sul pedale (come il GE-7)
         out["led_on_tread"] = True
     elif out.get("display"):
-        out["led"] = (0.029, 0.0625, top, 0.0020)
+        # a destra del display, dentro l'angolo arrotondato del pannello; scritta CHECK sotto il LED
+        out["led"] = (0.0285, 0.0565, top, 0.0020)
+        out["led_label_below"] = True
     elif not sliders and len(groups) > 4:
         out["led"] = (-0.017 if toggles else 0.0, 0.0585, top, 0.0023)
     else:
         out["led"] = (-0.017 if toggles else 0.0, 0.0575, top, 0.0024)
     for c in toggles:
-        if len(groups) > 4:
-            out["controls"][idx[id(c)]] = dict(x=0.017, y=0.0585, z=top, strip="toggle")
+        if out.get("display"):
+            out["controls"][idx[id(c)]] = dict(x=0.0135, y=DISPLAY_ROW_Y, z=top, strip="toggle")
+        elif len(groups) > 4:
+            out["controls"][idx[id(c)]] = dict(x=0.017, y=TALL_TOGGLE_Y, z=top, strip="toggle")
         else:
             out["controls"][idx[id(c)]] = dict(x=0.017, y=0.0575, z=top, strip="toggle")
 

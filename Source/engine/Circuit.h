@@ -22,6 +22,8 @@
         lin(i,a,b)   interpolazione lineare a..b
         log(i,a,b)   interpolazione logaritmica a..b
         sw(i,v0,v1,...) valore scelto dal selettore i
+        par(a,b,...)  resistenze in parallelo 1/(1/a+1/b+...) (argomenti = espressioni complete)
+        inv(a)        1/a          div(a,b)  a/b
 */
 
 #pragma once
@@ -38,8 +40,9 @@ namespace pt::engine
     class Expr
     {
     public:
-        struct Factor { enum Kind { Const, Pot, PotR, Taper, Lin, Log, Sw } kind = Const;
-                        int idx = 0; char taper = 'B'; std::vector<double> args; };
+        struct Factor { enum Kind { Const, Pot, PotR, Taper, Lin, Log, Sw, Par, Inv, Div } kind = Const;
+                        int idx = 0; char taper = 'B'; std::vector<double> args;
+                        std::vector<Expr> sub; };     // sotto-espressioni di par/inv/div
         using Term = std::vector<Factor>;
 
         static Expr parse (const std::string& text, std::string& error);
@@ -103,6 +106,7 @@ namespace pt::engine
     class CircuitEffect : public Effect
     {
     public:
+        static constexpr int maxTaps = 8;      // memorie "tap n=0..7" per rami paralleli (tap / recall / mix)
         explicit CircuitEffect (const ModelDef&);
         void prepare (double sampleRate, int maxBlock) override;
         void reset() override;
@@ -117,11 +121,12 @@ namespace pt::engine
         std::vector<std::unique_ptr<Stage>> stages;
         std::unique_ptr<juce::dsp::Oversampling<float>> os;
         std::vector<double> work;
-        std::unique_ptr<std::vector<double>[]> tapStore;   // punti "tap" per miscelazioni clean/drive
+        std::unique_ptr<std::vector<double>[]> tapStore;   // punti "tap" (maxTaps x 2 canali) per miscelazioni e rami paralleli
         float smoothed[maxControls] {};
         float lastUpdated[maxControls] {};
         double sr = 48000.0, osr = 192000.0;
         int maxN = 512;
         bool first = true;
+        bool needInputs = false;   // uno stadio legge gli ingressi di entrambi i canali (pan / blend)
     };
 }

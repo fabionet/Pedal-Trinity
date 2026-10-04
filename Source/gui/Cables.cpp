@@ -127,15 +127,136 @@ namespace pt::ui
         }
     }
 
+    CableOverlay::CableOverlay()
+    {
+        setInterceptsMouseClicks (true, false);          // solo sulle spine (hitTest)
+        setMouseCursor (juce::MouseCursor::DraggingHandCursor);
+        setTooltip ("Trascina la spina: infilala in un altro pedale per continuare la catena, "
+                    "lasciala nel vuoto per staccare il pedale");
+    }
+
+    void CableOverlay::setCables (std::vector<Cable> c)
+    {
+        if (drag >= 0) return;                           // la catena si aggiorna al rilascio
+        list = std::move (c);
+        repaint();
+    }
+
+    juce::Rectangle<float> CableOverlay::plugArea (const Cable& c, bool endB) const
+    {
+        const float dir = endB ? c.dirB : c.dirA;
+        if (dir == 0.0f || c.id < 0) return {};
+        const auto j = endB ? c.b : c.a;
+        const float s = c.scale, len = cables::plugLength * s, h = juce::jmax (16.0f, 30.0f * s);
+        return { dir > 0 ? j.x - 2.0f * s : j.x - len, j.y - h * 0.5f, len + 2.0f * s, h };
+    }
+
+    bool CableOverlay::hitTest (int x, int y)
+    {
+        if (! visible) return false;
+        if (drag >= 0) return true;
+        const juce::Point<float> p ((float) x, (float) y);
+        for (const auto& c : list)
+            if (plugArea (c, false).contains (p) || plugArea (c, true).contains (p)) return true;
+        return false;
+    }
+
+    void CableOverlay::mouseDown (const juce::MouseEvent& e)
+    {
+        const auto p = e.position;
+        drag = -1;
+        // la spina piu' in alto nella pila (disegnata per ultima) vince
+        for (int i = (int) list.size() - 1; i >= 0 && drag < 0; --i)
+            for (bool endB : { true, false })
+                if (plugArea (list[(size_t) i], endB).contains (p))
+                {
+                    drag = i; dragB = endB;
+                    grabOffset = p - (endB ? list[(size_t) i].b : list[(size_t) i].a);
+                    break;
+                }
+        if (drag < 0) return;
+        mouse = p;
+        target = {};
+        if (onGrab) onGrab (list[(size_t) drag].id, dragB);
+        repaint();
+    }
+
+    void CableOverlay::mouseDrag (const juce::MouseEvent& e)
+    {
+        if (drag < 0) return;
+        mouse = e.position;
+        target = onMove ? onMove (list[(size_t) drag].id, dragB, mouse) : Target {};
+        repaint();
+    }
+
+    void CableOverlay::mouseUp (const juce::MouseEvent& e)
+    {
+        if (drag < 0) return;
+        const int id = list[(size_t) drag].id;
+        const bool endB = dragB;
+        const bool moved = e.getDistanceFromDragStart() > 4;
+        drag = -1;
+        target = {};
+        repaint();
+        if (onDrop) onDrop (id, endB, e.position, moved);
+    }
+
     void CableOverlay::paint (juce::Graphics& g)
     {
         if (! visible) return;
-        for (const auto& c : list)
-            if (! c.under) cables::drawCable (g, c, body, sheen);
-        for (const auto& c : list)
+        auto colours = [this] (const Cable& c, juce::Colour& b, juce::Colour& s)
         {
+            b = c.body.isTransparent() ? body : c.body;
+            s = c.body.isTransparent() ? sheen : c.sheen;
+        };
+        // cavo tenuto in mano: dall'estremita' ancora infilata fino alla spina sotto il puntatore
+        Cable held;
+        if (drag >= 0)
+        {
+            held = list[(size_t) drag];
+            held.under = false;
+            const auto tip = mouse - grabOffset;
+            if (dragB) held.b = tip; else held.a = tip;
+        }
+        for (int i = 0; i < (int) list.size(); ++i)
+        {
+            const auto& c = i == drag ? held : list[(size_t) i];
+            if (c.under) continue;
+            juce::Colour b, s;
+            colours (c, b, s);
+            cables::drawCable (g, c, b, s);
+        }
+        for (int i = 0; i < (int) list.size(); ++i)
+        {
+            const auto& c = i == drag ? held : list[(size_t) i];
             cables::drawPlug (g, c.a, c.dirA, c.scale, c.line);
             cables::drawPlug (g, c.b, c.dirB, c.scale, c.line);
+        }
+        if (drag >= 0 && target.any)
+        {
+            const auto col = target.ok ? juce::Colour (0xff4cc26a) : juce::Colour (0xffe0554b);
+            if (! target.area.isEmpty())
+            {
+                g.setColour (col.withAlpha (0.16f));
+                g.fillRoundedRectangle (target.area, 8.0f);
+                g.setColour (col);
+                g.drawRoundedRectangle (target.area, 8.0f, 2.5f);
+            }
+            if (target.hint.isNotEmpty())
+            {
+                const juce::Font f (13.0f, juce::Font::bold);
+                const float w = juce::jmin ((float) getWidth() - 16.0f, (float) f.getStringWidth (target.hint) + 20.0f);
+                auto r = juce::Rectangle<float> (w, 24.0f).withCentre (mouse.translated (0.0f, -34.0f));
+                r = r.withX (juce::jlimit (8.0f, juce::jmax (8.0f, (float) getWidth() - w - 8.0f), r.getX()))
+                     .withY (juce::jmax (4.0f, r.getY()));
+                g.setColour (juce::Colour (0xee141518));
+                g.fillRoundedRectangle (r, 6.0f);
+                g.setColour (col);
+                g.drawRoundedRectangle (r, 6.0f, 1.2f);
+                g.setColour (juce::Colours::white);
+                g.setFont (f);
+                g.drawFittedText (target.hint, r.toNearestInt().reduced (8, 0), juce::Justification::centred, 1, 0.8f);
+            }
         }
     }
 }

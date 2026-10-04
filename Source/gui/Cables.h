@@ -21,6 +21,8 @@ namespace pt::ui
         int line = 0;               // 0 = A, 1 = B (colore dell'anello sulla spina)
         bool under = false;         // passa sotto la pedaliera (ritorno tra due file)
         float laneY = 0.0f;         // cavo "under": quota del passaggio tra le due file
+        int id = -1;                // collegamento della pedaliera a cui appartiene (spine trascinabili)
+        juce::Colour body, sheen;   // colore della gomma (trasparente = colore delle opzioni)
     };
 
     namespace cables
@@ -35,20 +37,42 @@ namespace pt::ui
         void drawSocket (juce::Graphics&, juce::Point<float> p, float scale);
     }
 
-    /** Strato trasparente sopra la pedaliera: cavi "sopra" e spine. Non riceve il mouse. */
-    class CableOverlay : public juce::Component
+    /** Strato trasparente sopra la pedaliera: cavi "sopra" e spine.
+        Riceve il mouse solo sulle spine: una spina si stacca trascinandola e si infila in un altro
+        pedale (o si lascia nel vuoto per staccare il pedale dalla catena). */
+    class CableOverlay : public juce::Component, public juce::SettableTooltipClient
     {
     public:
-        CableOverlay() { setInterceptsMouseClicks (false, false); }
-        void setCables (std::vector<Cable> c) { list = std::move (c); repaint(); }
+        /** Esito del passaggio sopra un possibile bersaglio durante il trascinamento di una spina. */
+        struct Target { bool any = false, ok = false; juce::Rectangle<float> area; juce::String hint; };
+
+        CableOverlay();
+        void setCables (std::vector<Cable> c);
         /** Colore della gomma e visibilita' dei cavi (opzioni). */
         void setStyle (juce::Colour b, juce::Colour s, bool show) { body = b; sheen = s; visible = show; repaint(); }
         const std::vector<Cable>& getCables() const { return list; }
+        bool isDraggingPlug() const { return drag >= 0; }
         void paint (juce::Graphics&) override;
+        bool hitTest (int x, int y) override;
+        void mouseDown (const juce::MouseEvent&) override;
+        void mouseDrag (const juce::MouseEvent&) override;
+        void mouseUp (const juce::MouseEvent&) override;
+
+        /** Spina presa (id del collegamento, true = estremita' di destinazione). */
+        std::function<void (int id, bool destEnd)> onGrab;
+        /** Spina trascinata sopra un punto della pedaliera: dove andrebbe a finire. */
+        std::function<Target (int id, bool destEnd, juce::Point<float>)> onMove;
+        /** Spina rilasciata; moved = false se e' stato solo un clic (nessun cambiamento). */
+        std::function<void (int id, bool destEnd, juce::Point<float>, bool moved)> onDrop;
 
     private:
+        juce::Rectangle<float> plugArea (const Cable&, bool endB) const;
         std::vector<Cable> list;
         juce::Colour body { 0xff141416 }, sheen { 0xff2a2b30 };
         bool visible = true;
+        int drag = -1;                  // indice in list della spina trascinata
+        bool dragB = false;
+        juce::Point<float> grabOffset, mouse;
+        Target target;
     };
 }

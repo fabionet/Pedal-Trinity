@@ -14,13 +14,13 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")  # nessun redistributable VC++ richiesto
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "")
 
-project(PedalTrinity VERSION 1.1.3 LANGUAGES C CXX)
+project(PedalTrinity VERSION 1.2.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)        # NeuralAmpModelerCore richiede la libreria C++20
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(PT_VERSION_STRING "1.1.3-beta")
+set(PT_VERSION_STRING "1.2.0-beta")
 set(PT_JUCE_DIR "" CACHE PATH "Cartella dei sorgenti di JUCE 7 (vuoto = download automatico)")
 set(PT_ASIO_SDK_DIR "" CACHE PATH "Cartella dello Steinberg ASIO SDK (solo Windows)")
 set(PT_JUCE_GIT_SHA "4f43011b96eb0636104cb3e433894cda98243626")
@@ -98,8 +98,8 @@ juce_add_plugin(PedalTrinity
     LV2URI "https://github.com/fabionet/Pedal-Trinity"
     VST3_CATEGORIES Fx Distortion EQ
     IS_SYNTH FALSE
-    NEEDS_MIDI_INPUT FALSE
-    NEEDS_MIDI_OUTPUT FALSE
+    NEEDS_MIDI_INPUT TRUE
+    NEEDS_MIDI_OUTPUT TRUE
     IS_MIDI_EFFECT FALSE
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE
     COPY_PLUGIN_AFTER_BUILD FALSE)
@@ -108,6 +108,7 @@ target_sources(PedalTrinity PRIVATE
     Source/PluginProcessor.cpp
     Source/PluginEditor.cpp
     Source/Presets.cpp
+    Source/MidiMap.cpp
     Source/StandaloneApp.cpp
     Source/engine/Catalog.cpp
     Source/engine/Chain.cpp
@@ -132,8 +133,25 @@ target_sources(PedalTrinity PRIVATE
     Source/gui/Theme.cpp
     Source/gui/RealMod.cpp
     Source/gui/OptionsPanel.cpp
+    Source/gui/MidiPanel.cpp
     Source/engine/FxNam.cpp
-    Source/engine/NamSecurity.cpp)
+    Source/engine/NamSecurity.cpp
+    Source/engine/FxClassic.cpp
+    Source/engine/FxClassicMod.cpp
+    Source/engine/FxClassicTime.cpp
+    Source/engine/FxPolyPitch.cpp
+    Source/engine/FxInstrument.cpp
+    Source/engine/FxClassicB.cpp
+    Source/engine/FxClassicBMod.cpp
+    Source/engine/FxClassicBTime.cpp
+    Source/engine/FxClassicBPitch.cpp
+    Source/engine/FxClassicBMulti.cpp)
+# banco di filtri complessi (FxSpectral.h): senza errno/trap sulle radici i cicli per banda si vettorizzano
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set_source_files_properties(Source/engine/FxPolyPitch.cpp Source/engine/FxInstrument.cpp
+        Source/engine/FxClassicBTime.cpp Source/engine/FxClassicBPitch.cpp Source/engine/FxClassicBMulti.cpp
+        PROPERTIES COMPILE_OPTIONS "-fno-math-errno;-fno-trapping-math")
+endif()
 # ResamplingContainer.h (AudioDSPTools) ridichiara LanczosResampler come alias: GCC 11-12 lo tratta come
 # errore "changes meaning" (permerror), i compilatori piu' recenti no. Solo per i file che lo includono.
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

@@ -24,18 +24,22 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SPECS = os.path.join(HERE, "real_specs.json")
 
 SERIES = ("compact", "twin", "series200", "series500", "floor", "treadle_volume", "treadle_wah", "rocker",
-          "vintage_box", "tabletop", "other")
+          "vintage_box", "tabletop", "other", "shaped", "stomp")
 
 # misure tipiche (mm) per famiglia, se la scheda non le riporta
 DEFAULT_DIMS = {"compact": (73, 129, 59), "twin": (173, 158, 57), "series200": (101, 138, 63),
                 "series500": (170, 138, 62), "floor": (238, 160, 62), "treadle_volume": (101, 316, 81),
                 "treadle_wah": (105, 275, 88), "rocker": (130, 250, 80), "vintage_box": (150, 140, 70),
-                "tabletop": (300, 200, 90), "other": (120, 140, 62)}
+                "tabletop": (300, 200, 90), "other": (120, 140, 62), "shaped": (102, 254, 64), "stomp": (70, 114, 53)}
 
 # scritte che non devono mai comparire sulle repliche (marchi e loghi del produttore)
-# nomi di aziende (BOSS, Roland e i marchi dei partner delle edizioni in collaborazione): mai stampati;
-# restano solo i nomi di prodotto, per identificare il pedale di riferimento
-NO_BRAND = re.compile(r"\bBOSS\b|\bRoland\b|\bFender\b|\bIbanez\b|\bJHS\b", re.I)
+# nomi di aziende (BOSS, Roland, Dunlop, Ernie Ball, Morley, DeArmond, MXR e i marchi dei partner delle edizioni
+# in collaborazione): mai stampati; restano solo i nomi di prodotto, per identificare il pedale di riferimento
+# (sulle signature anche il nome dell'artista, che fa parte del nome del modello)
+NO_BRAND = re.compile(r"\bBOSS\b|\bRoland\b|\bFender\b|\bIbanez\b|\bJHS\b|\bJim\s+Dunlop\b|\bDunlop\b|"
+                      r"\bErnie\s*Ball\b|\bMorley\b|\bDe\s*Armond\b|\bRowe\s+Industries\b|\bMXR\b|"
+                      r"\bCustom\s+Audio\s+Electronics\b|\bCAE\b|\bDaredevil(\s+Pedals)?\b|\bWylde\s+Audio\b|"
+                      r"\bPedaltrain\b|\bElectro\s*-?\s*Harmonix\b|\bEHX\b|\bSovtek\b|\bGuild\b", re.I)
 
 
 def hex_rgb(h, fallback):
@@ -78,6 +82,9 @@ def real_models(strict=True):
     specs = load_specs()
     out = []
     for m in models:
+        if m.get("real"):
+            out.append(_shaped_replica(m))
+            continue
         if not (m.get("inspired") or "").startswith("BOSS"):
             continue
         sp = specs.get(m["id"], {})
@@ -106,6 +113,27 @@ def real_models(strict=True):
         r["style"] = "real_" + series
         out.append(r)
     return out
+
+
+def _shaped_replica(m):
+    """Replica di un pedale non BOSS descritto nel catalogo (campi 'real' e 'look'): wah Cry Baby, volume
+    Dunlop / Ernie Ball / Morley / DeArmond. Stessa forma della versione normale, sigla e nome reali."""
+    lk = m["look"]
+    r = copy.deepcopy(m)
+    r["real_code"] = clean_text(m["real"]["code"])
+    r["real_name"] = clean_text(m["real"]["name"])
+    r["series"] = "shaped" if m["style"] == "treadle" else ("stomp" if lk.get("stomp") else "other")
+    r["dims"] = tuple(float(v) / 1000.0 for v in lk["dims"])
+    r["colour"] = tuple(lk.get("real_colour") or m["colour"])
+    r["text"] = m.get("text")
+    r["real_layout"] = lk.get("rows") if m["style"] == "box" else None
+    r["real_knob_order"] = None
+    r["real_concentric"] = []
+    r["real_footswitches"] = None
+    r["real_display"] = bool(lk.get("display"))
+    r["real_notes"] = ""
+    r["style"] = "real_" + r["series"]
+    return r
 
 
 if __name__ == "__main__":

@@ -13,17 +13,23 @@ namespace pt::ui
     class FootToggle : public juce::Component, public BoundControl, public juce::SettableTooltipClient
     {
     public:
-        explicit FootToggle (const ControlDef& cd) : c (cd)
+        /** showState: pulsanti e kickswitch dei wah a bilanciere (stato non mostrato da un LED dedicato):
+            un anello luminoso sul tasto quando e' inserito. */
+        explicit FootToggle (const ControlDef& cd, bool showStateRing = false) : c (cd), showState (showStateRing)
         {
-            const float r = c.radius * 1.15f;
+            const float r = c.radius * (showState ? 1.6f : 1.15f);
             setBounds (juce::Rectangle<float> (c.x - r, c.y - r, r * 2.0f, r * 2.0f).getSmallestIntegerContainer());
             setMouseCursor (juce::MouseCursor::PointingHandCursor);
-            setTooltip (juce::String (c.label).length() <= 1 ? juce::String ("Canale ") + c.label + ": acceso / spento"
-                                                               : juce::String (c.label) + ": footswitch");
+            if (showState && c.steps == 2 && c.choices != nullptr)
+                setTooltip (juce::String (c.label) + ": " + juce::String (c.choices).replace ("|", " / "));
+            else
+                setTooltip (juce::String (c.label).length() <= 1 ? juce::String ("Canale ") + c.label + ": acceso / spento"
+                                                                   : juce::String (c.label) + ": footswitch");
         }
         bool hitTest (int x, int y) override
         {
-            return getLocalBounds().toFloat().getCentre().getDistanceFrom ({ (float) x, (float) y }) <= c.radius * 1.15f;
+            const auto ctr = juce::Point<float> (c.x, c.y) - getPosition().toFloat();
+            return ctr.getDistanceFrom ({ (float) x, (float) y }) <= c.radius * 1.15f;
         }
         void mouseDown (const juce::MouseEvent&) override { pressed = true; repaint(); }
         void mouseUp (const juce::MouseEvent& e) override
@@ -34,9 +40,21 @@ namespace pt::ui
         }
         void paint (juce::Graphics& g) override
         {
+            const auto ctr = juce::Point<float> (c.x, c.y) - getPosition().toFloat();
+            if (showState && state)
+            {
+                const float r = c.radius * 1.32f;
+                juce::ColourGradient glow (juce::Colour (0x00ffb030), ctr, juce::Colour (0x00ffb030), ctr.translated (r * 1.2f, 0), true);
+                glow.addColour (0.62, juce::Colour (0x00ffb030));
+                glow.addColour (0.80, juce::Colour (0xaaffb030));
+                g.setGradientFill (glow);
+                g.fillEllipse (juce::Rectangle<float> (r * 2.4f, r * 2.4f).withCentre (ctr));
+                g.setColour (juce::Colour (0xffffc050));
+                g.drawEllipse (juce::Rectangle<float> (r * 2.0f, r * 2.0f).withCentre (ctr), 1.4f);
+            }
             if (! pressed) return;
             g.setColour (juce::Colours::black.withAlpha (0.25f));
-            g.fillEllipse (getLocalBounds().toFloat().reduced (getWidth() * 0.12f));
+            g.fillEllipse (juce::Rectangle<float> (c.radius * 2.0f, c.radius * 2.0f).withCentre (ctr));
         }
         void syncFromModel() override
         {
@@ -45,6 +63,7 @@ namespace pt::ui
         }
     private:
         const ControlDef& c;
+        bool showState = false;
         bool state = true, pressed = false;
     };
 
@@ -60,7 +79,7 @@ namespace pt::ui
             auto* d = owner.def;
             auto* s = owner.slot;
             if (d == nullptr || s == nullptr) return;
-            const bool on = s->enabled.load();
+            const bool on = s->enabled.load() && (s->patched.load() || s->isSplitter());   // staccato: LED spento
             if (d->family == Family::Nam) { paintNam (g, *d, *s, on); return; }
             // LED
             if (on && d->ledR > 0)
@@ -351,7 +370,7 @@ namespace pt::ui
         auto& ch = chain;
         auto bind = [this, idx, &ch] (BoundControl& b, int k)
         {
-            b.onChange = [idx, k, &ch] (float v) { ch.setParam (idx, k, v); };
+            b.onChange = [idx, k, &ch] (float v) { ch.setParam (idx, k, v); ch.notifyTouch (idx, k); };
             b.readModel = [this, k] { return slot != nullptr && slot->fx != nullptr ? slot->fx->p (k) : 0.0f; };
             b.syncFromModel();
         };
@@ -365,7 +384,7 @@ namespace pt::ui
             foot->onClick = [this] { if (slot != nullptr && slot->fx != nullptr) slot->fx->trigger (0); };
         }
         else
-            foot->onClick = [this, idx] { if (slot != nullptr) chain.setEnabled (idx, ! slot->enabled.load()); };
+            foot->onClick = [this, idx] { if (slot != nullptr) { chain.setEnabled (idx, ! slot->enabled.load()); chain.notifyTouch (idx, -1); } };
         canvas->addAndMakeVisible (foot);
         }
 
@@ -415,7 +434,7 @@ namespace pt::ui
                     {
                         if (c.strip == 255)          // footswitch renderizzato (NAM-A1A2)
                         {
-                            auto* f = new FootToggle (c);
+                            auto* f = new FootToggle (c, def->family != Family::Nam);
                             bind (*f, k);
                             comp = f;
                             break;
@@ -577,9 +596,10 @@ namespace pt::ui
             // slot vuoto
             auto r = getLocalBounds().toFloat().reduced (juce::jmin (getWidth(), getHeight()) * 0.08f);
             const auto& t = themes->current();
-            g.setColour (t.ink.withAlpha (0.07f));
+            const auto ink = themes->boardTheme().ink;      // segni leggibili sulla pedana scelta
+            g.setColour (ink.withAlpha (0.07f));
             g.fillRoundedRectangle (r, 10.0f);
-            g.setColour (t.ink.withAlpha (0.55f));
+            g.setColour (ink.withAlpha (0.55f));
             const float dash[] = { 6.0f, 5.0f };
             juce::Path p; p.addRoundedRectangle (r, 10.0f);
             juce::Path dashed; juce::PathStrokeType (1.5f).createDashedStroke (dashed, p, dash, 2);
@@ -623,7 +643,7 @@ namespace pt::ui
             }
         if (def != nullptr && (def->family == Family::Tuner || def->family == Family::Looper || def->family == Family::Nam))
             canvas->repaint();
-        const bool on = slot != nullptr && slot->enabled.load();
+        const bool on = slot != nullptr && slot->enabled.load() && (slot->patched.load() || slot->isSplitter());
         if (on != lastOn) { lastOn = on; repaint(); canvas->repaint(); }
     }
 }

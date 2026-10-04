@@ -1,0 +1,161 @@
+"""
+Pedal Trinity - MXR signature (tappa 3A): pedali a scatola con la forma del pedale vero (stomp_layout.py),
+modalita' normale con nome e sigla ORIGINALI Pedal Trinity e replica REAL MOD con nome e sigla reali del
+modello (mai il marchio del produttore). Nessun logo, artwork, ritratto o firma: colori e motivi geometrici
+semplificati (stomp_textures.py).
+
+Fonti dell'aspetto: schede della tappa 3 (manuali ufficiali, pagine prodotto, Kit Rae, misure dei contenitori);
+le posizioni dei comandi (x%, y% sul piano visto dall'alto) sono in gran parte stime +-5-8 punti.
+La parte funzionale viene da sound_stage3_analog.json / sound_stage3_digital.json (stomp_catalog.stomp): i
+comandi qui sotto sono il segnaposto usato finche' l'id manca in quei file.
+File generato da gen_catalog.py (tappa 3A) e poi mantenuto a mano.
+"""
+from catalog import knob, outer, inner, selector, toggle, slider, button
+from stomp_catalog import stomp, look
+
+MODELS = [
+    # MXR ZW44 Zakk Wylde Overdrive (poi 'Berzerker Overdrive'; riedizione WA44 Wylde Audio Overdrive) - c. 2005-2006 (stima; collaborazione Dunlop-Wylde iniziata ne
+    stomp("zw44", "YO-1", "Bullseye Crunch", "MXR ZW44 Zakk Wylde Overdrive (poi 'Berzerker Overdrive'; riedizione WA44 Wylde Audio Overdrive)",
+          ("ZW44", "Berzerker Overdrive"), "Overdrive / Boost", (112, 110, 66),
+          look("mxr", (61, 111, 36),
+               [('TONE', 50, 14, 'knob'), ('OUTPUT', 24, 27, 'knob'), ('GAIN', 76, 27, 'knob')],
+               feet=[('ON/OFF', 50, 82)], leds=[(50, 40, 'red')], extra=[], finish='paint', gfx={'panels': [('rect', 6, 52, 94, 66, (24, 24, 26), None, 2.0)],
+                'name': {'y': 59, 'size': 6.0, 'font': 'roman', 'col': (232, 230, 222)},
+                'code': {'y': 70, 'size': 2.6, 'col': (24, 24, 26)},
+                'label': {'col': (232, 230, 222)},
+                'brand': {'x': 50, 'y': 93}}),
+          ("Circuit", [knob("TONE", "tone"),
+            knob("OUTPUT", "level"),
+            knob("GAIN", "gain")],
+           "hpf R=470k C=100n; fbclip Rg=4.7k Cg=47n Rf=10k+pot(2,470k,A) Cf=51p d=si up=1 dn=1 rail=4.2; tonebm R1=22k C1=10n R2=22k C2=4n t=taper(0,B); vol a=taper(1,A)"),
+          "Overdrive a operazionale con clipping a diodi nel controreazione (famiglia SD-1/Tube Screamer): ingresso a transistor Darlington, stadio a operazionale non invertente con clipping asimmetrico in controreazione (struttura Boss SD-1), tone attivo, volume passivo. Parte funzionale provvisoria (segnaposto) finche' non arriva la scheda sonora."),
+
+    # MXR EVH 5150 Overdrive - 2015-2016 (manuale ottobre 2015)
+    stomp("evh5150", "YO-2", "Striped Blue Drive", "MXR EVH 5150 Overdrive",
+          ("EVH5150", "5150 Overdrive"), "Overdrive / Boost", (24, 24, 26),
+          look("mxr_big", (92, 121, 38),
+               [('OUTPUT', 12, 16, 'knob'), ('BASS', 31, 16, 'knob'), ('MID', 50, 16, 'knob'), ('TREBLE', 69, 16, 'knob'),
+                ('GAIN', 88, 16, 'knob'), ('GATE', 22, 46, 'knob'), ('BOOST', 78, 46, 'button')],
+               feet=[('ON/OFF', 50, 84)], leds=[(50, 64, 'blue')], extra=[], finish='matte', gfx={'panels': [('rect', 4, 16.0, 96, 110.0, None, (232, 230, 222), 3.0, 0.6)],
+                'name': {'y': 71.0, 'size': 7.5, 'font': 'black', 'col': (232, 230, 222)},
+                'code': {'y': 79.0, 'size': 2.8, 'col': (200, 200, 196)},
+                'label': {'col': (232, 230, 222)}}),
+          ("Circuit", [knob("OUTPUT", "level"),
+            knob("BASS", "tone"),
+            knob("MID", "tone"),
+            knob("TREBLE", "tone"),
+            knob("GAIN", "gain"),
+            knob("GATE", "aux"),
+            toggle("BOOST", "gain", ("OFF", "BOOST"), 0)],
+           "hpf R=470k C=100n; fbclip Rg=4.7k Cg=47n Rf=10k+pot(4,470k,A) Cf=51p d=si up=1 dn=1 rail=4.2; tonebm R1=22k C1=10n R2=22k C2=4n t=taper(1,B); vol a=taper(0,A)"),
+          "Overdrive/distorsione a piu' stadi MOSFET (canale 'blu' dell'amplificatore 5150 III) con EQ a 3 bande, boost e noise gate: cascata di stadi a MOSFET con filtri interstadio (imitazione del preamp 5150 III canale blu), tone stack attivo a 3 bande, stadio BOOST (+6 dB nel preamp) e noise gate a soglia dopo la distorsione. Parte funzionale provvisoria (segnaposto) finche' non arriva la scheda sonora."),
+
+    # MXR DD11 Dime Distortion (Dimebag Darrell) - c. 2010 (stima; manuale rev. D 2018)
+    stomp("dd11", "YD-1", "Hellfire Scoop", "MXR DD11 Dime Distortion (Dimebag Darrell)",
+          ("DD11", "Dime Distortion"), "Distorsione", (24, 24, 26),
+          look("mxr_big", (92, 121, 38),
+               [('OUTPUT', 12, 18, 'knob'), ('BASS', 31, 18, 'knob'), ('MID', 50, 18, 'knob'), ('TREB', 69, 18, 'knob'),
+                ('GAIN', 88, 18, 'knob', ['GAIN (DISTORTION)']), ('SCOOP', 50, 46, 'button')],
+               feet=[('ON/OFF', 50, 84)], leds=[(50, 66, 'red'), (50, 38, 'yellow')], extra=[], finish='paint', gfx={'panels': [('band', 0, 4, (196, 32, 36)), ('band', 96, 100, (196, 32, 36)),
+                           ('hline', 51.0, (196, 32, 36), 0.6, 8, 92), ('hline', 67.0, (196, 32, 36), 0.6, 8, 92)],
+                'name': {'y': 59.0, 'size': 7.0, 'font': 'blackit', 'col': (210, 210, 214), 'upper': True},
+                'code': {'y': 74, 'size': 2.6, 'col': (196, 32, 36)},
+                'label': {'col': (232, 230, 222)}}),
+          ("Circuit", [knob("OUTPUT", "level"),
+            knob("BASS", "tone"),
+            knob("MID", "tone"),
+            knob("TREB", "tone"),
+            knob("GAIN", "gain"),
+            toggle("SCOOP", "mode", ("OFF", "SCOOP"), 0)],
+           "hpf R=470k C=100n; opni Rg=2.2k Cg=1u Rf=10k+pot(4,470k,A) Cf=100p rail=4; dclip R=2.2k C=10n d=si; tonebm R1=22k C1=10n R2=22k C2=4n t=taper(1,B); vol a=taper(0,A)"),
+          "Distorsione ad alto guadagno a operazionali (18 V) con EQ a 3 bande e pulsante SCOOP: stadi di guadagno a operazionali a 18 V con clipping a diodi, EQ attivo a 3 bande, rete SCOOP che miscela uscite di stadi diversi per una tacca di -22 dB a 1 kHz. Parte funzionale provvisoria (segnaposto) finche' non arriva la scheda sonora."),
+
+    # MXR SF01 Slash Octave Fuzz - 2012
+    stomp("sf01", "YZ-1", "Top Hat Octafuzz", "MXR SF01 Slash Octave Fuzz",
+          ("SF01", "Slash Octave Fuzz"), "Fuzz", (24, 24, 26),
+          look("mxr_big", (92, 121, 38),
+               [('VOLUME', 14, 16, 'knob'), ('TONE', 38, 16, 'knob'), ('FUZZ', 62, 16, 'knob'), ('SUB OCTAVE', 86, 16, 'knob'),
+                ('OCTAVE UP', 72, 44, 'knob'), ('SUB>FUZZ', 28, 44, 'button', ['SUB INTO FUZZ'])],
+               feet=[('ON', 28, 84), ('UP', 72, 84, ['OCT UP', 'OCTAVE UP', 'UP'])], leds=[(28, 66, 'red'), (72, 66, 'red')], extra=[], finish='paint', gfx={'panels': [('rect', 4, 3, 96, 97, None, (190, 190, 186), 3.0, 0.5)],
+                'name': {'y': 58, 'size': 6.5, 'font': 'serif', 'col': (220, 220, 214)},
+                'code': {'y': 66, 'size': 2.6, 'col': (190, 190, 186)},
+                'label': {'col': (232, 230, 222)}}),
+          ("Circuit", [knob("VOLUME", "level"),
+            knob("TONE", "tone"),
+            knob("FUZZ", "gain"),
+            knob("SUB OCTAVE", "aux"),
+            knob("OCTAVE UP", "aux"),
+            toggle("SUB>FUZZ", "gain", ("OFF", "ON"), 0),
+            toggle("UP", "mode", ("OFF", "ON"), 0)],
+           "hpf R=470k C=100n; opni Rg=2.2k Cg=1u Rf=10k+pot(2,470k,A) Cf=100p rail=4; dclip R=2.2k C=10n d=si; tonebm R1=22k C1=10n R2=22k C2=4n t=taper(1,B); vol a=taper(0,A)"),
+          "Fuzz con sub-ottava (divisore digitale, derivato dal Blue Box) e ottava superiore a fuzz separato: ingresso, generatore di sub-ottava a flip-flop (come il Blue Box: squadratura + CD4013 /2), fuzz principale a transistor/op-amp, ramo ottava superiore a raddrizzatore (stima) con fuzz proprio e trimmer GAIN/TONE, mixer. Parte funzionale provvisoria (segnaposto) finche' non arriva la scheda sonora."),
+
+    # MXR DD25 Dookie Drive (Billie Joe Armstrong) - 2019 (V1), V2 2019-2020, V3 2020, V4 2023, 30th Anniversary 
+    stomp("dd25", "YO-3", "Twin Stack Blend", "MXR DD25 Dookie Drive (Billie Joe Armstrong)",
+          ("DD25", "Dookie Drive"), "Overdrive / Boost", (140, 176, 84),
+          look("mxr", (61, 111, 36),
+               [('OUTPUT', 24, 14, 'knob'), ('GAIN', 76, 14, 'knob'), ('SCOOP', 50, 26, 'button'), ('BLEND', 24, 40, 'knob'),
+                ('TONE', 76, 40, 'knob')],
+               feet=[('ON/OFF', 50, 82)], leds=[(50, 52, 'green')], extra=[], finish='paint', gfx={'panels': [('band', 56, 74, (232, 196, 60)), ('hline', 56, (24, 24, 26), 0.5), ('hline', 74, (24, 24, 26), 0.5)],
+                'name': {'y': 64, 'size': 6.0, 'font': 'gothic', 'col': (24, 24, 26), 'upper': True},
+                'code': {'y': 78, 'size': 2.4, 'col': (24, 24, 26)},
+                'label': {'col': (24, 24, 26)}}, knob='small'),
+          ("Circuit", [knob("OUTPUT", "level"),
+            knob("GAIN", "gain"),
+            toggle("SCOOP", "mode", ("OUT", "IN"), 0),
+            knob("BLEND", "tone"),
+            knob("TONE", "tone")],
+           "hpf R=470k C=100n; fbclip Rg=4.7k Cg=47n Rf=10k+pot(1,470k,A) Cf=51p d=si up=1 dn=1 rail=4.2; tonebm R1=22k C1=10n R2=22k C2=4n t=taper(3,B); vol a=taper(0,A)"),
+          "Doppio overdrive in parallelo (High Gain + Crunch) miscelabili, con SCOOP: buffer, due catene di saturazione in parallelo che imitano due testate Marshall 100 W modificate (una ad alto guadagno con medi scavati, una crunch con medi presenti), BLEND, tone e scoop comuni. Parte funzionale provvisoria (segnaposto) finche' non arriva la scheda sonora."),
+
+    # MXR ZW38 Zakk Wylde Black Label Chorus (riedizione WA38 Wylde Audio Chorus) - 2011 (manuale rev. A del gennaio 2011)
+    stomp("zw38", "YC-1", "Bullseye Chorus", "MXR ZW38 Zakk Wylde Black Label Chorus (riedizione WA38 Wylde Audio Chorus)",
+          ("ZW38", "Black Label Chorus"), "Chorus / Dimension", (24, 24, 26),
+          look("mxr", (61, 111, 36),
+               [('LOW', 24, 12, 'knob'), ('HIGH', 76, 12, 'knob'), ('LEVEL', 24, 32, 'knob'), ('DEPTH', 76, 32, 'knob'),
+                ('RATE', 50, 46, 'knob')],
+               feet=[('ON/OFF', 50, 82)], leds=[(50, 62, 'blue')], extra=[], finish='paint', gfx={'panels': [('rect', 5, 9.0, 95, 103.0, None, (232, 230, 222), 2.5, 0.5)],
+                'name': {'y': 69.0, 'size': 5.5, 'font': 'roman', 'col': (232, 230, 222)},
+                'code': {'y': 77.0, 'size': 2.4, 'col': (200, 200, 196)},
+                'label': {'col': (232, 230, 222)}}, knob='small'),
+          ("BBDChorus", [knob("LOW", "level"),
+            knob("HIGH", "level"),
+            knob("LEVEL", "level"),
+            knob("DEPTH", "depth"),
+            knob("RATE", "rate")],
+           "type=chorus stages=1024 clk=85000,150000 rate=0.32,3.5 lfo=0 aa=6800 comp=0 sat=1"),
+          "Chorus analogico a BBD con filtri passa-alto/passa-basso sul segnale ritardato, uscita stereo 'thru': buffer di ingresso, linea di ritardo BBD con clock e LFO triangolare, filtri anti-alias, filtri LOW/HIGH di tipo shelving sul segnale ritardato, miscelatore. Parte funzionale provvisoria (segnaposto) finche' non arriva la scheda sonora.", stereo=True),
+
+    # MXR EVH90 Phase 90 (Eddie Van Halen) - c. 2004-2005 (stima; manuale rev. B 2017)
+    stomp("evh90", "YP-1", "Striped Swirl", "MXR EVH90 Phase 90 (Eddie Van Halen)",
+          ("EVH90", "Phase 90"), "Phaser", (200, 36, 34),
+          look("mxr", (61, 111, 36),
+               [('SPEED', 50, 34, 'knob'), ('SCRIPT', 18, 12, 'button')],
+               feet=[('ON/OFF', 50, 82)], leds=[(50, 12, 'blue')], extra=[], finish='paint', gfx={'panels': [('rect', 4, 3, 96, 97, None, (232, 230, 222), 2.5, 0.8),
+                           ('rect', 7, 5, 93, 95, None, (24, 24, 26), 2.0, 0.6)],
+                'name': {'y': 60, 'size': 6.5, 'font': 'blackit', 'col': (232, 230, 222)},
+                'code': {'y': 68, 'size': 2.4, 'col': (24, 24, 26)},
+                'label': {'col': (232, 230, 222)}}),
+          ("Phaser", [knob("SPEED", "rate"),
+            toggle("SCRIPT", "mode", ("BLOCK", "SCRIPT"), 0)],
+           "stages=4 f=159,8000 rate=0.0625,10 fbmax=0.6 lfo=0 depth=1 resfix=0"),
+          "Phaser a 4 stadi JFET (Phase 90) con commutatore 'Script' che toglie la retroazione: buffer d'ingresso a op-amp, 4 celle passa-tutto con JFET 2N5952 come resistenze variabili, LFO triangolare (trigger di Schmitt + integratore), mixer 50/50 a PNP. Parte funzionale provvisoria (segnaposto) finche' non arriva la scheda sonora."),
+
+    # MXR EVH117 Flanger (Eddie Van Halen) - c. 2004 (stima)
+    stomp("evh117", "YF-1", "Striped Jet", "MXR EVH117 Flanger (Eddie Van Halen)",
+          ("EVH117", "Flanger"), "Flanger", (232, 232, 226),
+          look("mxr_big", (92, 121, 38),
+               [('MANUAL', 14, 18, 'knob'), ('WIDTH', 38, 18, 'knob'), ('SPEED', 62, 18, 'knob'), ('REGEN', 86, 18, 'knob'),
+                ('EVH', 50, 48, 'button')],
+               feet=[('ON/OFF', 50, 84)], leds=[(50, 66, 'blue'), (50, 40, 'yellow')], extra=[], finish='paint', gfx={'panels': [('rect', 4, 0.0, 96, 94.0, None, (24, 24, 26), 3.0, 0.8)],
+                'name': {'y': 59.0, 'size': 7.5, 'font': 'blackit', 'col': (24, 24, 26)},
+                'code': {'y': 67.0, 'size': 2.6, 'col': (24, 24, 26)},
+                'label': {'col': (24, 24, 26)}}),
+          ("BBDFlanger", [knob("MANUAL", "manual"),
+            knob("WIDTH", "depth"),
+            knob("SPEED", "rate"),
+            knob("REGEN", "res"),
+            toggle("EVH", "level", ("OFF", "EVH"), 0)],
+           "type=flanger stages=1024 clk=40000,500000 rate=0.0625,10 lfo=0 aa=12800 comp=0 fbmax=0.9 sat=0.8"),
+          "Flanger analogico a BBD (M117R) con preset 'Unchained' a pulsante: buffer, compressore (SA572) -> filtro anti-alias -> BBD con clock a frequenza variabile (VCO + flip-flop 4013 per i clock complementari, traslatore di livello MC14504) -> filtro di ricostruzione -> espansore -> mix dry/w. Parte funzionale provvisoria (segnaposto) finche' non arriva la scheda sonora."),
+]

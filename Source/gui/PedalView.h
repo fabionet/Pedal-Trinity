@@ -36,6 +36,8 @@ namespace pt::ui
         bool jackPoint (bool output, int line, juce::Point<float>& out) const;
         /** Pixel della vista per pixel logico dell'immagine del pedale. */
         float imageScale() const;
+        /** Riquadro dell'immagine del pedale nella vista. */
+        juce::Rectangle<float> pedalArea() const { return imageArea(); }
 
         //==================== REAL MOD: allineamento dei pomelli sulla foto personale
         bool hasPhoto() const { return photoImage.isValid() && def != nullptr && def->bodyW > 0; }

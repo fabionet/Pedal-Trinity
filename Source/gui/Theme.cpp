@@ -3,6 +3,8 @@
 */
 
 #include "Theme.h"
+#include "RealMod.h"
+#include "../engine/NamSecurity.h"
 #include <map>
 
 namespace pt::ui
@@ -45,6 +47,66 @@ namespace pt::ui
               BoardStyle::Carpet, c (0xff1b1c1f), c (0xff0d0d0f), c (0xff2a2b30), c (0xff8a877e),
               c (0xff0d0d0f), c (0xff2b2c30), c (0xff18191c), c (0xffd9b464), c (0xffe8e6df), c (0xffb9b6ac),
               c (0xff202125), c (0xff141517), c (0xff1f2024), c (0xff2a2b2f), c (0xff3d6b45) },
+            { "redtolex", "Tolex rosso",
+              "Tolex rosso ciliegia come i combo degli anni '60, profilo crema e angolari cromati.",
+              BoardStyle::Tolex, c (0xff6e1616), c (0xff3c0a0a), c (0xffe6d6b0), c (0xfff0dcc0),
+              c (0xff120c0b), c (0xff33201d), c (0xff1c1210), c (0xffe8b04a), c (0xffefe7dc), c (0xffc2b3a6),
+              c (0xff261816), c (0xff170e0d), c (0xff21140f), c (0xff35231f), c (0xff7a2a22) },
+            { "tweed", "Tweed '59",
+              "Tela tweed a spina di pesce con profilo in cuoio scuro, come gli amplificatori di fine anni '50.",
+              BoardStyle::Tweed, c (0xffc9b48a), c (0xff6e5a3a), c (0xff3a2a1a), c (0xff2a1e12),
+              c (0xff14100b), c (0xff3a2d1e), c (0xff21190f), c (0xffe0b66a), c (0xfff1e8d6), c (0xffc9bb9f),
+              c (0xff2b2115), c (0xff1a140c), c (0xff251c11), c (0xff3a2d1e), c (0xff6e5226) },
+            { "diamond", "Lamiera mandorlata",
+              "Lamiera d'alluminio antiscivolo a mandorle in rilievo, viti a vista: la pedana da palco.",
+              BoardStyle::DiamondPlate, c (0xffa3a8ad), c (0xff5c6166), c (0xff2c2f33), c (0xff15181b),
+              c (0xff0f1012), c (0xff2d3034), c (0xff191b1e), c (0xfff2a33a), c (0xffeceeef), c (0xffb7bcc1),
+              c (0xff212327), c (0xff151719), c (0xff1c1e21), c (0xff2c2f34), c (0xff8a4f12) },
+            { "carbon", "Fibra di carbonio",
+              "Trama di carbonio 2x2 sotto vernice lucida, profilo in alluminio scuro e accento rosso.",
+              BoardStyle::Carbon, c (0xff24272a), c (0xff0b0c0d), c (0xff3a3d42), c (0xffa0a6ad),
+              c (0xff0b0c0d), c (0xff26282c), c (0xff141518), c (0xffe5484d), c (0xffeceeef), c (0xffb4b9bf),
+              c (0xff1c1e21), c (0xff111214), c (0xff1a1b1e), c (0xff292b2f), c (0xff8a2226) },
+            { "maple", "Acero chiaro",
+              "Tavole d'acero chiaro con venatura fine, finitura satinata e viti brunite.",
+              BoardStyle::Wood, c (0xffc9a273), c (0xff9a7348), c (0xff6a5638), c (0xff2a1a0a),
+              c (0xff15100a), c (0xff3b2c1c), c (0xff21180f), c (0xffe3b26b), c (0xfff2e9da), c (0xffcbbca4),
+              c (0xff2c2115), c (0xff1b140c), c (0xff261d12), c (0xff3b2c1c), c (0xff7a5a2a) },
+            { "ebony", "Ebano e argento",
+              "Ebano quasi nero con riflessi caldi e viti cromate, eleganza da liuteria.",
+              BoardStyle::Wood, c (0xff2e221c), c (0xff110b08), c (0xffc0c4c8), c (0xffcfc5bb),
+              c (0xff0d0a09), c (0xff2a2320), c (0xff171210), c (0xffcfd6de), c (0xffefebe6), c (0xffbdb6ae),
+              c (0xff1f1916), c (0xff130f0d), c (0xff1b1613), c (0xff2c2522), c (0xff4a5560) },
+            { "surf", "Surf blu",
+              "Tolex blu surf con profilo bianco, il colore delle tavole e delle chitarre californiane.",
+              BoardStyle::Tolex, c (0xff1d3f6e), c (0xff0f2646), c (0xffeae4d4), c (0xffe6eef8),
+              c (0xff0a0f16), c (0xff1f2c3d), c (0xff111a25), c (0xff7cc4ff), c (0xffe9eef4), c (0xffb3c0cf),
+              c (0xff17212e), c (0xff0e151e), c (0xff142030), c (0xff22324a), c (0xff245a8a) },
+            { "purple", "Velluto viola",
+              "Moquette di velluto viola da sala prove, morbida e scura, accento lilla.",
+              BoardStyle::Carpet, c (0xff3d2152), c (0xff1d0e29), c (0xff5a3a70), c (0xffdccbea),
+              c (0xff0f0a13), c (0xff2c2034), c (0xff19121e), c (0xffc890ff), c (0xffefe9f4), c (0xffbfb3ca),
+              c (0xff221a29), c (0xff151018), c (0xff1e1624), c (0xff2f2438), c (0xff5a2f80) },
+            { "slate", "Ardesia",
+              "Lastra d'ardesia grigio scuro con venature chiare, bordo smussato e accento verde acqua.",
+              BoardStyle::Stone, c (0xff3d4247), c (0xff23272b), c (0xff6b7178), c (0xffd6dade),
+              c (0xff0d0f10), c (0xff292d31), c (0xff16191b), c (0xff8fd0c0), c (0xffe8ecee), c (0xffb3bcc1),
+              c (0xff1e2225), c (0xff131618), c (0xff1a1e21), c (0xff2a2f33), c (0xff2f6b62) },
+            { "goldrails", "Guide oro",
+              "Lamelle in alluminio anodizzato oro spazzolato con fessure scure: il palco dei grandi tour.",
+              BoardStyle::BrushedRails, c (0xffc9a656), c (0xff2a2216), c (0xff8a6d2c), c (0xff1e1608),
+              c (0xff120f09), c (0xff332a1b), c (0xff1d1810), c (0xffe8c66a), c (0xfff1e9d5), c (0xffc8bb9c),
+              c (0xff272015), c (0xff18130c), c (0xff221c12), c (0xff352c1d), c (0xff6e5520) },
+            { "white", "Tolex bianco",
+              "Tolex bianco avorio con profilo oro e angolari cromati, come i combo di lusso d'epoca.",
+              BoardStyle::Tolex, c (0xffe2ddd2), c (0xffb7b0a1), c (0xffc9a55a), c (0xff2b2925),
+              c (0xff121212), c (0xff2f2e2c), c (0xff1a1918), c (0xffd9b464), c (0xffeeece7), c (0xffbcb8b0),
+              c (0xff232221), c (0xff161515), c (0xff1e1d1c), c (0xff2f2e2c), c (0xff5c5338) },
+            { "neon", "Neon notte",
+              "Moquette nera con riflessi viola e accento magenta al neon, atmosfera da club.",
+              BoardStyle::Carpet, c (0xff181225), c (0xff07050d), c (0xff2a2140), c (0xffb8a8ff),
+              c (0xff09070e), c (0xff241d33), c (0xff120e1b), c (0xffff4fd8), c (0xffefeaf7), c (0xffbcb4cc),
+              c (0xff1b1626), c (0xff100c17), c (0xff181322), c (0xff2a2238), c (0xff7a1f68) },
         };
         return t;
     }
@@ -57,9 +119,24 @@ namespace pt::ui
             { "Rosso vintage", c (0xff4e1411), c (0xff7d2620) },
             { "Blu notte", c (0xff13213a), c (0xff27406a) },
             { "Tweed crema", c (0xff9c8a64), c (0xffcdbd97) },
+            { "Rosso fuoco", c (0xffa3191c), c (0xffd8383a) },
+            { "Arancio", c (0xffb85a10), c (0xffe98a35) },
+            { "Giallo", c (0xffb39212), c (0xffe8c63a) },
+            { "Verde lime", c (0xff4f8a14), c (0xff7cc23a) },
+            { "Verde bosco", c (0xff1d4a2a), c (0xff336e45) },
+            { "Azzurro", c (0xff1a6ea8), c (0xff45a1dc) },
+            { "Viola", c (0xff4b2a7a), c (0xff7550ad) },
+            { "Rosa", c (0xffb0457f), c (0xffe07ab0) },
+            { "Bianco", c (0xffc9c9c6), c (0xfff2f2ef) },
+            { "Oro", c (0xff8f7128), c (0xffd1ad55) },
+            { "Argento", c (0xff7d8186), c (0xffc3c7cc) },
+            { "Tessuto nero e oro", c (0xff1a1714), c (0xff8a7038) },
+            { "Multicolore", c (0xff141416), c (0xff2a2b30) },
         };
         return v;
     }
+
+    int multiCableIndex() { return (int) cableColours().size() - 1; }
 
     double contrastRatio (juce::Colour a, juce::Colour b)
     {
@@ -74,6 +151,12 @@ namespace pt::ui
         };
         const double la = lum (a), lb = lum (b);
         return (std::max (la, lb) + 0.05) / (std::min (la, lb) + 0.05);
+    }
+
+    juce::Colour inkFor (juce::Colour board)
+    {
+        const juce::Colour dark (0xff111111), light (0xffeeeeee);
+        return contrastRatio (dark, board) > contrastRatio (light, board) ? dark : light;
     }
 
     //==============================================================================
@@ -108,7 +191,7 @@ namespace pt::ui
                                                 juce::jlimit (0.0f, 1.0f, base.getFloatBlue() * k), 1.0f);
         }
 
-        enum class Tex { Loop, Brushed, Pebble, Grain, Carpet };
+        enum class Tex { Loop, Brushed, Pebble, Grain, Carpet, Tweed, Diamond, Carbon, Stone };
 
         juce::Image makeTile (Tex kind, juce::Colour base, juce::Colour alt)
         {
@@ -137,8 +220,9 @@ namespace pt::ui
                         case Tex::Pebble:   // tolex goffrato: grani con la sommita' lucida
                         {
                             const float n1 = vnoise (x, y, 64, 64, 6), n2 = vnoise (x, y, 12, 12, 7);
-                            float k = 1.0f + (n1 - 0.5f) * 0.55f + (n2 - 0.5f) * 0.18f;
-                            if (n1 > 0.72f) k += (n1 - 0.72f) * 1.4f;
+                            const float amp = base.getPerceivedBrightness() > 0.6f ? 0.4f : 1.0f;    // tolex chiaro: grana piu' tenue
+                            float k = 1.0f + ((n1 - 0.5f) * 0.55f + (n2 - 0.5f) * 0.18f) * amp;
+                            if (n1 > 0.72f) k += (n1 - 0.72f) * 1.4f * amp;
                             col = shade (base, k);
                             break;
                         }
@@ -159,6 +243,54 @@ namespace pt::ui
                             col = shade (base, 1.0f + (n - 0.5f) * 0.22f);
                             break;
                         }
+                        case Tex::Tweed:    // tela a spina di pesce: fili diagonali chiari e scuri che cambiano verso a bande
+                        {
+                            const int band = (x / 16) % 2;
+                            const int d = band == 0 ? (x + y) : (x - y + tileSize);
+                            const float twill = 0.5f + 0.5f * std::sin ((float) d * juce::MathConstants<float>::twoPi / 6.0f);
+                            const float fleck = hash (x, y, 13);
+                            col = alt.interpolatedWith (base, 0.35f + 0.5f * twill + 0.15f * vnoise (x, y, 32, 32, 14));
+                            if (fleck > 0.985f) col = col.darker (0.6f);
+                            col = shade (col, 0.94f + 0.12f * hash (x / 2, y / 2, 15));
+                            break;
+                        }
+                        case Tex::Diamond:  // lamiera mandorlata: mandorle in rilievo alternate a 90 gradi
+                        {
+                            constexpr int cell = 32;
+                            const int cx = x / cell, cy = y / cell;
+                            const float u0 = (float) (x % cell) - cell * 0.5f, v0 = (float) (y % cell) - cell * 0.5f;
+                            const float sgn = (cx + cy) % 2 == 0 ? 1.0f : -1.0f;
+                            const float u = (u0 + sgn * v0) * 0.7071f, v = (v0 - sgn * u0) * 0.7071f;
+                            const float e = (u * u) / (11.0f * 11.0f) + (v * v) / (3.2f * 3.2f);
+                            float k = 1.0f + (vnoise (x, y, 4, 128, 16) - 0.5f) * 0.12f;          // spazzolatura di fondo
+                            if (e < 1.0f)
+                            {
+                                const float lit = juce::jlimit (-1.0f, 1.0f, -(u * 0.08f + v * 0.35f) * sgn);
+                                k += 0.18f + 0.22f * lit * (1.0f - e);
+                            }
+                            else if (e < 1.35f) k -= 0.16f;                                        // ombra del bordo
+                            col = shade (base, k);
+                            break;
+                        }
+                        case Tex::Carbon:   // trama 2x2 di fibra: ogni quadretto riflette la luce in un verso
+                        {
+                            constexpr int cell = 8;
+                            const int cx = x / cell, cy = y / cell;
+                            const bool horiz = ((cx + cy / 2) % 2) == 0;
+                            const float along = (float) (horiz ? y % cell : x % cell) / (float) cell;
+                            const float sheen = std::sin (along * juce::MathConstants<float>::pi);
+                            const float fibre = 0.9f + 0.1f * hash (horiz ? x : x / 3, horiz ? y / 3 : y, 17);
+                            col = alt.interpolatedWith (base, juce::jlimit (0.0f, 1.0f, (horiz ? 0.35f : 0.75f) * sheen * fibre + 0.15f));
+                            break;
+                        }
+                        case Tex::Stone:    // ardesia: strati orizzontali sottili, grana fine e qualche scaglia chiara
+                        {
+                            const float layers = vnoise (x, y, 3, 40, 18) * 0.6f + vnoise (x, y, 9, 90, 19) * 0.4f;
+                            const float grain = 0.6f * vnoise (x, y, 64, 64, 20) + 0.4f * hash (x, y, 21);
+                            col = alt.interpolatedWith (base, juce::jlimit (0.0f, 1.0f, 0.3f + layers * 0.6f + (grain - 0.5f) * 0.25f));
+                            if (hash (x / 3, y, 22) > 0.997f) col = col.interpolatedWith (juce::Colour (0xffd8dde0), 0.25f);
+                            break;
+                        }
                     }
                     bd.setPixelColour (x, y, col);
                 }
@@ -168,7 +300,8 @@ namespace pt::ui
         const juce::Image& tileFor (const Theme& t, Tex kind, juce::Colour base, juce::Colour alt)
         {
             static std::map<juce::String, juce::Image> cache;      // solo thread dei messaggi
-            const auto key = t.id + ":" + juce::String ((int) kind);
+            juce::ignoreUnused (t);
+            const auto key = juce::String ((int) kind) + ":" + base.toString() + ":" + alt.toString();
             auto it = cache.find (key);
             if (it == cache.end()) it = cache.emplace (key, makeTile (kind, base, alt)).first;
             return it->second;
@@ -306,7 +439,106 @@ namespace pt::ui
                 g.setOpacity (1.0f);
                 break;
             }
+            case BoardStyle::Tweed:
+            {
+                fillTexture (g, tileFor (t, Tex::Tweed, t.boardBase, t.boardAlt), outline, s, a.getTopLeft());
+                // profilo in cuoio scuro con cucitura chiara
+                const auto pipe = a.reduced (11.0f * s);
+                g.setColour (juce::Colours::black.withAlpha (0.4f));
+                g.drawRoundedRectangle (pipe.translated (0.0f, 1.6f * s), radius * 0.7f, 5.0f * s);
+                g.setColour (t.trim);
+                g.drawRoundedRectangle (pipe, radius * 0.7f, 4.6f * s);
+                const float dash[] = { 5.0f * s, 4.0f * s };
+                juce::Path stitch, sp;
+                stitch.addRoundedRectangle (pipe, radius * 0.7f);
+                juce::PathStrokeType (0.9f * s).createDashedStroke (sp, stitch, dash, 2);
+                g.setColour (t.boardBase.brighter (0.4f).withAlpha (0.7f));
+                g.fillPath (sp);
+                juce::ColourGradient vig (juce::Colours::transparentBlack, a.getCentreX(), a.getCentreY(),
+                                          juce::Colours::black.withAlpha (0.38f), a.getX(), a.getY(), true);
+                g.setGradientFill (vig);
+                g.fillPath (outline);
+                g.setColour (t.trim.darker (0.5f));
+                g.drawRoundedRectangle (a.reduced (1.0f), radius, 3.0f * s);
+                break;
+            }
+            case BoardStyle::DiamondPlate:
+            {
+                g.setColour (t.trim);
+                g.fillPath (outline);
+                const auto inner = a.reduced (7.0f * s);
+                juce::Path ip;
+                ip.addRoundedRectangle (inner, radius * 0.6f);
+                fillTexture (g, tileFor (t, Tex::Diamond, t.boardBase, t.boardAlt), ip, s * 0.9f, inner.getTopLeft());
+                // riflesso diagonale del metallo e bordo piegato
+                juce::ColourGradient glare (juce::Colours::white.withAlpha (0.16f), inner.getX(), inner.getY(),
+                                            juce::Colours::black.withAlpha (0.22f), inner.getRight(), inner.getBottom(), false);
+                glare.addColour (0.45, juce::Colours::transparentWhite);
+                g.setGradientFill (glare);
+                g.fillPath (ip);
+                g.setColour (juce::Colours::white.withAlpha (0.35f));
+                g.drawRoundedRectangle (inner.reduced (0.5f), radius * 0.6f, juce::jmax (1.0f, 1.2f * s));
+                for (auto p : { inner.getTopLeft(), inner.getTopRight(), inner.getBottomLeft(), inner.getBottomRight() })
+                    screw (g, p + juce::Point<float> (p.x < inner.getCentreX() ? 14.0f * s : -14.0f * s, p.y < inner.getCentreY() ? 14.0f * s : -14.0f * s),
+                           5.0f * s, t.boardBase.brighter (0.2f));
+                break;
+            }
+            case BoardStyle::Carbon:
+            {
+                g.setGradientFill (juce::ColourGradient (t.trim.brighter (0.3f), a.getX(), a.getY(), t.trim.darker (0.6f), a.getX(), a.getBottom(), false));
+                g.fillPath (outline);
+                const auto inner = a.reduced (6.0f * s);
+                juce::Path ip;
+                ip.addRoundedRectangle (inner, radius * 0.7f);
+                fillTexture (g, tileFor (t, Tex::Carbon, t.boardBase, t.boardAlt), ip, s * 1.1f, inner.getTopLeft());
+                // vernice trasparente lucida: riflesso largo in alto
+                juce::ColourGradient clear (juce::Colours::white.withAlpha (0.14f), inner.getX(), inner.getY(),
+                                            juce::Colours::transparentWhite, inner.getX(), inner.getY() + inner.getHeight() * 0.45f, false);
+                g.setGradientFill (clear);
+                g.fillPath (ip);
+                g.setColour (juce::Colours::black.withAlpha (0.6f));
+                g.drawRoundedRectangle (inner, radius * 0.7f, 1.4f * s);
+                break;
+            }
+            case BoardStyle::Stone:
+            {
+                fillTexture (g, tileFor (t, Tex::Stone, t.boardBase, t.boardAlt), outline, s * 1.4f, a.getTopLeft());
+                // bordo smussato: luce in alto a sinistra, ombra in basso a destra
+                const float bev = 7.0f * s;
+                g.setColour (juce::Colours::white.withAlpha (0.12f));
+                g.drawRoundedRectangle (a.reduced (bev * 0.5f).translated (-1.0f * s, -1.0f * s), radius, bev * 0.5f);
+                g.setColour (juce::Colours::black.withAlpha (0.35f));
+                g.drawRoundedRectangle (a.reduced (bev * 0.5f).translated (1.0f * s, 1.5f * s), radius, bev * 0.4f);
+                juce::ColourGradient vig (juce::Colours::transparentBlack, a.getCentreX(), a.getCentreY(),
+                                          juce::Colours::black.withAlpha (0.3f), a.getX(), a.getY(), true);
+                g.setGradientFill (vig);
+                g.fillPath (outline);
+                g.setColour (juce::Colours::black.withAlpha (0.7f));
+                g.drawRoundedRectangle (a.reduced (1.0f), radius, 2.0f * s);
+                break;
+            }
         }
+    }
+
+    void paintBoardImage (juce::Graphics& g, const juce::Image& img, juce::Rectangle<float> a, float s)
+    {
+        const float radius = 10.0f * s;
+        juce::Path outline;
+        outline.addRoundedRectangle (a, radius);
+        {
+            juce::Graphics::ScopedSaveState ss (g);
+            g.reduceClipRegion (outline);
+            g.setOpacity (1.0f);
+            g.setImageResamplingQuality (juce::Graphics::highResamplingQuality);
+            // riempie l'area mantenendo le proporzioni (taglia l'eccesso)
+            g.drawImage (img, a, juce::RectanglePlacement::centred | juce::RectanglePlacement::fillDestination);
+            juce::ColourGradient vig (juce::Colours::transparentBlack, a.getCentreX(), a.getCentreY(),
+                                      juce::Colours::black.withAlpha (0.35f), a.getX(), a.getY(), true);
+            g.setGradientFill (vig);
+            g.fillPath (outline);
+        }
+        g.setColour (juce::Colours::black.withAlpha (0.75f));
+        g.drawRoundedRectangle (a.reduced (1.0f), radius, 3.0f * s);
     }
 
     //==============================================================================
@@ -324,12 +556,107 @@ namespace pt::ui
         cables = props->getBoolValue ("cables", true);
         cableColour = juce::jlimit (0, (int) cableColours().size() - 1, props->getIntValue ("cableColour", 0));
         real = props->getBoolValue ("realMod", false);
+        realListName = props->getValue ("realList", {});
+        if (RealPhotos::checkListName (realListName).isNotEmpty()) realListName = {};
+        boardSrc = props->getValue ("board", {});
+        const auto tintText = props->getValue ("boardTint", {});
+        tint = tintText.isNotEmpty() ? juce::Colour::fromString (tintText).withAlpha (1.0f) : juce::Colours::transparentBlack;
+        boardImagePath = juce::File (props->getValue ("boardImage", {}));
+        if (boardSrc == "image") loadBoardImage();
     }
 
     ThemeManager::~ThemeManager() { props->saveIfNeeded(); }
 
     const Theme& ThemeManager::current() const { return allThemes()[(size_t) index]; }
     const CableColour& ThemeManager::cable() const { return cableColours()[(size_t) cableColour]; }
+
+    const CableColour& ThemeManager::cableFor (int k) const
+    {
+        if (cableColour != multiCableIndex()) return cable();
+        // multicolore: si alternano i colori vivaci (salta neri, grigi e il tessuto)
+        static const int bright[] = { 5, 10, 7, 8, 12, 6, 11, 14, 4, 13 };
+        constexpr int nb = (int) (sizeof (bright) / sizeof (bright[0]));
+        return cableColours()[(size_t) bright[((k % nb) + nb) % nb]];
+    }
+
+    void ThemeManager::previewCableColour (int i)
+    {
+        cableColour = juce::jlimit (0, (int) cableColours().size() - 1, i);
+        sendChangeMessage();
+    }
+
+    void ThemeManager::previewBoardSource (const juce::String& src)
+    {
+        boardSrc = src == "image" ? juce::String() : src;
+        sendChangeMessage();
+    }
+
+    void ThemeManager::setBoardSource (const juce::String& src)
+    {
+        if (src == boardSrc) return;
+        boardSrc = src;
+        if (boardSrc == "image") loadBoardImage();
+        save();
+    }
+
+    void ThemeManager::setBoardTint (juce::Colour col)
+    {
+        if (col == tint) return;
+        tint = col;
+        save();
+    }
+
+    juce::String ThemeManager::setBoardImage (const juce::File& f)
+    {
+        if (! pt::namsafe::isSafeLocalFile (f.getFullPathName(), 25 * 1024 * 1024)) return "file non ammesso (solo file locali, massimo 25 MB)";
+        int w = 0, h = 0;
+        if (auto err = RealPhotos::checkImageFile (f, w, h); err.isNotEmpty()) return err;
+        const auto img = juce::ImageFileFormat::loadFrom (f);
+        if (! img.isValid() || img.getWidth() != w || img.getHeight() != h) return "immagine non decodificabile";
+        boardImagePath = f;
+        boardImg = img;
+        boardSrc = "image";
+        save();
+        return {};
+    }
+
+    void ThemeManager::loadBoardImage()
+    {
+        boardImg = {};
+        int w = 0, h = 0;
+        if (boardImagePath.getFullPathName().isEmpty()
+            || ! pt::namsafe::isSafeLocalFile (boardImagePath.getFullPathName(), 25 * 1024 * 1024)
+            || RealPhotos::checkImageFile (boardImagePath, w, h).isNotEmpty()) return;
+        const auto img = juce::ImageFileFormat::loadFrom (boardImagePath);
+        if (img.isValid() && img.getWidth() == w && img.getHeight() == h) boardImg = img;
+    }
+
+    Theme ThemeManager::boardTheme() const
+    {
+        Theme t = current();
+        if (boardSrc.isNotEmpty() && boardSrc != "image")
+            for (const auto& o : allThemes())
+                if (o.id == boardSrc)
+                {
+                    t.board = o.board; t.boardBase = o.boardBase; t.boardAlt = o.boardAlt; t.trim = o.trim; t.ink = o.ink;
+                }
+        if (! tint.isTransparent())
+        {
+            // stesso materiale nel colore scelto: il secondario resta proporzionato all'originale
+            const float ratio = juce::jlimit (0.05f, 1.0f, (t.boardAlt.getPerceivedBrightness() + 0.02f) / (t.boardBase.getPerceivedBrightness() + 0.02f));
+            t.boardBase = tint;
+            t.boardAlt = tint.withMultipliedBrightness (ratio);
+            t.ink = inkFor (tint);
+        }
+        t.id = boardKey();
+        return t;
+    }
+
+    juce::String ThemeManager::boardKey() const
+    {
+        return current().id + "|" + boardSrc + "|" + (tint.isTransparent() ? juce::String() : tint.toString())
+               + (boardSrc == "image" ? "|" + boardImagePath.getFullPathName() : juce::String());
+    }
 
     void ThemeManager::select (int i)
     {
@@ -354,6 +681,11 @@ namespace pt::ui
 
     void ThemeManager::setRealMode (bool b) { if (b != real) { real = b; save(); } }
     void ThemeManager::previewRealMode (bool b) { if (b != real) { real = b; sendChangeMessage(); } }
+    void ThemeManager::setRealList (const juce::String& l)
+    {
+        const auto v = RealPhotos::checkListName (l).isEmpty() ? l : juce::String();
+        if (v != realListName) { realListName = v; save(); }
+    }
 
     void ThemeManager::save()
     {
@@ -361,6 +693,10 @@ namespace pt::ui
         props->setValue ("cables", cables);
         props->setValue ("cableColour", cableColour);
         props->setValue ("realMod", real);
+        props->setValue ("realList", realListName);
+        props->setValue ("board", boardSrc);
+        props->setValue ("boardTint", tint.isTransparent() ? juce::String() : tint.toString());
+        props->setValue ("boardImage", boardImagePath.getFullPathName());
         props->saveIfNeeded();
         sendChangeMessage();
     }

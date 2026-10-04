@@ -15,7 +15,13 @@
         <SIGLA>.jpg / .jpeg / .png     (es. DS-1.jpg)
     e, facoltativo, un file <stesso nome>.json:
         { "crop": [x, y, w, h], "rotate": 0|90|180|270, "knobs": true|false,
-          "controls": { "LEVEL": [u, v, r], ... }, "led": [u, v] }
+          "controls": { "LEVEL": [u, v, r], ... }, "led": [u, v],
+          "name": "nome mostrato", "code": "SIGLA" }
+
+    Liste: oltre alla lista classica (cartella RealPhotos, repliche dei pedali
+    BOSS) l'utente puo' creare altre liste personalizzate, ognuna nella propria
+    cartella RealMod/<nome lista>, con le sue foto, i suoi nomi e le sue
+    posizioni dei pomelli. Si sceglie la lista nelle Opzioni.
     "controls" indica dove sono i pomelli nella foto: i pomelli 3D regolabili vi si
     sovrappongono esattamente, alla stessa dimensione.
     La foto (vista dall'alto) viene ritagliata, adagiata sul piano superiore
@@ -34,6 +40,10 @@ namespace pt::ui
     /** Definizione da disegnare: la replica reale se REAL MOD e' attivo e il modello ne ha una. */
     const engine::ModelDef* visualDef (const engine::ModelDef*);
 
+    /** Sigla e nome da mostrare per il pedale dello slot (repliche e nomi personalizzati della lista REAL MOD). */
+    juce::String visualCode (const engine::ModelDef* engineDef);
+    juce::String visualName (const engine::ModelDef* engineDef);
+
     /** Pomello nella foto: centro (x = u, y = v) e raggio z, in frazioni della foto ritagliata. */
     struct PhotoKnob { float x = 0, y = 0, z = 0; };
 
@@ -50,14 +60,30 @@ namespace pt::ui
             std::vector<std::pair<juce::String, PhotoKnob>> controls;
             bool hasLed = false;        // LED CHECK della foto (u, v in frazioni della foto)
             float ledU = 0, ledV = 0;
+            juce::String name, code;    // nome e sigla personalizzati (vuoti = quelli della replica)
         };
 
-        /** Cartella delle foto personali (creata al primo uso, con ELENCO_FOTO.txt dei nomi accettati). */
+        /** Cartella delle foto della lista REAL MOD in uso (creata al primo uso, con ELENCO_FOTO.txt). */
         static juce::File folder();
+        /** Cartella di una lista: "" = lista classica (RealPhotos), altrimenti RealMod/<nome>. */
+        static juce::File folderFor (const juce::String& list);
+        /** Cartella che contiene le liste personalizzate. */
+        static juce::File listsRoot();
+        /** Liste personalizzate esistenti (nomi delle cartelle valide, in ordine alfabetico). */
+        static juce::StringArray lists();
+        /** Nome ammesso per una lista (lettere, cifre, spazi, - _ . ; 1-40 caratteri): errore o stringa vuota. */
+        static juce::String checkListName (const juce::String&);
+        /** Crea una lista (vuota, o copia di foto e .json della lista 'copyFrom'): errore o stringa vuota. */
+        static juce::String createList (const juce::String& name, const juce::String* copyFrom = nullptr);
+        static juce::String renameList (const juce::String& from, const juce::String& to);
+        /** Sposta la cartella della lista nel cestino (recuperabile): errore o stringa vuota. */
+        static juce::String deleteList (const juce::String& name);
         /** Scrive ELENCO_FOTO.txt: per ogni pedale i nomi di file accettati. */
         static void writeList (const juce::File& dir);
         /** Foto personale per la replica 'real' (non valida se assente o rifiutata). */
         Photo forModel (const engine::ModelDef& real);
+        /** Sigla e nome personalizzati della lista in uso ("code"/"name" nel .json), letti senza decodificare la foto. */
+        void labelsFor (const engine::ModelDef& real, juce::String& code, juce::String& name);
         /** Ultimo errore per il modello (vuoto se nessuno). */
         juce::String problemFor (const char* id) const;
         /** Svuota la cache (dopo aver cambiato le foto nella cartella). */
@@ -79,7 +105,13 @@ namespace pt::ui
 
     private:
         static bool& enabledFlag() { static bool e = true; return e; }
+        juce::File photoFileFor (const engine::ModelDef& real);
+        /** Elenco dei file della cartella in uso, riletto al cambio di lista o dopo 1,5 s (i menu lo interrogano spesso). */
+        struct DirIndex { juce::String list; juce::File dir; std::map<juce::String, juce::File> files; juce::uint32 stamp = 0; bool valid = false; };
+        DirIndex dirIndex;
         struct Entry { juce::String key; Photo photo; juce::String error; };
         std::map<juce::String, Entry> cache;
+        struct Labels { juce::String key, code, name; };
+        std::map<juce::String, Labels> labels;
     };
 }

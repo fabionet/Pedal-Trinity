@@ -4,6 +4,7 @@
 
 #include "Families.h"
 #include "Circuit.h"
+#include "FxClassic.h"
 
 namespace pt::engine
 {
@@ -24,6 +25,8 @@ namespace pt::engine
 
     std::unique_ptr<Effect> createEffect (const ModelDef& d)
     {
+        // modelli della tappa 3 (type= nuovi): nullptr per tutti gli altri, che restano invariati
+        if (auto fx = makeClassic (d)) return fx;
         switch (d.family)
         {
             case Family::Circuit:      return makeCircuit (d);

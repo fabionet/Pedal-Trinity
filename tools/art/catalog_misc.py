@@ -107,12 +107,19 @@ IR200_NET = "; ".join([
     "vol a=taper(6,A)*3"])
 
 # ------------------------------------------------------------------ volumi (famiglia Volume)
+# colori come il pedale di riferimento (stessa forma della replica, vedi shaped_layout.as_shaped)
+VOL_COLOUR = {"pv1": (185, 187, 189), "fv50h": (24, 24, 26), "fv50l": (24, 24, 26), "fv300h": (42, 42, 44),
+              "fv300l": (42, 42, 44), "fv500h": (154, 156, 159), "fv500l": (154, 156, 159), "fv30h": (106, 108, 112),
+              "fv30l": (106, 108, 112), "fv60": (24, 24, 26)}
+
+
 def _vol(id, code, name, inspired, notes, minimum=True, stereo=False, exp=False):
     ctl = [knob("EXP" if exp else "VOLUME", "volume", 1.0, "percent", 0, 100)]
     if minimum:
         ctl.append(knob("MIN VOL", "min", 0.0, "percent", 0, 100))
-    return model(id, code, name, inspired, "Utility / Routing", "Volume", (30, 30, 33), ctl, "", notes,
-                 accent=(200, 200, 200), subtitle="EXPRESSION" if exp else "FOOT VOLUME", stereo=stereo)
+    return model(id, code, name, inspired, "Utility / Routing", "Volume", VOL_COLOUR.get(id, (30, 30, 33)), ctl, "", notes,
+                 accent=(200, 200, 200), subtitle="EXPRESSION" if exp else "FOOT VOLUME", stereo=stereo,
+                 style="treadle", look=dict(boss=True))
 
 
 # ------------------------------------------------------------------ accordatori (famiglia Tuner)
@@ -644,12 +651,12 @@ MODELS = [
           "",
           "Pedale d'espressione senza audio (due uscite TRS). Nel plugin passa il segnale e il pedale agisce da "
           "volume con minimo regolabile; per comandare un altro parametro si mappa EXP 1 con l'automazione dell'host.",
-          accent=(200, 200, 200), subtitle="DUAL EXPRESSION"),
+          accent=(200, 200, 200), subtitle="DUAL EXPRESSION", style="treadle", look=dict(boss=True)),
     model("ev1wl", "EXP-1W", "Wireless Expression", "BOSS EV-1-WL Wireless MIDI Expression Pedal",
           "Utility / Routing", "Volume", (30, 30, 33),
           [knob("EXP", "volume", 1.0, "percent", 0, 100)],
           "",
           "Espressione MIDI via Bluetooth/USB senza percorso audio: nel plugin funziona da pedale volume sul "
           "segnale che lo attraversa; il controllo di altri parametri avviene con l'automazione/MIDI learn dell'host.",
-          accent=(200, 200, 200), subtitle="MIDI EXPRESSION"),
+          accent=(200, 200, 200), subtitle="MIDI EXPRESSION", style="treadle", look=dict(boss=True)),
 ]

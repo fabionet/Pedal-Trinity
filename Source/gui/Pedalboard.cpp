@@ -28,6 +28,25 @@ namespace pt::ui
         addAndMakeVisible (inPanel);
         addAndMakeVisible (outPanel);
         addAndMakeVisible (overlay);
+        overlay.onGrab = [this] (int id, bool) { heldConn = id; repaint(); };
+        overlay.onMove = [this] (int id, bool destEnd, juce::Point<float> p)
+        {
+            CableOverlay::Target t;
+            if (! juce::isPositiveAndBelow (id, (int) conns.size())) return t;
+            const auto r = resolveReplug (conns[(size_t) id], destEnd, p);
+            t.any = r.kind != Replug::Cancel || r.hint.isNotEmpty();
+            t.ok = r.ok;
+            t.area = r.area;
+            t.hint = r.hint;
+            return t;
+        };
+        overlay.onDrop = [this] (int id, bool destEnd, juce::Point<float> p, bool moved)
+        {
+            heldConn = -1;
+            if (moved) applyReplug (id, destEnd, p);
+            updateCables();          // anche se nulla e' cambiato: il cavo torna al suo posto
+            repaint();
+        };
 
         pageLeft.setTooltip ("Pagina precedente della catena");
         pageRight.setTooltip ("Pagina successiva della catena");
@@ -294,8 +313,7 @@ namespace pt::ui
 
     void Pedalboard::updateCables()
     {
-        struct Conn { End a, b; };
-        std::vector<Conn> conns;
+        conns.clear();
         const int n = chain.size();
         const auto mode = chain.splitMode();
         End srcA { End::Input }, srcB { End::Input }, laneSrc[2] { { End::Input }, { End::Input } };
@@ -304,6 +322,7 @@ namespace pt::ui
         {
             auto* s = chain.slot (i);
             if (s == nullptr || s->fx == nullptr) continue;          // slot vuoto: il cavo lo attraversa
+            if (! s->patched.load() && ! s->isSplitter()) continue;  // pedale staccato: il cavo lo scavalca
             const End in0 { End::SlotIn, i, 0 }, in1 { End::SlotIn, i, 1 }, out0 { End::SlotOut, i, 0 }, out1 { End::SlotOut, i, 1 };
             if (s->isSplitter())
             {
@@ -366,8 +385,10 @@ namespace pt::ui
 
         std::vector<Cable> over;
         underCables.clear();
-        for (const auto& c : conns)
+        for (int ci = 0; ci < (int) conns.size(); ++ci)
         {
+            const auto& c = conns[(size_t) ci];
+            const auto& col = themes->cableFor (ci);
             juce::Point<float> pa, pb;
             float da = 0, db = 0, sa = 0.6f, sb = 0.6f;
             int ra = 0, rb = 0;
@@ -381,12 +402,12 @@ namespace pt::ui
                 const bool before = unitOf (c.b) < first, after = unitOf (c.a) >= first + pageLength();
                 if (before || after) continue;
                 const float y = rowJackY (dual ? line : 0, dual ? 0 : c.a.line);
-                over.push_back ({ { left, y }, { right, y }, 0.0f, 0.0f, sa, line, false });
+                over.push_back ({ { left, y }, { right, y }, 0.0f, 0.0f, sa, line, false, 0.0f, ci, col.body, col.sheen });
                 continue;
             }
             if (! va) { pa = { left, pb.y }; da = 0.0f; sa = sb; ra = rb; }
             if (! vb) { pb = { right, pa.y }; db = 0.0f; sb = sa; rb = ra; }
-            Cable cab { pa, pb, da, db, (sa + sb) * 0.5f, line, false };
+            Cable cab { pa, pb, da, db, (sa + sb) * 0.5f, line, false, 0.0f, ci, col.body, col.sheen };
             const int ca = colOf (c.a, -1), cbc = colOf (c.b, cols);
             cab.under = va && vb && ra != rb && std::abs (cbc - ca) > 1;
             cab.laneY = (float) cellGrid.getY() + (float) cellGrid.getHeight() * 0.5f;
@@ -400,8 +421,9 @@ namespace pt::ui
     void Pedalboard::paint (juce::Graphics& g)
     {
         const auto& t = themes->current();
-        // pedana del tema (in cache: si ridisegna solo se cambiano tema o dimensioni)
-        const auto key = t.id + juce::String (boardRect.getWidth()) + "x" + juce::String (boardRect.getHeight());
+        const auto bt = themes->boardTheme();         // materiale e colore della pedana scelti nelle opzioni
+        // pedana del tema (in cache: si ridisegna solo se cambiano tema, pedana o dimensioni)
+        const auto key = bt.id + juce::String (boardRect.getWidth()) + "x" + juce::String (boardRect.getHeight());
         if (key != boardKey && ! boardRect.isEmpty())
         {
             const float sc = (float) g.getInternalContext().getPhysicalPixelScaleFactor();
@@ -409,7 +431,11 @@ namespace pt::ui
                                       juce::roundToInt ((float) boardRect.getHeight() * sc), true);
             juce::Graphics bg (boardCache);
             bg.addTransform (juce::AffineTransform::scale (sc));
-            paintBoard (bg, t, boardRect.withZeroOrigin().toFloat(), juce::jlimit (0.7f, 2.2f, (float) getHeight() / 700.0f));
+            const float bs = juce::jlimit (0.7f, 2.2f, (float) getHeight() / 700.0f);
+            if (themes->boardSource() == "image" && themes->boardImage().isValid())
+                paintBoardImage (bg, themes->boardImage(), boardRect.withZeroOrigin().toFloat(), bs);
+            else
+                paintBoard (bg, bt, boardRect.withZeroOrigin().toFloat(), bs);
             boardKey = key;
         }
         if (boardCache.isValid())
@@ -425,12 +451,12 @@ namespace pt::ui
             const auto& c = cells[(size_t) k];
             if (c.slot != -1) continue;
             auto r = c.bounds.toFloat().reduced (6.0f);
-            g.setColour (t.ink.withAlpha (0.06f));
+            g.setColour (bt.ink.withAlpha (0.06f));
             g.fillRoundedRectangle (r, 8.0f);
             juce::Path p, d;
             p.addRoundedRectangle (r, 8.0f);
             juce::PathStrokeType (1.4f).createDashedStroke (d, p, dash, 2);
-            g.setColour (k == dropCell ? t.accent : t.ink.withAlpha (0.55f));
+            g.setColour (k == dropCell ? t.accent : bt.ink.withAlpha (0.55f));
             g.fillPath (d);
             if (k == dropCell)
             {
@@ -455,13 +481,148 @@ namespace pt::ui
         // cavi che tornano a capo passando sotto la pedaliera (coperti dalle intestazioni)
         if (themes->showCables())
             for (const auto& c : underCables)
-                cables::drawCable (g, c, themes->cable().body, themes->cable().sheen);
+                if (c.id != heldConn)
+                    cables::drawCable (g, c, c.body, c.sheen);
     }
 
     void Pedalboard::timerCallback()
     {
         inPanel.tick();
         outPanel.tick();
+    }
+
+    //==============================================================================
+    // cavi staccabili
+    int Pedalboard::segmentOfSlot (int i) const
+    {
+        // tratto della catena: 0 = prima dello splitter (o catena senza corsie), 1/2 = corsia A/B in DUAL
+        return dual && splitIndex >= 0 && i > splitIndex ? 1 + chain.lane (i) : 0;
+    }
+
+    int Pedalboard::segmentOf (const End& e) const
+    {
+        switch (e.kind)
+        {
+            case End::Input:   return 0;
+            case End::Output:  return dual ? 1 + e.line : 0;
+            case End::SlotIn:  return segmentOfSlot (e.slot);
+            case End::SlotOut: return dual && e.slot == splitIndex ? 1 + e.line : segmentOfSlot (e.slot);
+        }
+        return 0;
+    }
+
+    Pedalboard::Replug Pedalboard::resolveReplug (const Conn& c, bool destEnd, juce::Point<float> p) const
+    {
+        Replug r;
+        const int n = chain.size();
+        auto pos = [n] (const End& e) { return e.kind == End::Input ? -1 : e.kind == End::Output ? n : e.slot; };
+        const End& moving = destEnd ? c.b : c.a;
+        const int seg = segmentOf (moving);
+        const int lo0 = pos (c.a), hi0 = pos (c.b);
+
+        // pedali collegati che il cavo smetterebbe di attraversare tra lo e hi (esclusi), nello stesso tratto
+        auto between = [&] (int lo, int hi, std::vector<int>& out)
+        {
+            for (int k = lo + 1; k < hi; ++k)
+            {
+                auto* s = chain.slot (k);
+                if (s == nullptr || s->fx == nullptr || ! s->patched.load() || segmentOfSlot (k) != seg) continue;
+                if (s->isSplitter()) return false;           // lo splitter non si scavalca
+                out.push_back (k);
+            }
+            return true;
+        };
+
+        // bersaglio: un pedale (il suo corpo, con un po' di margine), il pannello INPUT/OUTPUT o la pedana libera
+        const auto ip = p.toInt();
+        for (auto* comp : slotComps)
+        {
+            const auto body = comp->pedalBounds().translated ((float) comp->getX(), (float) comp->getY());
+            if (body.isEmpty() || ! body.expanded (12.0f).contains (p)) continue;
+            const int y = comp->getIndex();
+            auto* s = chain.slot (y);
+            r.area = body.expanded (4.0f);
+            if (s == nullptr || s->fx == nullptr) continue;
+            const End& fixed = destEnd ? c.a : c.b;
+            if (y == moving.slot && moving.kind != End::Input && moving.kind != End::Output)
+                { r.hint = "Rilascia altrove per staccarlo"; return r; }
+            if (fixed.kind != End::Input && fixed.kind != End::Output && y == fixed.slot)
+                { r.hint = "Un pedale non si collega a se stesso"; return r; }
+            if (segmentOfSlot (y) != seg && ! (s->isSplitter() && seg == 0))
+                { r.hint = "Corsia diversa: sposta il pedale nella corsia del cavo"; return r; }
+            r.kind = Replug::Plug;
+            if (destEnd)
+            {
+                if (y <= lo0) { r.hint = "Il segnale va da sinistra a destra: il pedale e' prima del cavo"; return r; }
+                if (! between (lo0, y, r.unpatch)) { r.hint = "Lo splitter non si puo' scavalcare"; return r; }
+            }
+            else
+            {
+                if (y >= hi0) { r.hint = "Il segnale va da sinistra a destra: il pedale e' dopo il cavo"; return r; }
+                if (! between (y, hi0, r.unpatch)) { r.hint = "Lo splitter non si puo' scavalcare"; return r; }
+            }
+            r.patch = s->patched.load() ? -1 : y;
+            r.ok = true;
+            const auto name = juce::String (s->def->code);
+            r.hint = (destEnd ? "Ingresso di " : "Uscita di ") + name
+                   + (r.unpatch.empty() ? juce::String() : "  (scavalca " + juce::String ((int) r.unpatch.size()) + (r.unpatch.size() == 1 ? " pedale)" : " pedali)"));
+            return r;
+        }
+        const auto& panel = destEnd ? outPanel : inPanel;
+        if (panel.getBounds().contains (ip))
+        {
+            r.area = panel.getBounds().toFloat().reduced (3.0f);
+            const bool right = destEnd ? (moving.kind == End::Output) : (moving.kind == End::Input);
+            if (right) { r.hint = "Gia' collegato qui"; return r; }
+            r.kind = Replug::Plug;
+            if (! between (destEnd ? lo0 : -1, destEnd ? n : hi0, r.unpatch)) { r.hint = "Lo splitter non si puo' scavalcare"; r.kind = Replug::Cancel; return r; }
+            r.ok = true;
+            r.hint = juce::String (destEnd ? "OUTPUT" : "INPUT") + "  (scavalca " + juce::String ((int) r.unpatch.size())
+                   + (r.unpatch.size() == 1 ? " pedale)" : " pedali)");
+            return r;
+        }
+        if (! boardRect.contains (ip)) { r.hint = "Fuori dalla pedaliera: il cavo torna al suo posto"; return r; }
+        // pedana vuota: si stacca il pedale a quell'estremita' (la catena si richiude da sola)
+        if (moving.kind == End::Input || moving.kind == End::Output)
+            { r.hint = juce::String ("Il cavo dell'") + (moving.kind == End::Input ? "INPUT" : "OUTPUT") + " non si stacca"; return r; }
+        auto* s = chain.slot (moving.slot);
+        if (s == nullptr || s->isSplitter()) { r.hint = "Lo splitter non si stacca"; return r; }
+        r.kind = Replug::Unplug;
+        r.ok = true;
+        r.unpatch.push_back (moving.slot);
+        r.hint = "Rilascia per staccare " + juce::String (s->def != nullptr ? s->def->code : "") + " dalla catena";
+        return r;
+    }
+
+    bool Pedalboard::applyReplug (int id, bool destEnd, juce::Point<float> p)
+    {
+        if (! juce::isPositiveAndBelow (id, (int) conns.size())) return false;
+        const auto r = resolveReplug (conns[(size_t) id], destEnd, p);
+        if (! r.ok || r.kind == Replug::Cancel) return false;
+        for (int k : r.unpatch) chain.setPatched (k, false);
+        if (r.patch >= 0) chain.setPatched (r.patch, true);
+        return ! r.unpatch.empty() || r.patch >= 0;
+    }
+
+    juce::String Pedalboard::describeCables() const
+    {
+        auto end = [] (const End& e) { return e.kind == End::Input ? juce::String ("I") : e.kind == End::Output ? juce::String ("O") : juce::String (e.slot); };
+        juce::StringArray out;
+        for (const auto& c : conns) out.add (end (c.a) + ">" + end (c.b));
+        return out.joinIntoString (" ");
+    }
+
+    bool Pedalboard::dropPlugForTest (int conn, bool destEnd, juce::Point<float> p)
+    {
+        const bool changed = applyReplug (conn, destEnd, p);
+        updateCables();
+        return changed;
+    }
+
+    juce::Rectangle<int> Pedalboard::slotArea (int slot) const
+    {
+        if (auto* c = componentFor (slot)) return c->getBounds();
+        return {};
     }
 
     //==============================================================================

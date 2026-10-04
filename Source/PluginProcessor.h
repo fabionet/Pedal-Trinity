@@ -7,6 +7,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "engine/Chain.h"
 #include "Presets.h"
+#include "MidiMap.h"
 
 class PedalTrinityProcessor : public juce::AudioProcessor
 {
@@ -24,8 +25,8 @@ public:
     bool hasEditor() const override { return true; }
 
     const juce::String getName() const override { return JucePlugin_Name; }
-    bool acceptsMidi() const override { return false; }
-    bool producesMidi() const override { return false; }
+    bool acceptsMidi() const override { return true; }      // pedaliere MIDI esterne (programmazione MIDI)
+    bool producesMidi() const override { return true; }     // ritorno dello stato verso la pedaliera MIDI
     bool isMidiEffect() const override { return false; }
     double getTailLengthSeconds() const override { return 2.0; }
 
@@ -50,6 +51,7 @@ public:
     pt::PresetManager presets { *this };
     juce::ValueTree uiState { "UI" };       // vista, pagina, zoom (salvati nel progetto)
     pt::engine::LevelMeter outputMeter;     // picchi d'uscita (dopo il volume OUT) per il meter
+    pt::midi::MidiManager midi { *this };   // assegnazioni MIDI (salvate nel progetto, non nei preset)
 
 private:
     static juce::AudioProcessorValueTreeState::ParameterLayout createLayout();

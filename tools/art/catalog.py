@@ -76,7 +76,7 @@ def button(label, role):
 
 # ------------------------------------------------------------------ modello
 def model(id, code, name, inspired, category, family, colour, controls, config, notes,
-          style="boss", text=None, accent=None, subtitle=None, stereo=False):
+          style="boss", text=None, accent=None, subtitle=None, stereo=False, look=None, real=None):
     """
     id        identificatore stabile (minuscolo, es. "ds1")
     code      sigla ORIGINALE mostrata sul pedale (es. "DX-1")
@@ -88,20 +88,29 @@ def model(id, code, name, inspired, category, family, colour, controls, config, 
     controls  lista di comandi (knob/outer/inner/selector/toggle/slider/button)
     config    netlist a stadi (Circuit/AmpSim) oppure "chiave=valore ..." (altre famiglie)
     notes     descrizione breve in italiano (1-3 frasi, include le fonti principali)
-    style     "boss" (enclosure compatta), "ts" (tipo Tube Screamer) o "nam" (contenitore grande NAM-A1A2)
+    style     "boss" (enclosure compatta), "ts" (tipo Tube Screamer), "nam" (contenitore grande NAM-A1A2),
+              "treadle" (pedale a bilanciere: wah, volume, espressione) o "box" (scatola di misura reale)
     text      colore delle scritte (default automatico chiaro/scuro)
     accent    colore del nome sul pedale (default automatico)
     subtitle  sottotitolo sul pedale (default: categoria in maiuscolo)
+    look      solo stili "treadle"/"box": forma, misure, posizione dei comandi e finiture (vedi shaped_layout.py)
+    real      replica REAL MOD di un pedale non BOSS: dict(code=..., name=...) con sigla e nome reali
     """
     return dict(id=id, code=code, name=name, inspired=inspired, category=category, family=family,
                 colour=tuple(colour), controls=controls, config=" ".join(config.split()), notes=notes,
-                style=style, text=text, accent=accent, subtitle=subtitle, stereo=stereo)
+                style=style, text=text, accent=accent, subtitle=subtitle, stereo=stereo, look=look, real=real)
 
 
 # ------------------------------------------------------------------ raccolta e validazione
-GROUP_FILES = ["catalog_core", "catalog_drive", "catalog_dist", "catalog_mod", "catalog_time", "catalog_misc", "catalog_misc2"]
+GROUP_FILES = ["catalog_core", "catalog_drive", "catalog_dist", "catalog_mod", "catalog_time", "catalog_misc", "catalog_misc2",
+               "catalog_wah", "catalog_volume", "catalog_mxr", "catalog_ehx", "catalog_mxr_b", "catalog_ehx_b"]
 
-BANNED = re.compile(r"\bBOSS\b|\bRoland\b|\bIbanez\b|Tube\s*Screamer|Metal\s*Zone|Blues\s*Driver|Waza", re.I)
+BANNED = re.compile(r"\bBOSS\b|\bRoland\b|\bIbanez\b|Tube\s*Screamer|Metal\s*Zone|Blues\s*Driver|Waza|"
+                    r"Dunlop|Cry\s*Baby|Ernie\s*Ball|Morley|De\s*Armond|\bMXR\b|\bVox\b|Electro\s*-?\s*Harmonix|\bEHX\b|"
+                    r"Sovtek|\bMuff\b|Memory\s*(Man|Boy|Toy)|Holy\s*(Grail|Stain)|\bPOG\b|Small\s*(Stone|Clone)|Mistress|"
+                    r"Q-?Tron|Superego|Cathedral|Canyon|Oceans\s*1|Hazarai|Zakk|Wylde|\bEVH\b|Van\s*Halen|Dimebag|\bSlash\b|"
+                    r"Dookie", re.I)
+STYLES = ("boss", "ts", "nam", "treadle", "box")
 
 
 def load_all(strict=True):
@@ -138,16 +147,24 @@ def validate(m):
     if not 1 <= len(m["controls"]) <= 12: e.append("numero di comandi non valido")
     if len(m["name"]) > 22: e.append("nome troppo lungo (max 22)")
     if len(m["code"]) > 8: e.append("sigla troppo lunga (max 8)")
+    if m["style"] not in STYLES: e.append("stile sconosciuto %s" % m["style"])
+    if m["style"] in ("treadle", "box") and not isinstance(m.get("look"), dict): e.append("stile %s senza 'look'" % m["style"])
     for k, c in enumerate(m["controls"]):
         if c["kind"] == "outer" and (k + 1 >= len(m["controls"]) or m["controls"][k + 1]["kind"] != "inner"):
             e.append("outer non seguito da inner: %s" % c["label"])
         if c["units"] not in UNITS: e.append("unita' %s" % c["units"])
         if len(c["label"]) > 10: e.append("etichetta troppo lunga: %s" % c["label"])
     rot = [c for c in m["controls"] if c["kind"] in ("knob", "selector", "outer")]
-    if len(rot) > (9 if m["style"] == "nam" else 8): e.append("troppi pomelli (max 8 posizioni, 9 sul contenitore grande)")
+    if m["style"] == "treadle":
+        # il primo comando e' il bilanciere (strip 254): non occupa una posizione rotativa
+        if m["controls"][0]["kind"] != "knob": e.append("stile treadle: il primo comando deve essere il bilanciere")
+        rot = rot[1:]
+    stomp = m["style"] == "box" and isinstance(m.get("look"), dict) and m["look"].get("stomp")
+    if len(rot) > (12 if stomp else (9 if m["style"] == "nam" else 8)):
+        e.append("troppi pomelli (max 8 posizioni, 9 sul contenitore grande)")
     sl = [c for c in m["controls"] if c["kind"] == "slider"]
-    if sl and rot: e.append("cursori e pomelli insieme non supportati")
-    if len(sl) > 11: e.append("troppi cursori")
+    if sl and rot and not stomp: e.append("cursori e pomelli insieme non supportati")
+    if len(sl) > (12 if stomp else 11): e.append("troppi cursori")
     if m["style"] == "ts" and len(rot) != 3: e.append("stile ts richiede 3 pomelli")
     if m["style"] == "nam" and (len(rot) != 9 or len([c for c in m["controls"] if c["kind"] == "toggle"]) != 2):
         e.append("stile nam: 9 pomelli e 2 footswitch")

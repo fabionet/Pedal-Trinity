@@ -340,20 +340,20 @@ MODELS = [
 
     # ================================================================== WAH / FILTRI
     model("pw1", "RKW-1", "Rock Sweep", "BOSS PW-1 Rocker Wah", "Wah / Filtri", "Wah",
-          (42, 42, 44),
+          (35, 35, 37),
           [knob("PEDAL", "freq", 0.5)],
           "type=pedal f=400,2200 q=4,6 filt=bp",
           "Wah a pedale analogico a filtro risonante passa-banda con escursione ~400 Hz-2.2 kHz; interruttore "
           "sotto il pedale (boss_catalog; valori tipici dei wah a induttore, stimati).",
-          accent=(200, 200, 205), subtitle="WAH"),
+          accent=(200, 200, 205), subtitle="WAH", style="treadle", look=dict(boss=True)),
 
     model("fw3", "FSW-3", "Foot Sweep", "BOSS FW-3 Foot Wah", "Wah / Filtri", "Wah",
-          BLACK,
+          (28, 28, 30),
           [knob("PEDAL", "freq", 0.5), knob("PEAK", "peak", 0.5)],
           "type=pedal f=380,2400 q=2,10 filt=bp",
           "Wah a pedale compatto con on/off a pressione in punta e PEAK sulla risonanza del passa-banda; "
           "escursione ~380 Hz-2.4 kHz (boss_catalog, valori stimati).",
-          accent=(200, 200, 205), subtitle="WAH"),
+          accent=(200, 200, 205), subtitle="WAH", style="treadle", look=dict(boss=True)),
 
     model("tw1", "TQ-1", "Touch Quack", "BOSS TW-1 Touch Wah", "Wah / Filtri", "Wah",
           (234, 220, 150),
@@ -392,7 +392,7 @@ MODELS = [
           accent=(40, 30, 10), subtitle="DYNAMIC WAH"),
 
     model("pw10", "MSW-10", "Model Sweep", "BOSS PW-10 V-Wah", "Wah / Filtri", "Wah",
-          (46, 46, 50),
+          (30, 30, 32),
           [knob("PEDAL", "freq", 0.5),
            selector("TYPE", "voice", ["CUSTOM", "ADVANCED", "BASS MIX", "CLASSIC", "BRIT", "OPTO",
                                       "VOICE", "VIBE"], 3,
@@ -401,13 +401,13 @@ MODELS = [
           "type=pedal f=300,2500 q=3,8 filt=bp",
           "Wah COSM multimodello (wah classici, voce, vibe) con WAH RANGE e DRIVE, toe switch e memorie "
           "(boss_catalog, manuale PW-10); approssimato con un passa-banda risonante.",
-          accent=(200, 200, 205), subtitle="V-WAH"),
+          accent=(200, 200, 205), subtitle="V-WAH", style="treadle", look=dict(boss=True)),
 
     model("pw3", "CSW-3", "Classic Sweep", "BOSS PW-3 Wah", "Wah / Filtri", "Wah",
-          (26, 26, 29),
+          (28, 28, 30),
           [knob("PEDAL", "freq", 0.5), toggle("TONE", "peak", ("RICH", "VINT"), 0)],
           "type=pedal f=350,2300 q=3.5,7 filt=bp",
           "Wah analogico a pedale con due timbriche: RICH (picco piu' largo e corposo) e VINTAGE (picco stretto "
           "tipo wah classico); escursione ~350 Hz-2.3 kHz (boss_catalog, valori stimati).",
-          accent=(200, 200, 205), subtitle="WAH"),
+          accent=(200, 200, 205), subtitle="WAH", style="treadle", look=dict(boss=True)),
 ]
