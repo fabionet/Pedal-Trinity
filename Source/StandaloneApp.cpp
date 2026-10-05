@@ -2,7 +2,7 @@
     Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
 
     Applicazione Standalone personalizzata:
-      * finestra con titolo "Pedal Trinity 1.2.0 beta";
+      * finestra con titolo "Pedal Trinity 1.2.5 beta";
       * su Windows, al primo avvio, seleziona i driver ASIO se presenti;
       * ingresso audio attivo di default (e' un effetto per chitarra);
       * riga di comando:
@@ -3582,53 +3582,31 @@ namespace
                        });
         }
 
-        // 9. click cambiando i comandi (stessa misura della 3A). Oceans Abyss: l'algoritmo REVERSE, dopo ogni cambio di tipo (che svuota
-        //    il serbatoio con core.clear()), rilegge al contrario anche l'attacco brusco della registrazione e ~0.39 s dopo (fine del primo
-        //    segmento, TIME a ore 12) da' un gradino d'uscita (difetto noto del motore, FxVerbCore.h, non di stabilita'): per l'Abyss la
-        //    soglia si applica alla sequenza senza la posizione REVERSE di A/B TYPE e la sequenza completa e' solo riportata
+        // 9. click cambiando i comandi (stessa misura della 3A), Oceans Abyss compreso il REVERSE di A/B TYPE: il cambio di tipo
+        //    svuota il serbatoio (core.clear()) e la registrazione riparte con un attacco di 30 ms, niente gradino a fine segmento
         {
             std::vector<int> h;
-            auto what = std::make_shared<std::vector<juce::String>> ((size_t) numB + 1);     // comando peggiore (ogni misura scrive il suo)
-            auto noReverse = [] (const ModelDef& d)
-            {
-                std::function<bool (int, float)> skip;
-                if (std::strcmp (d.id, "ehabyss") == 0)
-                    skip = [&d] (int c, float v)
-                    {
-                        const bool type = std::strcmp (d.controls[c].role, "atype") == 0 || std::strcmp (d.controls[c].role, "btype") == 0;
-                        return type && (int) std::lround (v * (d.controls[c].steps - 1)) == 4;      // 4 = REVERSE
-                    };
-                return skip;
-            };
+            auto what = std::make_shared<std::vector<juce::String>> ((size_t) numB);     // comando peggiore (ogni misura scrive il suo)
             for (int mi = 0; mi < numB; ++mi)
-                h.push_back (lab.add (kStage3BDigital[mi], [mi, what, noReverse] (const ModelDef& d)
+                h.push_back (lab.add (kStage3BDigital[mi], [mi, what] (const ModelDef&)
                 {
-                    const auto r = clicksS2 (kStage3BDigital[mi], noReverse (d));
+                    const auto r = clicksS2 (kStage3BDigital[mi]);
                     (*what)[(size_t) mi] = r.what;
                     return std::vector<double> { r.worst };
                 }));
             for (int x : h) lab.first (x, 2);
-            const int full = lab.add ("ehabyss", [what] (const ModelDef&)
-            {
-                const auto r = clicksS2 ("ehabyss");
-                (*what)[(size_t) numB] = r.what;
-                return std::vector<double> { r.worst };
-            });
-            lab.first (full, 3);
-            std::vector<int> all = h;
-            all.push_back (full);
-            lab.check (all, "Tappa 3B digitali: niente click cambiando i comandi (seno 220 Hz, differenza seconda <= 10x prima/regime, 50 modelli; "
-                            "Oceans Abyss senza REVERSE, difetto noto riportato)", [&lab, h, what, full] {
-                double worst = 0;
+            lab.check (h, "Tappa 3B digitali: niente click cambiando i comandi (seno 220 Hz, differenza seconda <= 10x prima/regime, 50 modelli; "
+                          "Oceans Abyss anche con il REVERSE)", [&lab, h, what] {
+                double worst = 0, abyss = 0;
                 juce::String worstId, bad;
                 for (size_t k = 0; k < h.size(); ++k)
                 {
                     const double r = lab.v (h[k]);
                     if (r > 10.0) bad << kStage3BDigital[k] << " " << num (r, 1) << "x (" << (*what)[k] << ") ";
                     if (r > worst) { worst = r; worstId = juce::String (kStage3BDigital[k]) + " " + (*what)[k]; }
+                    if (std::strcmp (kStage3BDigital[k], "ehabyss") == 0) abyss = r;
                 }
-                return Verdict { bad.isEmpty(), "peggiore " + num (worst, 1) + "x (" + worstId + "); Abyss con REVERSE " + num (lab.v (full), 1) + "x ("
-                                                    + (*what)[(size_t) numB] + ", difetto noto) " + bad.trim() };
+                return Verdict { bad.isEmpty(), "peggiore " + num (worst, 1) + "x (" + worstId + "); Oceans Abyss " + num (abyss, 1) + "x " + bad.trim() };
             });
         }
 

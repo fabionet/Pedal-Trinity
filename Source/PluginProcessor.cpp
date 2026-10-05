@@ -137,7 +137,7 @@ void PedalTrinityProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 juce::ValueTree PedalTrinityProcessor::captureState() const
 {
     juce::ValueTree root ("PedalTrinityState");
-    root.setProperty ("version", "1.2.0-beta", nullptr);
+    root.setProperty ("version", "1.2.5-beta", nullptr);
     root.appendChild (const_cast<juce::AudioProcessorValueTreeState&> (apvts).copyState(), nullptr);
     root.appendChild (chain.toValueTree(), nullptr);
     root.appendChild (uiState.createCopy(), nullptr);
