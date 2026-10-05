@@ -29,6 +29,7 @@ namespace pt::engine::cx
             fdn.prepare (s, 2.4f); fdn2.prepare (s, 1.7f); plate.prepare (s); spring.prepare (s);
             pre.allocate ((int) (s * 2.2)); rev.allocate ((int) (s * 2.2)); flg.allocate ((int) (0.02 * s));
             comb.allocate ((int) (s / 40.0));
+            revFade = std::max (1, (int) (0.03 * s));
             for (auto& sh : shifter) sh.prepare (s, 70);
             env.set (s, 3, 120);
             lfo.setHz (s, 0.3); trem.setHz (s, 4);
@@ -39,12 +40,13 @@ namespace pt::engine::cx
         {
             fdn.clear(); fdn2.clear(); infCur = 0; plate.clear(); spring.clear(); pre.clear(); rev.clear(); flg.clear(); comb.clear();
             for (auto& sh : shifter) sh.clear();
-            flgFb = 0; revPos = 0; gate = 0; holdN = 0; infIn = 0; preFb = 0; shimFb[0] = shimFb[1] = 0; combFb = 0;
+            flgFb = 0; revPos = 0; revFill = 0; gate = 0; holdN = 0; infIn = 0; preFb = 0; shimFb[0] = shimFb[1] = 0; combFb = 0;
             lastE = 0; swell = 0; xfade = 1;
         }
         /** Parametri: t60 s (>=60 infinito), tono Hz, pre-delay s, feedback del pre-delay, a/b = parametri del tipo, variante 0..2. */
         void set (Algo a, float t60In, float toneHz, float preS, float preFbIn, float aIn, float bIn, int var)
         {
+            if (a == Reverse && algo != Reverse) { rev.clear(); revPos = 0; revFill = 0; }   // niente registrazione vecchia
             algo = a; t60 = t60In; tone = toneHz; preD = preS; preFbK = preFbIn; pa = aIn; pb = bIn; variant = var;
             switch (algo)
             {
@@ -102,7 +104,11 @@ namespace pt::engine::cx
                 {
                     // riverbero denso registrato e riletto al contrario per segmenti (swell finale)
                     float a, b; fdn.tick (in, a, b);
-                    rev.push (0.5f * (a + b) + 0.3f * in);
+                    // attacco della registrazione (30 ms a coseno rialzato): riletto al contrario, l'inizio del serbatoio dopo
+                    // clear() diventa una dissolvenza e non un gradino a fine segmento
+                    float att = 1.0f;
+                    if (revFill < revFade) { att = 0.5f - 0.5f * std::cos (pi * (float) revFill / (float) revFade); ++revFill; }
+                    rev.push (att * (0.5f * (a + b) + 0.3f * in));
                     const float seg = std::max (0.05f, pa) * sr;
                     float acc = 0;
                     for (int k = 0; k < 2; ++k)
@@ -222,7 +228,7 @@ namespace pt::engine::cx
     private:
         float sr = 48000, t60 = 2, tone = 6000, preD = 0, preFbK = 0, pa = 0.5f, pb = 0.5f, flgFb = 0, preFb = 0, shimFb[2] {},
               gate = 0, infIn = 0, combFb = 0, combD = 200, lastE = 0, swell = 1, xfade = 1;
-        int variant = 0, holdN = 0;
+        int variant = 0, holdN = 0, revFill = 0, revFade = 1440;
         long long revPos = 0;
         Algo algo = Hall;
         Fdn fdn, fdn2;
