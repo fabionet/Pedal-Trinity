@@ -16,7 +16,17 @@ look (dizionario del catalogo):
   leds     [(x%, y%, colore), ...] il primo e' il LED di stato acceso dall'interfaccia
   sections True: tutti i footswitch sono di sezione (levette del modello, anche il primo); l'effetto si inserisce
            cliccando il LED di stato
-  extra    elementi solo decorativi: ("tubes", x%, y%, n), ("display", x0%, y0%, x1%, y1%), ("ledbar", x%, y%, n, "v"|"h")
+  extra    elementi solo decorativi: ("tubes", x%, y%, n), ("display", x0%, y0%, x1%, y1%), ("ledbar", x%, y%, n, "v"|"h"),
+           ("rails", larghezza mm, altezza mm) longheroni rialzati lungo i fianchi (i comandi restano tra i due)
+Chiavi facoltative (tappa 4, Ibanez; i pedali che non le usano restano identici):
+  profile  [(y%, h mm), ...] profilo del piano lungo la profondita' (spezzata: parte rialzata, fronte inclinato,
+           piano piu' basso sotto il coperchio-pedale); sostituisce wedge
+  covers   [dict(foot=j, x0, x1, y0, y1 (%), h0, h1 (mm: quota della faccia superiore dietro/davanti), kind=paint|
+           chrome|metal|rubber|plastic, corner=mm, insets=[dict(x0, y0, x1, y1 (%), kind, col, ribs=passo mm, h=mm)],
+           bumps=[(x%, y%, r mm)])]: coperchi-pedale incernierati (serie 9/10/L, Soundtank, Tone-Lok, tasto
+           quadrato della serie 808...): il footswitch j e' tutto il coperchio (zona "foot" dell'interfaccia)
+  outline  [(x%, y%), ...] contorno poligonale convesso in pianta (es. contenitore a rombo) al posto del rettangolo
+  margin   (sinistra, destra, lontano, vicino) mm di margine in piu' per i comandi
 I comandi del modello si assegnano alle posizioni per etichetta (poi per tipo, nell'ordine); le posizioni
 del pedale vero senza un comando del modello diventano comandi decorativi (fissi) e i comandi del modello
 senza posizione vanno nello spazio libero. Le sovrapposizioni si risolvono spostando i comandi il meno possibile.
@@ -50,6 +60,17 @@ SHAPES = {
     "slab":     dict(corner=0.0030, edge=0.0016, knob="knob", kind="sheet", label="below"),
     "tank":     dict(corner=0.0050, edge=0.0025, knob="big", kind="tank", label="below"),
     "tube":     dict(corner=0.0040, edge=0.0020, knob="knob", kind="sheet", label="below"),
+    # tappa 4 (Ibanez)
+    "ib70":     dict(corner=0.0060, edge=0.0040, knob="big", kind="die", label="below"),     # prima serie a cuneo
+    "ibsheet":  dict(corner=0.0030, edge=0.0016, knob="big", kind="sheet", label="below"),   # scatole piatte anni '70
+    "ib808":    dict(corner=0.0050, edge=0.0035, knob="knob", kind="die", label="below"),    # serie 808 (tasto quadrato)
+    "ib9":      dict(corner=0.0070, edge=0.0045, knob="knob", kind="die", label="below"),    # serie 9 (coperchio cromato)
+    "ib10":     dict(corner=0.0060, edge=0.0040, knob="knob", kind="die", label="below"),    # Power/Master (serie 10, L)
+    "ibdcp":    dict(corner=0.0040, edge=0.0030, knob="small", kind="die", label="below"),   # DCP programmabili
+    "ibst":     dict(corner=0.0160, edge=0.0080, knob="knob", kind="die", label="below"),    # Soundtank (guscio a carro armato)
+    "ibtl":     dict(corner=0.0060, edge=0.0045, knob="med", kind="die", label="below"),     # Tone-Lok
+    "ibmini":   dict(corner=0.0050, edge=0.0040, knob="small", kind="die", label="below"),   # serie MINI
+    "ibbox":    dict(corner=0.0060, edge=0.0040, knob="knob", kind="die", label="below"),    # scatole moderne grandi
 }
 ROTARY = ("knob", "big", "med", "small", "encoder")
 SWITCHES = ("lever", "button")
@@ -68,8 +89,9 @@ def shape_params(lk):
 class Geo:
     """Conversioni tra percentuali del pedale vero e metri, quota del piano (cuneo)."""
 
-    def __init__(self, W, D, zf, zb):
+    def __init__(self, W, D, zf, zb, profile=None):
         self.W, self.D, self.zf, self.zb = W, D, zf, zb
+        self.prof = sorted((float(p), float(h) / 1000.0) for p, h in profile) if profile else None
 
     def x(self, pct):
         return (float(pct) / 100.0 - 0.5) * self.W
@@ -78,9 +100,20 @@ class Geo:
         return (0.5 - float(pct) / 100.0) * self.D
 
     def z(self, y):
+        if self.prof:
+            return profile_z(self.prof, (0.5 - y / self.D) * 100.0)
         t = (y + self.D / 2) / self.D
         return self.zf + t * (self.zb - self.zf)
 
+
+def profile_z(prof, pct):
+    """Quota (m) del profilo [(y%, h m), ...] alla profondita' pct (0 = bordo lontano)."""
+    if pct <= prof[0][0]:
+        return prof[0][1]
+    for (p0, h0), (p1, h1) in zip(prof, prof[1:]):
+        if pct <= p1:
+            return h0 + (h1 - h0) * (pct - p0) / max(1e-9, p1 - p0)
+    return prof[-1][1]
 
 def _ctrl_class(c):
     k = c["kind"]
@@ -165,7 +198,7 @@ def footprint(item, other=None):
     x, y = item["x"], item["y"]
     if t == "rot":
         r, h = item["r"], item["h"]
-        lab = 0.0058 if item.get("label") and other is not None and other["t"] != "led" else 0.0
+        lab = 0.0058 if item.get("label") and not item.get("nolab") and other is not None and other["t"] != "led" else 0.0
         return (x, y - lab, y + h * TAN22, r + 0.0010)
     if t == "toggle":
         return (x, y - 0.0045, y + TOGGLE_H * TAN22 * 0.6, 0.0050)
@@ -202,19 +235,52 @@ def _seg_dist(a, b):
     return math.hypot(dx, dy), dx, dy
 
 
-def _bounds(item, W, D):
+def _bounds(item, W, D, lim=None):
     """Limiti del centro dell'elemento: tutta la sagoma (sommita' proiettata compresa) dentro il piano."""
     x, y0, y1, r = footprint(item)
     if item["t"] == "rot":
         r = item["r"] + 0.0004
         y0 = item["y"]
-    return (-W / 2 + MARGIN + r, W / 2 - MARGIN - r, -D / 2 + MARGIN + r + (item["y"] - y0),
-            D / 2 - MARGIN - r - (y1 - item["y"]))
+    m = (lim or {}).get("margin") or (0.0, 0.0, 0.0, 0.0)
+    return (-W / 2 + MARGIN + m[0] + r, W / 2 - MARGIN - m[1] - r, -D / 2 + MARGIN + m[3] + r + (item["y"] - y0),
+            D / 2 - MARGIN - m[2] - r - (y1 - item["y"]))
 
 
-def resolve(items, W, D, warnings, rid):
+def _rect_push(item, rect, gap=0.0008):
+    """Sovrapposizione tra l'ingombro di un elemento e un rettangolo fisso (coperchio-pedale): spostamento verso il
+    bordo lontano (+y) che la elimina, 0 se non si toccano."""
+    x, y0, y1, r = footprint(item, rect)
+    if x + r <= rect["rx0"] - gap or x - r >= rect["rx1"] + gap or y0 - r >= rect["ry1"] + gap or y1 + r <= rect["ry0"] - gap:
+        return 0.0
+    return rect["ry1"] + gap - (y0 - r)
+
+
+def _poly_push(item, poly):
+    """Spostamento (dx, dy) che riporta l'ingombro dell'elemento dentro il contorno poligonale convesso."""
+    x, y0, y1, r = footprint(item)
+    cx = sum(p[0] for p in poly) / len(poly)
+    cy = sum(p[1] for p in poly) / len(poly)
+    dx = dy = 0.0
+    for (ax, ay), (bx, by) in zip(poly, poly[1:] + poly[:1]):
+        ex, ey = bx - ax, by - ay
+        ln = math.hypot(ex, ey) or 1.0
+        nx, ny = -ey / ln, ex / ln
+        if (cx - ax) * nx + (cy - ay) * ny < 0:
+            nx, ny = -nx, -ny
+        for yy in (y0, y1):
+            d = (x - ax) * nx + (yy - ay) * ny - (r + MARGIN)
+            if d < 0:
+                dx -= nx * d
+                dy -= ny * d
+                break
+    return dx, dy
+
+
+def resolve(items, W, D, warnings, rid, lim=None):
     """Allontana i comandi che si toccano (i fissi non si muovono), poi li riporta dentro il piano."""
     gap = 0.0006
+    rects = [it for it in items if it["t"] == "rect"]
+    poly = (lim or {}).get("poly")
     for it in items:
         it["x0"], it["y0_"] = it["x"], it["y"]
     for _ in range(400):
@@ -222,16 +288,28 @@ def resolve(items, W, D, warnings, rid):
         for it in items:
             if it.get("fixed"):
                 continue
-            bx0, bx1, by0, by1 = _bounds(it, W, D)
+            bx0, bx1, by0, by1 = _bounds(it, W, D, lim)
             nx = min(max(it["x"], bx0), bx1) if bx0 <= bx1 else 0.0
             ny = min(max(it["y"], by0), by1) if by0 <= by1 else (by0 + by1) / 2
             if abs(nx - it["x"]) > 1e-7 or abs(ny - it["y"]) > 1e-7:
                 _shift(it, nx - it["x"], ny - it["y"])
                 moved = True
+            if poly:
+                pdx, pdy = _poly_push(it, poly)
+                if abs(pdx) > 1e-7 or abs(pdy) > 1e-7:
+                    _shift(it, pdx, pdy)
+                    moved = True
+            for rc in rects:
+                pu = _rect_push(it, rc)
+                if pu > 0:
+                    _shift(it, 0.0, pu + 1e-5)
+                    moved = True
         for i in range(len(items)):
             for j in range(i + 1, len(items)):
                 a, b = items[i], items[j]
                 if (a.get("fixed") and b.get("fixed")) or a.get("skip") or b.get("skip"):
+                    continue
+                if a["t"] == "rect" or b["t"] == "rect":
                     continue
                 if (a["t"] == "zone" or b["t"] == "zone") and "led" not in (a["t"], b["t"]):
                     continue
@@ -270,6 +348,11 @@ def resolve(items, W, D, warnings, rid):
                 continue
             if (a["t"] == "zone" or b["t"] == "zone") and "led" not in (a["t"], b["t"]):
                 continue
+            if a["t"] == "rect" or b["t"] == "rect":
+                o, rc = (b, a) if a["t"] == "rect" else (a, b)
+                if _rect_push(o, rc, 0.0) > 0.0008:
+                    warnings.append("%s: %s sopra il coperchio-pedale" % (rid, o.get("label") or o["t"]))
+                continue
             fa, fb = footprint(a, b), footprint(b, a)
             d, _, _ = _seg_dist(fa, fb)
             if d < fa[3] + fb[3] - 0.0008:
@@ -291,7 +374,24 @@ def stomp_layout(r):
     W, D, H = r["dims"]
     wedge = lk.get("wedge")
     zf, zb = ((wedge[0] / 1000.0, wedge[1] / 1000.0) if wedge else (H, H))
-    G = Geo(W, D, zf, zb)
+    prof = lk.get("profile")
+    if prof:
+        pr = sorted((float(a), float(b) / 1000.0) for a, b in prof)
+        zf, zb = profile_z(pr, 100.0), profile_z(pr, 0.0)
+    G = Geo(W, D, zf, zb, prof)
+    ztop = max([zf, zb] + ([b / 1000.0 for a, b in prof] if prof else []))
+    covers = {int(c.get("foot", 0)): dict(c) for c in (lk.get("covers") or [])}
+    lim = {}
+    if lk.get("margin"):
+        lim["margin"] = tuple(v / 1000.0 for v in lk["margin"])
+    if lk.get("outline"):
+        lim["poly"] = [(G.x(a), G.y(b)) for a, b in lk["outline"]]
+    for ex in lk.get("extra") or []:
+        if ex[0] == "rails":
+            m0 = list(lim.get("margin") or (0.0, 0.0, 0.0, 0.0))
+            m0[0] = max(m0[0], ex[1] / 1000.0 + 0.0015)
+            m0[1] = max(m0[1], ex[1] / 1000.0 + 0.0015)
+            lim["margin"] = tuple(m0)
     ctrls = r["controls"]
     rid = r["id"]
     warnings = []
@@ -325,6 +425,8 @@ def stomp_layout(r):
             continue
         cls = _ctrl_class(c)
         want = {"rot": ("rot", "switch"), "switch": ("switch", "rot"), "button": ("switch",), "slider": ("slider",)}[cls]
+        if lk.get("param_row") and cls in ("rot", "switch"):
+            want = ()                   # i comandi senza etichetta corrispondente vanno nella fila dei parametri
         for w in want:
             for j, e in enumerate(entries):
                 if j not in used and _spec_class(e[3]) == w:
@@ -333,6 +435,18 @@ def stomp_layout(r):
                     break
             if assign[i] is not None:
                 break
+    # fila dei parametri (look["param_row"] = (y%, x0%, x1%), es. DCP programmabili senza pomelli): i comandi rotativi
+    # e le levette senza posizione si distribuiscono in fila
+    prow = lk.get("param_row")
+    if prow:
+        free_i = [i for i, c in enumerate(ctrls) if assign[i] is None and c["kind"] not in ("inner", "button", "slider")]
+        n = len(free_i)
+        for k, i in enumerate(free_i):
+            xp = prow[1] + (prow[2] - prow[1]) * ((k + 0.5) / n if n else 0.5)
+            kind = "lever" if ctrls[i]["kind"] == "toggle" else "small"
+            entries.append((ctrls[i]["label"], xp, prow[0], kind))
+            assign[i] = len(entries) - 1
+            used.add(assign[i])
     # bottoni del looper senza posizione: sui footswitch liberi
     for i, c in enumerate(ctrls):
         if assign[i] is None and c["kind"] in ("button", "toggle"):
@@ -373,8 +487,17 @@ def stomp_layout(r):
         items.append(dict(t=t, i=None, label=e[0], x=G.x(e[1]), y=G.y(e[2]), deco=True, spec=e[3]))
     for it in items:
         _size(it, default_knob)
-    # footswitch
+        if lk.get("label_side") and it["t"] == "rot":
+            it["nolab"] = True          # scritte dei pomelli a lato (serie 9/10 Ibanez): nessuno spazio riservato sotto
+    # footswitch (o coperchio-pedale incernierato: rettangolo fisso, i comandi restano dietro)
     for j, f in enumerate(feet):
+        if j in covers:
+            cv = covers[j]
+            x0, x1 = G.x(cv.get("x0", 4)), G.x(cv.get("x1", 96))
+            yf, yb = G.y(cv.get("y1", 98.5)), G.y(cv["y0"])
+            items.append(dict(t="rect", i=None, label=f[0], x=(x0 + x1) / 2, y=(yf + yb) / 2, rx0=x0, rx1=x1, ry0=yf,
+                              ry1=yb + 0.0010, fixed=True, foot=j, cover=cv))
+            continue
         items.append(dict(t="foot", i=None, label=f[0], x=G.x(f[1]), y=G.y(f[2]), fixed=True, foot=j))
     # LED
     leds = [tuple(l) for l in (lk.get("leds") or [])]
@@ -411,8 +534,13 @@ def stomp_layout(r):
                 for xx in [-W / 2 + 0.012 + 0.006 * k for k in range(int((W - 0.024) / 0.006) + 1)]:
                     _place(it, xx, yy)
                     ok = all(_seg_dist(footprint(it, o), footprint(o, it))[0] >= footprint(it, o)[3] + footprint(o, it)[3] + 0.001
-                             for o in items if o is not it and not o.get("auto") and not o.get("skip") and o["t"] != "zone")
-                    bx0, bx1, by0, by1 = _bounds(it, W, D)
+                             for o in items if o is not it and not o.get("auto") and not o.get("skip")
+                             and o["t"] not in ("zone", "rect"))
+                    ok = ok and all(_rect_push(it, o) <= 0 for o in items if o["t"] == "rect")
+                    if ok and lim.get("poly"):
+                        pdx, pdy = _poly_push(it, lim["poly"])
+                        ok = abs(pdx) < 1e-7 and abs(pdy) < 1e-7
+                    bx0, bx1, by0, by1 = _bounds(it, W, D, lim)
                     ok = ok and bx0 <= xx <= bx1 and by0 <= yy <= by1
                     if ok:
                         best = (xx, yy)
@@ -422,7 +550,7 @@ def stomp_layout(r):
             _place(it, *(best or (0.0, 0.0)))
             it.pop("auto")
             warnings.append("%s: %s senza posizione nella scheda (messo nello spazio libero)" % (rid, it["label"]))
-    resolve(items, W, D, warnings, rid)
+    resolve(items, W, D, warnings, rid, lim)
 
     # ---- uscita
     def z_at(y):
@@ -442,7 +570,7 @@ def stomp_layout(r):
         if t == "tubes":
             out["parts"].append(dict(it["part"], z=z))
             continue
-        if t in ("tube1", "zone"):
+        if t in ("tube1", "zone", "rect"):
             continue
         if it.get("deco"):
             if t == "rot":
@@ -473,6 +601,9 @@ def stomp_layout(r):
         out["kinds"][i] = c["kind"]
     # footswitch: il primo e' quello dell'effetto; gli altri sono comandi (levette/pulsanti del modello) o decorativi
     for it in items:
+        if it["t"] == "rect" and it.get("foot") is not None:
+            cover_out(out, it, G, assign, ctrls, D)
+            continue
         if it["t"] != "foot":
             continue
         x, y = it["x"], it["y"]
@@ -510,8 +641,11 @@ def stomp_layout(r):
         out["foot"] = [(lx - q, ly - q, lz), (lx + q, ly - q, lz), (lx + q, ly + q, lz), (lx - q, ly + q, lz)]
     if out["led"] is None:
         # pedali storici senza LED: l'interfaccia mostra comunque lo stato con un piccolo LED (vicino al footswitch)
-        f0 = [it for it in items if it["t"] == "foot" and it["foot"] == 0][0]
-        x, y = f0["x"] + FOOT_ZONE + 0.0045, f0["y"] + FOOT_ZONE
+        f0 = [it for it in items if it["t"] in ("foot", "rect") and it.get("foot") == 0][0]
+        if f0["t"] == "rect":
+            x, y = f0["rx1"] - 0.0050, f0["ry1"] + 0.0040
+        else:
+            x, y = f0["x"] + FOOT_ZONE + 0.0045, f0["y"] + FOOT_ZONE
         out["parts"].append(dict(type="led", x=x, y=y, z=z_at(y), colour="red", tiny=True))
         out["led"] = (x, y, z_at(y), 0.0018)
     for i, c in enumerate(out["controls"]):
@@ -532,18 +666,79 @@ def stomp_layout(r):
                 x = G.x(ex[1]) + (0 if vert else off)
                 y = G.y(ex[2]) - (off if vert else 0)
                 out["parts"].append(dict(type="led", x=x, y=y, z=z_at(y), colour=ex[5] if len(ex) > 5 else "yellow", small=True))
-    out["body"] = dict(W=W, D=D, H=max(zf, zb))
+    out["body"] = dict(W=W, D=D, H=max(zf, zb) if not prof else ztop)
     out["top"] = (zf, zb)
     out["base"] = dict(W=W, D=D, corner=P["corner"], edge=P["edge"], kind=P["kind"])
+    if prof:
+        # profilo per il render: [(y m, z m), ...] dal bordo lontano al vicino
+        out["profile"] = [((0.5 - a / 100.0) * D, b) for a, b in sorted((float(a), float(b) / 1000.0) for a, b in prof)]
+    if lim.get("poly"):
+        out["outline"] = list(lim["poly"])
     import real_layout
     tall = max([p.get("h", 0.0) for p in out["parts"] if p["type"] == "tubes"] + [0.0])
-    out["frame"] = real_layout._frame(W, D, max(zf, zb) + max(0.0, tall - 0.010))
+    hcov = max([max(p["zb"], p["zf"]) for p in out["parts"] if p["type"] == "cover"] + [0.0])
+    out["frame"] = real_layout._frame(W, D, max(max(zf, zb) if not prof else ztop, hcov) + max(0.0, tall - 0.010))
     jz = min(max(zf, zb) * 0.45, 0.024)
     jy = D / 2 - min(0.032, D * 0.28)
+    if prof:
+        jz = min(jz, G.z(jy) - 0.008)
+    if lim.get("poly"):
+        # contorno poligonale: le prese escono dai vertici piu' esterni sui fianchi
+        vx = max(lim["poly"], key=lambda q: q[0])
+        jy = vx[1]
     out["jacks"] = (W, [(jy, jz), (jy - 0.020, jz) if r.get("stereo") else None])
     out["warnings"] = warnings
     out["items"] = items
     return out
+
+
+def cover_out(out, it, G, assign, ctrls, D):
+    """Coperchio-pedale incernierato: parte per il render, zona "foot" (coperchio dell'effetto) o footswitch di
+    sezione (levetta del modello) al centro del coperchio."""
+    cv = it["cover"]
+    j = it["foot"]
+    x0, x1, yf, yb = it["rx0"], it["rx1"], it["ry0"], it["ry1"] - 0.0010
+    zb_, zf_ = cv["h0"] / 1000.0, cv["h1"] / 1000.0
+    deck = cv.get("deck")
+    deck = deck / 1000.0 if deck is not None else min(G.z(yb), G.z(yf), zb_, zf_) - 0.004
+
+    def mx(p):
+        return G.x(p)
+
+    def my(p):
+        return G.y(p)
+    insets = []
+    for q in cv.get("insets") or []:
+        insets.append(dict(q, x0=mx(q["x0"]), x1=mx(q["x1"]), y0=my(q["y1"]), y1=my(q["y0"])))
+    bumps = [(mx(b[0]), my(b[1]), b[2] / 1000.0) for b in cv.get("bumps") or []]
+    part = dict(type="cover", x0=x0, x1=x1, y0=yf, y1=yb, zb=zb_, zf=zf_, deck=deck, kind=cv.get("kind", "paint"),
+                corner=cv.get("corner", 3.0) / 1000.0, insets=insets, bumps=bumps, label=it["label"], foot=j,
+                hinge=cv.get("hinge", True), ribs=cv.get("ribs"), col=cv.get("col"), print=cv.get("print", False),
+                ribs_col=cv.get("ribs_col"))
+    out["parts"].append(part)
+
+    def zt(y):
+        return zf_ + (zb_ - zf_) * (y - yf) / max(1e-9, yb - yf)
+    if j == 0:
+        out["foot"] = [(x0, yf, zf_), (x1, yf, zf_), (x1, yb, zb_), (x0, yb, zb_)]
+        out["name_y"] = (yf + yb) / 2
+    cx, cy = (x0 + x1) / 2, (yf + yb) / 2
+    for i, a in enumerate(assign):
+        if a == ("foot", j):
+            c = ctrls[i]
+            part["control"] = True
+            if c["kind"] == "button":
+                out["controls"][i] = dict(x=cx, y=cy, z=zt(cy), strip="footbutton", r=FOOT_ZONE * 0.9)
+            else:
+                lp = [p for p in out["parts"] if p["type"] == "led" and abs(p["x"] - cx) < 0.022 and p["y"] > yb]
+                lp.sort(key=lambda p: math.hypot(p["x"] - cx, p["y"] - yb))
+                if lp:
+                    led = (lp[0]["x"], lp[0]["y"], lp[0]["z"])
+                else:
+                    led = (cx, yb + 0.0045, G.z(yb + 0.0045))
+                    out["parts"].append(dict(type="led", x=led[0], y=led[1], z=led[2], colour="red"))
+                out["controls"][i] = dict(x=cx, y=cy, z=zt(cy), strip="footswitch", r=FOOT_ZONE * 0.9, led=led)
+            out["kinds"][i] = c["kind"]
 
 
 def _item_type(c, spec_kind):

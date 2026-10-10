@@ -1,17 +1,18 @@
 # Pedal Trinity
 
-**Pedaliera virtuale fino a 100 pedali** con un catalogo di **505 modelli** ispirati all'intero catalogo
+**Pedaliera virtuale fino a 100 pedali** con un catalogo di **671 modelli** ispirati all'intero catalogo
 BOSS (compatti, Waza Craft, Twin, serie 200/500, amp e IR simulator, selettori A/B, tuner, looper), ai wah
 **Cry Baby** (signature comprese, con emulazione del circuito a induttore), ai pedali di volume classici
 (Dunlop, Ernie Ball, Morley, DeArmond), alle **signature MXR** (Zakk Wylde, EVH, Dimebag, Slash, Kerry King, Bonamassa, Morello, Malmsteen, Rhoads...),
 all'intero catalogo **Electro-Harmonix** storico e attuale (tutte le Big Muff, Small Stone, Memory Man, POG,
-HOG, Holy Grail, serie 9, Micro Synth, vocoder, wah d'epoca e molti altri) e all'overdrive verde stile Tube Screamer. Interfaccia fotorealistica con pomelli 3D regolabili sull'immagine.
+HOG, Holy Grail, serie 9, Micro Synth, vocoder, wah d'epoca e molti altri) e all'intero catalogo **Ibanez** dagli anni '70
+a oggi (tutte le Tube Screamer, serie 9, Master/L, Power/10, DCP, Soundtank, Tone-Lok, Mini, Tube King, wah Weeping Demon). Interfaccia fotorealistica con pomelli 3D regolabili sull'immagine.
 
 ![Pedal Trinity](docs/images/screenshot.png)
 
 | | |
 |---|---|
-| **Versione** | 1.2.5 beta |
+| **Versione** | 1.2.6 beta |
 | **Autore** | FabioNET |
 | **Licenza** | [GNU GPL v3](LICENSE) |
 | **Formati** | VST3 · LV2 · Standalone |
@@ -45,7 +46,7 @@ HOG, Holy Grail, serie 9, Micro Synth, vocoder, wah d'epoca e molti altri) e all
   scelta o una propria immagine. Cavi visibili e **18 colori dei cavi**, compreso *Multicolore*.
   Il contrasto di testi e segni è verificato per ogni tema (WCAG 2.1).
 * **REAL MOD PEDALBOARD** (tasto rosso nella barra): la pedaliera si trasforma nelle **repliche fedeli
-  dei pedali reali** — 501 modelli (216 BOSS, 44 wah Cry Baby, 15 pedali di volume, 16 MXR signature, 210 Electro-Harmonix) con sigla e nome veri, forma e misure ufficiali (compatti, Twin,
+  dei pedali reali** — 668 modelli (216 BOSS, 44 wah Cry Baby, 15 pedali di volume, 16 MXR signature, 210 Electro-Harmonix, 167 Ibanez) con sigla e nome veri, forma e misure ufficiali (compatti, Twin,
   serie 200/500, unità da pavimento, pedali di volume e wah a bilanciere, Rocker, box d'epoca) e comandi
   nella posizione reale; il bilanciere si trascina, i footswitch dei looper funzionano. Il suono non cambia;
   ripremendo il tasto tutto torna com'era. Si possono usare anche le **proprie foto** (cartella RealPhotos),
@@ -85,13 +86,13 @@ HOG, Holy Grail, serie 9, Micro Synth, vocoder, wah d'epoca e molti altri) e all
 
 ### Linux (Ubuntu 22.04+, Debian 12+, Mint 21+)
 ```bash
-sudo apt install ./pedal-trinity_1.2.5-beta_amd64.deb
+sudo apt install ./pedal-trinity_1.2.6-beta_amd64.deb
 ```
 Installa `/usr/lib/vst3/Pedal Trinity.vst3`, `/usr/lib/lv2/Pedal Trinity.lv2` e l'app `pedal-trinity`
 (nel menu *Audio*). La guida si trova in `/usr/share/doc/pedal-trinity/`.
 
 ### Windows 10/11 (x64)
-Esegui `PedalTrinity-1.2.5-beta-Windows-x64-Setup.exe`. Il VST3 va in
+Esegui `PedalTrinity-1.2.6-beta-Windows-x64-Setup.exe`. Il VST3 va in
 `C:\Program Files\Common Files\VST3`, l'LV2 in `C:\Program Files\Common Files\LV2`.
 L'app standalone supporta i driver **ASIO** (selezionati automaticamente al primo avvio se presenti),
 WASAPI e DirectSound.
@@ -133,7 +134,7 @@ Source/
   gui/                slot, vista del pedale, comandi 3D, pannelli zoom e info
   Presets.cpp         preset utente/fabbrica
   StandaloneApp.cpp   app standalone (ASIO, --selftest, --screenshot)
-Resources/            render dei 505 pedali, filmstrip 3D dei comandi, licenza, guida PDF
+Resources/            render dei 671 pedali, filmstrip 3D dei comandi, licenza, guida PDF
 docs/research/        dossier tecnici con le fonti di ogni pedale
 docs/guide/           guida (LaTeX) generata da tools/build_guide.sh
 packaging/            .deb (Linux) e installer Inno Setup (Windows)
@@ -150,7 +151,7 @@ Il plugin incorpora le immagini: la compilazione richiede solo un compilatore C+
 
 ## Marchi
 
-Pedal Trinity è un progetto indipendente. *Ibanez* e *Tube Screamer* sono marchi di Hoshino Gakki Co.;
+Pedal Trinity è un progetto indipendente. *Ibanez*, *Tube Screamer*, *Tube King*, *Weeping Demon*, *Soundtank*, *Tone-Lok* e *Jemini* sono marchi di Hoshino Gakki Co.; *Maxon* di Nisshin Onpa; *Nutube* di Korg Inc.;
 *BOSS*, *Roland*, *Waza Craft* e le sigle dei pedali BOSS (DS-1, MT-2, GE-7, …) sono marchi di Roland
 Corporation; *Fender* di Fender Musical Instruments Corporation; *Dunlop*, *Cry Baby* e *MXR* di Dunlop
 Manufacturing, Inc.; *Ernie Ball* di Ernie Ball, Inc.; *Electro-Harmonix*, *Big Muff*, *Memory Man*, *POG* e *Holy Grail* di New Sensor

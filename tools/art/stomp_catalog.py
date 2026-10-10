@@ -18,7 +18,10 @@ from catalog import model
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SOUND_FILES = [os.path.join(HERE, "sound_stage3_analog.json"), os.path.join(HERE, "sound_stage3_digital.json"),
-               os.path.join(HERE, "sound_stage3b_analog.json"), os.path.join(HERE, "sound_stage3b_digital.json")]
+               os.path.join(HERE, "sound_stage3b_analog.json"), os.path.join(HERE, "sound_stage3b_digital.json"),
+               # tappa 4 (Ibanez)
+               os.path.join(HERE, "sound_stage4_drive.json"), os.path.join(HERE, "sound_stage4_dyn.json"),
+               os.path.join(HERE, "sound_stage4_mod.json"), os.path.join(HERE, "sound_stage4_digital.json")]
 _SOUND = None
 SOUND_ERRORS = []
 
@@ -155,10 +158,43 @@ def stomp(id, code, name, inspired, real, category, colour, look, placeholder, n
             SOUND_ERRORS.append("%s: %s" % (id, e))
     if not is_ph:
         ctrls = foot_selectors(ctrls, look)
+    if look.get("adapt"):
+        look = adapt_place(look, ctrls)
     m = model(id, code, name, inspired, category, fam, colour, ctrls, cfg, notes, style="box", text=text,
               accent=accent, subtitle=subtitle, stereo=stereo, look=look, real=dict(code=real[0], name=real[1]))
     m["placeholder"] = is_ph
     return m
+
+
+def adapt_place(look, ctrls):
+    """look["adapt"] (tappa 4): il tipo di una posizione del pedale vero segue il comando del modello che le corrisponde
+    per etichetta (cursore <-> pomello, pomello <-> levetta), cosi' un comando della scheda funzionale di tipo diverso
+    resta al suo posto invece di finire nello spazio libero."""
+    import copy
+    import stomp_layout
+    lk = copy.deepcopy(look)
+    place = [list(e) for e in lk.get("place") or []]
+    for e in place:
+        best = None
+        for c in ctrls:
+            if c["kind"] == "inner":
+                continue
+            sc = stomp_layout._score(c["label"], tuple(e))
+            if sc >= 3 and (best is None or sc > best[0]):
+                best = (sc, c)
+        if best is None:
+            continue
+        c = best[1]
+        if e[3] == "slider" and c["kind"] != "slider":
+            e[3] = "lever" if c["kind"] == "toggle" else "knob"
+        elif e[3] != "slider" and c["kind"] == "slider":
+            e[3] = "slider"
+        elif e[3] in stomp_layout.ROTARY and c["kind"] == "toggle":
+            e[3] = "lever"
+        elif e[3] in ("lever", "button") and c["kind"] in ("knob", "outer"):
+            e[3] = "small"
+    lk["place"] = [tuple(e) for e in place]
+    return lk
 
 
 def look(shape, dims, place, feet=None, leds=None, wedge=None, extra=None, finish="paint", gfx=None, knob=None,
@@ -205,7 +241,9 @@ def _treadle_place(ctrls, spec):
     pedale vero (lato "L"/"R" della fiancata, pct dal tallone). Assegnazione per somiglianza delle etichette, poi
     nell'ordine; i comandi senza posizione vanno sui posti liberi (alternando i lati)."""
     import stomp_layout
-    entries = [(e[0], e[1], e[2], e[3], e[4] if len(e) > 4 else None) for e in spec]
+    # voci ("etichetta", "P", xf, pct, tipo[, alias]) = pannello della carcassa larga (forma "wide"): pct porta xf e pct
+    entries = [(e[0], e[1], (e[2], e[3]), e[4], e[5] if len(e) > 5 else None) if e[1] == "P" else
+               (e[0], e[1], e[2], e[3], e[4] if len(e) > 4 else None) for e in spec]
     out, used = {}, set()
     pairs = []
     for i, c in enumerate(ctrls[1:], 1):
@@ -219,7 +257,7 @@ def _treadle_place(ctrls, spec):
         if i in done or j in used:
             continue
         e = entries[j]
-        out[ctrls[i]["label"].upper()] = (e[1], e[2], e[3])
+        out[ctrls[i]["label"].upper()] = _pl(e)
         done.add(i)
         used.add(j)
     free = [entries[j] for j in range(len(entries)) if j not in used]
@@ -229,13 +267,20 @@ def _treadle_place(ctrls, spec):
             continue
         if free:
             e = free.pop(0)
-            out[c["label"].upper()] = (e[1], e[2], e[3])
+            out[c["label"].upper()] = _pl(e)
         else:
             extra.append(c)
     for k, c in enumerate(extra):
         side = "R" if k % 2 == 0 else "L"
         out[c["label"].upper()] = (side, 30 + 12 * (k // 2), "knob")
     return out
+
+
+def _pl(e):
+    """Voce di place_spec -> posizione di shaped_layout: ("L"|"R", pct, tipo) o ("P", xf, pct, tipo)."""
+    if e[1] == "P":
+        return ("P", e[2][0], e[2][1], e[3])
+    return (e[1], e[2], e[3])
 
 
 def rocker(id, code, name, inspired, real, category, colour, look, placeholder, notes, subtitle=None, stereo=False,

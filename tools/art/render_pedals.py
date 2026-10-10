@@ -614,6 +614,139 @@ def wedge_box(name, w, d, zf, zb, corner, edge, mat, seg=10, bevel_seg=6, z0=0.0
     return ob
 
 
+def _prof_z(prof, y):
+    """Quota del profilo [(y, z), ...] (dal bordo lontano, y decrescente) nel punto y."""
+    if y >= prof[0][0]:
+        return prof[0][1]
+    for (y0, z0), (y1, z1) in zip(prof, prof[1:]):
+        if y >= y1:
+            return z0 + (z1 - z0) * (y - y0) / ((y1 - y0) or 1e-9)
+    return prof[-1][1]
+
+
+def profile_box(name, w, d, prof, corner, edge, mat, seg=10, bevel_seg=6):
+    """Scatola con il piano a spezzata lungo la profondita' (parte rialzata, fronte inclinato, ripiano del
+    coperchio-pedale): tagli alle quote del profilo, ogni tratto del piano resta piano."""
+    bm = bmesh.new()
+    pts = rounded_rect_pts(w, d, corner, seg)
+    bot = [bm.verts.new((x, y, 0.0)) for x, y in pts]
+    top = [bm.verts.new((x, y, 1.0)) for x, y in pts]
+    bm.faces.new(list(reversed(bot))); bm.faces.new(top)
+    for i in range(len(pts)):
+        j = (i + 1) % len(pts); bm.faces.new([bot[i], bot[j], top[j], top[i]])
+    for y, _ in prof:
+        if -d / 2 + 1e-4 < y < d / 2 - 1e-4:
+            geom = bm.verts[:] + bm.edges[:] + bm.faces[:]
+            bmesh.ops.bisect_plane(bm, geom=geom, plane_co=(0.0, y, 0.0), plane_no=(0.0, 1.0, 0.0))
+    for v in bm.verts:
+        if v.co.z > 0.5:
+            v.co.z = _prof_z(prof, v.co.y)
+    bm.normal_update()
+    for e in bm.edges:
+        if len(e.link_faces) == 2:
+            a = e.calc_face_angle(0.0)
+            if math.radians(4) < a < math.radians(50):
+                e.smooth = False
+    ob = mesh_obj(name, bm, PEDAL, [mat])
+    if edge > 0:
+        bv = ob.modifiers.new("bevel", "BEVEL"); bv.width = edge; bv.segments = bevel_seg
+        bv.limit_method = "ANGLE"; bv.angle_limit = math.radians(50); bv.harden_normals = True
+    ob.modifiers.new("wn", "WEIGHTED_NORMAL").keep_sharp = True
+    return ob
+
+
+def rounded_poly(pts, r, seg=8):
+    """Contorno poligonale convesso con gli angoli raccordati (raggio r)."""
+    out = []
+    n = len(pts)
+    for i in range(n):
+        p0, p1, p2 = pts[i - 1], pts[i], pts[(i + 1) % n]
+        a = (p0[0] - p1[0], p0[1] - p1[1]); b = (p2[0] - p1[0], p2[1] - p1[1])
+        la, lb = math.hypot(*a) or 1.0, math.hypot(*b) or 1.0
+        a = (a[0] / la, a[1] / la); b = (b[0] / lb, b[1] / lb)
+        ang = math.acos(max(-1.0, min(1.0, a[0] * b[0] + a[1] * b[1])))
+        t = min(r / max(1e-6, math.tan(ang / 2)), la * 0.45, lb * 0.45)
+        s0 = (p1[0] + a[0] * t, p1[1] + a[1] * t); s1 = (p1[0] + b[0] * t, p1[1] + b[1] * t)
+        for k in range(seg + 1):          # curva di Bezier quadratica tra i due punti di tangenza
+            u = k / seg
+            out.append(((1 - u) ** 2 * s0[0] + 2 * u * (1 - u) * p1[0] + u * u * s1[0],
+                        (1 - u) ** 2 * s0[1] + 2 * u * (1 - u) * p1[1] + u * u * s1[1]))
+    # verso antiorario
+    area = sum(out[i][0] * out[(i + 1) % len(out)][1] - out[(i + 1) % len(out)][0] * out[i][1] for i in range(len(out)))
+    return out if area > 0 else out[::-1]
+
+
+def cover_mat(name, kind, fin, img, W, D, ribs=None):
+    """Materiale del coperchio-pedale o di un suo inserto: vernice del corpo, cromo, metallo satinato, gomma,
+    plastica zigrinata o etichetta lucida, con la serigrafia proiettata dall'alto (stessa texture del piano)."""
+    if kind == "paint":
+        m = finish_mat(name, fin, img, -W / 2, W / 2, -D / 2, D / 2)
+    else:
+        met, rough, coat = {"chrome": (1.0, 0.13, 0.0), "metal": (0.85, 0.32, 0.1), "rubber": (0.0, 0.85, 0.0),
+                            "plastic": (0.0, 0.55, 0.05), "label": (0.0, 0.25, 0.8), "gloss": (0.1, 0.22, 0.9)}.get(kind, (0.1, 0.4, 0.3))
+        m = textured(name, img, -W / 2, W / 2, -D / 2, D / 2, met, rough, coat)
+    nt = m.node_tree; b = bsdf_of(m)
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    tx = None
+    if ribs:
+        tx = nt.nodes.new("ShaderNodeTexWave"); tx.wave_type = "BANDS"; tx.bands_direction = "Y"
+        tx.inputs["Scale"].default_value = 1000.0 / max(0.4, float(ribs)) / (2 * math.pi) * 6.2832
+        strength, dist, out_ = 0.55, 0.0005, "Fac"
+    elif kind == "rubber":
+        tx = nt.nodes.new("ShaderNodeTexNoise"); tx.inputs["Detail"].default_value = 6.0
+        tx.inputs["Scale"].default_value = 1800.0; strength, dist, out_ = 0.35, 0.0003, "Fac"
+    elif kind == "plastic":
+        tx = nt.nodes.new("ShaderNodeTexVoronoi"); tx.inputs["Scale"].default_value = 700.0
+        strength, dist, out_ = 0.45, 0.0004, "Distance"
+    if tx is not None:
+        bp = nt.nodes.new("ShaderNodeBump")
+        bp.inputs["Strength"].default_value = strength; bp.inputs["Distance"].default_value = dist
+        nt.links.new(tc.outputs["Object"], tx.inputs["Vector"]); nt.links.new(tx.outputs[out_], bp.inputs["Height"])
+        nt.links.new(bp.outputs["Normal"], b.inputs["Normal"])
+    return m
+
+
+def sloped_plate(name, x0, x1, y0, y1, zf, zb, zbot, corner, edge, mat, seg=8):
+    """Piastra in coordinate assolute (la texture del piano resta allineata) con la faccia superiore inclinata da zf
+    (bordo vicino, y0) a zb (bordo lontano, y1) e il fondo a zbot."""
+    w, d = x1 - x0, y1 - y0
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    pts = [(cx + x, cy + y) for x, y in rounded_rect_pts(w, d, min(corner, w / 2 - 1e-4, d / 2 - 1e-4), seg)]
+    bm = bmesh.new()
+    bot = [bm.verts.new((x, y, zbot)) for x, y in pts]
+    top = [bm.verts.new((x, y, zf + (zb - zf) * (y - y0) / (d or 1e-9))) for x, y in pts]
+    bm.faces.new(list(reversed(bot))); bm.faces.new(top)
+    for i in range(len(pts)):
+        j = (i + 1) % len(pts); bm.faces.new([bot[i], bot[j], top[j], top[i]])
+    ob = mesh_obj(name, bm, PEDAL, [mat])
+    if edge > 0:
+        bv = ob.modifiers.new("bevel", "BEVEL"); bv.width = edge; bv.segments = 4
+        bv.limit_method = "ANGLE"; bv.angle_limit = math.radians(50); bv.harden_normals = True
+    ob.modifiers.new("wn", "WEIGHTED_NORMAL").keep_sharp = True
+    return ob
+
+
+def build_cover(r, part, img, W, D, fin):
+    """Coperchio-pedale incernierato (serie 9/10/L, Soundtank, Tone-Lok, tasto quadrato 808...): piastra inclinata
+    sul ripiano del corpo, inserti (piastra cromata a righe, gomma, etichetta) e piedini in gomma."""
+    x0, x1, y0, y1 = part["x0"], part["x1"], part["y0"], part["y1"]
+    zb, zf, deck = part["zb"], part["zf"], part["deck"]
+    mat = cover_mat("cover_%s_%d" % (r["id"], part["foot"]), part["kind"], fin, img, W, D, part.get("ribs"))
+    sloped_plate("cover", x0, x1, y0, y1, zf, zb, deck - 0.0005, part["corner"], 0.0012, mat)
+
+    def ztop(y):
+        return zf + (zb - zf) * (y - y0) / ((y1 - y0) or 1e-9)
+    for k, q in enumerate(part.get("insets") or []):
+        h = q.get("h", 0.6) / 1000.0
+        qm = cover_mat("inset_%s_%d_%d" % (r["id"], part["foot"], k), q.get("kind", "chrome"), fin, img, W, D, q.get("ribs"))
+        sloped_plate("cover_inset", q["x0"], q["x1"], q["y0"], q["y1"], ztop(q["y0"]) + h, ztop(q["y1"]) + h,
+                     min(ztop(q["y0"]), ztop(q["y1"])) - 0.0006, q.get("corner", 1.5) / 1000.0, min(0.0006, h * 0.8), qm)
+    for (bx, by, br) in part.get("bumps") or []:
+        bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=12, radius=br)
+        for v in bm.verts: v.co.z = max(v.co.z, 0.0) * 0.45
+        mesh_obj("cover_bump", bm, PEDAL, [MAT_RUBBER], (bx, by, ztop(by) - 0.0002))
+
+
 def round_footswitch(x, y, z, kind="round"):
     """Footswitch a pressione tondo (MXR, Electro-Harmonix): dado esagonale, ghiera filettata, pulsante cromato."""
     cylinder("fs_nut", 0.0074, 0.0026, PEDAL, MAT_NICKEL, (x, y, z), seg=6, edge=0.0004)
@@ -643,6 +776,15 @@ def build_stomp(r, lay):
         for sgn in (-1, 1):
             rounded_box("tank_rib", 0.004, D * 0.82, hb * 0.7, 0.0015, 0.0012, PEDAL, base, (sgn * (W / 2 + 0.0012), 0, hb * 0.15))
         wedge_box("chassis", W - 0.004, D - 0.004, zf, zb, b["corner"], b["edge"], mat, z0=hb - 0.006)
+    elif lay.get("outline"):
+        # contorno poligonale (contenitore a rombo, trapezio): prisma raccordato a piano unico
+        pts = rounded_poly(lay["outline"], b["corner"] * 1.6)
+        prism("chassis", pts, max(zf, zb), b["edge"], PEDAL, mat, (0, 0, 0))
+    elif lay.get("profile"):
+        profile_box("chassis", W, D, lay["profile"], b["corner"], b["edge"], mat, bevel_seg=6 if b["kind"] == "die" else 3)
+        if lk.get("body"):
+            base = principled("bottom_" + r["id"], srgb(tuple(lk["body"])), 0.3, 0.45, 0.1)
+            rounded_box("bottom", W + 0.0008, D + 0.0008, min(zf, zb) * 0.22, b["corner"], 0.0012, PEDAL, base)
     else:
         wedge_box("chassis", W, D, zf, zb, b["corner"], b["edge"], mat, bevel_seg=6 if b["kind"] == "die" else 3)
         if lk.get("body"):
@@ -662,10 +804,21 @@ def build_stomp(r, lay):
             cylinder("btn_ring", p["r"] * 1.30, 0.0012, PEDAL, MAT_CHROME, (p["x"], p["y"], z), seg=40, edge=0.0003)
             cap = principled("cap_%s_%d" % (r["id"], k), (0.02, 0.02, 0.021), 0.0, 0.45, coat=0.3)
             cylinder("btn_cap", p["r"], 0.0030, PEDAL, cap, (p["x"], p["y"], z + 0.0006), seg=40, edge=0.0010)
+    for ex in lk.get("extra") or []:
+        if ex[0] == "rails":
+            # longheroni rialzati lungo i fianchi (Echo Shifter)
+            rw, rh = ex[1] / 1000.0, ex[2] / 1000.0
+            rc = srgb(tuple(ex[3])) if len(ex) > 3 else srgb(tuple(r["colour"]))
+            rmat = principled("rail_" + r["id"], rc, 0.4, 0.38, 0.2)
+            for sgn in (-1, 1):
+                rounded_box("rail", rw, D - 0.002, max(zf, zb) + rh, min(0.003, rw / 2 - 1e-4), 0.0016, PEDAL, rmat,
+                            (sgn * (W / 2 - rw / 2), 0, 0))
     for part in lay["parts"]:
         t = part["type"]
         z = part.get("z", zb)
-        if t == "footswitch":
+        if t == "cover":
+            build_cover(r, part, img, W, D, fin)
+        elif t == "footswitch":
             round_footswitch(part["x"], part["y"], z, part.get("kind", "round"))
         elif t == "led":
             add_led_c(part["x"], part["y"], z, 0.0014 if part.get("small") or part.get("tiny") else 0.0018,

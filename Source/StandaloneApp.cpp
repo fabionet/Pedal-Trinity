@@ -2,7 +2,7 @@
     Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
 
     Applicazione Standalone personalizzata:
-      * finestra con titolo "Pedal Trinity 1.2.5 beta";
+      * finestra con titolo "Pedal Trinity 1.2.6 beta";
       * su Windows, al primo avvio, seleziona i driver ASIO se presenti;
       * ingresso audio attivo di default (e' un effetto per chitarra);
       * riga di comando:
@@ -19,6 +19,8 @@
 #include <iostream>
 #include <array>
 #include <atomic>
+#include <chrono>
+#include <ctime>
 #include <deque>
 #include <map>
 #include <random>
@@ -1298,6 +1300,33 @@ namespace
         "ehcathedral", "ehoceans11", "ehoceans12", "ehholystain", "ehsuperego", "eh720", "ehpog", "ehpog2", "ehmicropog", "ehhog", "ehhog2",
         "ehpitchfork", "ehb9", "ehc9", "ehkey9", "ehmel9", "ehsynth9", "ehbass9", "ehmonosynth", "ehravish", "ehvoicebox" };
 
+    //==============================================================================
+    // Tappa 4 (Ibanez, 166 pedali): controlli numerici dei quattro lavori del suono (s1 drive: Circuit.cpp con gli stadi
+    // mna, fbclip con gbw/sr/Rg2, triodo a griglia positiva, bbd; s2 dinamica/EQ/filtri/wah: FxStage4Dyn.cpp; s3 modulazioni
+    // e delay BBD: FxStage4Mod.cpp; s4 delay/chorus/flanger digitali ADM: FxStage4Time.cpp). Metodi e valori dei banchi della
+    // tappa (work/s1..s4/tests.md); misure registrate in un Lab ed eseguite in parallelo, segnali corti per i controlli su
+    // tutti i modelli.
+    //==============================================================================
+    const char* const kStage4Drive[] = { "ib9ts9", "ibtsts808hw", "ibtstsmini", "ibstts5", "ib10msl", "ib10ts10", "ibtsts808hwv2",
+        "ibtsts808dx", "ibtsts9dx", "ibtlts7", "ibtstsv808", "ibtsts9b", "ibtsnts", "ib7od855", "ib9st9", "ib10stl", "ib9sd9", "ibtssd9m",
+        "ib7od850", "ibtsfzmini", "ibstfz5", "ibstpl5", "ibsttm5", "ibstcm5", "ibstcr5", "ibstmf5", "ibstbn5", "ibstsp5", "ibstcd5",
+        "ibtlds7", "ib9sm9", "ibtssmmini", "ib10ms10", "ib10pds1", "ib10pod1", "ib10ds10", "ib10fc10", "ib10mt10", "ib10lm7", "ib10ss10",
+        "ib10ss20", "ib10bs10", "ib10ot10", "ibtlsm7", "ibtlsh7", "ibtlfz7", "ibtlpd7", "ibtlsb7", "ibtstk999", "ibtstk999us",
+        "ibtstk999od", "ibtstk999ht", "ibtsbb9", "ibtsjd9", "ibtsbtmini", "ibtsptpre", "ibxec20", "ib759", "ibtsjemini" };
+    const char* const kStage4Dyn[] = { "ib7cp830", "ib7cp835", "ib9cp9", "ib10cp10", "ib10bp10", "ibstcp5", "ibstbp5", "ibtstc999",
+        "ibxec30", "ib7ge601", "ib9ge9", "ib10ge10", "ib10be10", "ib7ge300", "ib7pq401", "ib9pq9", "ib10pql", "ib10ppe1", "ibmpteq",
+        "ib7af201", "ib9af9", "ib10afl", "ibtlaw7", "ibstaw5", "ibtllf7", "ib10nb10", "ibmptgate", "ib10wh10", "ibmwh10v3", "ib10wf10",
+        "ibtlwd7", "ibmwd7jr", "ibmtwp10", "ibmno93", "ibmno57", "ibmno84", "ibmno58", "ib10vl10", "ibmst810", "ib10ls10", "ibxec50" };
+    const char* const kStage4Mod[] = { "ib7pt999", "ib7pt707", "ib7pt909", "ib7fp777", "ib7jl70", "ib7st800", "ib7fl303", "ib7fl305",
+        "ib7fl301", "ib7fl301dx", "ib7cs505", "ib7ad80", "ib9fl9", "ib9cs9", "ib9pt9", "ib9ad9", "ib9bc9", "ib10sc10", "ib10tc10",
+        "ib10pc10", "ib10ph10", "ib10cd10", "ib10bc10", "ib10csl", "ibstcs5", "ibstfl5", "ibstph5", "ibsttl5", "ibstbc5", "ibtlph7",
+        "ibtlpm7", "ibtlap7", "ibmadmini", "ibmcsmini", "ibmphmini", "ibmflmini", "ibmtrmini", "ibmes2", "ibmes3", "ibmaf2", "ibmad99",
+        "ibmfl99", "ibmph99", "ibmrc99", "ibmec40", "ibmpt1000" };
+    const char* const kStage4Digital[] = { "ib10dl10", "ib10dpl10", "ib10dsc10", "ib10ddl10", "ib10dml10", "ib10dcf10", "ib10ddl20",
+        "ib10dml20", "ib10dcl", "ib10ddl", "ib10dfl", "ib10dml", "ib10pdm1", "ib10pdd1", "ibstdl5", "ibstem5", "ibtlcf7", "ibtltc7",
+        "ibtlde7", "ibmld303" };
+
+
     void runStage3AnalogTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
     {
         using namespace pt::engine;
@@ -2022,10 +2051,16 @@ namespace
         // 0. il nuovo aggancio (makeClassic) prende i 53 modelli della tappa e nessun altro modello del catalogo; le repliche
         //    REAL MOD (config vuota, suono del modello del catalogo) non sono mai agganciate direttamente
         {
+            // tappa 4: tutti i modelli s2/s3/s4 hanno tipi "i4..." (makeStage4) tranne i wah a induttore No.93 e No.57 (type=inductor,
+            // makeWah); i 59 drive della s1 sono netlist Circuit
             auto isNew = [] (const char* id)
             {
                 for (const char* n : kStage3Digital) if (std::strcmp (n, id) == 0) return true;
                 for (const char* n : kStage3BDigital) if (std::strcmp (n, id) == 0) return true;
+                if (std::strcmp (id, "ibmno93") == 0 || std::strcmp (id, "ibmno57") == 0) return false;
+                for (const char* n : kStage4Dyn) if (std::strcmp (n, id) == 0) return true;
+                for (const char* n : kStage4Mod) if (std::strcmp (n, id) == 0) return true;
+                for (const char* n : kStage4Digital) if (std::strcmp (n, id) == 0) return true;
                 return false;
             };
             int hooked = 0, total = 0;
@@ -2043,8 +2078,11 @@ namespace
                 const bool h = makeClassic (realModel (i)) != nullptr;
                 if (h) { ++hooked; if (! isNew (realModel (i).id)) bad << realModel (i).id << "(REAL) "; }
             }
-            constexpr int expected = (int) (sizeof (kStage3Digital) / sizeof (kStage3Digital[0]) + sizeof (kStage3BDigital) / sizeof (kStage3BDigital[0]));
-            report ("Tappa 3A/3B digitali: makeClassic aggancia i modelli nuovi e nessun pedale esistente (catalogo e REAL MOD)",
+            constexpr int expected = (int) (sizeof (kStage3Digital) / sizeof (kStage3Digital[0]) + sizeof (kStage3BDigital) / sizeof (kStage3BDigital[0])
+                                            + sizeof (kStage4Dyn) / sizeof (kStage4Dyn[0]) + sizeof (kStage4Mod) / sizeof (kStage4Mod[0])
+                                            + sizeof (kStage4Digital) / sizeof (kStage4Digital[0])) - 2;
+            report ("Tappa 3A/3B/4: makeClassic aggancia i modelli nuovi (53 della 3A, 50 della 3B, 105 'i4' della tappa 4) e nessun pedale esistente "
+                    "(catalogo e REAL MOD)",
                     bad.isEmpty() && hooked == expected, juce::String (hooked) + " agganciati su " + juce::String (total) + (bad.isEmpty() ? juce::String() : ", errati: " + bad.trim()));
         }
         // pedali esistenti invariati: hash dell'uscita (frase di 2 s, default e comandi a 0.7) misurati sul banco s2 prima della
@@ -3616,6 +3654,2268 @@ namespace
     //==============================================================================
     // Simulatori di cassa IR Loader: uscita deterministica (IR pronto dal primo campione, non dal thread di caricamento)
     //==============================================================================
+    template <size_t N> constexpr int countOf (const char* const (&)[N]) { return (int) N; }
+
+    /** Copia di un modello "type=..." con chiavi aggiunte in fondo alla config (le chiavi ripetute sostituiscono le
+        precedenti): solo il ramo ritardato ("mix=0,1"), senza rumore e compander ("noise=0 comp=0"), gate aperto ("gate=0").
+        Le stringhe restano valide fino alla fine del programma (registrazione solo dal thread principale). */
+    pt::engine::ModelDef withConfig (const pt::engine::ModelDef& d, const char* extra)
+    {
+        static std::deque<std::string> pool;
+        pool.push_back (std::string (d.config != nullptr ? d.config : "") + " " + extra);
+        auto c = d;
+        c.config = pool.back().c_str();
+        return c;
+    }
+
+    /** Misura su un modello del catalogo con la config modificata (modello assente: la misura fallisce come le altre). */
+    int addPatched (Lab& lab, const char* id, const char* extra, Lab::Measure m)
+    {
+        if (const auto* d = pt::engine::findModel (id)) return lab.add (withConfig (*d, extra), std::move (m));
+        return lab.add (id, std::move (m));
+    }
+
+    uint64_t fnvBytes (const Buf& x, uint64_t h = 1469598103934665603ull)
+    {
+        for (float v : x)
+        {
+            uint32_t u;
+            std::memcpy (&u, &v, 4);
+            for (int k = 0; k < 4; ++k) { h ^= (u >> (8 * k)) & 255u; h *= 1099511628211ull; }
+        }
+        return h;
+    }
+
+    /** Elaborazione stereo a blocchi da 256 dei banchi s3/s4; 'perBlock' (facoltativo) cambia i comandi prima del blocco. */
+    void runStereo256 (pt::engine::Effect& fx, Buf& l, Buf& r, const std::function<void (size_t)>& perBlock = {}, int numCh = 2)
+    {
+        for (size_t i = 0; i < l.size(); i += 256)
+        {
+            const int n = (int) std::min<size_t> (256, l.size() - i);
+            if (perBlock) perBlock (i);
+            float* ch[2] = { l.data() + i, r.data() + i };
+            fx.process (ch, numCh, n);
+        }
+    }
+
+    /** Effetto dei banchi s3/s4: prepare a 48 kHz / 256, poi i comandi per indice (lisciati a partire dal default, come nei
+        banchi: le misure aspettano l'assestamento). */
+    std::unique_ptr<pt::engine::Effect> makeAfter (const pt::engine::ModelDef& d, const std::map<int, float>& p)
+    {
+        auto fx = pt::engine::createEffect (d);
+        fx->prepare (48000.0, 256);
+        for (const auto& [k, v] : p) if (k >= 0 && k < d.numControls) fx->params[k].store (v);
+        return fx;
+    }
+
+    /** Chitarra sintetica del banco s3 (Karplus-Strong, accordi e note singole ogni 0.75 s, ~0.3 V di picco). */
+    Buf guitarS3 (double seconds, unsigned seed = 1)
+    {
+        const double SR = 48000.0;
+        const int n = (int) (seconds * SR);
+        Buf out ((size_t) n, 0.0f);
+        uint32_t s = seed * 2654435761u + 12345u;
+        auto rnd = [&s] { s ^= s << 13; s ^= s >> 17; s ^= s << 5; return (float) (int32_t) s * 4.6566129e-10f; };
+        const float notes[][3] = { { 82.41f, 123.47f, 164.81f }, { 110.0f, 164.81f, 220.0f }, { 146.83f, 220.0f, 293.66f },
+                                   { 196.0f, 246.94f, 329.63f }, { 329.63f, 392.0f, 493.88f }, { 659.25f, 0, 0 }, { 440.0f, 0, 0 } };
+        const int numEvents = (int) (seconds / 0.75);
+        for (int e = 0; e < numEvents; ++e)
+        {
+            const int start = (int) (e * 0.75 * SR);
+            const auto& ch = notes[e % 7];
+            for (int v = 0; v < 3; ++v)
+            {
+                if (ch[v] <= 0) continue;
+                const int period = (int) std::lround (SR / ch[v]);
+                Buf b ((size_t) period);
+                for (auto& x : b) x = rnd() * 0.5f;
+                float last = 0;
+                const int st = start + v * 300;
+                const int len = std::min (n - st, (int) (2.5 * SR));
+                for (int i = 0; i < len; ++i)
+                {
+                    const size_t k = (size_t) (i % period);
+                    const float y = b[k];
+                    const float nv = 0.4985f * (y + last);
+                    last = y;
+                    b[k] = nv;
+                    out[(size_t) (st + i)] += 0.35f * y;
+                }
+            }
+        }
+        return out;
+    }
+
+    /** Frase di chitarra del banco s4 (corde pizzicate ogni 0.35 s con plettrata, in volt). */
+    Buf guitarS4 (double seconds, uint32_t seed = 1)
+    {
+        const double SR = 48000.0;
+        const int n = (int) (seconds * SR);
+        Buf y ((size_t) n, 0.0f);
+        static const float notes[] = { 82.4f, 110.0f, 146.8f, 196.0f, 246.9f, 329.6f, 196.0f, 220.0f, 293.7f, 392.0f, 164.8f, 123.5f };
+        uint32_t s = seed;
+        auto rnd = [&s] { s ^= s << 13; s ^= s >> 17; s ^= s << 5; return (float) (int32_t) s * 4.6566129e-10f; };
+        int k = 0;
+        for (double t0 = 0.0; t0 < seconds - 0.2; t0 += 0.35, ++k)
+        {
+            const float f = notes[k % 12];
+            const int L = std::max (2, (int) std::lround (SR / f));
+            Buf b ((size_t) L);
+            for (auto& v : b) v = rnd();
+            for (int j = 1; j < L; ++j) b[(size_t) j] = 0.6f * b[(size_t) j] + 0.4f * b[(size_t) j - 1];
+            const int start = (int) (t0 * SR);
+            const float amp = 0.35f * (k % 3 == 0 ? 1.0f : 0.6f);
+            int p = 0;
+            for (int i = start; i < n && i < start + (int) (1.4 * SR); ++i)
+            {
+                const float v = b[(size_t) p];
+                const int q = (p + 1) % L;
+                b[(size_t) p] = 0.996f * 0.5f * (v + b[(size_t) q]);
+                p = q;
+                y[(size_t) i] += amp * v;
+            }
+        }
+        return y;
+    }
+
+    /** Indice del primo comando con quel ruolo (banco s4), -1 se assente. */
+    int roleIndex (const pt::engine::ModelDef& d, const char* role)
+    {
+        for (int i = 0; i < d.numControls; ++i) if (std::strcmp (d.controls[i].role, role) == 0) return i;
+        return -1;
+    }
+    void setRoleS4 (pt::engine::Effect& fx, const char* role, float v) { const int i = roleIndex (fx.def, role); if (i >= 0) fx.params[i].store (v); }
+    void setStepS4 (pt::engine::Effect& fx, const char* role, int k)
+    {
+        const int i = roleIndex (fx.def, role);
+        if (i < 0) return;
+        const int s = std::max (1, (int) fx.def.controls[i].steps);
+        fx.params[i].store (s > 1 ? (float) k / (float) (s - 1) : 0.0f);
+    }
+    int stepsOfRole (const pt::engine::ModelDef& d, const char* role)
+    {
+        const int i = roleIndex (d, role);
+        return i < 0 ? 1 : std::max (1, (int) d.controls[i].steps);
+    }
+
+    /** Tempo di CPU del thread corrente (s): misura del costo dentro il lavoro parallelo. */
+    double threadCpuSeconds()
+    {
+       #if JUCE_LINUX || JUCE_MAC
+        timespec ts {};
+        clock_gettime (CLOCK_THREAD_CPUTIME_ID, &ts);
+        return (double) ts.tv_sec + 1.0e-9 * (double) ts.tv_nsec;
+       #else
+        return juce::Time::getMillisecondCounterHiRes() * 0.001;
+       #endif
+    }
+
+    /** Passaggi per la media con isteresi (+-h/2) del banco s3: conta i semiperiodi senza i tremolii della misura. */
+    int hystCross (const std::vector<double>& v, double mean, double h)
+    {
+        int c = 0, state = 0;
+        for (double x : v)
+        {
+            if (x > mean + 0.5 * h && state != 1) { if (state != 0) ++c; state = 1; }
+            else if (x < mean - 0.5 * h && state != -1) { if (state != 0) ++c; state = -1; }
+        }
+        return c;
+    }
+
+    /** Ampiezza e fase (a sin + b cos) di una sinusoide nota di frequenza f su y[a..e) (minimi quadrati). */
+    std::pair<double, double> sineFit (const Buf& y, double f, size_t a, size_t e, double sr = 48000.0)
+    {
+        double ss = 0, sc = 0, cc = 0, ys = 0, yc = 0;
+        for (size_t i = a; i < e; ++i)
+        {
+            const double ph = 2 * kPi * f * (double) i / sr, s = std::sin (ph), c = std::cos (ph);
+            ss += s * s; sc += s * c; cc += c * c; ys += y[i] * s; yc += y[i] * c;
+        }
+        const double det = ss * cc - sc * sc;
+        return { (ys * cc - yc * sc) / det, (yc * ss - ys * sc) / det };
+    }
+
+    /** Picchi di risonanza a piccolo segnale (impulso di 1 mV, FFT 32768 dopo 0.2 s di assestamento): i 'count' massimi locali
+        piu' alti fra 60 Hz e 12 kHz (in ordine di frequenza), ciascuno come { Hz, dB }. Per i wah a due risonanze (TWP10). */
+    std::vector<std::pair<double, double>> resonancePeaks (pt::engine::Effect& fx, int count)
+    {
+        const double sr = 48000.0;
+        const int order = 15, N = 1 << order;
+        fx.prepare (sr, 512);
+        std::vector<float> buf ((size_t) N * 2, 0.0f);
+        for (int i = 0; i < (int) (sr * 0.2); i += 512) { float* c[1] = { buf.data() }; fx.process (c, 1, 512); }
+        std::fill (buf.begin(), buf.end(), 0.0f);
+        buf[0] = 1.0e-3f;
+        for (int i = 0; i < N; i += 512) { float* c[1] = { buf.data() + i }; fx.process (c, 1, 512); }
+        for (int i = 0; i < N; ++i) buf[(size_t) i] *= 1000.0f;
+        juce::dsp::FFT fft (order);
+        fft.performFrequencyOnlyForwardTransform (buf.data());
+        auto db = [&buf] (int k) { return 20.0 * std::log10 (std::max (1.0e-12, (double) buf[(size_t) k])); };
+        const int k0 = (int) (60.0 * N / sr), k1 = (int) (12000.0 * N / sr);
+        std::vector<std::pair<double, double>> peaks;
+        for (int k = k0; k <= k1; ++k)
+        {
+            // massimo locale su +-6% (niente increspature)
+            const int w = std::max (2, (int) (0.06 * k));
+            bool top = true;
+            for (int j = std::max (1, k - w); j <= k + w && top; ++j) if (j != k && buf[(size_t) j] > buf[(size_t) k]) top = false;
+            if (! top) continue;
+            const double y0 = db (k - 1), y1 = db (k), y2 = db (k + 1), den = y0 - 2 * y1 + y2;
+            const double dd = std::abs (den) > 1e-12 ? 0.5 * (y0 - y2) / den : 0.0;
+            peaks.push_back ({ (k + dd) * sr / N, y1 - 0.25 * (y0 - y2) * dd });
+        }
+        std::sort (peaks.begin(), peaks.end(), [] (const auto& a, const auto& b) { return a.second > b.second; });
+        if ((int) peaks.size() > count) peaks.resize ((size_t) count);
+        std::sort (peaks.begin(), peaks.end());
+        return peaks;
+    }
+
+    /** Comando con un click oltre la soglia del gruppo, gia' analizzato e segnalato (vedi il commento al punto d'uso): escluso dalla
+        misura comune e controllato da solo con un tetto proprio, cosi' non puo' peggiorare. */
+    struct ClickException { const char* id; const char* label; double limit; };
+
+    /** Controlli comuni a un gruppo della tappa 4: click cambiando i comandi (clicksS2, come 3A/3B) e determinismo (due istanze
+        nuove: uscita identica bit per bit; con 'needReset' anche la prima istanza dopo reset(); frase stereo di 1 s del banco s4). */
+    void addClickAndDeterminism (Lab& lab, const char* const* ids, int n, const juce::String& group, double clickLimit, bool needReset,
+                                 const std::vector<ClickException>& exceptions = {})
+    {
+        std::vector<int> hc, hd, hx;
+        auto what = std::make_shared<std::vector<juce::String>> ((size_t) n);
+        for (int i = 0; i < n; ++i)
+        {
+            const char* id = ids[i];
+            std::vector<juce::String> exLabels;
+            for (const auto& x : exceptions) if (std::strcmp (x.id, id) == 0) exLabels.push_back (x.label);
+            hc.push_back (lab.add (id, [id, what, i, exLabels] (const pt::engine::ModelDef& d)
+            {
+                const auto r = clicksS2 (id, [&d, &exLabels] (int c, float) {
+                    for (const auto& l : exLabels) if (l == d.controls[c].label) return true;
+                    return false;
+                });
+                (*what)[(size_t) i] = r.what;
+                return std::vector<double> { r.found ? r.worst : 1e9 };
+            }));
+            lab.first (hc.back());
+            hd.push_back (lab.add (id, [] (const pt::engine::ModelDef& d)
+            {
+                static const Buf g = guitarS4 (1.0, 9);
+                uint64_t h[3];
+                auto a = makeAfter (d, {}), b = makeAfter (d, {});
+                for (int k = 0; k < 3; ++k)
+                {
+                    auto& fx = k == 2 ? *b : *a;
+                    if (k == 1) fx.reset();
+                    Buf l = g, r = g;
+                    for (auto& x : r) x *= 0.8f;
+                    runStereo256 (fx, l, r);
+                    h[k] = fnvBytes (r, fnvBytes (l));
+                }
+                return std::vector<double> { h[0] == h[2] ? 1.0 : 0.0, h[0] == h[1] ? 1.0 : 0.0 };
+            }));
+        }
+        for (const auto& x : exceptions)
+        {
+            const juce::String label (x.label);
+            hx.push_back (lab.add (x.id, [x, label] (const pt::engine::ModelDef& d)
+            {
+                return std::vector<double> { clicksS2 (x.id, [&d, &label] (int c, float) { return label != d.controls[c].label; }).worst };
+            }));
+            lab.first (hx.back());
+        }
+        juce::String exText;
+        for (const auto& x : exceptions) exText << (exText.isEmpty() ? "; segnalati a parte: " : ", ") << x.id << " " << x.label << " <= " << juce::String (x.limit, 0) << "x";
+        auto needs = hc;
+        needs.insert (needs.end(), hx.begin(), hx.end());
+        lab.check (needs, group + ": niente click cambiando i comandi (seno 220 Hz, differenza seconda <= " + juce::String (clickLimit, 0) + "x prima/regime, "
+                              + juce::String (n) + " modelli" + exText + ")",
+                   [&lab, hc, hx, ids, n, clickLimit, what, exceptions] {
+                       double worst = 0;
+                       juce::String worstWhat, bad, ex;
+                       for (int i = 0; i < n; ++i)
+                       {
+                           const double w = lab.v (hc[(size_t) i]);
+                           if (w > clickLimit) bad << ids[i] << " " << num (w, 1) << "x (" << (*what)[(size_t) i] << ") ";
+                           if (w > worst) { worst = w; worstWhat = " (" + juce::String (ids[i]) + " " + (*what)[(size_t) i] + ")"; }
+                       }
+                       for (size_t k = 0; k < exceptions.size(); ++k)
+                       {
+                           const double w = lab.v (hx[k]);
+                           ex << exceptions[k].id << " " << exceptions[k].label << " " << num (w, 1) << "x; ";
+                           if (w > exceptions[k].limit) bad << exceptions[k].id << " " << exceptions[k].label << " " << num (w, 1) << "x ";
+                       }
+                       return Verdict { bad.isEmpty(), "peggiore " + num (worst, 1) + "x" + worstWhat + (ex.isEmpty() ? juce::String() : "; " + ex.trimCharactersAtEnd ("; "))
+                                                         + " " + bad.trim() };
+                   });
+        lab.check (hd, group + ": determinismo (due istanze nuove: uscita identica bit per bit" + (needReset ? juce::String (", anche dopo reset()") : juce::String()) + ", "
+                              + juce::String (n) + " modelli)",
+                   [&lab, hd, ids, n, needReset] {
+                       juce::String bad;
+                       int ok = 0, okReset = 0;
+                       for (int i = 0; i < n; ++i)
+                       {
+                           const bool same = lab.v (hd[(size_t) i], 0) > 0.5, sameReset = lab.v (hd[(size_t) i], 1) > 0.5;
+                           if (same) ++ok; else bad << ids[i] << " ";
+                           if (sameReset) ++okReset; else if (needReset) bad << ids[i] << " (reset) ";
+                       }
+                       return Verdict { ok == n && (! needReset || okReset == n), juce::String (ok) + "/" + juce::String (n) + " identici, dopo reset() "
+                                                                                    + juce::String (okReset) + "/" + juce::String (n) + " " + bad.trim() };
+                   });
+    }
+
+    /** Tappa 4, lavoro s1: overdrive, distorsioni, fuzz e multi analogici Ibanez (Circuit.cpp). Metodi del banco s1 (comandi
+        per ruolo/etichetta prima di prepare, blocchi da 512, risposta a piccolo segnale, riff Karplus-Strong, armoniche). */
+    void runStage4DriveTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        constexpr int numDrive = countOf (kStage4Drive);
+        Lab lab;
+        auto fr = [&lab] (const char* id, Sets sets, std::vector<double> freqs, double amp = 1.0e-4)
+        {
+            return lab.add (id, [sets, freqs, amp] (const ModelDef& d) { return smallSignalDb (d, sets, freqs, amp); });
+        };
+        auto frDef = [&lab] (const ModelDef& def, Sets sets, std::vector<double> freqs, double amp = 1.0e-4)
+        {
+            return lab.add (def, [sets, freqs, amp] (const ModelDef& d) { return smallSignalDb (d, sets, freqs, amp); });
+        };
+        static const Buf riff = guitarS1 (true, 48000.0, 3.0, -12.0);
+        /** Riff a -12 dBFS: { RMS dBFS, picco dBFS, finito, x tempo reale (CPU del thread) } (RMS e picco dopo 50 ms). */
+        auto riffOf = [] (const ModelDef& d, const std::function<void (Effect&)>& setup)
+        {
+            auto fx = createEffect (d);
+            setup (*fx);
+            fx->prepare (48000.0, 512);
+            Buf y = riff;
+            const double t0 = threadCpuSeconds();
+            processMono (*fx, y, 512);
+            const double cpu = threadCpuSeconds() - t0;
+            const size_t skip = (size_t) (0.05 * 48000.0);
+            double acc = 0, pk = 0;
+            bool fin = true;
+            for (size_t i = skip; i < y.size(); ++i)
+            {
+                fin = fin && std::isfinite (y[i]);
+                acc += (double) y[i] * y[i];
+                pk = std::max (pk, (double) std::abs (y[i]));
+            }
+            return std::vector<double> { 10.0 * std::log10 (acc / (double) (y.size() - skip) + 1e-30), dbOf (pk), fin ? 1.0 : 0.0,
+                                         3.0 / std::max (1.0e-6, cpu) };
+        };
+        auto riffSets = [&lab, riffOf] (const char* id, Sets sets)
+        {
+            return lab.add (id, [riffOf, sets] (const ModelDef& d) { return riffOf (d, [&] (Effect& fx) { setsS1 (fx, d, sets); }); });
+        };
+        auto harm = [&lab] (const char* id, Sets sets, std::vector<double> hs)
+        {
+            return lab.add (id, [sets, hs] (const ModelDef& d) { auto fx = makeS1 (d, sets); return harmonicsOf (*fx, 220.0, -20.0, hs); });
+        };
+
+        // 1. pedali esistenti invariati bit per bit dopo le modifiche della tappa 4 a Circuit.cpp (fbclip, triodo, stadi nuovi):
+        //    banco s1 'raw', impronte misurate con GCC su Linux x86-64 (il banco ha confrontato tutti i 190 modelli Circuit)
+        {
+            struct Ref { const char* id; uint64_t hash; };
+            static const Ref refs[] = { { "ed9", 0x9d5088d7529ea894ull }, { "hm2", 0xfacabf6572d23079ull }, { "ds2", 0x6f12f6569ba10332ull },
+                                        { "bmramshead", 0x9a2c98b5b36082aeull }, { "metalmuff", 0x257c6c449ecc1776ull },
+                                        { "ehbritvalve", 0xd4fbd62a4258e874ull }, { "ehtortion", 0xaf482d1a2f64f817ull } };
+            static const Buf raw = rawSignalS1 (48000.0);
+            std::vector<int> h;
+            for (const auto& r : refs)
+                h.push_back (lab.add (r.id, [] (const ModelDef& d)
+                {
+                    const uint64_t v = rawHashS1 (d, raw);
+                    return std::vector<double> { (double) (uint32_t) (v >> 32), (double) (uint32_t) v };
+                }));
+            for (int k : h) lab.first (k);
+            lab.check (h, "Tappa 4: ED-9, HM-2, DS-2, Ram's Head, Metal Muff, British Valve, Tortion invariati bit per bit (Circuit.cpp)", [&lab, h] {
+                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const uint64_t v = ((uint64_t) lab.v (h[k], 0) << 32) | (uint64_t) lab.v (h[k], 1);
+                    if (v != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) v) << ") ";
+                }
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici" : bad.trim() };
+            });
+        }
+
+        // 2. stadi nuovi del motore (netlist di prova)
+        {
+            const std::vector<double> f3 { 100.0, 1000.0, 10000.0 };
+            const int a = frDef (circuitDef ("mna R.i.a=10k C.a.0=10n OUT.a=1"), {}, f3), b = frDef (circuitDef ("lpf R=10k C=10n"), {}, f3);
+            lab.check ({ a, b }, "Circuito: mna (rete RC) uguale a 'lpf R=10k C=10n' a 100 Hz / 1 kHz / 10 kHz (scarto < 0.02 dB)", [&lab, a, b] {
+                double worst = 0;
+                for (size_t k = 0; k < 3; ++k) worst = std::max (worst, std::abs (lab.v (a, k) - lab.v (b, k)));
+                return Verdict { worst < 0.02, "mna " + dbList (lab.all (a)) + " dB, scarto max " + num (worst, 3) + " dB" };
+            });
+        }
+        {
+            const std::vector<double> f6 { 100.0, 500.0, 1000.0, 2000.0, 4000.0, 8000.0 };
+            const int a = frDef (circuitDef ("mna R.i.x=1k C.x.0=220n R.x.w=pot(0,20k,B) R.w.m=potr(0,20k,B) R.w.c=220 C.c.0=220n O.x.m.o=1 R.o.m=1k OUT.o=1", 1),
+                                 { { "k", 0.3f } }, f6);
+            const int b = frDef (circuitDef ("tonets R7=1k C4=220n P=20k t=taper(0,B) Rw=220 Cw=220n Rf=1k Cf=0", 1), { { "k", 0.3f } }, f6);
+            lab.check ({ a, b }, "Circuito: mna con op-amp e potenziometro uguale a 'tonets' (TONE 0.3, 100 Hz - 8 kHz, scarto < 0.02 dB)", [&lab, a, b] {
+                double worst = 0;
+                for (size_t k = 0; k < 6; ++k) worst = std::max (worst, std::abs (lab.v (a, k) - lab.v (b, k)));
+                return Verdict { worst < 0.02, "mna " + dbList (lab.all (a)) + " dB, scarto max " + num (worst, 3) + " dB" };
+            });
+        }
+        {
+            const int a = frDef (circuitDef ("mna R.i.a=1k L.a.b=4.7 C.b.c=470n R.c.0=1k OUT.c=1"), {}, { 100.0 });
+            lab.check ({ a }, "Circuito: mna con induttanza (RLC serie risonante a 107 Hz) a 100 Hz = -6.2 dB +-0.3", [&lab, a] {
+                return Verdict { within (lab.v (a), -6.2, 0.3), num (lab.v (a)) + " dB" };
+            });
+        }
+        {
+            const int a = frDef (circuitDef ("fbclip Rg=1k Cg=0 Rf=1M Cf=0 up=0 dn=0 gbw=3M sr=100 rail=10"), {}, { 1000.0, 8000.0 }, 1.0e-5);
+            const int b = frDef (circuitDef ("opni Rg=1k Cg=0 Rf=1M Cf=0"), {}, { 1000.0, 8000.0 }, 1.0e-5);
+            lab.check ({ a, b }, "Circuito: op-amp reale fbclip gbw=3M (guadagno 1001): 59.5 dB a 1 kHz (+-0.2), 8 kHz - 1 kHz = -8.9 dB (+-0.6); "
+                                 "opni ideale 60.0 dB piatto (+-0.05)", [&lab, a, b] {
+                const double g1 = lab.v (a, 0), d8 = lab.v (a, 1) - g1, i1 = lab.v (b, 0), id8 = lab.v (b, 1) - i1;
+                return Verdict { within (g1, 59.5, 0.2) && within (d8, -8.9, 0.6) && within (i1, 60.0, 0.05) && std::abs (id8) <= 0.05,
+                                 "fbclip " + num (g1) + " / " + num (d8) + " dB, opni " + num (i1) + " / " + num (id8) + " dB" };
+            });
+        }
+        {
+            // ampiezza della fondamentale (0.75-1.5 s): triangolo +-0.5 V -> 8 / pi^2 x 0.5 = 0.405 V (il picco dei campioni, ~0.48 V,
+            // contiene anche le armoniche del triangolo ripiegate sotto Nyquist)
+            const int a = lab.add (circuitDef ("fbclip Rg=1k Cg=0 Rf=1k Cf=0 up=0 dn=0 gbw=100M sr=0.02 rail=10"), [] (const ModelDef& d)
+            {
+                auto fx = makeS1 (d, {});
+                return harmonicsOf (*fx, 10000.0, 0.0, { 1.0 });
+            });
+            lab.check ({ a }, "Circuito: slew rate fbclip sr=0.02 V/us, seno 10 kHz 0 dBFS: triangolo +-0.5 V, fondamentale 0.41 V (+-0.05)", [&lab, a] {
+                return Verdict { within (lab.v (a), 0.41, 0.05), num (lab.v (a), 3) + " V" };
+            });
+        }
+        {
+            const std::vector<double> f3 { 100.0, 1000.0, 8000.0 };
+            const int a = frDef (circuitDef ("fbclip Rg=47 Cg=2.2u Rg2=560 Cg2=4.7u Rf=10k Cf=0 up=0 dn=0 gbw=1000M sr=1000 rail=10"), {}, f3, 1.0e-5);
+            const int b = frDef (circuitDef ("mna O.i.n.o=1 R.o.n=10k R.n.a=47 C.a.0=2.2u R.n.b=560 C.b.0=4.7u OUT.o=1"), {}, f3, 1.0e-5);
+            lab.check ({ a, b }, "Circuito: fbclip con il secondo ramo Rg2/Cg2 uguale all'analisi mna (100 Hz / 1 kHz / 8 kHz, scarto < 0.05 dB)", [&lab, a, b] {
+                double worst = 0;
+                for (size_t k = 0; k < 3; ++k) worst = std::max (worst, std::abs (lab.v (a, k) - lab.v (b, k)));
+                return Verdict { worst < 0.05, "fbclip " + dbList (lab.all (a)) + " dB, scarto max " + num (worst, 3) + " dB" };
+            });
+        }
+        {
+            const int a = lab.add (circuitDef ("fbclip Rg=47 Cg=2.2u Rf=30k Cf=100p up=0 dn=0 gbw=10M sr=13 rail=4.0"), [] (const ModelDef& d)
+            {
+                auto fx = makeS1 (d, {});
+                return harmonicsOf (*fx, 220.0, -20.0, { 1.0, 2.0 });
+            });
+            const int t = harm ("ib9ts9", {}, { 1.0, 2.0 });
+            const int n = harm ("ibtsnts", {}, { 1.0, 2.0 });
+            lab.check ({ a, t }, "Circuito: fbclip senza diodi ai binari e TS9 con diodi simmetrici: H2/H1 < -100 dB (seno 220 Hz -20 dBFS)", [&lab, a, t] {
+                const double h = dbOf (lab.v (a, 1) / lab.v (a, 0)), ht = dbOf (lab.v (t, 1) / lab.v (t, 0));
+                return Verdict { h < -100.0 && ht < -100.0, "fbclip " + num (h, 1) + " dB, TS9 " + num (ht, 1) + " dB" };
+            });
+            lab.check ({ n }, "NTS (triodo Nutube a griglia positiva): H2/H1 = -14 dB (-20..-8) col seno 220 Hz a -20 dBFS", [&lab, n] {
+                const double h = dbOf (lab.v (n, 1) / lab.v (n, 0));
+                return Verdict { h > -20.0 && h < -8.0, num (h, 1) + " dB" };
+            });
+        }
+        {
+            const int a = lab.add (circuitDef ("bbd ms=10 mod=0 rate=0 fb=0 bw=20000 max=20"), [] (const ModelDef& d)
+            {
+                auto fx = makeS1 (d, {});
+                Buf x = sineBuf (48000.0, 25.0, 0.1, 1.5);
+                processMono (*fx, x, 512);
+                const auto [s, c] = sineFit (x, 25.0, (size_t) (0.5 * 48000), x.size());
+                double ms = std::atan2 (-c, s) / (2 * kPi * 25.0) * 1000.0;
+                if (ms < 0) ms += 40.0;
+                return std::vector<double> { ms };
+            });
+            lab.check ({ a }, "Circuito: stadio bbd ms=10 (seno 25 Hz, fase ai minimi quadrati): ritardo 10.1 ms (+-0.2)", [&lab, a] {
+                return Verdict { within (lab.v (a), 10.1, 0.2), num (lab.v (a), 3) + " ms" };
+            });
+        }
+
+        // 3. livelli dei 59 modelli: riff a -12 dBFS con i comandi di default (finito, picco < 0 dBFS, RMS -36..-11 dBFS) e con i
+        //    comandi tutti al massimo / al minimo, selettori e levette all'ultima / prima posizione (finito, picco < +18 dBFS);
+        //    costo: i tre modelli piu' lenti nel lavoro parallelo, rimisurati da soli, sopra 3 x tempo reale in mono
+        {
+            std::vector<int> hDef, hMax, hMin;
+            for (int m = 0; m < numDrive; ++m)
+            {
+                const char* id = kStage4Drive[m];
+                hDef.push_back (lab.add (id, [riffOf] (const ModelDef& d) { return riffOf (d, [] (Effect&) {}); }));
+                for (float v : { 1.0f, 0.0f })
+                    (v > 0.5f ? hMax : hMin).push_back (lab.add (id, [riffOf, v] (const ModelDef& d)
+                    {
+                        return riffOf (d, [&] (Effect& fx) { for (int k = 0; k < d.numControls; ++k) fx.params[k].store (v); });
+                    }));
+            }
+            lab.check (hDef, "Tappa 4 drive: livelli con riff a -12 dBFS (59 modelli: finiti, picco < 0 dBFS, RMS -36..-11 dBFS)", [&lab, hDef] {
+                int good = 0;
+                double lo = 0, hi = -200, pk = -200;
+                juce::String bad;
+                for (int m = 0; m < numDrive; ++m)
+                {
+                    const double rms = lab.v (hDef[(size_t) m], 0), p = lab.v (hDef[(size_t) m], 1);
+                    const bool g = lab.v (hDef[(size_t) m], 2) > 0.5 && p < 0.0 && rms > -36.0 && rms < -11.0;
+                    if (g) ++good; else bad << kStage4Drive[m] << " (RMS " << num (rms, 1) << ", picco " << num (p, 1) << ") ";
+                    lo = std::min (lo, rms); hi = std::max (hi, rms); pk = std::max (pk, p);
+                }
+                return Verdict { good == numDrive, juce::String (good) + "/59, RMS " + num (lo, 1) + ".." + num (hi, 1) + " dBFS, picco max " + num (pk, 1)
+                                                       + " dBFS " + bad.trim() };
+            });
+            std::vector<int> hExt = hMax;
+            hExt.insert (hExt.end(), hMin.begin(), hMin.end());
+            lab.check (hExt, "Tappa 4 drive: comandi tutti al massimo e tutti al minimo (59 modelli, riff a -12 dBFS): finiti, picco < +18 dBFS", [&lab, hMax, hMin] {
+                double worst = -200;
+                juce::String bad, worstId;
+                for (int m = 0; m < numDrive; ++m)
+                    for (int s = 0; s < 2; ++s)
+                    {
+                        const int h = (s == 0 ? hMax : hMin)[(size_t) m];
+                        const bool fin = lab.v (h, 2) > 0.5;
+                        const double p = fin ? lab.v (h, 1) : 999.0;
+                        if (p > worst) { worst = p; worstId = juce::String (kStage4Drive[m]) + (s == 0 ? " max" : " min"); }
+                        if (! fin || p >= 18.0) bad << kStage4Drive[m] << (s == 0 ? "/max" : "/min") << (fin ? "" : " NaN") << " ";
+                    }
+                return Verdict { bad.isEmpty(), "picco max " + num (worst, 1) + " dBFS (" + worstId + ") " + bad.trim() };
+            });
+            lab.check (hDef, "Tappa 4 drive: costo, i 3 modelli piu' lenti (riff mono 3 s, rimisurati da soli) sopra 3 x tempo reale", [&lab, hDef] {
+                std::vector<std::pair<double, int>> speed;
+                for (int m = 0; m < numDrive; ++m) speed.push_back ({ lab.v (hDef[(size_t) m], 3), m });
+                std::sort (speed.begin(), speed.end());
+                bool ok = true;
+                juce::String detail;
+                for (int k = 0; k < 3; ++k)
+                {
+                    const auto* d = findModel (kStage4Drive[speed[(size_t) k].second]);
+                    auto fx = makeS1 (*d, {});
+                    Buf y = riff;
+                    const auto t0 = std::chrono::steady_clock::now();
+                    processMono (*fx, y, 512);
+                    const double x = 3.0 / std::max (1.0e-6, std::chrono::duration<double> (std::chrono::steady_clock::now() - t0).count());
+                    ok = ok && x > 3.0;
+                    detail << d->id << " " << num (x, 1) << "x ";
+                }
+                return Verdict { ok, detail.trim() };
+            });
+        }
+
+        // 4. famiglia Tube Screamer: differenze misurabili (risposta a piccolo segnale a 1e-4 V, riff, armoniche)
+        {
+            const std::vector<double> f6 { 100.0, 500.0, 1000.0, 2000.0, 4000.0, 8000.0 };
+            const int ts808 = fr ("ibtsts808hw", {}, f6), ts9 = fr ("ib9ts9", {}, f6), ts5 = fr ("ibstts5", {}, f6), ed9 = fr ("ed9", {}, f6);
+            const int msl = fr ("ib10msl", {}, f6);
+            const int r808 = riffSets ("ibtsts808hw", {}), r9 = riffSets ("ib9ts9", {}), r5 = riffSets ("ibstts5", {});
+            auto worstDiff = [&lab] (int a, int b) { double w = 0; for (size_t k = 0; k < 6; ++k) w = std::max (w, std::abs (lab.v (a, k) - lab.v (b, k))); return w; };
+            lab.check ({ ts808, ts9, r808, r9 }, "Tube Screamer: TS808HW e TS9 quasi identici (100 Hz - 8 kHz e RMS del riff entro 0.1 dB)", [&lab, worstDiff, ts808, ts9, r808, r9] {
+                const double w = worstDiff (ts808, ts9), dr = std::abs (lab.v (r808) - lab.v (r9));
+                return Verdict { w < 0.1 && dr < 0.1, "scarto max " + num (w, 3) + " dB, riff " + num (dr, 3) + " dB" };
+            });
+            // risposte relative a 1 kHz, come la tabella del banco (a 1 kHz l'uscita caricata 100 ohm / 10 k toglie 0.06 dB)
+            lab.check ({ ts808, ed9 }, "Tube Screamer: ED-9 (op-amp ideale) e TS808HW (op-amp reale, uscita caricata), risposta relativa a 1 kHz entro 0.35 dB "
+                                       "(100 Hz - 8 kHz)", [&lab, ts808, ed9] {
+                double w = 0;
+                for (size_t k = 0; k < 6; ++k) w = std::max (w, std::abs ((lab.v (ts808, k) - lab.v (ts808, 2)) - (lab.v (ed9, k) - lab.v (ed9, 2))));
+                return Verdict { w < 0.35, "scarto max " + num (w, 3) + " dB (8 kHz " + num ((lab.v (ts808, 5) - lab.v (ts808, 2)) - (lab.v (ed9, 5) - lab.v (ed9, 2)), 2)
+                                               + " dB), 1 kHz " + num (lab.v (ts808, 2) - lab.v (ed9, 2), 3) + " dB" };
+            });
+            lab.check ({ ts5, ts9, r5, r9 }, "Tube Screamer: TS5 = TS9 (stesso circuito, comandi in altro ordine; entro 0.01 dB)", [&lab, worstDiff, ts5, ts9, r5, r9] {
+                const double w = worstDiff (ts5, ts9), dr = std::abs (lab.v (r5) - lab.v (r9));
+                return Verdict { w < 0.01 && dr < 0.01, "scarto max " + num (w, 4) + " dB, riff " + num (dr, 4) + " dB" };
+            });
+            lab.check ({ msl, ts9 }, "Tube Screamer: MSL (82n) contro TS9 (47n), 100 Hz - 1 kHz = -8.0 / -11.3 dB (+-0.5)", [&lab, msl, ts9] {
+                const double m = lab.v (msl, 0) - lab.v (msl, 2), t = lab.v (ts9, 0) - lab.v (ts9, 2);
+                return Verdict { within (m, -8.0, 0.5) && within (t, -11.3, 0.5), "MSL " + num (m) + " dB, TS9 " + num (t) + " dB" };
+            });
+        }
+        {
+            std::vector<int> h;
+            for (float mode : { 0.0f, 1.0f / 3.0f, 2.0f / 3.0f, 1.0f }) h.push_back (riffSets ("ibtsts9dx", { { "MODE", mode } }));
+            lab.check (h, "TS9DX: RMS del riff nei modi TS9 / + / HOT / TURBO = -34.6 / -28.1 / -25.2 / -22.4 dBFS (+-1.5), crescente", [&lab, h] {
+                const double ref[] = { -34.6, -28.1, -25.2, -22.4 };
+                bool ok = true;
+                for (size_t k = 0; k < 4; ++k) ok = ok && within (lab.v (h[k]), ref[k], 1.5) && (k == 0 || lab.v (h[k]) > lab.v (h[k - 1]));
+                return Verdict { ok, num (lab.v (h[0]), 1) + " / " + num (lab.v (h[1]), 1) + " / " + num (lab.v (h[2]), 1) + " / " + num (lab.v (h[3]), 1) + " dBFS" };
+            });
+            const int turbo = harm ("ibtsts9dx", { { "MODE", 1.0f } }, { 1.0, 3.0 }), ts9m = harm ("ibtsts9dx", { { "MODE", 0.0f } }, { 1.0, 3.0 });
+            lab.check ({ turbo, ts9m }, "TS9DX: TURBO senza diodi quasi pulito, H3/H1 -61 dB (+-5) contro -17 dB del modo TS9 (+-5; seno 220 Hz -20 dBFS)", [&lab, turbo, ts9m] {
+                const double a = dbOf (lab.v (turbo, 1) / lab.v (turbo, 0)), b = dbOf (lab.v (ts9m, 1) / lab.v (ts9m, 0));
+                return Verdict { within (a, -61.0, 5.0) && within (b, -17.0, 5.0), "TURBO " + num (a, 1) + " dB, TS9 " + num (b, 1) + " dB" };
+            });
+        }
+        {
+            const int hot = fr ("ibtlts7", { { "MODE", 1.0f } }, { 1000.0 }), nrm = fr ("ibtlts7", { { "MODE", 0.0f } }, { 1000.0 });
+            lab.check ({ hot, nrm }, "TS7: MODE HOT - TS9 a 1 kHz = +7.6 dB (+-1)", [&lab, hot, nrm] {
+                const double d = lab.v (hot) - lab.v (nrm);
+                return Verdict { within (d, 7.6, 1.0), num (d) + " dB" };
+            });
+        }
+        {
+            const int on = riffSets ("ibtsts808dx", { { "BOOST", 1.0f }, { "PRE/POST", 1.0f } }), off = riffSets ("ibtsts808dx", { { "BOOST", 0.0f }, { "PRE/POST", 1.0f } });
+            lab.check ({ on, off }, "TS808DX: booster POST al massimo +20 dB sull'RMS del riff (+-2)", [&lab, on, off] {
+                const double d = lab.v (on) - lab.v (off);
+                return Verdict { within (d, 20.0, 2.0), num (d) + " dB (" + num (lab.v (off), 1) + " -> " + num (lab.v (on), 1) + " dBFS)" };
+            });
+            auto all = [&lab, riffOf] (float volt)
+            {
+                return lab.add ("ibtsts808dx", [riffOf, volt] (const ModelDef& d)
+                {
+                    return riffOf (d, [&] (Effect& fx) { for (int k = 0; k < d.numControls; ++k) fx.params[k].store (1.0f); setsS1 (fx, d, { { "18V/9V", volt } }); });
+                });
+            };
+            const int v18 = all (1.0f), v9 = all (0.0f);
+            lab.check ({ v18, v9 }, "TS808DX: tutti al massimo, 18 V contro 9 V: picco piu' alto di oltre 2.5 dB (binari +-8.4 / +-4 V; atteso +3.9)", [&lab, v18, v9] {
+                const double d = lab.v (v18, 1) - lab.v (v9, 1);
+                return Verdict { d > 2.5, num (d) + " dB (" + num (lab.v (v9, 1), 1) + " -> " + num (lab.v (v18, 1), 1) + " dBFS)" };
+            });
+        }
+        {
+            const int s1 = fr ("ibtstsv808", { { "SAT", 1.0f }, { "OVERDRIVE", 0.5f } }, { 1000.0 }), s0 = fr ("ibtstsv808", { { "SAT", 0.0f }, { "OVERDRIVE", 0.5f } }, { 1000.0 });
+            lab.check ({ s1, s0 }, "TSV808: SAT 1 - SAT 0 a 1 kHz = +13.4 dB (+-1) con OVERDRIVE a meta'", [&lab, s1, s0] {
+                const double d = lab.v (s1) - lab.v (s0);
+                return Verdict { within (d, 13.4, 1.0), num (d) + " dB" };
+            });
+            const int asym = harm ("ibtstsv808", { { "DIODE", 2.0f / 3.0f } }, { 1.0, 2.0 }), sym = harm ("ibtstsv808", { { "DIODE", 0.0f } }, { 1.0, 2.0 });
+            lab.check ({ asym, sym }, "TSV808: diodi ASYM 1 H2/H1 -19 dB (+-4), SYM 1 < -100 dB (seno 220 Hz -20 dBFS)", [&lab, asym, sym] {
+                const double a = dbOf (lab.v (asym, 1) / lab.v (asym, 0)), s = dbOf (lab.v (sym, 1) / lab.v (sym, 0));
+                return Verdict { within (a, -19.0, 4.0) && s < -100.0, "ASYM " + num (a, 1) + " dB, SYM " + num (s, 1) + " dB" };
+            });
+        }
+        {
+            std::vector<int> h;
+            for (float mix : { 0.0f, 0.5f, 1.0f }) h.push_back (riffSets ("ibtsnts", { { "MIX", mix } }));
+            lab.check (h, "NTS: RMS del riff con MIX 0 / 0.5 / 1 = -25.4 / -22.7 / -20.5 dBFS (+-1.5)", [&lab, h] {
+                const double ref[] = { -25.4, -22.7, -20.5 };
+                bool ok = true;
+                for (size_t k = 0; k < 3; ++k) ok = ok && within (lab.v (h[k]), ref[k], 1.5);
+                return Verdict { ok, num (lab.v (h[0]), 1) + " / " + num (lab.v (h[1]), 1) + " / " + num (lab.v (h[2]), 1) + " dBFS" };
+            });
+        }
+
+        // 5. comandi di tono e di voce (circuito dagli schemi)
+        {
+            const std::vector<double> f3 { 100.0, 1000.0, 8000.0 };
+            const int t0 = fr ("ib7od850", { { "SUSTAIN", 0.0f }, { "TONE", 0.0f } }, f3), t1 = fr ("ib7od850", { { "SUSTAIN", 0.0f }, { "TONE", 1.0f } }, f3);
+            lab.check ({ t0, t1 }, "OD-850: col TONE i bassi restano fermi (100 Hz - 1 kHz +3.1 / +0.4 dB) e gli acuti salgono (8 kHz - 1 kHz -31.6 / -21.9 dB; +-1)", [&lab, t0, t1] {
+                const double b0 = lab.v (t0, 0) - lab.v (t0, 1), b1 = lab.v (t1, 0) - lab.v (t1, 1), h0 = lab.v (t0, 2) - lab.v (t0, 1), h1 = lab.v (t1, 2) - lab.v (t1, 1);
+                return Verdict { within (b0, 3.1, 1.0) && within (b1, 0.4, 1.0) && within (h0, -31.6, 1.0) && within (h1, -21.9, 1.0),
+                                 "bassi " + num (b0) + " / " + num (b1) + " dB, acuti " + num (h0) + " / " + num (h1) + " dB" };
+            });
+        }
+        {
+            const int t0 = fr ("ibtlds7", { { "DRIVE", 0.0f }, { "TONE", 0.0f } }, { 1000.0, 8000.0 }), t1 = fr ("ibtlds7", { { "DRIVE", 0.0f }, { "TONE", 1.0f } }, { 1000.0, 8000.0 });
+            lab.check ({ t0, t1 }, "DS7: TONE a giratori, 8 kHz - 1 kHz = -16.6 / +7.2 dB a TONE 0 / 1 (+-1)", [&lab, t0, t1] {
+                const double a = lab.v (t0, 1) - lab.v (t0, 0), b = lab.v (t1, 1) - lab.v (t1, 0);
+                return Verdict { within (a, -16.6, 1.0) && within (b, 7.2, 1.0), num (a) + " / " + num (b) + " dB" };
+            });
+        }
+        {
+            const std::vector<double> f3 { 100.0, 1000.0, 2000.0 };
+            const int m0 = fr ("ib9st9", { { "DRIVE", 0.0f }, { "MID BOOST", 0.0f } }, f3), m1 = fr ("ib9st9", { { "DRIVE", 0.0f }, { "MID BOOST", 1.0f } }, f3);
+            lab.check ({ m0, m1 }, "ST9: MID BOOST 0 / 1, 2 kHz - 1 kHz = -2.0 / +2.1 dB, 100 Hz - 1 kHz = -8.5 / -16.0 dB (+-1)", [&lab, m0, m1] {
+                const double a = lab.v (m0, 2) - lab.v (m0, 1), b = lab.v (m1, 2) - lab.v (m1, 1), c = lab.v (m0, 0) - lab.v (m0, 1), e = lab.v (m1, 0) - lab.v (m1, 1);
+                return Verdict { within (a, -2.0, 1.0) && within (b, 2.1, 1.0) && within (c, -8.5, 1.0) && within (e, -16.0, 1.0),
+                                 "2 kHz " + num (a) + " / " + num (b) + " dB, 100 Hz " + num (c) + " / " + num (e) + " dB" };
+            });
+        }
+        {
+            const int mid = fr ("ibtssd9m", { { "MIDS", 1.0f } }, { 1000.0 }), scoop = fr ("ibtssd9m", { { "MIDS", 0.0f } }, { 1000.0 });
+            lab.check ({ mid, scoop }, "SD9M: MIDS MID - SCOOP a 1 kHz = +4.6 dB (+-1; 100n -> 33n)", [&lab, mid, scoop] {
+                const double d = lab.v (mid) - lab.v (scoop);
+                return Verdict { within (d, 4.6, 1.0), num (d) + " dB" };
+            });
+        }
+
+        // click: il motore Circuit aggiorna i comandi a blocchi (lisciatura 0.35 per blocco di 512 campioni, filtri ricalcolati a ogni
+        // blocco, selettori a scatto); i 189 pedali Circuit gia' a catalogo stanno sotto 47x (mediana 2.7x), salvo 18 commutazioni
+        // brusche oltre 100x (fino a 2271x): soglia 100x invece dei 10x dei modelli digitali
+        addClickAndDeterminism (lab, kStage4Drive, numDrive, "Tappa 4 drive", 100.0, false);
+        lab.run (report);
+    }
+
+    /** Tappa 4, lavoro s2: compressori, EQ, filtri, wah, volume e utility (FxStage4Dyn.cpp). Metodi del banco s2 (comandi per
+        ruolo/etichetta prima di prepare). */
+    void runStage4DynTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        constexpr int numDyn = countOf (kStage4Dyn);
+        Lab lab;
+        /** Effetto del banco s2: comandi per ruolo/etichetta (setsS2) prima di prepare, blocchi da 'block'. */
+        auto makeS2 = [] (const ModelDef& d, const Sets& sets, int block = 512)
+        {
+            auto fx = createEffect (d);
+            for (const auto& [k, v] : setsS2 (d, sets)) fx->params[k].store (v);
+            fx->prepare (48000.0, block);
+            return fx;
+        };
+        /** Risposta del banco s2 ('response'): effetto nuovo per ogni frequenza, 0.5 s di assestamento, blocchi da 256. */
+        auto respS2 = [makeS2] (const ModelDef& d, const Sets& sets, const std::vector<double>& freqs, double amp)
+        {
+            std::vector<double> out;
+            for (double f : freqs)
+            {
+                auto fx = makeS2 (d, sets, 256);
+                const double sr = 48000.0;
+                const int settle = (int) (0.5 * sr), per = (int) std::ceil (0.25 * f) + 2, meas = (int) std::lround (per * sr / f);
+                Buf x ((size_t) (settle + meas));
+                for (size_t i = 0; i < x.size(); ++i) x[i] = (float) (amp * std::sin (2 * kPi * f * (double) i / sr));
+                processMono (*fx, x, 256);
+                double re = 0, im = 0;
+                for (int i = 0; i < meas; ++i)
+                {
+                    const double ph = 2 * kPi * f * (double) (settle + i) / sr;
+                    re += x[(size_t) (settle + i)] * std::sin (ph);
+                    im += x[(size_t) (settle + i)] * std::cos (ph);
+                }
+                out.push_back (dbOf (2.0 * std::sqrt (re * re + im * im) / meas / amp));
+            }
+            return out;
+        };
+        auto resp = [&lab, respS2] (const char* id, Sets sets, std::vector<double> freqs, double amp = 0.01)
+        {
+            return lab.add (id, [respS2, sets, freqs, amp] (const ModelDef& d) { return respS2 (d, sets, freqs, amp); });
+        };
+        /** Picco principale a piccolo segnale (impulso di 1 mV, FFT): { Hz, dB }. */
+        auto peak = [&lab] (const char* id, Sets sets)
+        {
+            return lab.add (id, [sets] (const ModelDef& d)
+            {
+                auto fx = createEffect (d);
+                for (const auto& [k, v] : setsS2 (d, sets)) fx->params[k].store (v);
+                const auto p = measureWahPeak (*fx, 48000.0);
+                return std::vector<double> { p.f, p.db };
+            });
+        };
+        auto peak2 = [&lab] (const char* id, Sets sets)
+        {
+            return lab.add (id, [sets] (const ModelDef& d)
+            {
+                auto fx = createEffect (d);
+                for (const auto& [k, v] : setsS2 (d, sets)) fx->params[k].store (v);
+                const auto p = resonancePeaks (*fx, 2);
+                std::vector<double> r;
+                for (const auto& [f, g] : p) { r.push_back (f); r.push_back (g); }
+                while (r.size() < 4) r.push_back (0.0);
+                return r;
+            });
+        };
+        auto fq = [] (double f, double ref) { return std::abs (f / ref - 1.0) <= 0.06; };
+        auto hz = [] (double f) { return juce::String (juce::roundToInt (f)); };
+
+        // 1. pedali esistenti invariati bit per bit (FxFilters, FxDynamics, FxUtility non toccati): banco s1 'raw' come la 3A
+        //    (GCB95 e 535Q sono gia' controllati dalla 3A)
+        {
+            struct Ref { const char* id; uint64_t hash; };
+            static const Ref refs[] = { { "cs3", 0x6fdc24c6a389d2c4ull }, { "cp1x", 0x92e285ccf8211c83ull }, { "gq7", 0xfd3a4f1817a037e0ull },
+                                        { "eq200", 0xbbb9a8dc0af48785ull }, { "aw3", 0xd416340cf1fb2140ull }, { "fv500h", 0x37efb2ce81bff398ull },
+                                        { "ge7b", 0x1ff326c60e76a089ull }, { "pq4", 0x054ada23da9bdb7eull }, { "lmb3", 0x143006ce4ed4b57dull },
+                                        { "ehsoulpreacher", 0x851613863b16c460ull }, { "ehbasspreacher", 0x729438fd2ea4a2a5ull },
+                                        { "mc404", 0x1a2b9a742f18af64ull }, { "dd95fw", 0x3cb7aaf74c2613a3ull }, { "fv60", 0x38a9d37e24b9a79bull } };
+            static const Buf raw = rawSignalS1 (48000.0);
+            std::vector<int> h;
+            for (const auto& r : refs)
+                h.push_back (lab.add (r.id, [] (const ModelDef& d)
+                {
+                    const uint64_t v = rawHashS1 (d, raw);
+                    return std::vector<double> { (double) (uint32_t) (v >> 32), (double) (uint32_t) v };
+                }));
+            lab.check (h, "Tappa 4: CS-3, CP-1X, GE-7, EQ-200, AW-3, FV-500H, GE-7B, PQ-4, LMB-3, Soul/Bass Preacher, MC404, DD95FW, FV60 invariati bit per bit",
+                       [&lab, h] {
+                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const uint64_t v = ((uint64_t) lab.v (h[k], 0) << 32) | (uint64_t) lab.v (h[k], 1);
+                    if (v != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) v) << ") ";
+                }
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici" : bad.trim() };
+            });
+        }
+
+        // 2. livelli dei 41 modelli: riff a -12 dBFS con i comandi di default (finito, picco fra -30 e -3 dBFS, RMS -42..-14 dBFS e
+        //    entro 1.5 dB dai valori del banco, 2 dB per i compressori); robustezza: riff + accordo a -6 / -3 dBFS ripetuti per 3 s con
+        //    comandi casuali (mt19937 seme 7, 30% dei comandi ogni 1024 campioni; banco: 10 s), poi stereo a blocchi irregolari
+        {
+            struct Ref { const char* id; double pk, rms; };
+            static const Ref refs[] = {
+                { "ib7cp830", -8.42, -26.30 }, { "ib7cp835", -9.71, -22.93 }, { "ib9cp9", -9.82, -25.83 }, { "ib10cp10", -11.78, -26.93 },
+                { "ib10bp10", -11.68, -26.99 }, { "ibstcp5", -11.78, -26.93 }, { "ibstbp5", -11.68, -26.99 }, { "ibtstc999", -14.82, -30.86 },
+                { "ibxec30", -9.29, -25.25 }, { "ib7ge601", -12.00, -28.72 }, { "ib9ge9", -12.00, -28.72 }, { "ib10ge10", -12.00, -28.72 },
+                { "ib10be10", -12.00, -28.72 }, { "ib7ge300", -12.00, -28.72 }, { "ib7pq401", -11.99, -28.78 }, { "ib9pq9", -11.99, -28.79 },
+                { "ib10pql", -11.99, -28.79 }, { "ib10ppe1", -12.00, -28.72 }, { "ibmpteq", -12.00, -28.72 }, { "ib7af201", -17.77, -34.37 },
+                { "ib9af9", -17.78, -34.45 }, { "ib10afl", -17.78, -34.45 }, { "ibtlaw7", -16.46, -32.04 }, { "ibstaw5", -9.40, -24.02 },
+                { "ibtllf7", -17.82, -31.60 }, { "ib10nb10", -11.87, -28.88 }, { "ibmptgate", -12.00, -28.72 }, { "ib10wh10", -15.50, -29.63 },
+                { "ibmwh10v3", -15.50, -29.63 }, { "ib10wf10", -12.90, -26.97 }, { "ibtlwd7", -15.12, -29.45 }, { "ibmwd7jr", -15.45, -29.59 },
+                { "ibmtwp10", -10.32, -25.08 }, { "ibmno93", -9.08, -22.88 }, { "ibmno57", -9.08, -22.88 }, { "ibmno84", -7.93, -18.21 },
+                { "ibmno58", -4.99, -15.59 }, { "ib10vl10", -12.00, -28.72 }, { "ibmst810", -15.01, -31.73 }, { "ib10ls10", -12.00, -28.72 },
+                { "ibxec50", -11.88, -25.81 } };
+            static_assert (sizeof (refs) / sizeof (refs[0]) == (size_t) numDyn, "un valore per ogni modello s2");
+            static const Buf riff = guitarS1 (true, 48000.0, 3.0, -12.0);
+            static const Buf stress = []
+            {
+                Buf x = guitarS1 (true, 48000.0, 3.0, -6.0);
+                const Buf ch = guitarS1 (false, 48000.0, 2.0, -3.0);
+                x.insert (x.end(), ch.begin(), ch.end());
+                x.resize ((size_t) (3.0 * 48000.0));
+                return x;
+            }();
+            std::vector<int> hl, hs;
+            for (const auto& r : refs)
+            {
+                hl.push_back (lab.add (r.id, [makeS2] (const ModelDef& d)
+                {
+                    auto fx = makeS2 (d, {});
+                    Buf y = riff;
+                    processMono (*fx, y, 512);
+                    double acc = 0, pk = 0;
+                    bool fin = true;
+                    const size_t skip = (size_t) (0.05 * 48000.0);
+                    for (size_t i = skip; i < y.size(); ++i) { fin = fin && std::isfinite (y[i]); acc += (double) y[i] * y[i]; pk = std::max (pk, (double) std::abs (y[i])); }
+                    return std::vector<double> { dbOf (pk), 10.0 * std::log10 (acc / (double) (y.size() - skip) + 1e-30), fin ? 1.0 : 0.0 };
+                }));
+                hs.push_back (lab.add (r.id, [makeS2] (const ModelDef& d)
+                {
+                    std::mt19937 rng (7);
+                    std::uniform_real_distribution<float> u (0, 1);
+                    auto fx = makeS2 (d, {}, 1024);
+                    Buf y = stress;
+                    double pk = 0;
+                    bool fin = true;
+                    for (size_t i = 0; i + 1024 <= y.size(); i += 1024)
+                    {
+                        for (int c = 0; c < d.numControls; ++c) if (u (rng) < 0.3f) fx->params[c].store (u (rng));
+                        float* p[1] = { y.data() + i };
+                        fx->process (p, 1, 1024);
+                        for (int k = 0; k < 1024; ++k) { fin = fin && std::isfinite (y[i + (size_t) k]); pk = std::max (pk, (double) std::abs (y[i + (size_t) k])); }
+                    }
+                    auto fx2 = makeS2 (d, {}, 512);
+                    Buf l = riff, rr = riff;
+                    for (size_t i = 0; i < l.size();)
+                    {
+                        const int m = (int) std::min<size_t> ((size_t) (1 + (int) (u (rng) * 511)), l.size() - i);
+                        float* p[2] = { l.data() + i, rr.data() + i };
+                        fx2->process (p, 2, m);
+                        for (int k = 0; k < m; ++k) fin = fin && std::isfinite (l[i + (size_t) k]) && std::isfinite (rr[i + (size_t) k]);
+                        i += (size_t) m;
+                    }
+                    return std::vector<double> { dbOf (pk), fin ? 1.0 : 0.0 };
+                }));
+            }
+            lab.check (hl, "Tappa 4 dinamica/EQ/filtri: livelli con riff a -12 dBFS (41 modelli: finiti, picco -30..-3 dBFS, RMS -42..-14 dBFS, "
+                           "entro 1.5 dB dal banco, compressori 2 dB)", [&lab, hl] {
+                int good = 0;
+                double worst = 0;
+                juce::String bad;
+                for (int m = 0; m < numDyn; ++m)
+                {
+                    const double pk = lab.v (hl[(size_t) m], 0), rms = lab.v (hl[(size_t) m], 1);
+                    const auto* d = findModel (refs[m].id);
+                    const double tol = d != nullptr && d->family == Family::Compressor ? 2.0 : 1.5;
+                    const double dev = std::max (std::abs (pk - refs[m].pk), std::abs (rms - refs[m].rms));
+                    worst = std::max (worst, dev);
+                    const bool g = lab.v (hl[(size_t) m], 2) > 0.5 && pk < -3.0 && pk > -30.0 && rms > -42.0 && rms < -14.0 && dev <= tol;
+                    if (g) ++good; else bad << refs[m].id << " (picco " << num (pk, 1) << ", RMS " << num (rms, 1) << ") ";
+                }
+                return Verdict { good == numDyn, juce::String (good) + "/41, scarto max dal banco " + num (worst) + " dB " + bad.trim() };
+            });
+            lab.check (hs, "Tappa 4 dinamica/EQ/filtri: robustezza (riff + accordo a -6/-3 dBFS, comandi casuali ogni 1024 campioni; stereo a blocchi "
+                           "irregolari): finiti, picco < +12 dBFS", [&lab, hs] {
+                double worst = -200;
+                juce::String bad, worstId;
+                for (int m = 0; m < numDyn; ++m)
+                {
+                    const bool fin = lab.v (hs[(size_t) m], 1) > 0.5;
+                    const double pk = fin ? lab.v (hs[(size_t) m], 0) : 999.0;
+                    if (pk > worst) { worst = pk; worstId = refs[m].id; }
+                    if (! fin || pk >= 12.0) bad << refs[m].id << (fin ? "" : " NaN") << " ";
+                }
+                return Verdict { bad.isEmpty(), "picco max " + num (worst, 1) + " dBFS (" + worstId + ") " + bad.trim() };
+            });
+        }
+
+        // 3. wah a pedale: picco a piccolo segnale (frequenze +-6%, guadagni +-1 dB)
+        {
+            const int h0 = peak ("ib10wh10", { { "PEDAL", 0.0f } }), h5 = peak ("ib10wh10", { { "PEDAL", 0.5f } }), h1 = peak ("ib10wh10", { { "PEDAL", 1.0f } });
+            const int b0 = peak ("ib10wh10", { { "PEDAL", 0.0f }, { "RANGE", 1.0f } }), b1 = peak ("ib10wh10", { { "PEDAL", 1.0f }, { "RANGE", 1.0f } });
+            const int v5 = peak ("ibmwh10v3", { { "PEDAL", 0.5f } });
+            lab.check ({ h0, h5, h1, b0, b1, v5 }, "WH10 (DEPTH 0.5): GUITAR 307 / 826 / 2357 Hz (+8.8 / +8.5 dB in punta e tallone), BASS 153 / 1187 Hz; "
+                                                   "WH10V3 uguale", [&lab, fq, hz, h0, h5, h1, b0, b1, v5] {
+                const bool ok = fq (lab.v (h0), 307) && fq (lab.v (h5), 826) && fq (lab.v (h1), 2357) && within (lab.v (h0, 1), 8.8, 1.0)
+                             && within (lab.v (h1, 1), 8.5, 1.0) && fq (lab.v (b0), 153) && fq (lab.v (b1), 1187)
+                             && std::abs (lab.v (v5) / lab.v (h5) - 1.0) < 0.01 && std::abs (lab.v (v5, 1) - lab.v (h5, 1)) < 0.1;
+                return Verdict { ok, "GUITAR " + hz (lab.v (h0)) + " (" + num (lab.v (h0, 1), 1) + " dB) / " + hz (lab.v (h5)) + " / " + hz (lab.v (h1))
+                                         + " (" + num (lab.v (h1, 1), 1) + " dB), BASS " + hz (lab.v (b0)) + " / " + hz (lab.v (b1)) + ", V3 " + hz (lab.v (v5)) + " Hz" };
+            });
+        }
+        {
+            const Sets foot { { "MODE", 0.0f }, { "RANGE", 0.0f }, { "FINE TUNE", 0.5f } };
+            auto with = [foot] (Sets s) { Sets r = foot; r.insert (r.end(), s.begin(), s.end()); return r; };
+            const int a = peak ("ibtlwd7", with ({ { "PEDAL", 0.25f } })), b = peak ("ibtlwd7", with ({ { "PEDAL", 0.5f } })), c = peak ("ibtlwd7", with ({ { "PEDAL", 1.0f } }));
+            const int f1 = peak ("ibtlwd7", with ({ { "PEDAL", 1.0f }, { "FINE TUNE", 1.0f } })), f0 = peak ("ibtlwd7", with ({ { "PEDAL", 1.0f }, { "FINE TUNE", 0.0f } }));
+            const int l0 = peak ("ibtlwd7", with ({ { "PEDAL", 0.25f }, { "RANGE", 1.0f } })), l1 = peak ("ibtlwd7", with ({ { "PEDAL", 1.0f }, { "RANGE", 1.0f } }));
+            // guadagno in punta: 15.71 dB nelle misure grezze del banco (measure.log); il "+9.7 dB" di tests.md e' un refuso
+            lab.check ({ a, b, c, f1, f0, l0, l1 }, "WD7 (FOOT SW, NORMAL): pedale 0.25 / 0.5 / 1 = 435 / 617 / 1568 Hz (+15.7 dB), FINE 1 / 0 in punta 1762 / 1043 Hz, "
+                                                    "RANGE LOW 192 .. 654 Hz", [&lab, fq, hz, a, b, c, f1, f0, l0, l1] {
+                const bool ok = fq (lab.v (a), 435) && fq (lab.v (b), 617) && fq (lab.v (c), 1568) && within (lab.v (c, 1), 15.7, 1.0)
+                             && fq (lab.v (f1), 1762) && fq (lab.v (f0), 1043) && fq (lab.v (l0), 192) && fq (lab.v (l1), 654);
+                return Verdict { ok, hz (lab.v (a)) + " / " + hz (lab.v (b)) + " / " + hz (lab.v (c)) + " Hz (" + num (lab.v (c, 1), 1) + " dB), FINE "
+                                         + hz (lab.v (f1)) + " / " + hz (lab.v (f0)) + ", LOW " + hz (lab.v (l0)) + " .. " + hz (lab.v (l1)) + " Hz" };
+            });
+        }
+        {
+            // accensione automatica: pedale a 0.6 per 1 s poi al tallone; l'effetto (readout 1) si spegne dopo OFF DELAY
+            auto offTime = [&lab] (const char* id, Sets sets)
+            {
+                return lab.add (id, [sets] (const ModelDef& d)
+                {
+                    auto fx = createEffect (d);
+                    for (const auto& [k, v] : setsS2 (d, sets)) fx->params[k].store (v);
+                    fx->prepare (48000.0, 480);
+                    fx->params[0].store (0.6f);
+                    const double sr = 48000.0;
+                    Buf x ((size_t) (4 * sr));
+                    for (size_t i = 0; i < x.size(); ++i) x[i] = (float) (0.1 * std::sin (2 * kPi * 440 * (double) i / sr));
+                    double off = -1, onBefore = 0;
+                    for (size_t i = 0; i < x.size(); i += 48)
+                    {
+                        if (i == (size_t) sr) { onBefore = fx->readout (1); fx->params[0].store (0.0f); }
+                        float* p[1] = { x.data() + i };
+                        fx->process (p, 1, 48);
+                        if (i >= (size_t) sr && off < 0 && fx->readout (1) < 0.5f) off = (double) (i + 48 - (size_t) sr) / sr;
+                    }
+                    return std::vector<double> { onBefore, off };
+                });
+            };
+            const int a0 = offTime ("ibtlwd7", { { "MODE", 1.0f }, { "OFF DELAY", 0.0f } }), a5 = offTime ("ibtlwd7", { { "MODE", 1.0f }, { "OFF DELAY", 0.5f } });
+            const int a1 = offTime ("ibtlwd7", { { "MODE", 1.0f }, { "OFF DELAY", 1.0f } }), ft = offTime ("ibtlwd7", { { "MODE", 0.0f }, { "OFF DELAY", 0.0f } });
+            const int jr = offTime ("ibmwd7jr", { { "OFF DELAY", 0.5f } });
+            lab.check ({ a0, a5, a1, ft, jr }, "WD7 AUTO SW: al tallone si spegne dopo OFF DELAY 0 / 0.5 / 1 (< 60 ms / 0.25-0.35 s / 2.3-2.7 s); FOOT SW resta acceso; "
+                                               "WD7JR automatico", [&lab, a0, a5, a1, ft, jr] {
+                auto t = [&lab] (int h) { return lab.v (h, 1); };
+                const bool ok = lab.v (a0) > 0.5 && t (a0) >= 0 && t (a0) < 0.06 && t (a5) >= 0.25 && t (a5) <= 0.35 && t (a1) >= 2.3 && t (a1) <= 2.7
+                             && lab.v (ft) > 0.5 && t (ft) < 0 && t (jr) >= 0.25 && t (jr) <= 0.35;
+                auto s = [&] (int h) { return t (h) < 0 ? juce::String ("acceso") : num (t (h), 3) + " s"; };
+                return Verdict { ok, s (a0) + " / " + s (a5) + " / " + s (a1) + ", FOOT SW " + s (ft) + ", WD7JR " + s (jr) };
+            });
+        }
+        {
+            const int h0 = peak2 ("ibmtwp10", { { "PEDAL", 0.0f }, { "TONE", 0.0f } }), h1 = peak2 ("ibmtwp10", { { "PEDAL", 1.0f }, { "TONE", 0.0f } });
+            const int l0 = peak2 ("ibmtwp10", { { "PEDAL", 0.0f }, { "TONE", 1.0f } }), l1 = peak2 ("ibmtwp10", { { "PEDAL", 1.0f }, { "TONE", 1.0f } });
+            lab.check ({ h0, h1, l0, l1 }, "TWP10 (BALANCE 0.5): due picchi, HIGH 307 + 654 / 984 + 3155 Hz, LOW 229 + 461 / 735 + 2098 Hz (tallone / punta, +-6%)",
+                       [&lab, fq, hz, h0, h1, l0, l1] {
+                auto two = [&] (int h, double a, double b) { return fq (lab.v (h, 0), a) && fq (lab.v (h, 2), b); };
+                auto s = [&] (int h) { return hz (lab.v (h, 0)) + " + " + hz (lab.v (h, 2)); };
+                return Verdict { two (h0, 307, 654) && two (h1, 984, 3155) && two (l0, 229, 461) && two (l1, 735, 2098),
+                                 "HIGH " + s (h0) + " / " + s (h1) + ", LOW " + s (l0) + " / " + s (l1) + " Hz" };
+            });
+        }
+        {
+            const int a0 = peak ("ibmno93", { { "PEDAL", 0.0f } }), a1 = peak ("ibmno93", { { "PEDAL", 1.0f } });
+            const int b0 = peak ("ibmno57", { { "PEDAL", 0.0f } }), b1 = peak ("ibmno57", { { "PEDAL", 1.0f } });
+            // picchi grezzi del banco (measure.log, griglia di 6%): 18.2 dB al tallone, 17.35 in punta ("+17 dB" di tests.md e' arrotondato)
+            lab.check ({ a0, a1, b0, b1 }, "No.93 / No.57 (wah a induttore 620 mH): 387 -> 1979 Hz, picco +18.2 / +17.4 dB (+-1)", [&lab, fq, hz, a0, a1, b0, b1] {
+                bool ok = true;
+                for (int k : { a0, b0 }) ok = ok && fq (lab.v (k), 387) && within (lab.v (k, 1), 18.2, 1.0);
+                for (int k : { a1, b1 }) ok = ok && fq (lab.v (k), 1979) && within (lab.v (k, 1), 17.35, 1.0);
+                return Verdict { ok, "No.93 " + hz (lab.v (a0)) + " (" + num (lab.v (a0, 1), 1) + " dB) -> " + hz (lab.v (a1)) + " (" + num (lab.v (a1, 1), 1)
+                                         + " dB), No.57 " + hz (lab.v (b0)) + " -> " + hz (lab.v (b1)) + " Hz" };
+            });
+        }
+
+        // 4. EQ (piccolo segnale 0.01 V; guadagni +-1 dB, frequenze +-6%)
+        {
+            const std::vector<double> fl { 50.0, 100.0, 300.0, 1000.0, 3000.0, 10000.0 };
+            const int flat = resp ("ib10pql", {}, fl);
+            const int lo = resp ("ib10pql", { { "LOW", 1.0f } }, { 75.0 }), hi = resp ("ib10pql", { { "HIGH", 1.0f } }, { 5600.0 });
+            const int mid = resp ("ib10pql", { { "MID", 1.0f } }, { 503.0 });
+            const int pm = peak ("ib10pql", { { "MID", 1.0f } }), p0 = peak ("ib10pql", { { "MID", 1.0f }, { "FREQUENCY", 0.0f } });
+            const int p1 = peak ("ib10pql", { { "MID", 1.0f }, { "FREQUENCY", 1.0f } });
+            lab.check ({ flat, lo, hi, mid, pm, p0, p1 }, "PQL: piatto (+-0.2 dB) a meta', LOW +14.5 dB a 75 Hz, HIGH +15.0 dB a 5.6 kHz, MID +13.7 dB a 503 Hz, "
+                                                          "FREQUENCY 0 / 1 = 81 Hz / 5.9 kHz", [&lab, fq, hz, flat, lo, hi, mid, pm, p0, p1] {
+                double w = 0;
+                for (double g : lab.all (flat)) w = std::max (w, std::abs (g));
+                const bool ok = w <= 0.2 && within (lab.v (lo), 14.5, 1.0) && within (lab.v (hi), 15.0, 1.0) && within (lab.v (mid), 13.7, 1.0)
+                             && fq (lab.v (pm), 503) && fq (lab.v (p0), 81) && fq (lab.v (p1), 5900);
+                return Verdict { ok, "piatto +-" + num (w) + " dB, LOW " + num (lab.v (lo)) + ", HIGH " + num (lab.v (hi)) + ", MID " + num (lab.v (mid)) + " dB a "
+                                         + hz (lab.v (pm)) + " Hz, FREQUENCY " + hz (lab.v (p0)) + " / " + hz (lab.v (p1)) + " Hz" };
+            });
+        }
+        {
+            const int mx = resp ("ib10ge10", { { "800", 1.0f } }, { 800.0 }), mn = resp ("ib10ge10", { { "800", 0.0f } }, { 800.0 });
+            const int q3 = resp ("ib10ge10", { { "800", 0.75f } }, { 800.0 }), lv = resp ("ib10ge10", { { "LEVEL", 1.0f } }, { 1000.0 });
+            const int g9x = resp ("ib9ge9", { { "800", 1.0f } }, { 800.0 }), g9n = resp ("ib9ge9", { { "800", 0.0f } }, { 800.0 });
+            const int g6x = resp ("ib7ge601", { { "800", 1.0f } }, { 800.0 }), g6n = resp ("ib7ge601", { { "800", 0.0f } }, { 800.0 });
+            const int bex = resp ("ib10be10", { { "500", 1.0f } }, { 500.0 }), ben = resp ("ib10be10", { { "500", 0.0f } }, { 500.0 });
+            const int g3l = resp ("ib7ge300", { { "LOW", 1.0f } }, { 100.0 }), g3m = resp ("ib7ge300", { { "MID", 1.0f } }, { 600.0 });
+            const int g3h = resp ("ib7ge300", { { "HI", 1.0f } }, { 1500.0 });
+            lab.check ({ mx, mn, q3, lv, g9x, g9n, g6x, g6n, bex, ben, g3l, g3m, g3h },
+                       "EQ grafici: GE10 / GE9 800 Hz +-15.7 dB (3/4 di corsa +5.7, LEVEL +15), GE-601 +-12.3 dB, BE10 500 Hz +-15.8 dB, GE-300 +12.5 / +12.8 / +12.1 dB "
+                       "a 100 / 600 / 1500 Hz (+-1)", [&lab, mx, mn, q3, lv, g9x, g9n, g6x, g6n, bex, ben, g3l, g3m, g3h] {
+                auto v = [&lab] (int h) { return lab.v (h); };
+                const bool ok = within (v (mx), 15.7, 1.0) && within (v (mn), -15.7, 1.0) && within (v (q3), 5.7, 1.0) && within (v (lv), 15.0, 1.0)
+                             && within (v (g9x), 15.7, 1.0) && within (v (g9n), -15.7, 1.0) && within (v (g6x), 12.3, 1.0) && within (v (g6n), -12.3, 1.0)
+                             && within (v (bex), 15.8, 1.0) && within (v (ben), -15.8, 1.0) && within (v (g3l), 12.5, 1.0) && within (v (g3m), 12.8, 1.0)
+                             && within (v (g3h), 12.1, 1.0);
+                return Verdict { ok, "GE10 " + num (v (mx), 1) + " / " + num (v (mn), 1) + " / " + num (v (q3), 1) + ", LEVEL " + num (v (lv), 1) + "; GE9 " + num (v (g9x), 1)
+                                         + " / " + num (v (g9n), 1) + "; GE-601 " + num (v (g6x), 1) + " / " + num (v (g6n), 1) + "; BE10 " + num (v (bex), 1) + " / "
+                                         + num (v (ben), 1) + "; GE-300 " + num (v (g3l), 1) + " / " + num (v (g3m), 1) + " / " + num (v (g3h), 1) + " dB" };
+            });
+        }
+
+        // 5. compressori: seno 1 kHz, 2.5 s per livello, picco degli ultimi 200 ms; attacco: gradino -40 -> -10 dBFS, costante = 1/e della
+        //    sovraelongazione in dB (risoluzione 0.5 ms), rilascio (entro 1 dB) dopo il ritorno a -40 dBFS
+        {
+            auto level = [&lab, makeS2] (const char* id, Sets sets, double inDb)
+            {
+                return lab.add (id, [makeS2, sets, inDb] (const ModelDef& d)
+                {
+                    auto fx = makeS2 (d, sets);
+                    Buf x = sineBuf (48000.0, 1000.0, std::pow (10.0, inDb / 20.0), 2.5);
+                    processMono (*fx, x, 512);
+                    double pk = 0;
+                    for (size_t i = x.size() - 9600; i < x.size(); ++i) pk = std::max (pk, (double) std::abs (x[i]));
+                    return std::vector<double> { dbOf (pk) };
+                });
+            };
+            auto attack = [&lab, makeS2] (const char* id, Sets sets)
+            {
+                return lab.add (id, [makeS2, sets] (const ModelDef& d)
+                {
+                    const double sr = 48000.0;
+                    auto fx = makeS2 (d, sets);
+                    const int n = (int) (3 * sr);
+                    Buf x ((size_t) n);
+                    for (int i = 0; i < n; ++i)
+                        x[(size_t) i] = (float) (std::pow (10.0, (i >= sr && i < 2 * sr ? -10.0 : -40.0) / 20) * std::sin (2 * kPi * 1000 * i / sr));
+                    processMono (*fx, x, 512);
+                    auto env = [&x] (int i) { double m = 0; for (int k = 0; k < 48; ++k) m = std::max (m, (double) std::abs (x[(size_t) (i + k)])); return dbOf (m); };
+                    const double fin = env ((int) (2 * sr) - 960), finR = env (n - 960), ov = env ((int) sr) - fin;
+                    int t63 = (int) sr;
+                    while (t63 < 2 * sr - 48 && env (t63) - fin > ov / 2.718) t63 += 24;
+                    int tr = (int) (2 * sr);
+                    while (tr < n - 48 && std::abs (env (tr) - finR) > 1.0) tr += 48;
+                    return std::vector<double> { (t63 - sr) / sr * 1000.0, (tr - 2 * sr) / sr * 1000.0 };
+                });
+            };
+            const int c40 = level ("ib7cp835", {}, -40), c20 = level ("ib7cp835", {}, -20), c0 = level ("ib7cp835", {}, 0), c30 = level ("ib7cp835", {}, -30);
+            const int cat = attack ("ib7cp835", {});
+            lab.check ({ c40, c20, c0, c30, cat }, "CP-835 (Ross): -40 / -20 / 0 dBFS -> -24.6 / -15.8 / -15.6 dBFS (+-1.5), uscita entro 1.5 dB da -30 a 0 dBFS, "
+                                                   "attacco 5 ms, rilascio 0.8 s (+-20%)", [&lab, c40, c20, c0, c30, cat] {
+                const double span = std::abs (lab.v (c0) - lab.v (c30));
+                const bool ok = within (lab.v (c40), -24.6, 1.5) && within (lab.v (c20), -15.8, 1.5) && within (lab.v (c0), -15.6, 1.5) && span <= 1.5
+                             && within (lab.v (cat, 0), 5.0, 1.0) && within (lab.v (cat, 1), 800.0, 160.0);
+                return Verdict { ok, num (lab.v (c40), 1) + " / " + num (lab.v (c20), 1) + " / " + num (lab.v (c0), 1) + " dBFS, -30..0 " + num (span) + " dB, attacco "
+                                         + num (lab.v (cat, 0), 1) + " ms, rilascio " + num (lab.v (cat, 1), 0) + " ms" };
+            });
+            struct Cv { const char* id; double in, out; };
+            static const Cv cvs[] = { { "ib9cp9", -30, -21.8 }, { "ib9cp9", 0, -18.1 }, { "ib10cp10", -30, -25.3 }, { "ib10cp10", 0, -18.2 },
+                                      { "ibstcp5", -30, -25.3 }, { "ibstcp5", 0, -18.2 }, { "ib10bp10", -30, -25.3 }, { "ib10bp10", 0, -18.2 },
+                                      { "ibstbp5", -30, -25.3 }, { "ibstbp5", 0, -18.2 }, { "ibxec30", 0, -17.8 } };
+            std::vector<int> hc;
+            for (const auto& c : cvs) hc.push_back (level (c.id, {}, c.in));
+            lab.check (hc, "CP9 / CP10 / CP5 / BP10 / BP5 / EC30: curva statica a -30 e 0 dBFS (CP9 -21.8 / -18.1, CP10-BP5 -25.3 / -18.2, EC30 0 -> -17.8 dBFS; +-1.5)",
+                       [&lab, hc] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < hc.size(); ++k)
+                {
+                    const double v = lab.v (hc[k]);
+                    ok = ok && within (v, cvs[k].out, 1.5);
+                    if (k % 2 == 0) detail << cvs[k].id << " " << num (v, 1); else detail << " / " << num (v, 1) << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") };
+            });
+            struct At { const char* id; double a0, a1; };
+            static const At ats[] = { { "ib9cp9", 7.0, 20.0 }, { "ib10cp10", 8.0, 21.5 }, { "ibstcp5", 8.0, 21.5 }, { "ib10bp10", 4.0, 10.0 }, { "ibstbp5", 4.0, 10.0 } };
+            std::vector<int> ha;
+            for (const auto& a : ats) { ha.push_back (attack (a.id, { { "ATTACK", 0.0f } })); ha.push_back (attack (a.id, { { "ATTACK", 1.0f } })); }
+            lab.check (ha, "Compressori: costante d'attacco con ATTACK 0 / 1 (gradino -40 -> -10 dBFS): CP9 7 / 20 ms, CP10 e CP5 8 / 21.5 ms, BP10 e BP5 4 / 10 ms "
+                           "(+-15% + 0.5 ms)", [&lab, ha] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < std::size (ats); ++k)
+                {
+                    const double a = lab.v (ha[2 * k]), b = lab.v (ha[2 * k + 1]);
+                    ok = ok && std::abs (a - ats[k].a0) <= 0.15 * ats[k].a0 + 0.5 && std::abs (b - ats[k].a1) <= 0.15 * ats[k].a1 + 0.5;
+                    detail << ats[k].id << " " << num (a, 1) << " / " << num (b, 1) << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") + " ms" };
+            });
+            const int t40 = level ("ibtstc999", {}, -40), t20 = level ("ibtstc999", {}, -20), t0 = level ("ibtstc999", {}, 0);
+            lab.check ({ t40, t20, t0 }, "TC999: -40 / -20 / 0 dBFS -> -35.1 / -22.9 / -13.7 dBFS (compressione dolce ~2:1, +-2)", [&lab, t40, t20, t0] {
+                const bool ok = within (lab.v (t40), -35.1, 2.0) && within (lab.v (t20), -22.9, 2.0) && within (lab.v (t0), -13.7, 2.0);
+                return Verdict { ok, num (lab.v (t40), 1) + " / " + num (lab.v (t20), 1) + " / " + num (lab.v (t0), 1) + " dBFS" };
+            });
+            const int o40 = level ("ib7cp830", { { "SUSTAIN", 1.0f } }, -40), o20 = level ("ib7cp830", { { "SUSTAIN", 1.0f } }, -20);
+            lab.check ({ o40, o20 }, "CP-830 (fotocellula): con SUSTAIN 1 l'uscita da -40 a -20 dBFS varia meno di 6 dB (regime dopo 2 s)", [&lab, o40, o20] {
+                const double d = lab.v (o20) - lab.v (o40);
+                return Verdict { std::abs (d) < 6.0, num (lab.v (o40), 1) + " -> " + num (lab.v (o20), 1) + " dBFS (" + num (d, 1) + " dB)" };
+            });
+        }
+
+        // click oltre 10x analizzati e segnalati: PPE1 HIGH (18.5x: biquad in forma diretta ricalcolati ogni 8 campioni con 6 ms di
+        // lisciatura, una mensola di +-16 dB a 5.6 kHz lascia un transitorio) e TC999 SUSTAIN (11.8x a 4 ms dal cambio: il VCA si
+        // riassesta con il suo attacco); col metodo del banco s2 (seno + 1 kHz, 15 ms) entrambi < 3 (2.89 / 2.24). Il reset() di AF-201,
+        // AF9, AFL, AW7 e AW5 non riporta l'inviluppo allo stato iniziale (innocuo: reset() si usa riaccendendo il pedale)
+        addClickAndDeterminism (lab, kStage4Dyn, numDyn, "Tappa 4 dinamica/EQ/filtri", 10.0, false,
+                                { { "ib10ppe1", "HIGH", 20.0 }, { "ibtstc999", "SUSTAIN", 15.0 } });
+        lab.run (report);
+    }
+
+    //------------------------------------------------------------------------------
+    // Misure del banco s3 (stereo, ingresso uguale sui due canali, blocchi da 256, comandi per indice dopo prepare)
+    //------------------------------------------------------------------------------
+    /** 'ir': assestamento 1.5 s in silenzio, impulso di 0.05 V; { ritardo del picco dopo 20 campioni (ms), -3 dB del ramo
+        ritardato sopra il suo massimo (Hz) }. */
+    std::vector<double> bbdImpulse (const pt::engine::ModelDef& d, const std::map<int, float>& p)
+    {
+        const double SR = 48000.0;
+        auto fx = makeAfter (d, p);
+        Buf l ((size_t) (SR * 1.5), 0.0f), r = l;
+        runStereo256 (*fx, l, r);
+        const int n = (int) (SR * 1.2);
+        l.assign ((size_t) n, 0.0f); r = l;
+        l[0] = r[0] = 0.05f;
+        runStereo256 (*fx, l, r);
+        int best = 20;
+        float bv = 0;
+        for (int i = 20; i < n; ++i) if (std::abs (l[(size_t) i]) > bv) { bv = std::abs (l[(size_t) i]); best = i; }
+        std::vector<float> w (16384, 0.0f);
+        const int a = std::max (20, best - 24);
+        for (int i = 0; i < 2048 && a + i < n; ++i) w[(size_t) i] = l[(size_t) (a + i)];
+        juce::dsp::FFT fft (13);
+        fft.performFrequencyOnlyForwardTransform (w.data());
+        float pk = 0;
+        int kpk = 0;
+        for (int k = 3; k < 4096; ++k) if (w[(size_t) k] > pk) { pk = w[(size_t) k]; kpk = k; }
+        int k3 = kpk;
+        while (k3 < 4095 && w[(size_t) k3] > pk * 0.7071f) ++k3;
+        return { best * 1000.0 / SR, k3 * SR / 8192.0 };
+    }
+
+    /** 'track': treno d'impulsi da 0.5 V ogni 30 ms per 10 s dopo 1 s di silenzio; { ritardo min, max (ms), LFO (Hz) }. */
+    std::vector<double> bbdTrack (const pt::engine::ModelDef& d, const std::map<int, float>& p)
+    {
+        const double SR = 48000.0, seconds = 10.0, stepMs = 30.0;
+        auto fx = makeAfter (d, p);
+        Buf l ((size_t) SR, 0.0f), r = l;
+        runStereo256 (*fx, l, r);
+        const int n = (int) (seconds * SR), step = (int) (stepMs * 0.001 * SR);
+        l.assign ((size_t) n, 0.0f); r = l;
+        for (int i = 0; i < n; i += step) l[(size_t) i] = r[(size_t) i] = 0.5f;
+        runStereo256 (*fx, l, r);
+        std::vector<double> dl;
+        for (int i = 0; i + step <= n; i += step)
+        {
+            int best = -1;
+            float bv = 0;
+            for (int j = 12; j < step - 2; ++j) if (std::abs (l[(size_t) (i + j)]) > bv) { bv = std::abs (l[(size_t) (i + j)]); best = j; }
+            dl.push_back (best * 1000.0 / SR);
+        }
+        double lo = 1e9, hi = 0, mean = 0;
+        for (double v : dl) { lo = std::min (lo, v); hi = std::max (hi, v); mean += v; }
+        mean /= (double) dl.size();
+        const int cross = hystCross (dl, mean, 0.3 * (hi - lo));
+        return { lo, hi, cross / 2.0 / ((double) dl.size() * stepMs * 0.001) };
+    }
+
+    /** 'notch': impulso ogni 60 ms (dopo 1 s), notch = minimo locale 12 dB sotto il massimo in [f/2, 2f] (FFT 4096);
+        { primo notch min, max (Hz), numero massimo di notch, LFO (Hz), terzo notch dell'ultima finestra (Hz, 0 se assente) }. */
+    std::vector<double> phaserNotches (const pt::engine::ModelDef& d, const std::map<int, float>& p, double seconds)
+    {
+        const double SR = 48000.0;
+        auto fx = makeAfter (d, p);
+        Buf l ((size_t) SR, 0.0f), r = l;
+        runStereo256 (*fx, l, r);
+        const int n = (int) (seconds * SR), step = (int) (0.06 * SR);
+        l.assign ((size_t) n, 0.0f); r = l;
+        for (int i = 0; i < n; i += step) l[(size_t) i] = r[(size_t) i] = 0.5f;
+        runStereo256 (*fx, l, r);
+        double nlo = 1e9, nhi = 0, third = 0;
+        std::vector<double> first;
+        int maxNotches = 0;
+        juce::dsp::FFT fft (12);
+        for (int i = 0; i + step <= n; i += step)
+        {
+            std::vector<float> w (8192, 0.0f);
+            for (int j = 0; j < step && j < 4096; ++j) w[(size_t) j] = l[(size_t) (i + j)];
+            fft.performFrequencyOnlyForwardTransform (w.data());
+            std::vector<double> nf;
+            for (int k = 2; k < 2000; ++k)
+                if (w[(size_t) k] < w[(size_t) k - 1] && w[(size_t) k] <= w[(size_t) k + 1])
+                {
+                    float loc = 0;
+                    for (int j = std::max (1, k / 2); j < std::min (2047, k * 2 + 2); ++j) loc = std::max (loc, w[(size_t) j]);
+                    if (dbOf (w[(size_t) k] / std::max (loc, 1.0e-30f)) < -12) nf.push_back (k * SR / 4096);
+                }
+            maxNotches = std::max (maxNotches, (int) nf.size());
+            third = nf.size() >= 3 ? nf[2] : 0.0;
+            if (! nf.empty()) { nlo = std::min (nlo, nf.front()); nhi = std::max (nhi, nf.front()); first.push_back (nf.front()); }
+            else first.push_back (0);
+        }
+        double mean = 0;
+        int cnt = 0;
+        for (double v : first) if (v > 0) { mean += std::log (v); ++cnt; }
+        mean = cnt ? std::exp (mean / cnt) : 0;
+        std::vector<double> lg;
+        for (double v : first) lg.push_back (v > 0 ? std::log (v) : std::log (mean));
+        const int cross = cnt ? hystCross (lg, std::log (mean), 0.3 * std::log (nhi / nlo)) : 0;
+        return { nlo, nhi, (double) maxNotches, cross / 2.0 / ((double) first.size() * 0.06), third };
+    }
+
+    /** 'fb': frase del banco s3 (6 s) + silenzio fino a 14 s; { picco (V), coda 12-14 s (dBV), finito }. */
+    std::vector<double> bbdFeedback (const pt::engine::ModelDef& d, const std::map<int, float>& p)
+    {
+        static const Buf g = guitarS3 (6.0, 5);
+        auto fx = makeAfter (d, p);
+        Buf l = g;
+        l.resize ((size_t) (48000.0 * 14), 0.0f);
+        Buf r = l;
+        runStereo256 (*fx, l, r);
+        double pk = 0;
+        bool fin = true;
+        for (float v : l) { fin = fin && std::isfinite (v); pk = std::max (pk, (double) std::abs (v)); }
+        return { pk, dbOf (rmsOf (l, (size_t) (48000.0 * 12), l.size())), fin ? 1.0 : 0.0, dbOf (rmsOf (l, (size_t) (48000.0 * 6), (size_t) (48000.0 * 8))) };
+    }
+
+    /** 'am': seno a 440 Hz di 0.3 V per 10 s, inviluppo RMS su 5 ms (da 1 s); { freq L, profondita' L (dB), escursione di L^2 + R^2 (dB) }. */
+    std::vector<double> tremoloAm (const pt::engine::ModelDef& d, const std::map<int, float>& p)
+    {
+        const double SR = 48000.0;
+        auto fx = makeAfter (d, p);
+        const int n = (int) (SR * 10);
+        Buf l = sineBuf (SR, 440.0, 0.3, 10.0), r = l;
+        runStereo256 (*fx, l, r);
+        const int win = (int) (SR * 0.005);
+        std::vector<double> e, pw;
+        for (int i = (int) SR; i + win <= n; i += win)
+        {
+            const double a = rmsOf (l, (size_t) i, (size_t) (i + win)), b = rmsOf (r, (size_t) i, (size_t) (i + win));
+            e.push_back (a);
+            pw.push_back (a * a + b * b);
+        }
+        double lo = 1e9, hi = 0, mean = 0, plo = 1e9, phi = 0;
+        for (double v : e) { lo = std::min (lo, v); hi = std::max (hi, v); mean += v; }
+        for (double v : pw) { plo = std::min (plo, v); phi = std::max (phi, v); }
+        mean /= (double) e.size();
+        const int cross = hystCross (e, mean, 0.3 * (hi - lo));
+        return { cross / 2.0 / ((double) e.size() * 0.005), dbOf (hi / std::max (lo, 1e-9)), 10.0 * std::log10 (phi / std::max (plo, 1e-30)) };
+    }
+
+    /** Tappa 4, lavoro s3: phaser, chorus, flanger, tremolo e delay BBD (FxStage4Mod.cpp). Metodi del banco s3. */
+    void runStage4ModTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        constexpr int numMod = countOf (kStage4Mod);
+        Lab lab;
+        /** Comandi per etichetta o ruolo (setsS2) di un modello del catalogo, eventualmente con la config modificata. */
+        auto at = [&lab] (const char* id, const char* extra, Sets sets, std::function<std::vector<double> (const ModelDef&, const std::map<int, float>&)> m)
+        {
+            auto f = [sets, m] (const ModelDef& d) { return m (d, setsS2 (d, sets)); };
+            return extra != nullptr ? addPatched (lab, id, extra, f) : lab.add (id, f);
+        };
+        auto tol = [] (double x, double ref, double rel, double abs) { return std::abs (x - ref) <= rel * std::abs (ref) + abs; };
+
+        // 0. pedali esistenti invariati bit per bit (banco s3 'hash': frase di 6 s, fabbrica / tutti 0.8 / tutti 0.2, R = 0.7 L)
+        {
+            struct Ref { const char* id; uint64_t hash; };
+            static const Ref refs[] = { { "ce2", 0x1c265696304c2dfcull }, { "ce1", 0xba7cb4ec4a4198f0ull }, { "bf2", 0xc0f5da7731dbaa2full },
+                                        { "ph1", 0x57bfd71565f1db5bull }, { "ph3", 0x50051f3685d3e211ull }, { "dm2", 0xbc24ad3e410c67b0ull },
+                                        { "tr2", 0x77647c9d8ed04ee8ull }, { "evh90", 0xc38117b07b98878full }, { "ehxss75", 0x2437960de13072a7ull },
+                                        { "ehxem76", 0x1649948fd59db79bull }, { "ehmm76", 0x8519405ebac1118bull }, { "ehdmm", 0xbfb931a230a17f83ull },
+                                        { "evh117", 0x64226c87e45b4bffull }, { "zw38", 0x4d812a3368684e9eull }, { "ehxsclone", 0xaf8edbd4a6c5c7a3ull },
+                                        { "evh30", 0xea8fd4e1fca4787full }, { "ehxbassclo", 0xa0005ebf0712db27ull }, { "ehxstpolyc", 0x2fd6ebdf5571faffull },
+                                        { "ehxbadst1", 0x011bc05506118b9full }, { "ehxpoly79", 0x1031e13bfa7ca007ull } };
+            static const Buf g = guitarS3 (6.0);
+            std::vector<int> h;
+            for (const auto& r : refs)
+            {
+                h.push_back (lab.add (r.id, [] (const ModelDef& d)
+                {
+                    uint64_t hv = 1469598103934665603ull;
+                    for (int set = 0; set < 3; ++set)
+                    {
+                        std::map<int, float> p;
+                        if (set > 0) for (int k = 0; k < d.numControls; ++k) p[k] = set == 1 ? 0.8f : 0.2f;
+                        auto fx = makeAfter (d, p);
+                        Buf bl = g, br = g;
+                        for (auto& x : br) x *= 0.7f;
+                        runStereo256 (*fx, bl, br);
+                        hv = fnvBytes (br, fnvBytes (bl, hv));
+                    }
+                    return std::vector<double> { (double) (uint32_t) (hv >> 32), (double) (uint32_t) hv };
+                }));
+                lab.first (h.back());
+            }
+            lab.check (h, "Tappa 4: 20 modulazioni e delay esistenti (CE-2, CE-1, BF-2, PH-1/3, DM-2, TR-2, EVH 90/117/30, EHX, MXR) invariati bit per bit",
+                       [&lab, h] {
+                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const uint64_t v = ((uint64_t) lab.v (h[k], 0) << 32) | (uint64_t) lab.v (h[k], 1);
+                    if (v != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) v) << ") ";
+                }
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici" : bad.trim() };
+            });
+        }
+
+        // 1. robustezza dei 46 modelli (banco s3 'check', frase di 3 s invece di 8): comandi tutti a 1, tutti a 0, casuali ogni 40 blocchi,
+        //    casuali con l'ingresso x6 (~2 V di picco), stessa istanza; livelli col riff a -12 dBFS e i comandi di default
+        {
+            static const Buf g = guitarS3 (3.0, 3);
+            static const Buf riff = guitarS1 (true, 48000.0, 3.0, -12.0);
+            std::vector<int> h, hl;
+            for (int m = 0; m < numMod; ++m)
+            {
+                h.push_back (lab.add (kStage4Mod[m], [] (const ModelDef& d)
+                {
+                    auto fx = makeAfter (d, {});
+                    double peak = 0;
+                    bool finite = true;
+                    uint32_t s = 77;
+                    auto rnd = [&s] { s ^= s << 13; s ^= s >> 17; s ^= s << 5; return (float) (s & 0xffff) / 65535.0f; };
+                    for (int pass = 0; pass < 4; ++pass)
+                    {
+                        Buf l = g, r = g;
+                        const float gain = pass == 3 ? 6.0f : 1.0f;
+                        for (auto& x : l) x *= gain;
+                        for (auto& x : r) x *= gain;
+                        runStereo256 (*fx, l, r, [&] (size_t i)
+                        {
+                            if (i % (256 * 40) == 0)
+                                for (int k = 0; k < d.numControls; ++k) fx->params[k].store (pass == 0 ? 1.0f : pass == 1 ? 0.0f : rnd());
+                        });
+                        for (size_t i = 0; i < l.size(); ++i)
+                        {
+                            finite = finite && std::isfinite (l[i]) && std::isfinite (r[i]);
+                            peak = std::max (peak, (double) std::max (std::abs (l[i]), std::abs (r[i])));
+                        }
+                    }
+                    return std::vector<double> { finite ? 1.0 : 0.0, peak };
+                }));
+                hl.push_back (lab.add (kStage4Mod[m], [] (const ModelDef& d)
+                {
+                    auto fx = makeS1 (d, {});
+                    Buf y = riff;
+                    processMono (*fx, y, 512);
+                    double pk = 0;
+                    bool fin = true;
+                    for (float v : y) { fin = fin && std::isfinite (v); pk = std::max (pk, (double) std::abs (v)); }
+                    return std::vector<double> { fin ? 1.0 : 0.0, dbOf (pk), dbOf (rmsOf (y, (size_t) (0.05 * 48000.0))) };
+                }));
+            }
+            lab.check (h, "Tappa 4 modulazioni: robustezza (46 modelli, comandi a 1 / 0 / casuali, ingresso fino a ~2 V): finiti, picco < 8 V", [&lab, h] {
+                double worst = 0;
+                juce::String bad, worstId;
+                for (int m = 0; m < numMod; ++m)
+                {
+                    const bool fin = lab.v (h[(size_t) m], 0) > 0.5;
+                    const double pk = fin ? lab.v (h[(size_t) m], 1) : 999.0;
+                    if (pk > worst) { worst = pk; worstId = kStage4Mod[m]; }
+                    if (! fin || pk >= 8.0) bad << kStage4Mod[m] << (fin ? "" : " NaN") << " ";
+                }
+                return Verdict { bad.isEmpty(), "picco max " + num (worst) + " V (" + worstId + ") " + bad.trim() };
+            });
+            lab.check (hl, "Tappa 4 modulazioni: livelli con riff a -12 dBFS e comandi di default (46 modelli: finiti, picco < 0 dBFS, RMS -40..-20 dBFS)", [&lab, hl] {
+                int good = 0;
+                double lo = 0, hi = -200, pk = -200;
+                juce::String bad;
+                for (int m = 0; m < numMod; ++m)
+                {
+                    const double p = lab.v (hl[(size_t) m], 1), rms = lab.v (hl[(size_t) m], 2);
+                    const bool fine = lab.v (hl[(size_t) m], 0) > 0.5 && p < 0.0 && rms > -40.0 && rms < -20.0;
+                    if (fine) ++good; else bad << kStage4Mod[m] << " (RMS " << num (rms, 1) << ", picco " << num (p, 1) << ") ";
+                    lo = std::min (lo, rms); hi = std::max (hi, rms); pk = std::max (pk, p);
+                }
+                return Verdict { good == numMod, juce::String (good) + "/46, RMS " + num (lo, 1) + ".." + num (hi, 1) + " dBFS, picco max " + num (pk, 1) + " dBFS " + bad.trim() };
+            });
+        }
+
+        // 2. ritardo dei BBD (impulso, comandi assestati 1.5 s, retroazione e profondita' 0; +-4% + 0.25 ms) e banda del ramo ritardato
+        //    (senza rumore e compander, come il banco)
+        {
+            struct D { const char* id; const char* extra; Sets sets; double ms; };
+            const D ds[] = {
+                { "ib9fl9", "noise=0 gate=0", { { "REGEN", 0.0f }, { "WIDTH", 0.0f }, { "DELAY TIME", 0.0f } }, 1.0 },
+                { "ib9fl9", "noise=0 gate=0", { { "REGEN", 0.0f }, { "WIDTH", 0.0f }, { "DELAY TIME", 1.0f } }, 12.8 },
+                { "ib9ad9", "noise=0 comp=0", { { "DELAY TIME", 0.0f }, { "REPEAT", 0.0f } }, 10.0 },
+                { "ib9ad9", "noise=0 comp=0", { { "DELAY TIME", 1.0f }, { "REPEAT", 0.0f } }, 300.0 },
+                { "ib10cd10", "noise=0 comp=0", { { "D-TIME", 0.0f }, { "REPEAT", 0.0f } }, 20.0 },
+                { "ib10cd10", "noise=0 comp=0", { { "D-TIME", 1.0f }, { "REPEAT", 0.0f } }, 300.0 },
+                { "ibmadmini", "noise=0 comp=0", { { "DELAY TIME", 0.0f }, { "REPEAT", 0.0f } }, 20.0 },
+                { "ibmadmini", "noise=0 comp=0", { { "DELAY TIME", 1.0f }, { "REPEAT", 0.0f } }, 600.0 },
+                { "ibmes2", "noise=0 comp=0", { { "DELAY TIME", 0.0f }, { "FEEDBACK", 0.0f } }, 30.0 },
+                { "ibmes2", "noise=0 comp=0", { { "DELAY TIME", 1.0f }, { "FEEDBACK", 0.0f } }, 1000.0 },
+                { "ibmes3", "noise=0 comp=0", { { "DELAY TIME", 0.3f }, { "FEEDBACK", 0.0f }, { "ANA/DIG", 0.0f } }, 90.4 },
+                { "ibmes3", "noise=0 comp=0", { { "DELAY TIME", 0.3f }, { "FEEDBACK", 0.0f }, { "ANA/DIG", 1.0f } }, 118.7 },
+                { "ib10sc10", "noise=0 gate=0", { { "WIDTH", 0.0f }, { "D-TIME", 0.5f } }, 2.68 },
+                { "ib9cs9", "noise=0 gate=0", { { "WIDTH", 0.0f } }, 5.22 } };
+            std::vector<int> h;
+            for (const auto& x : ds) h.push_back (at (x.id, x.extra, x.sets, bbdImpulse));
+            std::vector<D> copy (std::begin (ds), std::end (ds));
+            lab.check (h, "BBD: ritardo del ramo ritardato (FL9 1 / 12.8, AD9 10 / 300, CD10 20 / 300, AD MINI 20 / 600, ES2 30 / 1000, ES3 0.3 ANALOG / DIGITAL "
+                          "90.4 / 118.7, SC10 2.68, CS9 5.22 ms; +-4% + 0.25 ms)", [&lab, h, copy, tol] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const double v = lab.v (h[k]);
+                    const bool g = tol (v, copy[k].ms, 0.04, 0.25);
+                    ok = ok && g;
+                    detail << copy[k].id << " " << num (v) << (g ? "" : " (FUORI)") << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") + " ms" };
+            });
+            struct B { int idx; double hz, rel; };
+            const B bs[] = { { 0, 6200.0, 0.10 }, { 13, 5700.0, 0.10 }, { 2, 2300.0, 0.12 }, { 3, 2150.0, 0.12 }, { 7, 1000.0, 0.15 } };
+            std::vector<int> hb;
+            for (const auto& b : bs) hb.push_back (h[(size_t) b.idx]);
+            std::vector<B> bcopy (std::begin (bs), std::end (bs));
+            lab.check (hb, "BBD: banda -3 dB del ramo ritardato (FL9 6.2 kHz +-10%, CS9 5.7 kHz +-10%, AD9 10 / 300 ms 2.3 / 2.15 kHz +-12%, AD MINI 600 ms 1.0 kHz +-15%)",
+                       [&lab, h, bcopy, copy] {
+                bool ok = true;
+                juce::String detail;
+                for (const auto& b : bcopy)
+                {
+                    const double v = lab.v (h[(size_t) b.idx], 1);
+                    ok = ok && std::abs (v / b.hz - 1.0) <= b.rel;
+                    detail << copy[(size_t) b.idx].id << " " << juce::String (juce::roundToInt (v)) << " Hz; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") };
+            });
+        }
+
+        // 3. escursione e frequenza dell'LFO (treno d'impulsi ogni 30 ms; estremi +-6% + 0.25 ms, LFO +-8%)
+        {
+            struct T { const char* id; Sets sets; double lo, hi, hz; };
+            const T ts[] = { { "ib9cs9", { { "SPEED", 0.5f }, { "WIDTH", 1.0f } }, 3.3, 8.5, 0.95 },
+                             { "ib10sc10", { { "SPEED", 0.5f }, { "WIDTH", 1.0f } }, 1.6, 4.9, 1.90 },
+                             { "ib9bc9", { { "SPEED A", 0.5f }, { "WIDTH A", 1.0f }, { "WIDTH B", 0.0f } }, 4.7, 7.8, 2.53 },
+                             { "ib7fl301", { { "SPEED", 0.5f }, { "WIDTH", 1.0f }, { "REGEN", 0.0f } }, 2.6, 11.5, 0.74 },
+                             { "ibmaf2", { { "SPEED", 0.5f }, { "RANGE", 1.0f }, { "ENHANCE", 0.0f } }, 0.6, 14.8, 0.63 } };
+            std::vector<int> h;
+            for (const auto& t : ts) h.push_back (at (t.id, "gate=0", t.sets, bbdTrack));
+            std::vector<T> copy (std::begin (ts), std::end (ts));
+            lab.check (h, "BBD: escursione del ritardo e LFO (CS9 3.3-8.5 ms 0.95 Hz, SC10 1.6-4.9 ms 1.90 Hz, BC9 4.7-7.8 ms 2.53 Hz, FL301 2.6-11.5 ms 0.74 Hz, "
+                          "AF2 0.6-14.8 ms 0.63 Hz)", [&lab, h, copy, tol] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const double lo = lab.v (h[k], 0), hi = lab.v (h[k], 1), f = lab.v (h[k], 2);
+                    const bool g = tol (lo, copy[k].lo, 0.06, 0.25) && tol (hi, copy[k].hi, 0.06, 0.25) && std::abs (f / copy[k].hz - 1.0) <= 0.08;
+                    ok = ok && g;
+                    detail << copy[k].id << " " << num (lo) << "-" << num (hi) << " ms " << num (f, 3) << " Hz" << (g ? "" : " (FUORI)") << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") };
+            });
+        }
+
+        // 4. phaser: traiettoria del primo notch, numero di notch, LFO (impulso ogni 60 ms; estremi +-12%, notch esatti, LFO +-8%)
+        {
+            struct P { const char* id; Sets sets; double seconds, lo, hi; int notches; double hz; };
+            const P ps[] = {
+                { "ib7pt999", { { "SPEED", 0.0f } }, 22, 94, 1031, 2, 0 },
+                { "ib7pt999", { { "SPEED", 0.5f } }, 10, 0, 0, 2, 0.837 },
+                { "ib7pt707", { { "SPEED", 0.0f }, { "FEEDBACK", 0.0f } }, 12, 70, 1734, 2, 0 },
+                { "ib7pt707", { { "SPEED", 0.5f }, { "FEEDBACK", 0.0f } }, 10, 0, 0, 2, 1.673 },
+                { "ib7jl70", { { "SPEED", 0.0f }, { "DEPTH", 0.0f } }, 12, 35, 457, 4, 0 },
+                { "ibtlph7", { { "SPEED", 0.5f }, { "DEPTH", 1.0f }, { "FEEDBACK", 0.0f }, { "MODE", 0.0f } }, 10, 35, 281, 2, 0.424 },
+                { "ibtlph7", { { "SPEED", 0.0f }, { "DEPTH", 1.0f }, { "FEEDBACK", 0.0f }, { "MODE", 1.0f } }, 60, 23, 188, 3, 0 },
+                { "ib10ph10", { { "SPEED", 0.0f }, { "WIDTH", 1.0f }, { "FEEDBACK", 0.0f }, { "MODE", 0.0f } }, 55, 0, 0, 3, 0 },
+                { "ib10ph10", { { "SPEED", 0.0f }, { "WIDTH", 1.0f }, { "FEEDBACK", 0.0f }, { "MODE", 1.0f } }, 55, 0, 0, 5, 0 },
+                { "ib10ph10", { { "SPEED", 0.5f }, { "WIDTH", 1.0f }, { "FEEDBACK", 0.0f } }, 10, 0, 0, 3, 0.632 },
+                { "ibtlpm7", { { "SPEED", 0.0f }, { "DEPTH", 1.0f } }, 2.2 / 0.15, 47, 3902, 1, 0 },        // FEEDBACK bipolare (fbbip): al centro
+                { "ibtlpm7", { { "SPEED", 0.5f }, { "DEPTH", 1.0f } }, 10, 0, 0, 1, 0.875 } };
+            std::vector<int> h;
+            for (const auto& p : ps)
+            {
+                const double s = p.seconds;
+                h.push_back (at (p.id, nullptr, p.sets, [s] (const ModelDef& d, const std::map<int, float>& m) { return phaserNotches (d, m, s); }));
+                if (s > 20) lab.first (h.back());
+            }
+            const int cal = at ("ibtlph7", nullptr, { { "DEPTH", 0.0f }, { "MODE", 1.0f } }, [] (const ModelDef& d, const std::map<int, float>& m) { return phaserNotches (d, m, 3.0); });
+            std::vector<P> copy (std::begin (ps), std::end (ps));
+            auto hAll = h;
+            hAll.push_back (cal);
+            lab.check (hAll, "Phaser: primo notch (PT-999 94-1031, PT-707 70-1734, Jetlyzer 35-457, PH7 35-281 / 23-188 Hz), numero di notch (2 / 2 / 4 / 2-3, PH10 3 / 5, "
+                             "PM7 1), LFO a meta' corsa (+-8%); PH7 a riposo: terzo notch a 1.4 kHz (+-10%)", [&lab, h, copy, cal] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const auto& p = copy[k];
+                    const double lo = lab.v (h[k], 0), hi = lab.v (h[k], 1), nn = lab.v (h[k], 2), f = lab.v (h[k], 3);
+                    bool g = (int) nn == p.notches;
+                    if (p.lo > 0) g = g && std::abs (lo / p.lo - 1.0) <= 0.12 && std::abs (hi / p.hi - 1.0) <= 0.12;
+                    if (p.hz > 0) g = g && std::abs (f / p.hz - 1.0) <= 0.08;
+                    ok = ok && g;
+                    detail << p.id << " ";
+                    if (p.lo > 0) detail << juce::roundToInt (lo) << "-" << juce::roundToInt (hi) << " Hz ";
+                    detail << (int) nn << "n";
+                    if (p.hz > 0) detail << " " << num (f, 3) << " Hz";
+                    detail << (g ? "" : " (FUORI)") << "; ";
+                }
+                const double third = lab.v (cal, 4);
+                ok = ok && std::abs (third / 1400.0 - 1.0) <= 0.10;
+                return Verdict { ok, detail + "PH7 terzo notch " + juce::String (juce::roundToInt (third)) + " Hz" };
+            });
+        }
+
+        // 5. retroazione dei delay al massimo (frase 6 s + silenzio fino a 14 s): finiti, picco < 1 V, coda < -90 dBV fino a DELAY TIME 0.3,
+        //    < -55 dBV per tutti; ES2 in autooscillazione limitata (coda -35..-15 dBV, picco < 1.5 V); flanger e chorus al massimo coda < -70 dBV
+        {
+            struct F { const char* id; Sets base; const char* time; };
+            const F fs[] = { { "ib9ad9", { { "REPEAT", 1.0f } }, "DELAY TIME" }, { "ib7ad80", { { "REPEAT", 1.0f } }, "DELAY TIME" },
+                             { "ib10cd10", { { "REPEAT", 1.0f } }, "D-TIME" }, { "ibmad99", { { "FEEDBACK", 1.0f } }, "DELAY TIME" },
+                             { "ibmadmini", { { "REPEAT", 1.0f } }, "DELAY TIME" }, { "ibmes2", { { "FEEDBACK", 1.0f } }, "DELAY TIME" },
+                             { "ibmes3", { { "FEEDBACK", 1.0f } }, "DELAY TIME" } };
+            const float times[] = { 0.0f, 0.15f, 0.3f, 0.5f, 0.7f, 1.0f };
+            std::vector<int> h;
+            std::vector<juce::String> what;
+            for (const auto& f : fs)
+                for (float t : times)
+                {
+                    Sets s = f.base;
+                    s.push_back ({ f.time, t });
+                    h.push_back (at (f.id, nullptr, s, bbdFeedback));
+                    what.push_back (juce::String (f.id) + "@" + num (t));
+                }
+            // ES3 DIGITAL: il ritardo digitale non ha le perdite della linea BBD, l'anello resta a fbmax = 0.96 per ripetizione (a 118 ms
+            // dopo 6 s di silenzio -18 dB soltanto): niente soglie di coda, la coda deve solo calare (12-14 s sotto 6-8 s)
+            std::vector<int> hdig;
+            for (float t : times) hdig.push_back (at ("ibmes3", nullptr, { { "FEEDBACK", 1.0f }, { "ANA/DIG", 1.0f }, { "DELAY TIME", t } }, bbdFeedback));
+            lab.check (hdig, "ES3 DIGITAL con FEEDBACK al massimo (DELAY TIME 0..1): finito, picco < 1 V, la coda cala (12-14 s sotto 6-8 s)", [&lab, hdig] {
+                bool ok = true;
+                juce::String detail;
+                for (int k : hdig)
+                {
+                    ok = ok && lab.v (k, 2) > 0.5 && lab.v (k, 0) < 1.0 && lab.v (k, 1) < lab.v (k, 3);
+                    detail << num (lab.v (k, 3), 1) << " -> " << num (lab.v (k, 1), 1) << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") + " dBV" };
+            });
+            lab.check (h, "Delay BBD con REPEAT/FEEDBACK al massimo (AD9, AD80, CD10, AD99, AD MINI, ES2, ES3; DELAY TIME 0..1): finiti, picco < 1 V, "
+                          "coda < -90 dBV fino a 0.3 e < -55 dBV per tutti", [&lab, h, what] {
+                bool ok = true;
+                double pk = 0, tailShort = -300, tailAll = -300;
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const double p = lab.v (h[k], 0), tail = lab.v (h[k], 1);
+                    const bool shortT = (k % 6) <= 2;
+                    const bool g = lab.v (h[k], 2) > 0.5 && p < 1.0 && tail < -55.0 && (! shortT || tail < -90.0);
+                    ok = ok && g;
+                    pk = std::max (pk, p);
+                    (shortT ? tailShort : tailAll) = std::max (shortT ? tailShort : tailAll, tail);
+                    if (! g) bad << what[k] << " (" << num (p, 2) << " V, " << num (tail, 1) << " dBV) ";
+                }
+                return Verdict { ok, "picco max " + num (pk, 3) + " V, coda max " + num (tailShort, 1) + " dBV (<= 0.3) / " + num (tailAll, 1) + " dBV " + bad.trim() };
+            });
+            const int osc = at ("ibmes2", nullptr, { { "FEEDBACK", 1.0f }, { "OSCILLATE", 1.0f } }, bbdFeedback);
+            lab.check ({ osc }, "ES2 OSCILLATE ON: autooscillazione limitata (coda -35..-15 dBV, picco < 1.5 V)", [&lab, osc] {
+                const double p = lab.v (osc, 0), t = lab.v (osc, 1);
+                return Verdict { lab.v (osc, 2) > 0.5 && p < 1.5 && t > -35.0 && t < -15.0, num (p, 3) + " V, coda " + num (t, 1) + " dBV" };
+            });
+            struct R { const char* id; Sets sets; };
+            const R rs[] = { { "ib7fl303", { { "REGEN", 1.0f } } }, { "ib9fl9", { { "REGEN", 1.0f } } }, { "ibstfl5", { { "REGEN", 1.0f } } },
+                             { "ibmfl99", { { "REGEN", 1.0f } } }, { "ibmaf2", { { "ENHANCE", 1.0f }, { "MODE", 1.0f } } },
+                             { "ib10pc10", { { "FLANGE", 1.0f }, { "MODE", 1.0f } } }, { "ibmec40", { { "REGEN", 1.0f } } } };
+            std::vector<int> hr;
+            for (const auto& r : rs) hr.push_back (at (r.id, nullptr, r.sets, bbdFeedback));
+            lab.check (hr, "Flanger e chorus con REGEN / FLANGE / ENHANCE al massimo (FL-303, FL9, FL5, FL99, AF2 TAKEOFF, PC10 B, EC40): coda < -70 dBV", [&lab, hr] {
+                bool ok = true;
+                double worst = -300;
+                for (int k : hr) { ok = ok && lab.v (k, 2) > 0.5 && lab.v (k, 1) < -70.0; worst = std::max (worst, lab.v (k, 1)); }
+                return Verdict { ok, "coda max " + num (worst, 1) + " dBV" };
+            });
+        }
+
+        // 6. tremolo e pan (seno 440 Hz 0.3 V, inviluppo RMS su 5 ms)
+        {
+            const int tl = at ("ibsttl5", nullptr, { { "SPEED", 0.5f }, { "DEPTH", 1.0f } }, tremoloAm);
+            const int tm = at ("ibmtrmini", nullptr, { { "SPEED", 0.5f }, { "DEPTH", 1.0f }, { "WAVE", 0.0f } }, tremoloAm);
+            const int st = at ("ib7st800", nullptr, { { "SPEED", 0.5f } }, tremoloAm);
+            lab.check ({ tl, tm, st }, "Tremolo: TL5 2.68 Hz (+-5%) profondita' > 40 dB, TREMOLO MINI 2.65 Hz > 30 dB; ST-800 1.55 Hz con L^2 + R^2 costante (+-0.5 dB)",
+                       [&lab, tl, tm, st] {
+                const bool ok = std::abs (lab.v (tl, 0) / 2.68 - 1.0) <= 0.05 && lab.v (tl, 1) > 40.0 && std::abs (lab.v (tm, 0) / 2.65 - 1.0) <= 0.05
+                             && lab.v (tm, 1) > 30.0 && std::abs (lab.v (st, 0) / 1.55 - 1.0) <= 0.05 && lab.v (st, 2) <= 1.0;
+                return Verdict { ok, "TL5 " + num (lab.v (tl, 0), 3) + " Hz " + num (lab.v (tl, 1), 1) + " dB, MINI " + num (lab.v (tm, 0), 3) + " Hz " + num (lab.v (tm, 1), 1)
+                                         + " dB, ST-800 " + num (lab.v (st, 0), 3) + " Hz, potenza +-" + num (0.5 * lab.v (st, 2)) + " dB" };
+            });
+            auto gain = [&] (float level)
+            {
+                return at ("ibsttl5", nullptr, { { "DEPTH", 0.0f }, { "LEVEL", level } }, [] (const ModelDef& d, const std::map<int, float>& p)
+                {
+                    auto fx = makeAfter (d, p);
+                    Buf l = sineBuf (48000.0, 440.0, 0.2, 6.0), r = l;
+                    runStereo256 (*fx, l, r);
+                    return std::vector<double> { dbOf (rmsOf (l, (size_t) (2 * 48000), l.size()) / 0.14142) };
+                });
+            };
+            const int g6 = gain (0.6f), g1 = gain (1.0f);
+            lab.check ({ g6, g1 }, "TL5: LEVEL a 0.6 guadagno unitario (+-0.2 dB), al massimo +4 dB (+-0.5)", [&lab, g6, g1] {
+                return Verdict { within (lab.v (g6), 0.0, 0.2) && within (lab.v (g1), 4.0, 0.5), num (lab.v (g6)) + " / " + num (lab.v (g1)) + " dB" };
+            });
+        }
+
+        // 7. uscite stereo
+        {
+            static const Buf g = guitarS3 (2.0, 4);
+            std::vector<int> hc, hd;
+            for (const char* id : { "ib9cs9", "ib10sc10", "ib9bc9" })
+                hc.push_back (lab.add (id, [] (const ModelDef& d)
+                {
+                    auto fx = makeAfter (d, {});
+                    Buf l = g, r = g;
+                    runStereo256 (*fx, l, r);
+                    double e = 0, ref = 0;
+                    for (size_t i = 0; i < l.size(); ++i)
+                    {
+                        const double dry = 0.6 * g[i], diff = 0.5 * ((double) l[i] + r[i]) - dry;
+                        e += diff * diff;
+                        ref += dry * dry;
+                    }
+                    return std::vector<double> { 10.0 * std::log10 (e / std::max (ref, 1e-30) + 1e-30) };
+                }));
+            for (const char* id : { "ib9ad9", "ib10cd10", "ibmad99" })
+                hd.push_back (lab.add (id, [] (const ModelDef& d)
+                {
+                    auto fx = makeAfter (d, {});
+                    Buf l = g, r = g;
+                    runStereo256 (*fx, l, r);
+                    return std::vector<double> { std::memcmp (r.data(), g.data(), g.size() * sizeof (float)) == 0 ? 1.0 : 0.0 };
+                }));
+            // CS-505: con due canali R = diretto (dopo il blocco della continua: residuo rispetto all'ingresso), L = solo chorus
+            const int cs = lab.add ("ib7cs505", [] (const ModelDef& d)
+            {
+                auto fx = makeAfter (d, {});
+                Buf l = g, r = g;
+                runStereo256 (*fx, l, r);
+                double e = 0, ref = 0;
+                for (size_t i = 0; i < r.size(); ++i) { e += ((double) r[i] - g[i]) * ((double) r[i] - g[i]); ref += (double) g[i] * g[i]; }
+                fx = makeAfter (d, {});                       // impulso su un'istanza nuova, dopo 1 s di silenzio (linea vuota)
+                l.assign ((size_t) 48000, 0.0f); r = l;
+                runStereo256 (*fx, l, r);
+                l.assign (4800, 0.0f); r = l;
+                l[0] = r[0] = 0.05f;
+                runStereo256 (*fx, l, r);
+                double early = 0;
+                for (int i = 0; i < 24; ++i) early = std::max (early, (double) std::abs (l[(size_t) i]));
+                return std::vector<double> { 10.0 * std::log10 (e / std::max (ref, 1e-30) + 1e-30), early };
+            });
+            auto all = hc;
+            all.insert (all.end(), hd.begin(), hd.end());
+            all.push_back (cs);
+            lab.check (all, "Uscite stereo: CS9 / SC10 / BC9 (L + R) / 2 = diretto x 0.6 (residuo < -40 dB); AD9 / CD10 / AD99 R = ingresso bit per bit; "
+                            "CS-505 R = ingresso (residuo < -40 dB), L solo effetto", [&lab, hc, hd, cs] {
+                bool ok = true;
+                juce::String detail;
+                for (int h : hc) { ok = ok && lab.v (h) < -40.0; detail << num (lab.v (h), 1) << " "; }
+                int same = 0;
+                for (int h : hd) same += lab.v (h) > 0.5 ? 1 : 0;
+                ok = ok && same == 3 && lab.v (cs, 0) < -40.0 && lab.v (cs, 1) < 1.0e-4;
+                return Verdict { ok, "residui " + detail.trim() + " dB, R = ingresso " + juce::String (same) + "/3, CS-505 R - ingresso " + num (lab.v (cs, 0), 1)
+                                         + " dB, L a ritardo 0 " + num (lab.v (cs, 1), 6) + " V" };
+            });
+        }
+
+        // 8. rumore a ingresso muto (non pesato, 3 s, dal secondo 1)
+        {
+            struct N { const char* id; double max; };
+            const N ns[] = { { "ib9ad9", -105 }, { "ib10cd10", -105 }, { "ibmadmini", -105 }, { "ibmad99", -105 }, { "ibmes2", -105 }, { "ibmes3", -105 },
+                             { "ib7ad80", -105 }, { "ib10sc10", -90 }, { "ib7fl303", -75 }, { "ib9fl9", -95 } };
+            std::vector<int> h;
+            for (const auto& x : ns)
+                h.push_back (lab.add (x.id, [] (const ModelDef& d)
+                {
+                    auto fx = makeAfter (d, {});
+                    Buf l ((size_t) (48000 * 3), 0.0f), r = l;
+                    runStereo256 (*fx, l, r);
+                    return std::vector<double> { dbOf (rmsOf (l, 48000, l.size())) };
+                }));
+            std::vector<N> copy (std::begin (ns), std::end (ns));
+            lab.check (h, "Rumore a ingresso muto: delay col compander < -105 dBV, chorus MN3207 < -90, FL-303 (SAD1024) < -75, FL9 < -95 dBV", [&lab, h, copy] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    ok = ok && lab.v (h[k]) < copy[k].max;
+                    detail << copy[k].id << " " << num (lab.v (h[k]), 1) << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") + " dBV" };
+            });
+        }
+
+        // reset() non riporta LFO e lisciature allo stato iniziale (innocuo: reset() si usa riaccendendo il pedale): determinismo fra istanze
+        addClickAndDeterminism (lab, kStage4Mod, numMod, "Tappa 4 modulazioni", 10.0, false);
+        lab.run (report);
+    }
+
+    //------------------------------------------------------------------------------
+    // Misure del banco s4 (stereo, blocchi da 256, comandi per ruolo dopo prepare; "mix=0,1" = solo il ramo ritardato)
+    //------------------------------------------------------------------------------
+    struct S4Opt { int range = -1; float time = 0.0f; };
+
+    std::unique_ptr<pt::engine::Effect> makeS4Wet (const pt::engine::ModelDef& d, const S4Opt& o, float depth = 0.0f)
+    {
+        auto fx = makeAfter (d, {});
+        if (o.range >= 0) setStepS4 (*fx, "mode", o.range);
+        setRoleS4 (*fx, "time", o.time); setRoleS4 (*fx, "feedback", 0.0f); setRoleS4 (*fx, "depth", depth);
+        setRoleS4 (*fx, "level", 1.0f); setRoleS4 (*fx, "balance", 1.0f); setRoleS4 (*fx, "mix", 1.0f);
+        return fx;
+    }
+
+    /** Ritardo (ms) del ramo ritardato: burst di 1 ms a 1 kHz dopo 0.8 s, picco della correlazione |ingresso x uscita| (canale L). */
+    double s4Delay (const pt::engine::ModelDef& d, const S4Opt& o)
+    {
+        const double SR = 48000.0;
+        auto fx = makeS4Wet (d, o);
+        setRoleS4 (*fx, "v16", 0.0f); setRoleS4 (*fx, "v3", 0.0f);
+        const int pre = (int) (0.8 * SR), len = (int) (3.4 * SR), bl = 48;
+        Buf l ((size_t) (pre + len), 0.0f);
+        for (int i = 0; i < bl; ++i) l[(size_t) (pre + i)] = 0.4f * std::sin (3.14159f * i / bl) * std::sin (2 * 3.14159f * 1000.0f * i / (float) SR + 0.3f);
+        const Buf in = l;
+        Buf r = l;
+        runStereo256 (*fx, l, r);
+        double best = -1;
+        int lag = 0;
+        for (int L = 1; L < len - bl; ++L)
+        {
+            double c = 0;
+            for (int i = 0; i < bl; ++i) c += in[(size_t) (pre + i)] * l[(size_t) (pre + L + i)];
+            c = std::abs (c);
+            if (c > best) { best = c; lag = L; }
+        }
+        return lag * 1000.0 / SR;
+    }
+
+    /** Seno di ampiezza 'amp' per 3.8 s, fit sull'ultimo mezzo secondo: { guadagno (dB), SNR (dB) } del ramo ritardato (TONE a 1). */
+    std::vector<double> s4Sine (const pt::engine::ModelDef& d, const S4Opt& o, double f, double amp)
+    {
+        const double SR = 48000.0;
+        auto fx = makeS4Wet (d, o);
+        setRoleS4 (*fx, "tone", 1.0f);
+        Buf l = sineBuf (SR, f, amp, 3.8), r = l;
+        runStereo256 (*fx, l, r);
+        const size_t a = l.size() - (size_t) (0.5 * SR);
+        const auto [A, B] = sineFit (l, f, a, l.size());
+        double res = 0, tot = 0;
+        for (size_t i = a; i < l.size(); ++i)
+        {
+            const double ph = 2 * kPi * f * (double) i / SR, fit = A * std::sin (ph) + B * std::cos (ph);
+            res += (l[i] - fit) * (l[i] - fit);
+            tot += fit * fit;
+        }
+        return { dbOf (std::sqrt (A * A + B * B) / amp), 10.0 * std::log10 (tot / std::max (1e-30, res)) };
+    }
+
+    /** Rumore del ramo ritardato a ingresso nullo (4 s, RMS dell'ultimo secondo, dBV). */
+    double s4Noise (const pt::engine::ModelDef& d, const S4Opt& o)
+    {
+        auto fx = makeS4Wet (d, o);
+        setRoleS4 (*fx, "tone", 1.0f);
+        Buf l ((size_t) (4 * 48000), 0.0f), r = l;
+        runStereo256 (*fx, l, r);
+        return dbOf (rmsOf (l, l.size() - 48000, l.size()));
+    }
+
+    /** Fase srotolata del ramo ritardato con un seno a 25 Hz (media mobile su un periodo, ogni 240 campioni, da 3 s). */
+    std::vector<double> s4Phase (const pt::engine::ModelDef& d, const S4Opt& o, float depth, float rate)
+    {
+        const double SR = 48000.0, f = 25.0;
+        auto fx = makeS4Wet (d, o, depth);
+        setRoleS4 (*fx, "rate", rate); setRoleS4 (*fx, "tone", 1.0f); setStepS4 (*fx, "alt", 0);
+        const int n = (int) (14.0 * SR), per = (int) (SR / f);
+        Buf l = sineBuf (SR, f, 0.2, 14.0), r = l;
+        runStereo256 (*fx, l, r);
+        std::vector<double> ph;
+        double prev = 0, acc = 0;
+        for (int p = (int) (3.0 * SR); p + per < n; p += 240)
+        {
+            double I = 0, Q = 0;
+            for (int i = p; i < p + per; ++i)
+            {
+                const double w = 2.0 * kPi * f * i / SR;
+                I += l[(size_t) i] * std::cos (w); Q += l[(size_t) i] * std::sin (w);
+            }
+            const double a = std::atan2 (I, Q);
+            if (! ph.empty())
+            {
+                double dl = a - prev;
+                while (dl > kPi) dl -= 2 * kPi;
+                while (dl < -kPi) dl += 2 * kPi;
+                acc += dl;
+            }
+            else acc = a;
+            prev = a;
+            ph.push_back (acc);
+        }
+        return ph;
+    }
+
+    /** Escursione del ritardo modulato: { min, max (percentili 1% e 99%, ms), LFO (Hz) }. */
+    std::vector<double> s4Mod (const pt::engine::ModelDef& d, const S4Opt& o, float depth, float rate)
+    {
+        const double still = s4Delay (d, o);
+        const auto ref = s4Phase (d, o, 0.0f, rate), ph = s4Phase (d, o, depth, rate);
+        double r0 = 0, mean = 0;
+        for (double v : ref) r0 += v;
+        r0 /= (double) ref.size();
+        for (double v : ph) mean += v;
+        mean /= (double) ph.size();
+        const double k = 1000.0 / (2.0 * kPi * 25.0), tw = 2.0 * kPi, m = std::round ((r0 - mean) / tw);
+        std::vector<double> track;
+        for (double v : ph) track.push_back (still + (r0 - (v + m * tw)) * k);
+        auto sorted = track;
+        std::sort (sorted.begin(), sorted.end());
+        const double lo = sorted[(size_t) (0.01 * (double) sorted.size())], hi = sorted[(size_t) (0.99 * (double) (sorted.size() - 1))];
+        const double mid = 0.5 * (lo + hi), hyst = 0.2 * (hi - lo);
+        int cross = 0, side = 0;
+        for (double v : track)
+        {
+            if (v > mid + hyst && side <= 0) { if (side < 0) ++cross; side = 1; }
+            else if (v < mid - hyst && side >= 0) { if (side > 0) ++cross; side = -1; }
+        }
+        return { lo, hi, cross / 2.0 / ((double) track.size() * 240.0 / 48000.0) };
+    }
+
+    /** Stabilita': retroazione a 1, livello 1, frase del banco s4 di 2 s poi 18 s di silenzio; { picco (V), RMS ultimo secondo (dBV),
+        RMS massimo su finestre di 1 s nei primi 3 s (dBV), finito }. */
+    std::vector<double> s4Stability (const pt::engine::ModelDef& d, const S4Opt& o, int alt)
+    {
+        static const Buf g = guitarS4 (2.0);
+        auto fx = makeAfter (d, {});
+        if (alt >= 0) setStepS4 (*fx, "alt", alt);
+        if (o.range >= 0) setStepS4 (*fx, "mode", o.range);
+        setRoleS4 (*fx, "time", o.time); setRoleS4 (*fx, "feedback", 1.0f); setRoleS4 (*fx, "level", 1.0f);
+        const int n = (int) (20.0 * 48000);
+        Buf l = g;
+        l.resize ((size_t) n, 0.0f);
+        Buf r = l;
+        runStereo256 (*fx, l, r);
+        double pk = 0;
+        bool fin = true;
+        for (int i = 0; i < n; ++i)
+        {
+            fin = fin && std::isfinite (l[(size_t) i]) && std::isfinite (r[(size_t) i]);
+            pk = std::max (pk, (double) std::max (std::abs (l[(size_t) i]), std::abs (r[(size_t) i])));
+        }
+        double early = 0;
+        for (int s = 0; s + 48000 <= 3 * 48000; s += 4800) early = std::max (early, rmsOf (l, (size_t) s, (size_t) (s + 48000)));
+        return { pk, dbOf (rmsOf (l, (size_t) (n - 48000), (size_t) n)), dbOf (early), fin ? 1.0 : 0.0 };
+    }
+
+    /** Gamme dichiarate nella config di un i4adm ("ranges=Nome:minms:maxms:bit[:flag]|...", i4layer: "time=min,max"):
+        { minms, maxms, hold }. */
+    struct S4Range { double lo, hi; bool hold; };
+    std::vector<S4Range> s4Ranges (const pt::engine::ModelDef& d)
+    {
+        std::vector<S4Range> out;
+        const pt::engine::Config cfg (d.config);
+        if (cfg.str ("type") == "i4layer")
+        {
+            const auto t = cfg.list ("time");
+            if (t.size() == 2) out.push_back ({ t[0], t[1], false });
+            return out;
+        }
+        for (const auto& r : juce::StringArray::fromTokens (juce::String (cfg.str ("ranges")), "|", ""))
+        {
+            const auto f = juce::StringArray::fromTokens (r, ":", "");
+            if (f.size() >= 4) out.push_back ({ f[1].getDoubleValue(), f[2].getDoubleValue(), f.size() > 4 && f[4].contains ("hold") });
+        }
+        return out;
+    }
+
+    /** Tappa 4, lavoro s4: delay, chorus e flanger digitali ADM e LD303 (FxStage4Time.cpp). Metodi del banco s4. */
+    void runStage4DigitalTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        constexpr int numDig = countOf (kStage4Digital);
+        Lab lab;
+
+        // 0. pedali esistenti invariati bit per bit (banco s4 'hash': frase di 4 s, poi comandi spostati di +0.37 e frase di 3 s)
+        {
+            struct Ref { const char* id; uint64_t a, b; };
+            static const Ref refs[] = {
+                { "dd2", 0x590d15b01a380403ull, 0x1ea8adcd65f03752ull }, { "dd3", 0x590d15b01a380403ull, 0x1ea8adcd65f03752ull },
+                { "dd8", 0x92261ccdd28adf26ull, 0xa2997543c6fb4f74ull }, { "dd5", 0x014f09a9444e70e3ull, 0x90563655310ca654ull },
+                { "rv6", 0x54957206ce566aa3ull, 0xf4011ffa6fb89d98ull }, { "rv5", 0x8c9485d03f8c184full, 0xa343e7cb9ddf7bb0ull },
+                { "eh16sec", 0x4134d161fc535ce3ull, 0x677caddc91298e5full }, { "ehcanyon", 0x4289809e604536b6ull, 0xf57051122a5de3cdull },
+                { "eh1echo", 0x88666b012b77805dull, 0xc664bcb07ecc79e3ull }, { "ehhgmax", 0x71e1b361f48ef709ull, 0x334c52fa5ca473c6ull },
+                { "ehdmm", 0x701dabd49a1c457full, 0xa638f22f4e8bb063ull }, { "ehcanecho", 0xb6f86f1122f524bbull, 0x8b68562fea06b6c3ull },
+                { "ehabyss", 0xfb160dc28622a6a2ull, 0x9b820cdc95c6d4ffull }, { "ehmmstereo", 0x4a3659cfb24a92caull, 0x568c7d296d57eb57ull },
+                { "ehreplay", 0x1dbd8c954cc91723ull, 0xbf4ac868324f5587ull } };
+            static const Buf g1 = guitarS4 (4.0, 3), g2 = guitarS4 (3.0, 5);
+            std::vector<int> h;
+            for (const auto& r : refs)
+            {
+                h.push_back (lab.add (r.id, [] (const ModelDef& d)
+                {
+                    auto fx = makeAfter (d, {});
+                    Buf l = g1, rr = g1;
+                    for (auto& x : rr) x *= 0.8f;
+                    runStereo256 (*fx, l, rr);
+                    const uint64_t a = fnvBytes (rr, fnvBytes (l));
+                    for (int k = 0; k < d.numControls; ++k) fx->params[k].store (std::fmod (d.controls[k].def + 0.37f, 1.0f));
+                    Buf l2 = g2, r2 = g2;
+                    runStereo256 (*fx, l2, r2);
+                    const uint64_t b = fnvBytes (r2, fnvBytes (l2));
+                    return std::vector<double> { (double) (uint32_t) (a >> 32), (double) (uint32_t) a, (double) (uint32_t) (b >> 32), (double) (uint32_t) b };
+                }));
+                lab.first (h.back());
+            }
+            lab.check (h, "Tappa 4: DD-2/3/8/5, RV-6/5, 16 Second, Canyon, 1 Echo, Holy Grail Max, DMM, Canyon Echo, Oceans Abyss, Memory Man Stereo, Instant Replay "
+                          "invariati bit per bit", [&lab, h] {
+                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const uint64_t a = ((uint64_t) lab.v (h[k], 0) << 32) | (uint64_t) lab.v (h[k], 1), b = ((uint64_t) lab.v (h[k], 2) << 32) | (uint64_t) lab.v (h[k], 3);
+                    if (a != refs[k].a || b != refs[k].b) bad << refs[k].id << " DIVERSO ";
+                }
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " doppie impronte identiche" : bad.trim() };
+            });
+        }
+
+        // 1. tempo di ritardo dei 20 modelli: ogni gamma a D-TIME 0 e 1 (la prima anche a 0.5); atteso = estremi dichiarati nella config
+        //    (minms, minms * sqrt (max / min), maxms) + 0.05..0.2 ms di filtri, tolleranza 0.25 ms + 1%
+        {
+            struct Job { const char* id; int range; float t; };
+            std::vector<Job> jobs;
+            std::vector<int> h;
+            for (int m = 0; m < numDig; ++m)
+            {
+                const auto* d = findModel (kStage4Digital[m]);
+                if (d == nullptr) { h.push_back (lab.add (kStage4Digital[m], {})); jobs.push_back ({ kStage4Digital[m], 0, 0 }); continue; }
+                const auto rs = s4Ranges (*d);
+                const bool multi = stepsOfRole (*d, "mode") > 1 && rs.size() > 1;
+                for (int r = 0; r < (int) rs.size(); ++r)
+                {
+                    if (rs[(size_t) r].hold) continue;
+                    for (int ti = 0; ti < 3; ++ti)
+                    {
+                        if (ti == 1 && r > 0) continue;
+                        const float t = 0.5f * (float) ti;
+                        const S4Opt o { multi ? r : -1, t };
+                        h.push_back (lab.add (withConfig (*d, "mix=0,1"), [o] (const ModelDef& dd) { return std::vector<double> { s4Delay (dd, o) }; }));
+                        jobs.push_back ({ kStage4Digital[m], r, t });
+                    }
+                }
+            }
+            lab.check (h, "Tappa 4 digitali: tempo di ritardo di ogni gamma a D-TIME 0 / (0.5) / 1 = estremi dichiarati + 0.05..0.2 ms (+-0.25 ms + 1%, "
+                          + juce::String ((int) h.size()) + " misure)", [&lab, h, jobs] {
+                bool ok = true;
+                double worst = 0;
+                juce::String bad, ex;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const auto* d = findModel (jobs[k].id);
+                    const auto rs = s4Ranges (*d);
+                    const auto& R = rs[(size_t) jobs[k].range];
+                    const double decl = R.lo * std::pow (R.hi / R.lo, (double) jobs[k].t), v = lab.v (h[k]), tl = 0.25 + 0.01 * decl;
+                    const double dev = v < decl + 0.05 ? decl + 0.05 - v : (v > decl + 0.2 ? v - decl - 0.2 : 0.0);
+                    worst = std::max (worst, dev / tl);
+                    if (dev > tl) { ok = false; bad << jobs[k].id << "/" << jobs[k].range << "@" << num (jobs[k].t, 1) << " " << num (v) << " ms (" << num (decl) << ") "; }
+                    if (std::strcmp (jobs[k].id, "ib10dl10") == 0 || std::strcmp (jobs[k].id, "ibmld303") == 0) ex << jobs[k].id << " " << num (v) << "; ";
+                }
+                return Verdict { ok, "scarto max " + num (worst * 100.0, 0) + "% della tolleranza; " + ex.trimCharactersAtEnd ("; ") + " ms " + bad.trim() };
+            });
+        }
+
+        // 2-4. banda del primo eco (gamma di default, D-TIME 0 e 1; relativa a 1 kHz), SNR a 1 kHz e rumore di fondo
+        {
+            struct Band { const char* id; std::vector<int> h; std::vector<double> f; };
+            std::vector<Band> bands;
+            std::vector<int> hAll, hSnr, hNoise;
+            std::vector<juce::String> noiseIds;
+            for (int m = 0; m < numDig; ++m)
+            {
+                const auto* d = findModel (kStage4Digital[m]);
+                if (d == nullptr) { hAll.push_back (lab.add (kStage4Digital[m], {})); continue; }
+                const Config cfg (d->config);
+                const bool layer = cfg.str ("type") == "i4layer";
+                const long bw = std::lround (cfg.num ("bw", 0));
+                std::vector<double> freqs { 500.0, 1000.0, 2000.0 };
+                if (layer) freqs.push_back (14000.0);
+                else if (bw == 7000) { freqs.push_back (7000.0); freqs.push_back (10000.0); }
+                else if (bw == 12000) { freqs.push_back (10000.0); freqs.push_back (14000.0); }
+                else if (bw == 16000) { freqs.push_back (14000.0); freqs.push_back (18000.0); }
+                else { freqs.push_back (7000.0); freqs.push_back (10000.0); }
+                const int mi = roleIndex (*d, "mode");
+                const int rDef = mi >= 0 ? (int) std::lround (d->controls[mi].def * (stepsOfRole (*d, "mode") - 1)) : -1;
+                const auto wet = withConfig (*d, "mix=0,1");
+                for (float t : { 0.0f, 1.0f })
+                {
+                    Band b { kStage4Digital[m], {}, freqs };
+                    for (double f : freqs)
+                    {
+                        b.h.push_back (lab.add (wet, [rDef, t, f] (const ModelDef& dd) { return s4Sine (dd, { rDef, t }, f, 0.1); }));
+                        hAll.push_back (b.h.back());
+                    }
+                    bands.push_back (b);
+                    hNoise.push_back (lab.add (wet, [rDef, t] (const ModelDef& dd) { return std::vector<double> { s4Noise (dd, { rDef, t }) }; }));
+                    noiseIds.push_back (juce::String (kStage4Digital[m]) + "@" + juce::String ((int) t));
+                }
+            }
+            lab.check (hAll, "Tappa 4 digitali: banda del primo eco (7 kHz: a 7k -2.5..-6 dB, 10k <= -15; 12 kHz: 10k -1..-6, 14k <= -10; 16 kHz: 14k -2.5..-6, 18k <= -10; "
+                             "8 kHz: 7k -1..-4, 10k <= -10; LD303 14k >= -3 dB; sotto 3 kHz +-0.5 dB)", [&lab, bands] {
+                bool ok = true;
+                juce::String bad, ex;
+                for (const auto& b : bands)
+                {
+                    const auto* d = findModel (b.id);
+                    const Config cfg (d->config);
+                    const bool layer = cfg.str ("type") == "i4layer";
+                    const long bw = std::lround (cfg.num ("bw", 0));
+                    const double ref = lab.v (b.h[1]);
+                    auto rel = [&] (size_t k) { return lab.v (b.h[k]) - ref; };
+                    bool g = std::abs (rel (0)) <= 0.5 && std::abs (rel (2)) <= 0.5;
+                    if (layer) g = g && rel (3) >= -3.0;
+                    else if (bw == 7000) g = g && rel (3) <= -2.5 && rel (3) >= -6.0 && rel (4) <= -15.0;
+                    else if (bw == 12000) g = g && rel (3) <= -1.0 && rel (3) >= -6.0 && rel (4) <= -10.0;
+                    else if (bw == 16000) g = g && rel (3) <= -2.5 && rel (3) >= -6.0 && rel (4) <= -10.0;
+                    else g = g && rel (3) <= -1.0 && rel (3) >= -4.0 && rel (4) <= -10.0;
+                    ok = ok && g;
+                    juce::String s;
+                    s << b.id << " " << juce::roundToInt (b.f[3] / 1000.0) << "k " << num (rel (3), 1);
+                    if (b.f.size() > 4) s << " " << juce::roundToInt (b.f[4] / 1000.0) << "k " << num (rel (4), 1);
+                    if (! g) bad << s << " (500/2k " << num (rel (0), 1) << "/" << num (rel (2), 1) << ") ";
+                    if (std::strcmp (b.id, "ib10dl10") == 0 && ex.isEmpty()) ex = s;
+                }
+                return Verdict { ok, ex + " dB " + bad.trim() };
+            });
+            // SNR: valori del banco s4 (measure6.txt, gamma di default) con la tolleranza di +-4 dB del file; il ">= 50 dB per tutti" di
+            // tests.md e' arrotondato (DSC10 misurato 49.4 dB anche dal banco)
+            lab.check (hAll, "Tappa 4 digitali: SNR a 1 kHz (seno 0.1 V) entro 4 dB dal banco a D-TIME 0 e 1; M50195 (DL10, DPL10, DL5) ed EM5 almeno 10 dB "
+                             "peggiori a D-TIME 1 (meno bit al secondo); LD303 >= 100 dB", [&lab, bands] {
+                struct Snr { const char* id; double s0, s1; };
+                static const Snr refs[] = { { "ib10dl10", 61.8, 39.9 }, { "ib10dpl10", 58.1, 39.9 }, { "ib10dsc10", 49.4, 49.4 }, { "ib10ddl10", 58.7, 40.5 },
+                                            { "ib10dml10", 61.3, 39.6 }, { "ib10dcf10", 61.1, 36.5 }, { "ib10ddl20", 59.2, 56.8 }, { "ib10dml20", 59.2, 56.8 },
+                                            { "ib10dcl", 62.8, 44.8 }, { "ib10ddl", 61.7, 41.0 }, { "ib10dfl", 62.8, 44.9 }, { "ib10dml", 62.8, 44.8 },
+                                            { "ib10pdm1", 59.2, 56.8 }, { "ib10pdd1", 59.2, 56.8 }, { "ibstdl5", 58.1, 39.9 }, { "ibstem5", 58.5, 29.0 },
+                                            { "ibtlcf7", 58.4, 40.0 }, { "ibtltc7", 53.5, 53.5 }, { "ibtlde7", 56.0, 50.8 }, { "ibmld303", 146.7, 146.1 } };
+                bool ok = true;
+                double worst = 0;
+                juce::String bad, ex;
+                for (size_t k = 0; k + 1 < bands.size(); k += 2)
+                {
+                    const auto& b0 = bands[k];
+                    const double s0 = lab.v (b0.h[1], 1), s1 = lab.v (bands[k + 1].h[1], 1);
+                    const Snr* r = nullptr;
+                    for (const auto& x : refs) if (std::strcmp (x.id, b0.id) == 0) r = &x;
+                    const bool layer = std::strcmp (b0.id, "ibmld303") == 0;
+                    const bool clockLaw = std::strcmp (b0.id, "ib10dl10") == 0 || std::strcmp (b0.id, "ib10dpl10") == 0 || std::strcmp (b0.id, "ibstdl5") == 0
+                                       || std::strcmp (b0.id, "ibstem5") == 0;
+                    bool g = r != nullptr && (layer ? s0 >= 100.0 && s1 >= 100.0 : std::abs (s0 - r->s0) <= 4.0 && std::abs (s1 - r->s1) <= 4.0);
+                    if (r != nullptr && ! layer) worst = std::max (worst, std::max (std::abs (s0 - r->s0), std::abs (s1 - r->s1)));
+                    if (clockLaw) g = g && s0 - s1 >= 10.0;
+                    ok = ok && g;
+                    if (! g) bad << b0.id << " " << num (s0, 1) << " / " << num (s1, 1) << " ";
+                    if (clockLaw) ex << b0.id << " " << num (s0, 1) << " / " << num (s1, 1) << "; ";
+                }
+                return Verdict { ok, "scarto max " + num (worst, 1) + " dB; " + ex.trimCharactersAtEnd ("; ") + " dB " + bad.trim() };
+            });
+            lab.check (hNoise, "Tappa 4 digitali: rumore di fondo del ramo ritardato fra hiss - 2 e hiss + 6 dB (hiss della config; EM5 a D-TIME 1 fino a -80 dBV +2), "
+                               "LD303 < -120 dBV", [&lab, hNoise, noiseIds] {
+                bool ok = true;
+                juce::String bad, ex;
+                for (size_t k = 0; k < hNoise.size(); ++k)
+                {
+                    const auto id = noiseIds[k].upToFirstOccurrenceOf ("@", false, false);
+                    const auto* d = findModel (id.toRawUTF8());
+                    const double v = lab.v (hNoise[k]), hiss = Config (d->config).num ("hiss", -90);
+                    bool g;
+                    if (id == "ibmld303") g = v < -120.0;
+                    else if (id == "ibstem5" && noiseIds[k].endsWith ("@1")) g = v >= hiss - 2.0 && v <= -78.0;
+                    else g = v >= hiss - 2.0 && v <= hiss + 6.0;
+                    ok = ok && g;
+                    if (! g) bad << noiseIds[k] << " " << num (v, 1) << " (" << num (hiss, 0) << ") ";
+                    if (id == "ib10dl10" || id == "ibtlde7" || id == "ibstem5") ex << noiseIds[k] << " " << num (v, 1) << "; ";
+                }
+                return Verdict { ok, ex.trimCharactersAtEnd ("; ") + " dBV " + bad.trim() };
+            });
+        }
+
+        // 5. modulazione (gamma di default, D-TIME 0.5, WIDTH 1, SPEED 0.3): estremi +-12% + 0.25 ms (media mobile di 40 ms; 0.25 ms come
+        //    la tolleranza dei ritardi, per i ritardi minimi dove pesano i filtri), LFO +-10%; sotto 0.25 Hz (DSC10, CF7) +-25% come indica
+        //    tests.md (la finestra di 11 s vede meno di tre periodi)
+        {
+            struct M { const char* id; double lo, hi, hz, tolHz; };
+            const M ms[] = { { "ib10dsc10", 7.07, 14.1, 0.22, 0.25 }, { "ib10dml10", 0.9, 7.2, 0.30, 0.10 }, { "ib10dcf10", 0.25, 2.0, 0, 0 },
+                             { "ib10dml20", 4.0, 16.0, 0.32, 0.10 }, { "ib10dcl", 1.0, 8.0, 1.19, 0.10 }, { "ib10dfl", 0.5, 4.0, 0, 0 },
+                             { "ib10dml", 8.0, 64.0, 0, 0 }, { "ib10pdm1", 64.0, 256.0, 0, 0 }, { "ibtlcf7", 2.52, 21.8, 0.15, 0.25 },
+                             { "ibtltc7", 4.9, 7.35, 0, 0 } };
+            std::vector<int> h;
+            for (const auto& x : ms)
+            {
+                const auto* d = findModel (x.id);
+                if (d == nullptr) { h.push_back (lab.add (x.id, {})); continue; }
+                const int mi = roleIndex (*d, "mode");
+                const int rDef = mi >= 0 ? (int) std::lround (d->controls[mi].def * (stepsOfRole (*d, "mode") - 1)) : -1;
+                h.push_back (lab.add (withConfig (*d, "mix=0,1"), [rDef] (const ModelDef& dd) { return s4Mod (dd, { rDef, 0.5f }, 1.0f, 0.3f); }));
+                lab.first (h.back());
+            }
+            std::vector<M> copy (std::begin (ms), std::end (ms));
+            lab.check (h, "Tappa 4 digitali: escursione della modulazione (DSC10 7.07-14.1, DML10 0.9-7.2, DCF10 0.25-2, DML20 4-16, DCL 1-8, DFL 0.5-4, DML 8-64, PDM1 64-256, "
+                          "CF7 2.52-21.8, TC7 4.9-7.35 ms) e LFO", [&lab, h, copy] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const auto& x = copy[k];
+                    const double lo = lab.v (h[k], 0), hi = lab.v (h[k], 1), f = lab.v (h[k], 2);
+                    bool g = std::abs (lo - x.lo) <= 0.12 * x.lo + 0.25 && std::abs (hi - x.hi) <= 0.12 * x.hi + 0.25;
+                    if (x.hz > 0) g = g && std::abs (f / x.hz - 1.0) <= x.tolHz;
+                    ok = ok && g;
+                    detail << x.id << " " << num (lo) << "-" << num (hi);
+                    if (x.hz > 0) detail << " " << num (f, 2) << " Hz";
+                    detail << (g ? "" : " (FUORI)") << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") + " ms" };
+            });
+        }
+
+        // 6. stabilita' con la retroazione al massimo (gamma minima e massima, D-TIME 0 e 1; DE7 e CF7 anche con la levetta): finiti,
+        //    picco <= 1.6 V, nessuna crescita (ultimo secondo <= massimo dei primi 3 s), <= -70 dBV per fbmax < 1 e ritardi <= 160 ms;
+        //    ripetizioni infinite dichiarate (DE7 ECHO, EM5, LD303): ultimo secondo <= -10 dBV e picco <= 0.8 V
+        {
+            struct St { const char* id; S4Opt o; int alt; double delayMs; };
+            std::vector<St> runs;
+            std::vector<int> h;
+            for (int m = 0; m < numDig; ++m)
+            {
+                const auto* d = findModel (kStage4Digital[m]);
+                if (d == nullptr) { h.push_back (lab.add (kStage4Digital[m], {})); runs.push_back ({ kStage4Digital[m], {}, -1, 0 }); continue; }
+                if (roleIndex (*d, "feedback") < 0) continue;
+                const auto rs = s4Ranges (*d);
+                const int nr = stepsOfRole (*d, "mode") > 1 ? (int) rs.size() : 1;
+                auto add = [&] (int r, float t, int alt)
+                {
+                    const S4Opt o { nr > 1 ? r : -1, t };
+                    const auto& R = rs[(size_t) std::max (0, r)];
+                    h.push_back (lab.add (kStage4Digital[m], [o, alt] (const ModelDef& dd) { return s4Stability (dd, o, alt); }));
+                    runs.push_back ({ kStage4Digital[m], o, alt, R.lo * std::pow (R.hi / R.lo, (double) t) });
+                };
+                for (int r : (nr > 1 ? std::vector<int> { 0, nr - 1 } : std::vector<int> { 0 }))
+                    for (float t : { 0.0f, 1.0f }) add (r, t, -1);
+                if (roleIndex (*d, "alt") >= 0)
+                    for (int al : { 0, 1 })
+                        for (float t : { 0.0f, 1.0f }) add (nr - 1, t, al);
+            }
+            for (int k : h) lab.first (k, 0);
+            lab.check (h, "Tappa 4 digitali: retroazione al massimo, 2 s di frase e 18 s di silenzio (" + juce::String ((int) h.size()) + " prove): finiti, picco <= 1.6 V, "
+                          "nessuna crescita, <= -70 dBV coi ritardi <= 160 ms; DE7 ECHO, EM5, LD303 <= -10 dBV e <= 0.8 V", [&lab, h, runs] {
+                bool ok = true;
+                double pk = 0;
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const auto& r = runs[k];
+                    const auto* d = findModel (r.id);
+                    const Config cfg (d->config);
+                    const double p = lab.v (h[k], 0), last = lab.v (h[k], 1), early = lab.v (h[k], 2);
+                    const bool infinite = std::strcmp (r.id, "ibstem5") == 0 || std::strcmp (r.id, "ibmld303") == 0
+                                       || (std::strcmp (r.id, "ibtlde7") == 0 && r.alt == 0);
+                    bool g = lab.v (h[k], 3) > 0.5 && p <= 1.6;
+                    if (infinite) g = g && last <= -10.0 && p <= 0.8;      // ripetizioni infinite limitate dai diodi: al posto della crescita
+                    else
+                    {
+                        g = g && last <= early;
+                        if (cfg.num ("fbmax", 1.0) < 1.0 && r.delayMs <= 160.0) g = g && last <= -70.0;
+                    }
+                    ok = ok && g;
+                    pk = std::max (pk, p);
+                    if (! g) bad << r.id << "/" << r.o.range << "@" << num (r.o.time, 0) << (r.alt >= 0 ? "/alt" + juce::String (r.alt) : juce::String()) << " ("
+                                 << num (p, 2) << " V, " << num (last, 1) << " dBV) ";
+                }
+                return Verdict { ok, "picco max " + num (pk) + " V " + bad.trim() };
+            });
+        }
+
+        // 7. HOLD del DDL: frase a impulsi in LONG (D-TIME 0.3), poi HOLD con un seno a 300 Hz all'ingresso; il ramo ritardato resta periodico
+        //    col periodo del campione congelato (correlazione >= 0.999) e non contiene il seno entrato dopo (< -40 dB)
+        {
+            const int hd = addPatched (lab, "ib10ddl", "mix=0,1", [] (const ModelDef& d)
+            {
+                const double SR = 48000.0;
+                auto fx = makeAfter (d, {});
+                setStepS4 (*fx, "mode", 1); setRoleS4 (*fx, "time", 0.3f); setRoleS4 (*fx, "balance", 1.0f); setRoleS4 (*fx, "feedback", 0.0f);
+                const int n = (int) (6 * SR), sw = (int) (1.5 * SR);
+                Buf l ((size_t) n), r;
+                for (int i = 0; i < n; ++i)
+                {
+                    const double t = i / SR;
+                    l[(size_t) i] = i < sw ? (float) (0.2 * (std::sin (2 * kPi * 110 * t) + std::sin (2 * kPi * 165 * t)) * (std::fmod (t, 0.25) < 0.12 ? 1 : 0.2))
+                                           : (float) (0.2 * std::sin (2 * kPi * 300 * t));
+                }
+                r = l;
+                runStereo256 (*fx, l, r, [&] (size_t i) { if ((int) i <= sw && sw < (int) i + 256) setStepS4 (*fx, "mode", 2); });
+                const double P = 112.0 * std::pow (900.0 / 112.0, 0.3) * 0.001 * SR;
+                double bc = -1;
+                const int a = (int) (3.0 * SR), len = (int) (1.0 * SR);
+                for (int L = (int) (P * 0.9); L < (int) (P * 1.1); ++L)
+                {
+                    double c = 0, e1 = 0, e2 = 0;
+                    for (int i = a; i < a + len; ++i)
+                    {
+                        c += (double) l[(size_t) i] * l[(size_t) (i + L)];
+                        e1 += (double) l[(size_t) i] * l[(size_t) i];
+                        e2 += (double) l[(size_t) (i + L)] * l[(size_t) (i + L)];
+                    }
+                    bc = std::max (bc, c / std::sqrt (e1 * e2 + 1e-30));
+                }
+                double I = 0, Q = 0, tot = 0;
+                for (int i = a; i < a + len; ++i)
+                {
+                    const double w = 2 * kPi * 300 * i / SR;
+                    I += l[(size_t) i] * std::cos (w); Q += l[(size_t) i] * std::sin (w); tot += (double) l[(size_t) i] * l[(size_t) i];
+                }
+                const double p300 = 2 * (I * I + Q * Q) / len / len, ptot = tot / len;
+                return std::vector<double> { bc, 10 * std::log10 (p300 / ptot + 1e-30), 10 * std::log10 (ptot + 1e-30) };
+            });
+            lab.check ({ hd }, "DDL HOLD: il campione congelato si ripete (correlazione fra periodi >= 0.999) e il seno entrato dopo non passa (< -40 dB)", [&lab, hd] {
+                return Verdict { lab.v (hd, 0) >= 0.999 && lab.v (hd, 1) < -40.0 && lab.v (hd, 2) > -60.0,
+                                 "correlazione " + num (lab.v (hd, 0), 5) + ", 300 Hz " + num (lab.v (hd, 1), 1) + " dB, wet " + num (lab.v (hd, 2), 1) + " dBV" };
+            });
+        }
+
+        // livelli col riff a -12 dBFS e i comandi di default (finiti, picco < 0 dBFS, RMS -40..-20 dBFS)
+        {
+            static const Buf riff = guitarS1 (true, 48000.0, 3.0, -12.0);
+            std::vector<int> hl;
+            for (int m = 0; m < numDig; ++m)
+                hl.push_back (lab.add (kStage4Digital[m], [] (const ModelDef& d)
+                {
+                    auto fx = makeS1 (d, {});
+                    Buf y = riff;
+                    processMono (*fx, y, 512);
+                    double pk = 0;
+                    bool fin = true;
+                    for (float v : y) { fin = fin && std::isfinite (v); pk = std::max (pk, (double) std::abs (v)); }
+                    return std::vector<double> { fin ? 1.0 : 0.0, dbOf (pk), dbOf (rmsOf (y, (size_t) (0.05 * 48000.0))) };
+                }));
+            lab.check (hl, "Tappa 4 digitali: livelli con riff a -12 dBFS e comandi di default (20 modelli: finiti, picco < 0 dBFS, RMS -40..-20 dBFS)", [&lab, hl] {
+                int good = 0;
+                double lo = 0, hi = -200, pk = -200;
+                juce::String bad;
+                for (int m = 0; m < numDig; ++m)
+                {
+                    const double p = lab.v (hl[(size_t) m], 1), rms = lab.v (hl[(size_t) m], 2);
+                    const bool g = lab.v (hl[(size_t) m], 0) > 0.5 && p < 0.0 && rms > -40.0 && rms < -20.0;
+                    if (g) ++good; else bad << kStage4Digital[m] << " (RMS " << num (rms, 1) << ", picco " << num (p, 1) << ") ";
+                    lo = std::min (lo, rms); hi = std::max (hi, rms); pk = std::max (pk, p);
+                }
+                return Verdict { good == numDig, juce::String (good) + "/20, RMS " + num (lo, 1) + ".." + num (hi, 1) + " dBFS, picco max " + num (pk, 1) + " dBFS " + bad.trim() };
+            });
+        }
+
+        // click oltre 10x analizzati e segnalati (DE7 MODE ECHO/DELAY, prima 143x, ora con dissolvenza di 10 ms e senza eccezione):
+        // LD303 TIME e DML20 WIDTH (16x: lisciatura a un polo, glissato con la velocita' massima
+        // all'istante del cambio), PDM1 / PDD1 SOUND (15x / 21x: memorie con tempo e larghezza diversi). Col metodo del banco s4
+        // (passa-alto a 3 kHz, 100 ms) tutti <= 0.92x
+        addClickAndDeterminism (lab, kStage4Digital, numDig, "Tappa 4 digitali", 10.0, true,
+                                { { "ibmld303", "TIME", 20.0 }, { "ib10dml20", "WIDTH", 20.0 }, { "ib10pdm1", "SOUND", 20.0 },
+                                  { "ib10pdd1", "SOUND", 25.0 } });
+        lab.run (report);
+    }
+
     void runCabIRTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
     {
         using namespace pt::engine;
@@ -3780,6 +6080,10 @@ namespace
         runStage3DigitalTests (report);
         runStage3BAnalogTests (report);
         runStage3BDigitalTests (report);
+        runStage4DriveTests (report);
+        runStage4DynTests (report);
+        runStage4ModTests (report);
+        runStage4DigitalTests (report);
 
         // 7. processore completo e bypass
         {

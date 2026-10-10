@@ -185,5 +185,6 @@ ImageDraw.Draw(mask).rounded_rectangle([0, 0, 511, 511], radius=96, fill=255)
 bgc = Image.new("RGBA", (512, 512), (22, 22, 25, 255))
 icon.paste(bgc, (0, 0), mask)
 icon.alpha_composite(crop, ((512 - crop.width) // 2, (512 - crop.height) // 2))
-icon.save(os.path.join(RES, "icon.png"))
-print("icon.png")
+# l'icona del programma ora e' disegnata a parte (tools/art/icon/icon.svg, make_icon.sh): qui non si sovrascrive
+icon.save(os.path.join(os.path.dirname(os.path.abspath(__file__)), "build", "icon_render.png"))
+print("icon_render.png (anteprima, l'icona vera e' tools/art/icon/icon.svg)")

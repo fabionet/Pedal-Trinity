@@ -49,7 +49,8 @@ def analyse(tag, m, lay, d, texname, z, kind):
     PG.use_frame(m.get("style", "boss"), lay.get("frame"))
     def box_img(o):
         _, s, x0, y0, x1, y1 = o
-        a = PG.proj(x0, y1, z); b = PG.proj(x1, y0, z)
+        zz = z((x0 + x1) / 2, (y0 + y1) / 2) if callable(z) else z
+        a = PG.proj(x0, y1, zz); b = PG.proj(x1, y0, zz)
         return (a[0], a[1], b[0], b[1])
     lx, ly, lr = d["led"]
     for o in texts:
@@ -74,6 +75,28 @@ def analyse(tag, m, lay, d, texname, z, kind):
             issues.append(("etichetta sotto il display", "%s '%s'" % (texname, o[1])))
     return issues
 
+def stomp_z(lay):
+    """Quota del piano dei pedali "stomp" nel punto (x, y): profilo a spezzata (tappa 4) o cuneo, coperchi-pedale."""
+    zf, zb = lay["top"]
+    D = lay["body"]["D"]
+    prof = lay.get("profile")
+    covers = [p for p in lay["parts"] if p["type"] == "cover"]
+
+    def z(x, y):
+        for c in covers:
+            if c["x0"] <= x <= c["x1"] and c["y0"] <= y <= c["y1"]:
+                return c["zf"] + (c["zb"] - c["zf"]) * (y - c["y0"]) / max(1e-9, c["y1"] - c["y0"])
+        if prof:
+            if y >= prof[0][0]:
+                return prof[0][1]
+            for (ya, za), (yb, zb_) in zip(prof, prof[1:]):
+                if y >= yb:
+                    return za + (zb_ - za) * (y - ya) / ((yb - ya) or 1e-9)
+            return prof[-1][1]
+        return zf + (zb - zf) * (y + D / 2) / D
+    return z
+
+
 def run():
     res = {}
     models, _ = catalog.load_all(strict=False)
@@ -86,6 +109,10 @@ def run():
             iss += analyse("NORM", m, lay, d, m["id"] + "_top.png", PL.TS_H, "top")
         elif m["style"] == "nam":
             iss += analyse("NORM", m, lay, d, m["id"] + "_top.png", PL.NAM_H, "top")
+        elif lay.get("builder") == "stomp":
+            iss += analyse("NORM", m, lay, d, m["id"] + "_top.png", stomp_z(lay), "top")
+        elif m["style"] in ("box", "treadle"):
+            pass                      # bilancieri e scatole sagomate: check_tex_wah.py
         else:
             iss += analyse("NORM", m, lay, d, m["id"] + "_panel.png", PL.PANEL_H, "panel")
             iss += analyse("NORM", m, lay, d, m["id"] + "_tread.png", None, "tread")
@@ -102,6 +129,10 @@ def run():
         elif lay["builder"] == "treadle":
             iss += analyse("REAL", r, lay, d, r["id"] + "_back.png", lay["back_block"]["z"], "top")
             iss += analyse("REAL", r, lay, d, r["id"] + "_plate.png", None, "tread")
+        elif lay["builder"] == "stomp":
+            iss += analyse("REAL", r, lay, d, r["id"] + "_top.png", stomp_z(lay), "top")
+        elif lay["builder"] == "wah":
+            pass                      # check_tex_wah.py
         else:
             iss += analyse("REAL", r, lay, d, r["id"] + "_top.png", lay["body"]["H"], "top")
         if iss:
