@@ -39,7 +39,8 @@ DEFAULT_DIMS = {"compact": (73, 129, 59), "twin": (173, 158, 57), "series200": (
 NO_BRAND = re.compile(r"\bBOSS\b|\bRoland\b|\bFender\b|\bIbanez\b|\bJHS\b|\bJim\s+Dunlop\b|\bDunlop\b|"
                       r"\bErnie\s*Ball\b|\bMorley\b|\bDe\s*Armond\b|\bRowe\s+Industries\b|\bMXR\b|"
                       r"\bCustom\s+Audio\s+Electronics\b|\bCAE\b|\bDaredevil(\s+Pedals)?\b|\bWylde\s+Audio\b|"
-                      r"\bPedaltrain\b|\bElectro\s*-?\s*Harmonix\b|\bEHX\b|\bSovtek\b|\bGuild\b", re.I)
+                      r"\bPedaltrain\b|\bElectro\s*-?\s*Harmonix\b|\bEHX\b|\bSovtek\b|\bGuild\b|\bMaxon\b|"
+                      r"\bNisshin\s+Onpa\b|\bHoshino(\s+Gakki)?\b|\bVemuram\b|\bKorg\b", re.I)
 
 
 def hex_rgb(h, fallback):
@@ -81,9 +82,18 @@ def real_models(strict=True):
     models, errors = catalog.load_all(strict=strict)
     specs = load_specs()
     out = []
+    extra = real_only_looks()
     for m in models:
         if m.get("real"):
             out.append(_shaped_replica(m))
+            continue
+        if m["id"] in extra:
+            # replica con la forma del pedale vero di un modello che in modalita' normale ha un altro stile (es. ed9:
+            # TS808 a scatola, mentre la versione normale resta nello stile "ts"); il modello normale non cambia
+            mm = copy.deepcopy(m)
+            mm["look"], mm["real"] = extra[m["id"]]["look"], extra[m["id"]]["real"]
+            mm["style"] = "box"
+            out.append(_shaped_replica(mm))
             continue
         if not (m.get("inspired") or "").startswith("BOSS"):
             continue
@@ -112,6 +122,18 @@ def real_models(strict=True):
         r["real_notes"] = sp.get("notes") or ""
         r["style"] = "real_" + series
         out.append(r)
+    return out
+
+
+def real_only_looks():
+    """Repliche di modelli senza 'look' nel catalogo normale: dizionario REAL_ONLY dei file dei gruppi
+    {id: dict(look=..., real=dict(code=..., name=...))}."""
+    import importlib
+    out = {}
+    for g in catalog.GROUP_FILES:
+        if not os.path.exists(os.path.join(HERE, g + ".py")):
+            continue
+        out.update(getattr(importlib.import_module(g), "REAL_ONLY", {}) or {})
     return out
 
 

@@ -1,0 +1,3477 @@
+{
+ "ib9ts9": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "OVERDRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(0,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=3.9; tonets R7=1k C4=220n P=20k t=taper(2,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(1,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tube Screamer TS9: inseguitore d'ingresso (20n, 510k), clipping a op-amp TA75558 con 1S1588 antiparalleli in retroazione (51k + 500k A, 51p; gamba 4k7 + 47n = 720 Hz, guadagno 12-118), tono attivo 1k/0.22u + 20k con 220R/0.22u, LEVEL 100k A; uscita TS9 470 ohm / 100 k (il TS808 ha 100 ohm / 10 k). Fonti: ElectroSmash, R.G. Keen."
+ },
+ "ibtsts808hw": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "OVERDRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(0,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; tonets R7=1k C4=220n P=20k t=taper(2,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(1,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=100 R.o.0=par(10k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "TS808 cablato a mano su torretta (JRC4558D selezionati, true bypass): circuito TS808 classico, 51k + 500k A con 51p e 1S1588, gamba 4k7 + 47n, tono 1k/0.22u + 20k, uscita 100 ohm / 10 k. Valori TS808 (ElectroSmash): Ibanez non pubblica lo schema; il cablaggio a mano non cambia il suono."
+ },
+ "ibtstsmini": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OVERDRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(2,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; tonets R7=1k C4=220n P=20k t=taper(0,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(1,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=100 R.o.0=par(10k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tube Screamer in contenitore mini con componenti SMD e JRC4558 'conforme alle specifiche originali': circuito TS808 (51k + 500k A, 1S1588, 4k7 + 47n, tono 1k/0.22u + 20k, uscita 100 ohm / 10 k). Valori assunti dal TS808 (stima: le piccole differenze di resistenze riportate dagli appassionati non sono verificate)."
+ },
+ "ibstts5": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(2,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=3.9; tonets R7=1k C4=220n P=20k t=taper(1,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(0,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Soundtank TS5: circuito stampato 1:1 con il TS9 riedito (mirosol, Dirk Hendrik) con TA75558P: stesso config del TS9 (ib9ts9) salvo l'ordine dei comandi; uscita 470 ohm / 100 k. Valori del TS9 (stima, non misurati sul TS5)."
+ },
+ "ib10msl": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "OVERDRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=82n Rf=51k+pot(0,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; tonets R7=1k C4=220n P=20k t=taper(1,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(2,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Metal Screamer (Master Series): TS9 con il condensatore della gamba verso massa da 82n invece di 47n (passa-alto del ramo che distorce a 410 Hz invece di 720 Hz: bassi piu' saturi), JRC4558D; resto come ib9ts9 (mirosol).",
+  "control_notes": "Etichette dei pomelli stimate (OVERDRIVE/TONE/LEVEL); la levetta del vano pila e' omessa."
+ },
+ "ib10ts10": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(0,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=3.6 railn=4.4; tonets R7=1k C4=220n P=20k t=taper(1,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=3.8 railn=4.6; hpf R=100k C=1u; vol a=taper(2,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "TS10 Classic: circuito TS9 con 220 ohm in serie all'ingresso + del clipping (ininfluente in banda audio), inseguitore in piu' verso il bypass e riferimento piu' alto di 4.5 V (R.G. Keen): escursione dell'op-amp asimmetrica (+3.6/-4.4 V, stima). Uscita 470 ohm / 100 k come il TS9.",
+  "control_notes": "La levetta OPEN/BATTERY del coperchio non e' un comando audio: omessa."
+ },
+ "ibtsts808hwv2": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "OVERDRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(0,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; tonets R7=1k C4=220n P=20k t=taper(2,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(1,A); fbclip Rg=10k Cg=10u Rf=10k Cf=47p up=0 dn=0 gbw=3M sr=1 rail=4.0; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=180 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "TS808 cablato a mano (JRC4558D) con uno stadio di guadagno finale in piu': op-amp non invertente x2 (+6 dB, uscita massima +16.1 dBu dichiarata con 18 V) che abbassa l'impedenza d'uscita a 180 ohm. Topologia del boost non pubblicata: op-amp x2 a 9 V (stima); resto TS808 (ElectroSmash)."
+ },
+ "ibtsts808dx": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "OVERDRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BOOST",
+    "role": "boost",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "PRE/POST",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "PRE",
+     "POST"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "18V/9V",
+    "role": "voltage",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "9V",
+     "18V"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=470k C=20n; fbclip Rg=11k Cg=10u Rf=1+pot(3,100k,A)*sw(4,1,0) Cf=22p up=0 dn=0 gbw=3M sr=1 rail=sw(5,4.0,8.4); hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(0,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=sw(5,4.0,8.4); tonets R7=1k C4=220n P=20k t=taper(1,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=sw(5,4.2,8.6); hpf R=100k C=1u; vol a=taper(2,A); fbclip Rg=11k Cg=10u Rf=1+pot(3,100k,A)*sw(4,0,1) Cf=22p up=0 dn=0 gbw=3M sr=1 rail=sw(5,4.0,8.4); rail rail=sw(5,4.3,8.6); lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=100 R.o.0=par(10k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "TS808 completo (JRC4558D, 1S1588, 4k7 + 47n, tono 1k/0.22u + 20k, uscita 100 ohm / 10 k) piu' un booster pulito a op-amp da 0 a +20 dB (1 + 100k A / 11k) messo prima (PRE) o dopo (POST) il TS; a 18 V i binari degli op-amp salgono da +-4 a +-8.4 V (uscita massima +15 dBu dichiarata). Schema del booster non pubblicato (stima).",
+  "control_notes": "Il footswitch del booster e' reso con BOOST a zero (0 dB); il commutatore 18V/9V del pannello posteriore e' un selettore a 2 posizioni (una sola levetta ammessa: PRE/POST)."
+ },
+ "ibtsts9dx": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "TS9",
+     "+",
+     "HOT",
+     "TURBO"
+    ],
+    "short": [
+     "TS9",
+     "+",
+     "HOT",
+     "TURB"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=sw(2,47n,220n,1u,2.2u) Rf=par(51k+pot(0,500k,A),sw(2,100M,100M,470k,100M)) Cf=51p d=si up=sw(2,1,2,1,0) dn=sw(2,1,2,1,0) is=sw(2,2.52n,2.52n,2.3e-18,2.52n) n=sw(2,1.752,1.752,1.9,1.752) gbw=3M sr=1 rail=4.0; tonets R7=1k C4=220n P=20k t=taper(3,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(1,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "TS9 completo con selettore a 4 modi sulle schede dei pomelli: TS9 originale; '+' due diodi in serie per lato e condensatore della gamba 0.22u (150 Hz); HOT LED rossi con 470k in parallelo e 1u (34 Hz); TURBO senza diodi (limita solo l'op-amp ai binari) e 2.2u (15 Hz). Rapporti 5x/20x/40x da Analogman, valori assoluti e resistenza del modo HOT stimati."
+ },
+ "ibtlts7": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "TS9",
+     "HOT"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=22n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(0,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0 Rg2=1.8k Cg2=sw(3,1p,47n); tonets R7=1k C4=220n P=20k t=taper(1,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(2,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tone-Lok TS7: TS9 (NJM4558D, MA150 antiparalleli, 51k + 500k A con 51p, 4k7 + 47n, tono 1k/0.22u + 20k, uscita 470 ohm / 100 k, distinta base Ibanez 2002); il modo HOT aggiunge R31 1k8 nella gamba di guadagno (secondo ramo 1k8 + 47n, stima del collegamento: +5 dB a 1 kHz, +10 dB sugli acuti).",
+  "control_notes": "Il selettore a slitta TS9/HOT e' reso come levetta."
+ },
+ "ibtstsv808": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "OVERDRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SAT",
+    "role": "sat",
+    "default": 0.5,
+    "units": "db",
+    "lo": -2.5,
+    "hi": 11.7,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "DIODE",
+    "role": "diode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "SYM 1",
+     "SYM 2",
+     "ASYM 1",
+     "ASYM 2"
+    ],
+    "short": [
+     "S1",
+     "S2",
+     "A1",
+     "A2"
+    ]
+   }
+  ],
+  "config": "hpf R=1M C=20n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k*0.75+51k*1*lin(3,0,-0.614)+51k*3.714*taper(3,A)+pot(0,500k,A)*0.75+pot(0,500k,A)*1*lin(3,0,-0.614)+pot(0,500k,A)*3.714*taper(3,A) Cf=51p d=si up=sw(5,1,2,1,1) dn=sw(5,1,2,2,3) gbw=8M sr=20 rail=3.5; lshelf f=250 Q=0.6 g=lin(4,-6,6); tonets R7=1k C4=220n P=20k t=taper(2,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.0; hpf R=100k C=1u; vol a=taper(1,A)*2.24; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=6k R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Ibrido TS808 / Jan Ray su c.s. a 4 strati con OPA2134 (8 MHz, 20 V/us), Zin 1 M: trimmer SAT sul guadagno massimo (-2.5 / +11.7 dB rispetto al TS808, centro = TS808), trimmer BASS, quattro forme di clipping dai due dip switch e volume +7 dB rispetto al TS. Schema non pubblicato: BASS come mensola +-6 dB a 250 Hz e diodi 1+1 / 2+2 / 1+2 / 1+3 (stime).",
+  "control_notes": "SAT e BASS sono trimmer esterni a cacciavite; i due dip switch interni dei diodi sono un selettore a 4 posizioni."
+ },
+ "ibtsts9b": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIX",
+    "role": "mix",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; tap n=0; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(0,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; lpf R=1k C=47n; mix n=0 wet=taper(2,B) dry=lin(2,1,0)*1.4; lshelf f=100 Q=0.6 g=lin(3,-12,12) rail=4.0; hshelf f=2000 Q=0.6 g=lin(4,-12,12) rail=4.0; vol a=taper(1,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Primo Tube Screamer per basso: stadio di clipping TS (op-amp + diodi in retroazione, gamba 4k7 + 47n) in parallelo a un percorso pulito miscelati dal MIX, poi EQ attivo a mensola BASS (100 Hz) e TREBLE (2 kHz). Schema non pubblicato: valori del TS9, passa-basso 3.4 kHz dopo il clipping ed escursione +-12 dB dell'EQ stimati."
+ },
+ "ibtsnts": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIX",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=500k C=22n; bjt g=2+taper(0,A)*38 vp=3.5 vn=3.5 soft=3; hpf R=100k C=100n; tap n=0; triode Rp=470k Rk=1 B=18 byp=1 mu=18.1 ex=4.08 kg1=4.27M kp=451.94 kvb=4.2 vg=1.5 gc=1.5 gw=0.4; gain a=-0.9; hpf R=1M C=22n; mix n=0 wet=taper(3,B) dry=lin(3,1.6,0); tonets R7=1k C4=220n P=20k t=taper(2,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.0; hpf R=100k C=1u; vol a=taper(1,A)*1.6; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=300 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Nu Tubescreamer: amplificatore discreto (DRIVE) che pilota il doppio triodo a fluorescenza Korg Nutube 6P1 al posto dei diodi (modello di Koren di Rezzonics con griglia positiva e conduzione di griglia), MIX pulito/saturato, tono attivo tipo TS, LEVEL e uscita 300 ohm. Schema non pubblicato (solo blocchi del manuale): guadagno dello stadio discreto, tensione anodica (18 V) e carico (470k) stimati."
+ },
+ "ib7od855": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "OVERDRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BALANCE",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=100n Rf=51k+pot(0,1M,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; tonets R7=1k C4=220n P=20k t=taper(1,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(2,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=100 R.o.0=par(47k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Overdrive II, precursore del TS808: stessa architettura (inseguitore, op-amp 4558 con diodi al silicio in retroazione, tono attivo, volume, inseguitore) ma guadagno massimo 40 dB dichiarato e piu' bassi: qui 51k + 1M A e gamba 4k7 + 0.1u (340 Hz). Valori stimati dalla genealogia TS (schema non trovato); tono come il TS808.",
+  "control_notes": "BALANCE e' il volume d'uscita."
+ },
+ "ib9st9": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID BOOST",
+    "role": "mid",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 200.0,
+    "hi": 2000.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=47n; mna O.i.n.o=1 C.n.o=27n R.n.c=1.5k+potr(3,20k,B) R.o.c=1.5k+potr(3,20k,B) C.c.0=68n OUT.o=1 rail=4.0; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(0,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=3.9; tonets R7=1k C4=100n P=100k t=taper(2,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.0; hpf R=101k C=1u; vol a=taper(1,B)*0.99; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Super Tube Screamer (schema Dirk Hendrik 2008, due TA75558): buffer a op-amp, stadio MID BOOST con rete a T pontato in retroazione (1k5 + doppio 20k per ramo, 68n al centro, 27n tra uscita e ingresso -: campana fissa ~+8 dB tra 200 Hz e 2 kHz), clipping TS (51k + 500k A, 4k7 + 47n), passa-basso 1k/100n (1.6 kHz) e tono attivo 100k, LEVEL 100k B, uscita 470 ohm."
+ },
+ "ib10stl": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "mid",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 200.0,
+    "hi": 2000.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(0,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; mna O.i.n.o=1 C.n.o=27n R.n.c=1.5k+potr(3,20k,B) R.o.c=1.5k+potr(3,20k,B) C.c.0=68n OUT.o=1 rail=4.0; tonets R7=1k C4=220n P=20k t=taper(2,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(1,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Super Tube (Master Series 1985): circuito TS9 (JRC4558, diodi al silicio, 4k7 + 47n, tono 1k/0.22u + 20k, uscita 470 ohm) con l'enfasi dei medi quasi-parametrica spostata dopo il clipping (Analogman). La rete dei medi e' quella dell'ST9 (T pontato, ~+8 dB, 200 Hz - 2 kHz): stima, schema dell'STL non trovato.",
+  "control_notes": "Etichette stimate (DRIVE/LEVEL/TONE/MID): alcune fonti riportano DRIVE/BITE/BRIGHT/LEVEL. Levetta del vano pila omessa."
+ },
+ "ib9sd9": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=47n; hpf R=100k C=47n; fbclip Rg=470 Cg=220n Rf=33k+pot(0,250k,B) Cf=220p up=0 dn=0 gbw=3M sr=1 rail=4.0; hpf R=10k C=470n; dclip R=2.2k C=10n d=si; mna R.i.x=2.2k C.x.h=27n R.h.0=6.8k R.i.l=6.8k C.l.0=100n R.l.w=pot(2,25k,B) R.w.h=potr(2,25k,B) R.w.0=101k OUT.w=1; vol a=lin(1,0.0099,1); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Sonic Distortion: JRC4558D non invertente con guadagno 1 + (33k + DIST 250k B)/470 (71-600, 37-55 dB; GBW 3 MHz: banda di 5 kHz al massimo), 220p in parallelo e gamba 470 + 0.22u; 0.47u, 2k2 e due 1N914 verso massa con 10n; tono Big Muff 2k2 + 27n / 6k8 (870 Hz) e 6k8 / 100n (230 Hz) su 25k B; LEVEL 100k B con 1k verso massa; uscita 470 ohm. Fonti: GGG, Aion Meteor. C in retroazione 220p (GGG; Aion indica 1n): con 1n il guadagno massimo a 1 kHz sarebbe +32 dB invece dei +55 dB del catalogo."
+ },
+ "ibtssd9m": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "GAIN",
+    "role": "boost",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "NORMAL",
+     "HIGH"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MIDS",
+    "role": "mids",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SCOOP",
+     "MID"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=47n; hpf R=100k C=47n; fbclip Rg=470 Cg=220n Rf=33k+pot(0,250k,B) Cf=220p up=0 dn=0 gbw=3M sr=1 rail=4.0; fbclip Rg=10k Cg=4.7u Rf=sw(3,1,90k) Cf=100p up=0 dn=0 gbw=3M sr=1 rail=4.0; hpf R=10k C=470n; dclip R=2.2k C=10n d=si; mna R.i.x=2.2k C.x.h=27n R.h.0=6.8k R.i.l=6.8k C.l.0=sw(4,100n,33n) R.l.w=pot(2,25k,B) R.w.h=potr(2,25k,B) R.w.0=101k OUT.w=1; vol a=lin(1,0.0099,1); fbclip Rg=10k Cg=10u Rf=1 Cf=100p up=0 dn=0 gbw=3M sr=1 rail=4.0; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Sonic Distortion Mod: circuito SD9 (JRC4558, 33k + 250k B / 470, diodi al silicio verso massa, tono Big Muff) con uno stadio a op-amp in piu' commutabile x1 / x10 (levetta GAIN, satura ai binari) e levetta MIDS che porta il condensatore del ramo dei bassi da 100n a 33n (medi meno scavati, Aion); buffer d'uscita a op-amp. Valori dell'SD9M non pubblicati: stadio x10 stimato.",
+  "control_notes": "Due levette sul pedale vero: GAIN resta levetta, MIDS diventa un selettore a 2 posizioni."
+ },
+ "ib7od850": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BALANCE",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "fbinv Ri=10k Ci=1u Rf=470k Cf=330p Rb=31k A=58 rail=5.0 railn=3.8 soft=4; hpf R=100k C=1u; gain a=div(pot(0,100k,B)+1k,101k); fbinv Ri=10k+par(potr(0,100k,B),pot(0,100k,B)+1k) Ci=1u Rf=470k Cf=330p Cd=100n d=si Rb=41k A=21 rail=4.8 railn=3.9 soft=4; fbinv Ri=10k Ci=1u Rf=470k Cf=330p Cd=100n d=si Rb=41k A=26 rail=4.8 railn=3.9 soft=4; mna R.i.qi=1k C.qi.n=1u R.n.tl=10k R.tl.m=47k C.tl.m=47n R.m.tr=47k C.m.tr=47n R.tr.x=10k R.m.b=10k R.n.w=potr(1,100k,B) R.w.x=pot(1,100k,B) C.w.k=2.2n R.k.b=22k C.b.bq=1u R.bq.0=9.4k E.bq.0.q0=-119 R.q0.q=5.6k C.q.x=1u R.x.0=147k OUT.x=1 rail=3.1 railn=4.5; vol a=taper(2,B)*0.68; rail rail=4.4",
+  "stereo": false,
+  "notes": "OD-850 (gemello del Maxon D&S): Big Muff modificato a 4 transistor (valori del clone PedalPCB Panhandle). Q1 preamplificatore (10k + 1u, 470k || 330p, 10k / 100R), SUSTAIN 100k B con 1k verso massa, due clipper a transistor con 1N914 antiparalleli + 100n e 330p in retroazione (470k, 10k / 180R), poi recupero Q4 (5k6, 1k bypassato) con la rete 47k/47n - 10k nella retroazione e TONE 100k B con 2n2 + 22k: i bassi restano fermi lungo la corsa; BALANCE 100k B dopo 47k. Tipo dei transistor originali stimato (2N5088 nel clone).",
+  "control_notes": "BALANCE e' il volume d'uscita."
+ },
+ "ibtsfzmini": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "fbinv Ri=10k Ci=1u Rf=470k Cf=330p Rb=31k A=58 rail=5.0 railn=3.8 soft=4; hpf R=100k C=1u; gain a=div(pot(2,100k,B)+1k,101k); fbinv Ri=10k+par(potr(2,100k,B),pot(2,100k,B)+1k) Ci=1u Rf=470k Cf=330p Cd=100n d=si Rb=41k A=21 rail=4.8 railn=3.9 soft=4; fbinv Ri=10k Ci=1u Rf=470k Cf=330p Cd=100n d=si Rb=41k A=26 rail=4.8 railn=3.9 soft=4; mna R.i.qi=1k C.qi.n=1u R.n.tl=10k R.tl.m=47k C.tl.m=47n R.m.tr=47k C.m.tr=47n R.tr.x=10k R.m.b=10k R.n.w=potr(0,100k,B) R.w.x=pot(0,100k,B) C.w.k=2.2n R.k.b=22k C.b.bq=1u R.bq.0=9.4k E.bq.0.q0=-119 R.q0.q=5.6k C.q.x=1u R.x.0=147k OUT.x=1 rail=3.1 railn=4.5; vol a=taper(1,B)*0.68; rail rail=4.4",
+  "stereo": false,
+  "notes": "850 Fuzz Mini: circuito dell'OD850 anni '70 rifatto in SMD (Ibanez): stesso config dell'OD-850 (ib7od850: tre stadi a transistor con diodi 1N914 in retroazione, recupero con rete di tono 47k/47n e TONE 100k B). Schema non pubblicato: valori dell'OD850 (stima).",
+  "control_notes": "Il pedale vero ha TONE, LEVEL e SUSTAIN (LEVEL al posto di BALANCE)."
+ },
+ "ibstfz5": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=47n; fbinv Ri=10k Ci=1u Rf=470k Cf=330p Rb=31k A=58 rail=5.0 railn=3.8 soft=4; hpf R=100k C=1u; gain a=div(pot(2,100k,B)+1k,101k); fbinv Ri=10k+par(potr(2,100k,B),pot(2,100k,B)+1k) Ci=1u Rf=470k Cf=330p Cd=100n d=si Rb=41k A=21 rail=4.8 railn=3.9 soft=4; fbinv Ri=10k Ci=1u Rf=470k Cf=330p Cd=100n d=si Rb=41k A=26 rail=4.8 railn=3.9 soft=4; tonebm R1=22k C1=10n R2=22k C2=4.7n t=taper(1,B); bjt g=8 vp=3.1 vn=4.5 soft=3; hpf R=100k C=1u; vol a=taper(0,A)*0.9; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Soundtank 60's Fuzz: stadi di distorsione uguali a OD850/OD9 (due 2SC1815 con coppie di diodi al silicio in retroazione, Dirk Hendrik) ma tono riscritto e guadagno di recupero basso (mirosol: suono 'trattenuto'). Schema non reperito: stadi d'ingresso e di clipping dell'OD850, tono passivo tipo Big Muff 22k/10n - 22k/4n7 e recupero x8 stimati; buffer d'ingresso/uscita Soundtank."
+ },
+ "ibstpl5": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=22n; fbinv Ri=33k Ci=10n Rf=560k Cf=47p Rb=105k A=14.7 rail=6.8 railn=2.0 soft=4; hpf R=10.2k C=100n; fbclip Rg=180 Cg=2.2u Rf=200+pot(2,20k,A) Cf=68p up=0 dn=0 gbw=3M sr=1.7 rail=4.0 Rg2=4.7k Cg2=1u; dclip R=1k C=0 d=si2; hpf R=1M C=100n; mna R.i.x=10k O.x.n.o=1 C.x.g3=22n C.g3.b3=15n R.b3.0=82k E.b3.0.e3=0.995 R.e3.g3=1.5k+67 R.x.p=4.7k R.p.w=potr(1,20k,B) R.w.n=pot(1,20k,B) R.w.q=1k C.q.g4=1u C.g4.b4=100n R.b4.0=82k E.b4.0.e4=0.995 R.e4.g4=220+67 C.n.g5=220n C.g5.b5=100n R.b5.0=150k E.b5.0.e5=0.995 R.e5.g5=680+67 R.o.n=10k C.o.n=10n OUT.o=1 rail=4.0; hpf R=101k C=1u; vol a=taper(0,A)*0.99; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Soundtank Powerlead (schema Robert Strand 2000): inseguitore, 2SC1815 a emettitore comune con 560k || 47p (ingresso 10n + 33k: passa-alto 480 Hz), RC4558D non invertente 1 + (200 + DIST 20k A)/(180 + 2u2 || 4k7 + 1u) fino a 117x, 1N4148 verso massa dopo 1k, tono attivo a tre giratori: notch fisso a 790 Hz sull'ingresso +, TONE 20k B che dosa il giratore a 118 Hz, risonanza fissa a 106 Hz nella gamba verso massa (Q ~ 9)."
+ },
+ "ibsttm5": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=47n; fbinv Ri=16k Ci=10n Rf=560k Cf=30p Rb=105k A=14.7 rail=6.8 railn=2.0 soft=4; mna C.i.a=100n R.a.b=24k R.b.0=10k C.b.c=22n R.c.0=1M OUT.c=1; fbclip Rg=180 Cg=1u Rf=200+pot(2,20k,A) Cf=100p up=0 dn=0 gbw=3M sr=1 rail=4.0 Rg2=4.7k Cg2=1u; dclip R=1.2k C=0 d=si2; hpf R=1M C=100n; mna O.i.n.o=1 R.o.n=3k C.o.n=100p C.n.g1=470n C.g1.b1=68n R.b1.0=82k E.b1.0.e1=0.995 R.e1.g1=820+67 OUT.o=1 rail=4.0; lpf R=2.4k+potr(1,50k,B) C=3.3n; hpf R=1M C=22n; vol a=taper(0,A)*0.99; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Soundtank Thrashmetal (Dirk Hendrik 2006): inseguitore, 2SC1815 con 560k || 30p e ingresso 10n + 16k (passa-alto 1 kHz), partitore 24k/10k, 4558 con 200 + GAIN 20k log su 180 + 1u || 4k7 + 1u, 1N4148 verso massa, secondo 4558 con 3k || 100p e giratore 0.47u/68n/820/82k (risonanza a 108 Hz, +13 dB), tono passa-basso TONE 50k lin + 2k4 / 3n3, inseguitore JFET, LEVEL 100k log."
+ },
+ "ibstcm5": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=47n; hpf R=10.2k C=68n; fbclip Rg=220+potr(2,10k,C) Cg=1u Rf=390k Cf=47p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=1k C=0 d=si2; hpf R=1M C=100n; mna R.i.x=10k O.x.n.o=1 R.x.w=potr(1,22k,B) R.w.p=pot(1,22k,B) R.p.n=4.7k C.w.g1=220n C.g1.b1=100n R.b1.0=82k E.b1.0.e1=0.995 R.e1.g1=680+67 C.n.g2=220n C.g2.b2=100n R.b2.0=150k E.b2.0.e2=0.995 R.e2.g2=680+67 R.o.n=10k C.o.n=10n OUT.o=1 rail=4.0; hpf R=101k C=1u; vol a=taper(0,A)*0.99; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Soundtank Classic Metal (Dirk Hendrik 2006): inseguitore, 68n + 220 verso il + (passa-alto 230 Hz), 4558 con 390k || 47p e gamba DIST 10k + 220 + 1u (39-1774x: limitato dal GBW di 3 MHz), 1N4148 verso massa, tono attivo con TONE 22k + 4k7 tra + e - e due giratori (0.22u/0.1u/680, 82k sul cursore = 143 Hz, 150k fisso = 106 Hz)."
+ },
+ "ibstcr5": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=100n; fbinv Ri=1 Ci=47n Rf=100k Cf=220p Rb=43k A=35 rail=7.0 railn=1.2 soft=4; hpf R=100k C=47n; fbclip Rg=4.7k Cg=2.2u Rf=pot(2,100k,B)+10 Cf=1p up=0 dn=0 gbw=10M sr=5 rail=3.5; hpf R=1M C=22n; dclip R=22k C=0 d=si2; hpf R=1M C=100n; mna O.i.n.o=1 R.o.n=3k C.o.n=100p C.n.g1=470n C.g1.b1=68n R.b1.0=82k E.b1.0.e1=0.995 R.e1.g1=820+67 OUT.o=1 rail=4.0; lpf R=2.4k+potr(1,50k,B) C=3.3n; hpf R=1M C=22n; vol a=taper(0,A)*0.99; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Soundtank Crunchy Rhythm (schema di fabbrica): inseguitore, 2SC1815Y a emettitore comune pilotato direttamente (47n, 100k || 220p, 10k / 220: satura presto sul semiperiodo negativo), op-amp discreto a coppia differenziale 2SA1015 con DIST 100k B su 4k7 + 2u2, 22n + 22k verso due 1N4148 a massa, NJM4558D con giratore 0.47u/68n/820 (108 Hz), tono passa-basso 50k B + 2k4 / 3n3, inseguitore JFET, LEVEL 100k A, buffer 4558. Guadagno dello stadio discreto stimato (1 + DIST/4k7)."
+ },
+ "ibstmf5": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=22n; hpf R=10.2k C=1u; fbclip Rg=4.7k Cg=100n Rf=24k+pot(2,1M,A) Cf=68p d=si2 up=1 dn=1 gbw=3M sr=1 rail=4.0; mna R.i.x=1k R.x.0=1M O.x.n.o=1 R.o.n=3k C.o.n=100p C.n.g1=470n C.g1.b1=68n R.b1.0=82k E.b1.0.e1=0.995 R.e1.g1=820+67 C.n.g2=12n C.g2.b2=1.8n R.b2.0=75k E.b2.0.e2=0.995 R.e2.g2=1k+67 OUT.o=1 rail=4.0; lpf R=2.4k+potr(1,50k,B) C=3.3n; hpf R=1M C=22n; vol a=taper(0,A)*0.99; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Soundtank Modern Fusion (schema di fabbrica): NJM4558D tipo TS con 1N4148 in retroazione (24k + DIST 1M A, 68p, gamba 4k7 + 0.1u: guadagno fino a 219), poi secondo 4558 con due giratori nella gamba verso massa (0.47u/68n/820 = 108 Hz e 12n/1n8/1k = 4 kHz, entrambi in esaltazione), tono passa-basso 50k B + 2k4 / 3n3, inseguitore JFET, LEVEL 100k A."
+ },
+ "ibstbn5": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=22n; hpf R=10.2k C=100n; fbclip Rg=180 Cg=10u Rf=10k+pot(2,100k,B) Cf=68p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=1k C=0 d=si2; hpf R=1M C=100n; mna R.i.x=10k R.x.0=1M O.x.n.o=1 C.x.g3=33n C.g3.b3=4.7n R.b3.0=100k E.b3.0.e3=0.995 R.e3.g3=5.6k+67 R.x.p=4.7k R.p.w=pot(1,20k,B) R.w.n=potr(1,20k,B) R.w.q=100 C.q.0=22n C.n.g5=220n C.g5.b5=47n R.b5.0=10k E.b5.0.e5=0.995 R.e5.g5=1.5k+67 R.o.n=10k C.o.n=10n OUT.o=1 rail=4.0; hpf R=101k C=1u; vol a=taper(0,A)*0.99; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Soundtank Black Noise (Dirk Hendrik 2007): inseguitore, JRC4558D con 68p || 10k + DIST 100k B su 180 + 10u (57-612x), 1N4148 verso massa, secondo 4558 con giratore sull'ingresso + (33n/4n7/5k6/100k: incavo a 540 Hz), TONE 20k B + 4k7 tra + e - con 100 + 22n sul cursore (acuti), giratore 0.22u/47n/1k5/10k nella gamba verso massa (~400 Hz), LEVEL 100k A."
+ },
+ "ibstsp5": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=22n; hpf R=10.2k C=47n; fbclip Rg=220 Cg=4.7u Rf=10k+pot(2,100k,B) Cf=68p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=1k C=0 d=si2; hpf R=1M C=100n; mna R.i.x=10k R.x.0=1M O.x.n.o=1 C.x.g3=22n C.g3.b3=2.2n R.b3.0=100k E.b3.0.e3=0.995 R.e3.g3=4.7k+67 R.x.p=4.7k R.p.w=pot(1,20k,B) R.w.n=potr(1,20k,B) R.w.q=100 C.q.0=22n C.n.g5=100n C.g5.b5=22n R.b5.0=22k E.b5.0.e5=0.995 R.e5.g5=1k+67 R.o.n=10k C.o.n=10n OUT.o=1 rail=4.0; hpf R=101k C=1u; vol a=taper(0,A)*0.99; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Soundtank Slam Punk: stessa topologia e circuito stampato del BN5 (mirosol: buffer, 4558 tipo RAT, diodi verso massa, tono e giratori fissi) con risposta diversa e bassi piu' asciutti. Schema 8bitsindgenug non recuperabile: valori dei giratori e dei passa-alto (47n, 220 + 4u7) stimati per un taglio dei bassi piu' alto e medi piu' avanti.",
+  "control_notes": "Scritte del pannello: LEVEL, TONE ('SPIKE'), DIST ('ANARCHY'); qui con le etichette funzionali."
+ },
+ "ibstcd5": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=511k C=100n; tap n=0; bpf f=log(1,350,2400) Q=3.2; gain db=14; mix n=0 wet=1 dry=0.15; hpf R=10k C=1u; fbclip Rg=560 Cg=3.3u Rf=pot(2,100k,B)+10 Cf=3.9n d=led up=1 dn=1 gbw=3M sr=1 rail=4.0 Rg2=47 Cg2=2.2u; lpf R=2.2k C=22n; gain a=0.199; vol a=taper(0,A); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=1k R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Soundtank Cyberdrive (Dirk Hendrik 2006): buffer 4558, filtro passa-banda del wah WH10 (variabile di stato a due op-amp) con TONE 50k log inverso come posizione del pedale, 4558 non invertente con due LED rossi, 3n9 e DIST 100k lin in retroazione su 560 + 3u3 || 47 + 2u2, passa-basso 2k2 / 22n, partitore 100k/33k, LEVEL 100k log, inseguitore JFET. Il filtro e' reso come passa-banda 350 Hz - 2.4 kHz, Q 3.2, +14 dB con un poco di diretto (stima)."
+ },
+ "ibtlds7": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=22n; hpf R=10.2k C=100n; fbclip Rg=300 Cg=1u Rf=5.6k+pot(0,500k,A) Cf=68p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=1k C=0 d=si; hpf R=1M C=100n; mna R.i.p=10k O.p.n.o=1 R.o.n=10k C.o.n=100p R.n.j1=2k R.j1.p=18k R.n.j2=5.6k R.j2.p=15k R.n.j3=6.2k R.j3.p=15k C.j1.g6=470n C.g6.b6=47n R.b6.0=100k E.b6.0.e6=0.995 R.e6.g6=1k+67 C.j2.g7=33n C.g7.b7=12n R.b7.0=100k E.b7.0.e7=0.995 R.e7.g7=1k+67 C.j3.g8=12n C.g8.b8=1.2n R.b8.0=100k E.b8.0.e8=0.995 R.e8.g8=1k+67 C.p.g9=2.2n C.g9.b9=1n R.b9.0=180k E.b9.0.e9=0.995 R.e9.g9=470+67 R.p.w=pot(1,20k,B) R.w.n=potr(1,20k,B) R.w.k=220 C.k.0=22n OUT.o=1 rail=4.0; hpf R=89k C=1u; vol a=taper(2,B)*0.56; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tone-Lok DS7 (schema e distinta base Ibanez): inseguitore, NJM4558D non invertente 1 + (5k6 + DRIVE 500k A)/(300 + 1u) con 68p (fino a ~1700x, limitato dal GBW), 1k + 4u7 verso due 1SS133 a massa, tono attivo a 4 giratori: tre partitori fissi tra - e + (2k/18k, 5k6/15k, 6k2/15k) con giratori a 107 Hz, 800 Hz e 4.2 kHz in esaltazione e uno a 11.7 kHz sull'ingresso + in taglio, TONE 20k B tra + e - con 220 + 22n sul cursore; LEVEL 50k B dopo 39k."
+ },
+ "ib9sm9": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "EDGE",
+    "role": "edge",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PUNCH",
+    "role": "punch",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; hshelf f=2000 Q=0.6 g=lin(2,-4,14) rail=4.0; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(1,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; lpf R=1k C=47n; fbclip Rg=4.7k Cg=47n Rf=15k Cf=100p d=si up=1 dn=1 gbw=1M sr=0.5 rail=3.6; lshelf f=110 Q=0.7 g=lin(4,-12,12) rail=4.0; hshelf f=3000 Q=0.6 g=lin(3,-12,12) rail=4.0; lpf R=10k C=2.2n; vol a=taper(0,A)*1.8; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Super Metal (serie 9): buffer ad alta impedenza (1 M), ATTACK = mensola degli acuti prima della distorsione, due stadi TS in cascata (JRC4558D 51k + 500k A con diodi al silicio, poi MC1458 a guadagno 4: insieme ~+54 dB come da volantino 1984), EQ attivo PUNCH (bassi 110 Hz) ed EDGE (acuti 3 kHz) +-12 dB, LEVEL. Nessuno schema pubblico: numero e taratura degli stadi e frequenze dell'EQ stimati (Dirk Hendrik: tre stadi; 'due TS9 in serie')."
+ },
+ "ibtssmmini": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "outer",
+    "label": "PUNCH",
+    "role": "punch",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "EDGE",
+    "role": "edge",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; hshelf f=2000 Q=0.6 g=lin(3,-4,14) rail=4.0; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(4,500k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; lpf R=1k C=47n; fbclip Rg=4.7k Cg=47n Rf=15k Cf=100p d=si up=1 dn=1 gbw=1M sr=0.5 rail=3.6; lshelf f=110 Q=0.7 g=lin(0,-12,12) rail=4.0; hshelf f=3000 Q=0.6 g=lin(1,-12,12) rail=4.0; lpf R=10k C=2.2n; vol a=taper(2,A)*1.8; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Super Metal Mini: circuito Super Metal dichiarato equivalente all'SM9 (stesso config di ib9sm9, in SMD, true bypass); cinque comandi su due pomelli concentrici piu' DRIVE. Equivalenza non verificata su schema (stima).",
+  "control_notes": "Pomelli concentrici: sezione superiore EDGE/ATTACK (pomello interno), inferiore PUNCH/LEVEL (anello esterno); assegnazione interno/esterno stimata."
+ },
+ "ib10ms10": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PUNCH",
+    "role": "punch",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "EDGE",
+    "role": "edge",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; hshelf f=1800 Q=0.6 g=lin(2,-6,12) rail=4.0; hpf R=10k C=1u; fbclip Rg=1k Cg=1u Rf=pot(0,100k,A)+1k Cf=100p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=2.2k C=10n d=si; hpf R=10k C=470n; fbclip Rg=2.2k Cg=2.2u Rf=22k Cf=220p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=2.2k C=10n d=si; lshelf f=100 Q=0.7 g=lin(3,-12,12) rail=4.0; hshelf f=3500 Q=0.6 g=lin(4,-12,12) rail=4.0; vol a=taper(1,A)*1.4; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Metal Charger (serie Power, stessa scheda del Master Series SML): quattro JRC4558D, ATTACK = enfasi degli acuti prima della distorsione, due stadi a op-amp ciascuno seguito da una coppia di diodi al silicio verso massa (guadagno massimo +62 dB dichiarato), PUNCH (bassi) ed EDGE (acuti) dopo la distorsione, LEVEL. Valori R/C non pubblicati: guadagni, frequenze (100 Hz / 3.5 kHz) ed escursione +-12 dB stimati.",
+  "control_notes": "La levetta OPEN/BATTERY del coperchio e' omessa."
+ },
+ "ib10pds1": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PUNCH",
+    "role": "punch",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "EDGE",
+    "role": "edge",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; hshelf f=1800 Q=0.6 g=lin(1,-6,12) rail=4.0; hpf R=10k C=1u; fbclip Rg=1k Cg=1u Rf=pot(0,47k,A)+1k Cf=100p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=2.2k C=10n d=si; hpf R=10k C=470n; fbclip Rg=2.2k Cg=2.2u Rf=22k Cf=220p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=2.2k C=10n d=si; lshelf f=100 Q=0.7 g=lin(2,-12,12) rail=4.0; hshelf f=3500 Q=0.6 g=lin(3,-12,12) rail=4.0; vol a=taper(4,A)*1.4; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "DCP Distortion (1988): distorsione analogica a controllo digitale progettata come il Metal Charger (stessi stadi di clipping, filtri ATTACK/PUNCH/EDGE 'migliorati'), guadagno massimo +55 dB invece di +62: config dell'MS10 con guadagno ridotto (stima). Le 100 memorie e il controllo MIDI/SEDI del pedale vero non sono riprodotti.",
+  "control_notes": "Il pedale vero si regola con pulsanti (SOUND, BANK/VALUE, PATCH/PARAM, MODE, STORE): qui i suoi cinque parametri (DIST, ATTACK, PUNCH, EDGE, LEVEL) sono pomelli."
+ },
+ "ib10pod1": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "toggle",
+    "label": "OD/DS",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OD",
+     "DS"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DIST",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PUNCH",
+    "role": "punch",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BITE",
+    "role": "bite",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FREQ",
+    "role": "freq",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 1000.0,
+    "hi": 8000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; tap n=0; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=4.7k+pot(1,220k,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; tonets R7=1k C4=220n P=20k t=0.6 Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; gain a=sw(0,1,0); tap n=1; recall n=0; hpf R=10k C=1u; fbclip Rg=1k Cg=1u Rf=1k+pot(1,680k,A) Cf=100p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=2.2k C=10n d=si; lpf R=4.7k C=10n; gain a=sw(0,0,1)*1.6; mix n=1 wet=1 dry=1; lshelf f=100 Q=0.7 g=lin(2,-12,12) rail=4.0; tap n=2; hpf2 f=log(4,1000,8000) Q=0.7; bjt g=4 vp=0.5 vn=0.5 soft=2; gain a=taper(3,B)*0.8; mix n=2 wet=1 dry=1; vol a=taper(5,A)*1.6; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "DCP Overdrive/Distortion (1988): due circuiti indipendenti a controllo digitale, overdrive tipo TS (diodi in retroazione, 34 dB) e distorsione (diodi verso massa, 57 dB); PUNCH = EQ dei bassi, BITE/FREQ = eccitatore di fase sugli acuti. Topologie, frequenze e quantita' stimate (solo specifiche del catalogo DCP 1988); memorie e MIDI non riprodotti.",
+  "control_notes": "Il pedale vero si regola con pulsanti e memorie: i parametri OD/DS, DIST, PUNCH, BITE, FREQ e LEVEL sono qui comandi diretti (OD/DS come levetta)."
+ },
+ "ib10ds10": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LOW",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HIGH",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ENHANCE",
+    "role": "enhance",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=500k C=47n; hpf R=10k C=1u; fbclip Rg=1k Cg=1u Rf=2.2k+pot(0,620k,A) Cf=100p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=4.7k C=4.7n d=si; lshelf f=120 Q=0.7 g=lin(2,-12,12) rail=4.0; hshelf f=2500 Q=0.6 g=lin(3,-12,12) rail=4.0; tap n=0; hpf2 f=2500 Q=0.7; hpf R=10k C=10n; gain a=taper(4,B)*2; mix n=0 wet=1 dry=1; vol a=taper(1,A)*1.17; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Distortion Charger (serie Power): distorsione a op-amp dall'overdrive al metal (guadagno massimo +56 dB), EQ dopo la distorsione a due gamme LOW/HIGH e ENHANCE che estrae le armoniche acute, le sfasa e le rimescola all'uscita A. Schema non pubblicato: clipping a diodi verso massa, frequenze ed escursioni stimate.",
+  "control_notes": "Etichette dei pomelli da descrizioni di rivenditori (stima); l'uscita B (solo enhancer sul pulito) e la levetta del vano pila sono omesse."
+ },
+ "ib10fc10": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FILTER",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=500k C=47n; hpf R=1M C=22n; fbclip Rg=47 Cg=2.2u Rf=pot(0,100k,A)+10 Cf=100p up=0 dn=0 gbw=10M sr=13 rail=4.0 Rg2=560 Cg2=4.7u; hpf R=1M C=4.7u; dclip R=1k C=0 d=si; lpf R=1.5k+potr(1,100k,A) C=3.3n; vol a=taper(2,A)*1.4; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Fat Cat: topologia ProCo RAT con op-amp JRC5534 al posto dell'LM308 (10 MHz, 13 V/us: niente distorsione da slew del RAT), 100k A in retroazione con 100p, gambe 47 + 2u2 e 560 + 4u7 (fino a ~2100x, +60 dB dichiarati), 1k e 1N914 verso massa, filtro 1k5 + 100k / 3n3 con verso invertito (comportamento da tono normale), buffer Ibanez. Valori del RAT (mirosol: stessa rete, buffer e tono invertito).",
+  "control_notes": "La levetta del vano pila e' omessa."
+ },
+ "ib10mt10": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "mid",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; hpf R=10k C=1u; fbclip Rg=1k Cg=2.2u Rf=1k+pot(0,180k,A) Cf=100p up=0 dn=0 gbw=4M sr=10 rail=4.4; lpf R=10k C=1n; fmv R1=250k R2=1M R3=25k R4=33k C1=470p C2=22n C3=22n t=taper(4,B) m=taper(3,B) l=taper(2,A); gain db=20; rail rail=4.4; vol a=taper(1,A)*0.22; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Mostortion: amplificatore di clipping con op-amp a ingresso/uscita MOSFET Harris CA3260 (la saturazione dell'uscita CMOS fa da clipping, imitando un ampli a valvole), tone stack a tre bande BASS/MIDDLE/TREBLE e amplificatore di recupero (+20 dB), buffer. Guadagno massimo +45 dB (catalogo 1990); valori R/C non pubblicati: stack Marshall e guadagni stimati.",
+  "control_notes": "La levetta del vano pila e' omessa."
+ },
+ "ib10lm7": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=500k C=47n; hpf R=10k C=1u; fbclip Rg=2.2k Cg=1u Rf=2.2k+pot(2,1M,A) Cf=47p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=2.2k C=10n d=si; hpf R=10k C=470n; fbclip Rg=2.2k Cg=1u Rf=10k Cf=100p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=2.2k C=10n d=si; tonebm R1=10k C1=22n R2=10k C2=4.7n t=taper(1,B); vol a=taper(0,A)*1.6; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=1k R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "L.A. Metal (1987): distorsione heavy metal a op-amp, guadagno massimo +60 dB, uscita massima -2 dBv (Product News 1987). Schema non pubblicato: due stadi 4558 con diodi al silicio verso massa (456x e 5.5x), tono passivo a due rami e LEVEL stimati.",
+  "control_notes": "Etichette lette in parte dalla foto Product News (l'ultima a destra e' DISTORTION); levetta del vano pila omessa."
+ },
+ "ib10ss10": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "CHORUS",
+    "role": "mix",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SERIES",
+     "PARALLEL"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; tap n=0; hpf R=10k C=1u; fbclip Rg=1k Cg=1u Rf=1k+pot(4,1.5M,A) Cf=47p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=2.2k C=10n d=si; lpf R=2.2k+potr(3,50k,B) C=4.7n; gain a=0.5; tap n=1; recall n=1 a=sw(1,1,0); mix n=0 wet=1 dry=sw(1,0,1); bbd ms=5.85 mod=2.65 rate=1.2 fb=0 bw=7000 max=12; gain a=taper(0,B); mix n=1 wet=1 dry=1; vol a=taper(2,A)*1.4; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Session Man (serie Power): distorsione a op-amp (+55 dB, uscita -9 dBv) e chorus analogico a BBD con velocita' e profondita' fisse sui trimmer interni (ritardo 3.2-8.5 ms, 0.6-6 Hz: qui a meta' corsa, 1.2 Hz), collegati in serie o in parallelo (MODE). Schema non pubblicato: clipping a diodi verso massa, tono passa-basso e livelli stimati.",
+  "control_notes": "I trimmer interni SPEED/DEPTH del chorus sono fissi a meta'; il selettore a slitta MODE e' una levetta; levetta del vano pila omessa."
+ },
+ "ib10ss20": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "D-TIME",
+    "role": "time",
+    "default": 0.4,
+    "units": "ms",
+    "lo": 7.0,
+    "hi": 70.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SERIES",
+     "PARALLEL"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "REPEAT",
+    "role": "feedback",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "D-LEVEL",
+    "role": "mix",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; tap n=0; hpf R=10k C=1u; fbclip Rg=1k Cg=1u Rf=1k+pot(4,1.5M,A) Cf=47p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=2.2k C=10n d=si; lpf R=2.2k+potr(3,50k,B) C=4.7n; gain a=0.5; tap n=1; recall n=1 a=sw(1,1,0); mix n=0 wet=1 dry=sw(1,0,1); bbd ms=log(0,7,70) mod=0 rate=0 fb=taper(5,B)*0.85 bw=4500 max=80 sat=1.5; gain a=taper(6,B); mix n=1 wet=1 dry=1; vol a=taper(2,A)*1.4; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Session Man II: la distorsione dell'SS10 (+56 dB) con un delay analogico a BBD (7-70 ms) in serie o in parallelo; ripetizioni e livello del ritardo sono trimmer da 100k sotto il coperchio (Phaze 1, mirosol). Banda del BBD (4.5 kHz) e saturazione della retroazione stimate.",
+  "control_notes": "REPEAT e D-LEVEL sono trimmer accessibili sotto il coperchio, resi come pomelli; MODE e' una levetta."
+ },
+ "ib10bs10": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; tap n=0; hpf R=10k C=1u; fbclip Rg=4.7k Cg=100n Rf=10k+pot(0,1M,A) Cf=100p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; lpf R=10k C=4.7n; lshelf f=80 Q=0.7 g=-6; peak f=600 Q=0.8 g=4; mix n=0 wet=1 dry=0.6; hshelf f=1500 Q=0.6 g=lin(1,-12,10) rail=4.0; vol a=taper(2,A)*1.4; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Bass Stack (serie Power): overdrive per basso con EQ 'accordata' miscelata al segnale pulito per conservare le fondamentali (guadagno +46 dB, uscita massima -4 dBv). Schema non pubblicato: clipping TS (diodi in retroazione, gamba 4k7 + 0.1u), voce del ramo distorto, miscela fissa 60% di pulito e TONE a mensola stimati.",
+  "control_notes": "Etichette stimate (DRIVE/TONE/LEVEL); levetta del vano pila omessa."
+ },
+ "ib10ot10": {
+  "family": "Circuit",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "EFFECT",
+    "role": "sub",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "EDGE",
+    "role": "octave",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRY",
+    "role": "dry",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; tap n=0; lpf2 f=300 Q=0.7; lpf2 f=300 Q=0.7; subocta div=2 hys=0.3 atk=3 rel=90 thr=0.003 g=1.4; lpf2 f=1200 Q=0.6; gain a=taper(0,B); tap n=1; recall n=0; rect g=3 mix=1 vk=0.02; bjt g=6 vp=0.6 vn=0.6 soft=2.5; hpf R=10k C=22n; gain a=taper(1,B)*0.6; mix n=1 wet=1 dry=1; tap n=1; recall n=0 a=taper(2,B); mix n=1 wet=1 dry=1; rail rail=4.4; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Octave (serie Power): op-amp quadruplo che squadra il segnale e flip-flop CMOS 4013 che lo divide per due (ottava sotto a onda quadra, livello EFFECT), EDGE = armoniche acute ottenute raddrizzando con due diodi e squadrando, DRY dal buffer a guadagno unitario; tre pot 100k B. Filtri del rivelatore e dell'onda quadra stimati.",
+  "control_notes": "Levetta del vano pila omessa."
+ },
+ "ibtlsm7": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LO",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HI",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "VOID",
+    "role": "gate",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OFF",
+     "1",
+     "2"
+    ],
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "EDGE",
+    "role": "edge",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SHARP",
+     "SMOOTH"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=22n; hpf R=33k C=22n; fbclip Rg=1.5k Cg=470n Rf=6.8k+pot(0,50k,A) Cf=47p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; hpf R=10k C=47n; fbclip Rg=5.1k Cg=2.2u Rf=200k Cf=68p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=1.5k C=2.7n d=si; lpf R=10k C=2.7n; peak f=650 Q=0.38 g=-9; peak f=100 Q=0.5 g=lin(1,-12,12) rail=4.0; peak f=3300 Q=0.5 g=lin(2,-12,12) rail=4.0; hshelf f=4500 Q=0.6 g=sw(5,6,0); gate thr=sw(4,0,0.004,0.012) atk=0.5 rel=sw(4,60,60,25) hold=15 floor=60; vol a=taper(3,B)*0.54; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tone-Lok Smash Box: due stadi NJM4558D ad alto guadagno (DRIVE 50k A; MA150 in retroazione nel primo, 1SS133 verso massa dopo il secondo), medi scavati e LO/HI attivi a giratori 2SC1815 (20k B), EDGE che commuta un'enfasi degli acuti, gate VOID a JFET con due soglie. Funzione dei componenti dedotta dalla distinta base Ibanez (schema SM7-01 illeggibile): guadagni, frequenze e soglie stimati.",
+  "control_notes": "VOID (slitta a 3 posizioni) e' un selettore, EDGE (slitta a 2 posizioni) una levetta."
+ },
+ "ibtlsh7": {
+  "family": "Circuit",
+  "category": "Metal",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LO",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HI",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "VOID",
+    "role": "gate",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OFF",
+     "1",
+     "2"
+    ],
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "1",
+     "2"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=22n; hpf R=33k C=22n; fbclip Rg=1.5k Cg=470n Rf=6.8k+pot(0,50k,A) Cf=47p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; hpf R=10k C=47n; fbclip Rg=5.1k Cg=2.2u Rf=200k Cf=68p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=1.5k C=2.7n d=si; lpf R=10k C=2.7n; peak f=650 Q=0.38 g=-9; peak f=sw(5,80,62) Q=0.5 g=lin(1,-12,12) rail=4.0; peak f=3300 Q=0.5 g=lin(2,-12,12) rail=4.0; lshelf f=120 Q=0.6 g=sw(5,0,4); gate thr=sw(4,0,0.004,0.012) atk=0.5 rel=sw(4,60,60,25) hold=15 floor=60; vol a=taper(3,B)*0.54; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tone-Lok Seventh Heaven (per chitarra a 7 corde): parente dello SM7 (due NJM4558D, nove 2SC1815 per buffer e giratori, 1SS133), EQ LO/HI a giratori tarato piu' in basso per la corda Si, gate VOID e selettore di voce MODE. Funzioni dalla distinta base: valori stimati (LO a 80/62 Hz, MODE 2 = +4 dB sotto 120 Hz).",
+  "control_notes": "VOID e' un selettore a 3 posizioni, MODE una levetta."
+ },
+ "ibtlfz7": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "DAMAGE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "0%",
+     "10%",
+     "100%"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=22n; hpf R=10k C=1u; fbclip Rg=2.2k Cg=2.2u Rf=2.2k+pot(0,180k,A) Cf=47p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=6.8k C=1n d=si; hpf R=33k C=68n; cebias g=sw(3,40,60,90) vsw=7 q=sw(3,0.5,0.32,0.12) s=0.04 k=4; lpf R=13k C=3.3n; peak f=log(1,300,3000) Q=0.6 g=8 rail=4.0; vol a=taper(2,B)*0.12; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tone-Lok Fuzz: fuzz anni '60 a op-amp (NJM4558D con 1SS133) seguito da stadi a transistor 2SC1815 saturati, tono attivo a giratori (20k B) e selettore DAMAGE che sposta la polarizzazione dello stadio a transistor fino al fuzz 'strozzato' da radio rotta. Ruolo dei componenti dedotto dalla distinta base (schema FZ7-01 illeggibile): punto di lavoro, guadagni e tono a campana 300 Hz - 3 kHz stimati.",
+  "control_notes": "DAMAGE (slitta a 3 posizioni) e' un selettore."
+ },
+ "ibtlpd7": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LO",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HI",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "CLEAN",
+     "OD",
+     "DIST"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OFF",
+     "1",
+     "2"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=22n; tap n=0; hpf R=10k C=1u; fbclip Rg=3.9k Cg=68n Rf=33k+pot(0,500k,A) Cf=68p d=si up=sw(4,0,1,1) dn=sw(4,0,1,1) gbw=3M sr=1 rail=4.0; dclip R=sw(4,1,1,2.4k) C=sw(4,1p,1p,1.5n) d=si up=sw(4,0,0,1) dn=sw(4,0,0,1); gain a=sw(4,0.25,1,1.6); lpf R=10k C=1.5n; mix n=0 wet=1 dry=sw(4,0,0.3,0.3); lshelf f=80 Q=0.7 g=lin(1,-12,12) rail=4.0; hshelf f=2500 Q=0.6 g=lin(2,-12,12) rail=4.0; tap n=1; hpf2 f=sw(5,8000,2500,1500) Q=0.7; bjt g=3 vp=0.6 vn=0.6 soft=2; gain a=sw(5,0,0.5,1); mix n=1 wet=1 dry=1; vol a=taper(3,B)*0.9; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tone-Lok Phat-Hed (basso): preamplificatore a tre NJM4558D con DRIVE 500k A e modi CLEAN (senza diodi), OD (1SS133 in retroazione, 30% di pulito per le fondamentali) e DIST (piu' guadagno e diodi verso massa), EQ attivo LO/HI (20k B) e ATTACK che aggiunge una rete di enfasi delle armoniche. Funzioni dalla distinta base: valori stimati.",
+  "control_notes": "MODE e ATTACK (slitte a 3 posizioni) sono selettori."
+ },
+ "ibtlsb7": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FREQUENCY",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RESONANCE",
+    "role": "res",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "AUTOWAH",
+     "SYNTH1",
+     "SYNTH2"
+    ],
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "DECAY",
+    "role": "decay",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SLOW",
+     "FAST"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=22n; tap n=0; lpf2 f=500 Q=0.7; subocta div=1 hys=0.2 atk=1 rel=50 thr=0.003 g=0.9; tap n=1; recall n=0; lpf2 f=300 Q=0.7; subocta div=2 hys=0.3 atk=2 rel=60 thr=0.003 g=0.9; tap n=2; recall n=0 a=sw(4,0.45,0,0); mix n=1 wet=1 dry=sw(4,0,1,0.6); mix n=2 wet=1 dry=sw(4,0,0,0.8); envf mode=0 flo=log(1,60,600) fhi=log(1,1200,6000) q=lin(2,0.8,8) sens=log(0,1.5,40) atk=3 rel=sw(5,400,90) src=0 drive=0.6; vol a=taper(3,B)*2.4; rail rail=4.4; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tone-Lok Synthesizer Bass: nessun rilevamento dell'altezza; il basso viene squadrato (onda impulsiva, op-amp e 1SS133) e passa in un filtro passa-basso risonante a OTA LM13600 aperto dall'inviluppo (decadimento SLOW/FAST): AUTOWAH filtra il segnale diretto, SYNTH1 l'onda quadra, SYNTH2 quadra + sub-ottava (stima). Frequenze, Q e tempi stimati dalla distinta base.",
+  "control_notes": "MODE e' un selettore a 3 posizioni, DECAY una levetta; il trimmer interno VR5 e' omesso."
+ },
+ "ibtstk999": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID BOOST",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MASTER",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "NOISE SUP",
+    "role": "threshold",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=511k C=47n; hpf R=47k C=1u; peak f=1600 Q=0.6 g=6; lpf R=47k C=100p; fbclip Rg=6.8k Cg=470n Rf=2.2k+pot(0,500k,A) Cf=100p up=0 dn=0 gbw=3M sr=1 rail=4.0; hpf R=1M C=100n; gain a=0.24; triode Rp=68k Rk=1k B=9 byp=1; hpf R=1M C=100n; lpf R=33k C=3.9n; triode Rp=33k Rk=1k B=9 byp=1; hpf R=1M C=47n; gain a=-3; lshelf f=120 Q=0.6 g=lin(1,-15,15) rail=4.0; peak f=1000 Q=0.7 g=lin(2,-15,15) rail=4.0; hshelf f=3000 Q=0.6 g=lin(3,-15,15) rail=4.0; gate thr=taper(5,A)*0.03 atk=0.5 rel=80 hold=20 floor=40; vol a=taper(4,C)*0.0625; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tube King (versione giapponese Maxon, schema Dirk Hendrik): buffer 4558, preamplificatore a op-amp con filtro, stadio GAIN (500k A su 6k8 + 0.47u), due triodi 12AX7 alimentati a 9 V (anodo 'affamato', carichi 68k e 33k, 3n9 tra gli stadi), EQ attivo BASS / MID BOOST / TREBLE (50k B) con 4558, MASTER 500k C e noise suppressor. Polarizzazione dei triodi, guadagni e frequenze dell'EQ stimati; noise suppressor non tracciato (gate stimato).",
+  "control_notes": "Il controllo NOISE SUPPRESSOR (tipo non verificato) e' un pomello di soglia: tutto a sinistra = spento."
+ },
+ "ibtstk999us": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MASTER",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=511k C=47n; hpf R=47k C=1u; peak f=1600 Q=0.6 g=6; lpf R=47k C=100p; fbclip Rg=6.8k Cg=470n Rf=2.2k+pot(0,500k,A) Cf=100p up=0 dn=0 gbw=3M sr=13 rail=3.4; hpf R=1M C=100n; gain a=0.24; triode Rp=68k Rk=1k B=9 byp=1; hpf R=1M C=100n; lpf R=33k C=3.9n; triode Rp=33k Rk=1k B=9 byp=1; hpf R=1M C=47n; gain a=-3; lshelf f=120 Q=0.6 g=lin(1,-12,12) rail=4.0; peak f=700 Q=0.7 g=lin(2,-12,12) rail=4.0; hshelf f=3000 Q=0.6 g=lin(3,-12,12) rail=4.0; vol a=taper(4,B)*0.11; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tube King USA (schema Dirk Hendrik 2006): come la versione giapponese ma con op-amp TL072 (13 V/us, escursione piu' stretta), stadio GAIN 500k su 4k7 + 47u, due triodi 12AX7 a bassa tensione (68k, 33k), EQ a 3 bande su un solo op-amp (50k lineari), MASTER 50k e nessun noise suppressor. Polarizzazione dei triodi e taratura dell'EQ stimati."
+ },
+ "ibtstk999od": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LO",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "INPUT",
+    "role": "pad",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "HI",
+     "LO"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HI",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PRESENCE",
+    "role": "presence",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=22n; gain a=sw(4,1,0.4); gain a=0.1+taper(0,A)*9; triode Rp=100k Rk=1.5k B=100 byp=1; hpf R=470k C=22n; gain a=0.12; triode Rp=100k Rk=1.5k B=100 byp=0; hpf R=470k C=22n; gain a=0.05; lshelf f=110 Q=0.6 g=lin(2,-12,12) rail=4.0; peak f=750 Q=0.7 g=lin(3,-12,12) rail=4.0; hshelf f=2800 Q=0.6 g=lin(5,-12,12) rail=4.0; hshelf f=5000 Q=0.7 g=lin(6,0,10) rail=4.0; vol a=taper(1,A)*0.75; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tube King Overdrive (2010): 12AX7 alimentata ad alta tensione interna (circa 100 V, rivenditori), voce overdrive non scavata, EQ LO/MID/HI + PRESENCE continuo, commutatore di sensibilita' d'ingresso HI/LO, true bypass. Schema non trovato: due stadi a triodo 100k / 1k5 a 100 V e frequenze dell'EQ stimati.",
+  "control_notes": "INPUT HI/LO e' la levetta."
+ },
+ "ibtstk999ht": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LO",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -14.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "PRESENCE",
+    "role": "presence",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "HI",
+     "LO"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HI",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VOID",
+    "role": "threshold",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=511k C=100n; tap n=0; fbclip Rg=10k Cg=1u Rf=10k+pot(0,100k,A) Cf=1n up=0 dn=0 gbw=3M sr=13 rail=5.7; hpf R=1M C=330n; gain a=0.15; triode Rp=100k Rk=3.3k B=96 byp=1; hpf R=470k C=22n; triode Rp=100k Rk=3.3k B=96 byp=1; hpf R=150k C=10n; gain a=0.153; hshelf f=sw(4,3000,1500) Q=0.6 g=5; peak f=110 Q=0.8 g=lin(2,-12,12) rail=4.5; peak f=600 Q=0.7 g=lin(3,-14,10) rail=4.5; peak f=3200 Q=0.8 g=lin(5,-12,12) rail=4.5; gate thr=taper(6,A)*0.03 atk=0.5 rel=60 hold=20 floor=60; vol a=taper(1,B)*0.062; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Tube King Distortion (schema Dirk Hendrik 2009): inseguitore, TL072 con DRIVE 100k A e zener 5V1 di protezione, due triodi 12AX7 in cascata a ~96 V (anodo 100k 1 W, catodo 3k3 bypassato con 1u, 22n / 470k tra gli stadi, uscita 10n su 150k/27k), presence a levetta (2n2 / 8n2), EQ LO/MID/HI a giratori su TL072 (20k B, voce con medi scavati), noise gate VOID a JFET e LEVEL 50k B. Frequenze dell'EQ stimate dai condensatori dei giratori.",
+  "control_notes": "PRESENCE HI/LO e' la levetta; VOID tutto a sinistra = gate spento."
+ },
+ "ibtsbb9": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=470k C=1u; tap n=0; gain a=taper(0,B); fbclip Rg=1k Cg=3.3u Rf=51k+470k Cf=47p d=si up=1 dn=1 gbw=3M sr=1 rail=8.0; lpf R=8.2k C=3.3n; peak f=180 Q=0.9 g=9 rail=8.0; gain a=0.35; mix n=0 wet=1 dry=lin(0,1,0); gain a=6.8; rail rail=8.0; hshelf f=1500 Q=0.6 g=lin(2,-10,10) rail=8.0; vol a=taper(1,B)*0.18; rail rail=8.0; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Bottom Booster (schema Dirk Hendrik 2013): op-amp a +-9 V da pompa di carica LT1044, pot GAIN doppio 50k B: una sezione toglie il pulito, l'altra pilota il JRC4558D con 1N4002 antiparalleli in retroazione (1k + 3u3 a massa, 51k/470k, 47p), giratore statico che esalta le basse, miscelatore a op-amp (68k/10k), tono attivo 25k B tra due 22n e LEVEL 100k B. Frequenza/Q del giratore e passa-basso stimati da una lettura parziale dello schema."
+ },
+ "ibtsjd9": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "mid",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=22n; fbinv Ri=4.7k Ci=47n Rf=47k+pot(0,1M,B) Cf=51p d=si up=1 dn=1 A=100k rail=4.0; lpf R=1k C=220n; fbclip Rg=10k Cg=220n Rf=27k Cf=220p up=0 dn=0 gbw=3M sr=1 rail=4.0; mna R.i.p=20k O.p.n.o=1 R.o.n=20k R.p.w=pot(2,10k,B) R.w.n=potr(2,10k,B) C.w.g1=47n C.g1.b1=2.2n R.b1.0=75k E.b1.0.e1=0.995 R.e1.g1=6.8k+67 R.p.u=pot(3,10k,B) R.u.n=potr(3,10k,B) C.u.k=10n R.k.0=8.2k OUT.o=1 rail=4.0; hpf R=100k C=1u; vol a=taper(1,B)*0.48; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=1u R.a.o=510 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Jet Driver (schema Dirk Hendrik 2014): inseguitore, JRC4558D invertente con 47k + DRIVE 1M B su 4k7 (guadagno fino a ~220) e due diodi al silicio con 51p in retroazione, passa-basso 1k / 220n, recupero non invertente x3.7, controlli attivi MID (giratore 650-690 Hz su 10k B) e TONE (10n + 8k2 su 10k B) intorno al 4558, VOLUME 100k B, inseguitore d'uscita. Tipo dei diodi non indicato (silicio piccolo segnale)."
+ },
+ "ibtsbtmini": {
+  "family": "Circuit",
+  "category": "Overdrive / Boost",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; lshelf f=120 Q=0.6 g=lin(0,-12,12); hshelf f=3000 Q=0.6 g=lin(1,-12,12); fbclip Rg=10k Cg=4.7u Rf=1+pot(2,100k,A) Cf=33p up=0 dn=0 gbw=11M sr=5 rail=4.1; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Booster Mini: booster a op-amp JRC MUSES8820 (11 MHz, uscita fino a +-4 V a 9 V) con BASS e TREBLE e LEVEL fino a +20 dB (oltre, l'op-amp tocca i binari). Schema non pubblicato: EQ a mensola +-12 dB a 120 Hz / 3 kHz e guadagno 1-11x stimati dalle impostazioni d'esempio del manuale (Wide Range, Mid Boost, Clean, Solo)."
+ },
+ "ibtsptpre": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "PRE BOOST",
+    "role": "boost",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "POST BOOST",
+    "role": "level2",
+    "default": 0.0,
+    "units": "db",
+    "lo": 0.0,
+    "hi": 11.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GATE",
+    "role": "threshold",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "FREQ MID",
+    "role": "midfreq",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 200.0,
+    "hi": 1300.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "MID",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "FREQ HMID",
+    "role": "hmfreq",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 620.0,
+    "hi": 4000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "HIGH MID",
+    "role": "hmid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "BRIGHT",
+    "role": "bright",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=300k C=47n; tap n=0; fbclip Rg=10k Cg=4.7u Rf=1+pot(4,100k,A) Cf=33p up=0 dn=0 gbw=3M sr=1 rail=4.0; hpf R=10k C=1u; fbclip Rg=2.2k Cg=1u Rf=2.2k+pot(0,470k,A) Cf=100p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; hpf R=10k C=470n; fbclip Rg=4.7k Cg=1u Rf=47k Cf=100p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=2.2k C=10n d=si; hshelf f=2000 Q=0.7 g=sw(11,0,6); lshelf f=120 Q=0.6 g=lin(1,-12,12) rail=4.0; hshelf f=3000 Q=0.6 g=lin(2,-12,12) rail=4.0; vol a=taper(3,A); peak f=log(7,200,1300) Q=1.2 g=lin(8,-10,10) rail=4.0; peak f=log(9,620,4000) Q=1.2 g=lin(10,-10,10) rail=4.0; gain a=1+taper(5,B)*2.55; rail rail=4.2; gate thr=taper(6,A)*0.02 atk=0.5 rel=70 hold=20 floor=60; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=1k R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Pentatone Preamp (2022): PRE BOOST, distorsione (GAIN, BASS, TREBLE, BRIGHT, LEVEL), EQ parametrico (frequenze continue, +-10 dB), POST BOOST 0-11 dB e noise gate con rilevatore sul segnale secco, come lo schema a blocchi del manuale. Circuito non pubblicato: due stadi a op-amp (diodi in retroazione e poi verso massa) e frequenze stimati; dell'EQ a 5 bande restano le bande MID (200 Hz-1.3 kHz) e HIGH MID (620 Hz-4 kHz).",
+  "control_notes": "Il pedale vero ha 21 comandi: qui 12 (limite del motore) con BASS/TREBLE, PRE/POST BOOST e le due bande dell'EQ su pomelli concentrici; gli interruttori ON/OFF di PRE BOOST, NOISE GATE e EQ sono resi dai valori a zero (PRE BOOST 0 = guadagno unitario, GATE 0 = spento, MID/HIGH MID al centro = piatto); bande LO, LOW MID e HIGH omesse."
+ },
+ "ibxec20": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OD",
+     "DIST1",
+     "DIST2"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "mid",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HUSH",
+    "role": "threshold",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MASTER",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=500k C=47n; hpf R=10k C=1u; lshelf f=200 Q=0.6 g=sw(0,0,3,0); fbclip Rg=4.7k Cg=sw(0,47n,220n,100n) Rf=10k+pot(1,220k,A)*sw(0,1,0,0)+pot(1,470k,A)*sw(0,0,1,0)+pot(1,1M,A)*sw(0,0,0,1) Cf=100p d=si up=sw(0,1,0,0) dn=sw(0,1,0,0) gbw=3M sr=1 rail=4.0; dclip R=sw(0,1,2.2k,2.2k) C=sw(0,1p,10n,4.7n) d=si up=sw(0,0,1,1) dn=sw(0,0,1,1); hshelf f=3000 Q=0.6 g=sw(0,0,0,4); lshelf f=100 Q=0.6 g=lin(2,-10,10) rail=4.0; peak f=800 Q=0.7 g=lin(3,-10,10) rail=4.0; hshelf f=3200 Q=0.6 g=lin(4,-10,10) rail=4.0; gate thr=taper(5,A)*0.015 atk=0.5 rel=90 hold=10 floor=30; envf mode=0 flo=log(5,20000,2500) fhi=20000 q=0.7 sens=60 atk=1 rel=60 src=-1; vol a=taper(6,A)*sw(0,3,1.8,1.6); rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Shark Distortion (Effect Component 1994): preamplificatore a tre voci (OD naturale con diodi in retroazione, DIST1 'big stack' con diodi verso massa e piu' bassi, DIST2 piu' guadagno e piu' acuti), EQ attivo BASS/MIDDLE/TREBLE +-10 dB e riduttore di rumore HUSH su licenza Rocktron (espansore verso il basso + passa-basso dinamico). Circuito non documentato: clipping, guadagni e frequenze stimati.",
+  "control_notes": "HUSH tutto a sinistra = spento."
+ },
+ "ib759": {
+  "family": "Circuit",
+  "category": "Fuzz",
+  "controls": [
+   {
+    "kind": "slider",
+    "label": "BALANCE",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "FUZZ DEPTH",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=47n; bjt g=8 vp=3 vn=3 soft=2; hpf R=47k C=100n; bjt g=1+taper(1,A)*30 vp=2.2 vn=2.2 soft=2.5 inv=1; rect g=1.4 mix=0.85 vk=0.03; hpf R=10k C=47n; bjt g=12 vp=2.4 vn=1.8 soft=3; lpf R=10k C=4.7n; vol a=taper(0,A)*0.6; rail rail=4.4; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Fuzz Machine No. 59: derivato dall'Univox Super-Fuzz con preamplificatore a JFET al posto dei due transistor, invertitore di fase con retroazione collettore-base, raddrizzatore a onda intera a due transistor (ottava sopra), stadio di guadagno e BALANCE d'uscita. Valori non trovati: guadagni, equilibrio del raddrizzatore e filtri stimati dal Super-Fuzz.",
+  "control_notes": "I comandi sono due cursori come sul pedale vero; il pulsante TONE CHANGE (filtro che scava i medi) citato dalle fonti non e' tra i comandi della scheda e resta escluso."
+ },
+ "ibtsjemini": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE 1",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE 1",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL 1",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "CHANNEL",
+    "role": "channel",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "1",
+     "2"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE 2",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE 2",
+    "role": "tone2",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL 2",
+    "role": "level2",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=446k C=20n; tap n=0; hpf R=10k C=1u; fbclip Rg=4.7k Cg=47n Rf=51k+pot(0,1M,A) Cf=51p d=si up=1 dn=1 gbw=3M sr=1 rail=4.0; tonets R7=1k C4=220n P=20k t=taper(1,B) Rw=220 Cw=220n Rf=1k Cf=0 rail=4.2; hpf R=100k C=1u; vol a=taper(2,A)*sw(3,1,0); tap n=1; recall n=0; hpf R=10k C=26n; bjt g=60 vp=4.8 vn=3.6 soft=2.2; lpf R=10k C=1n; fbclip Rg=4.7k Cg=1u Rf=pot(4,100k,B)+10 Cf=100p up=0 dn=0 gbw=3M sr=1 rail=4.0; dclip R=2.2k C=10n d=si; tonebm R1=6.8k C1=100n R2=6.8k C2=22n t=taper(5,B); vol a=taper(6,B)*sw(3,0,1)*0.5; mix n=1 wet=1 dry=1; rail rail=4.3; lpf2 f=22000 Q=0.707; mna C.i.a=10u R.a.o=470 R.o.0=par(100k,1M) C.o.0=470p OUT.o=1",
+  "stereo": false,
+  "notes": "Doppio pedale a due canali indipendenti attivati uno alla volta: a sinistra un overdrive derivato dal TS9 (qui con DRIVE 1M, piu' guadagno), a destra una distorsione a clipping duro ispirata al DS-1 (booster a transistor, op-amp con DIST 100k B, diodi verso massa, tono a due rami). Derivazioni dalla stampa, non confermate da schemi: valori del TS9 e del DS-1 (stima).",
+  "control_notes": "Il canale si sceglie col footswitch: reso con la levetta CHANNEL al posto della levetta LED BRIGHT/SAVE (che regola solo la luminosita' dei LED)."
+ }
+}

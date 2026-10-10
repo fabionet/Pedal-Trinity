@@ -1,0 +1,1306 @@
+{
+ "ib10dl10": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 50.0,
+    "hi": 400.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4adm ranges=Delay:50:400:65536 bw=7000 comp=0 fref=500000 slew=3000 idle=-40 hiss=-95 fbmax=0.95 out=direct",
+  "stereo": true,
+  "notes": "Mitsubishi M50195 (ADM con DRAM 4164 da 64 kbit): 50-400 ms variando il clock, quindi 1,3 MHz-164 kHz di bit e ripetizioni che si impastano ai tempi lunghi; banda 7 kHz; OUTPUT = diretto + eco, seconda uscita diretta (Product News 1988, catalogo 1990).",
+  "control_notes": "Minimo 50 ms dal volantino 1988 (il catalogo 1990 dice 70 ms). La levetta di apertura del coperchio non e' un comando audio."
+ },
+ "ib10dpl10": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "PAN D.TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 70.0,
+    "hi": 400.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D.LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4adm ranges=Pan:70:400:65536 bw=7000 comp=0 fref=500000 slew=3000 idle=-40 hiss=-95 fbmax=0.95 out=pan",
+  "stereo": true,
+  "notes": "Due M50195 in cascata: il primo ritarda di T (70-400 ms) verso l'uscita sinistra, il secondo riprende l'eco e lo ritarda ancora di T verso la destra, REPEAT dal secondo al primo (eco che rimbalza L/R); in mono si sente il ritardo doppio 140-800 ms (catalogo 1990, mirosol)."
+ },
+ "ib10dsc10": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 7.0
+   },
+   {
+    "label": "D.TIME",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "5 ms",
+     "10 ms",
+     "20 ms"
+    ],
+    "short": [
+     "5",
+     "10",
+     "20"
+    ]
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "COLOR",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "hz",
+    "lo": 1200.0,
+    "hi": 12000.0
+   }
+  ],
+  "config": "type=i4adm ranges=5ms:5:5:2048|10ms:10:10:4096|20ms:20:20:8192 bw=8000 comp=0 fref=409000 slew=3000 idle=-40 hiss=-92 mod=free sweep=2 lfo=0.05,7 mix=0.7,0.7 color=1200,12000 out=inv",
+  "stereo": true,
+  "notes": "Mitsubishi M50198 (ADM, SRAM interna da 8 kbit, fs = clock/8 = 409 kHz a 3,27 MHz): i tre ritardi del selettore sono quelli del chip (2048/4096/8192 bit), l'LFO su JRC2904 sposta il clock (vibrato fino a 2:1, stima), COLOR passa-basso passivo sul wet; uscite normale e invertita (datasheet Mitsubishi 1995).",
+  "control_notes": "Gamma di SPEED e profondita' massima di WIDTH non dichiarate (stima). Il selettore a slitta D.TIME e' reso come selettore a 3 posizioni."
+ },
+ "ib10ddl10": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.6666666666666666,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "19-113 ms",
+     "38-225 ms",
+     "75-450 ms",
+     "150-900 ms"
+    ],
+    "short": [
+     "19",
+     "38",
+     "75",
+     "150"
+    ]
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4adm ranges=19-113:18.75:113:16384|38-225:37.5:225:32768|75-450:75:450:65536|150-900:150:900:131072 bw=7000 comp=1 ctau=15 fref=500000 slew=3000 idle=-40 hiss=-90 fbmax=0.95 out=mono",
+  "stereo": false,
+  "notes": "I.D.P.C. (MC4101F + DRAM 4164, compander NE571): MODE sceglie la memoria (16-128 kbit, gamme che raddoppiano) e D-TIME il clock (874-146 kHz, rapporto 6:1), banda 7 kHz; le ripetizioni ripassano dal convertitore e si scuriscono (brochure 1986, mirosol; memoria e clock stimati)."
+ },
+ "ib10dml10": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.06,
+    "hi": 13.0
+   },
+   {
+    "label": "D-LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "0.9-7 ms",
+     "7-57 ms",
+     "28-225 ms",
+     "112-900 ms"
+    ],
+    "short": [
+     "0.9",
+     "7",
+     "28",
+     "112"
+    ]
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4adm ranges=0.9-7:0.9:7.2:1024|7-57:7.2:57.6:8192|28-225:28:225:32768|112-900:112:900:131072 bw=7000 comp=1 ctau=15 fref=500000 slew=3000 idle=-40 hiss=-90 lfo=0.06,13 fbmax=0.95 out=mono",
+  "stereo": false,
+  "notes": "I.D.P.C. modulato: D-TIME e LFO spostano insieme il clock nello sweep 8:1 della gamma (flanger, chorus, doubling, eco), banda 7 kHz e compander; 0,9-900 ms in quattro gamme (brochure 1986; estremi delle gamme e velocita' dell'LFO stimati come DML/DCF10).",
+  "control_notes": "Gli estremi delle 4 gamme del MODE non sono dichiarati: stimati (0.9-7.2, 7.2-57.6, 28-225, 112-900 ms)."
+ },
+ "ib10dcf10": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.06,
+    "hi": 13.0
+   },
+   {
+    "label": "D-LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "0.25-2 ms",
+     "1-8 ms",
+     "4-32 ms",
+     "16-128 ms"
+    ],
+    "short": [
+     "0.25",
+     "1",
+     "4",
+     "16"
+    ]
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REGEN",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4adm ranges=0.25-2:0.25:2:256|1-8:1:8:1024|4-32:4:32:4096|16-128:16:128:16384 bw=7000 comp=1 ctau=15 fref=500000 slew=3000 idle=-40 hiss=-90 lfo=0.06,13 fbmax=0.9 out=inv",
+  "stereo": true,
+  "notes": "Chorus/flanger I.D.P.C.: quattro gamme 0,25-2 / 1-8 / 4-32 / 16-128 ms con sweep 1:8 del clock, SPEED 0,06-13 Hz, REGEN in retroazione positiva, banda 7 kHz; uscite normale e invertita (catalogo 1987).",
+  "control_notes": "Etichetta D-LEVEL del sesto pomello stimata come nella scheda."
+ },
+ "ib10ddl20": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.6,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "FILTERING",
+     "DOUBLING",
+     "SLAPBACK",
+     "ECHO S",
+     "ECHO M",
+     "ECHO L"
+    ],
+    "short": [
+     "FILT",
+     "DBL",
+     "SLAP",
+     "ES",
+     "EM",
+     "EL"
+    ]
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4adm ranges=FILTERING:8:32:32768|DOUBLING:16:64:65536|SLAPBACK:32:128:131072|ECHO_S:64:256:262144|ECHO_M:128:512:524288|ECHO_L:256:1024:1048576 bw=16000 comp=0 fref=2000000 slew=3000 idle=-46 hiss=-90 fbmax=0.95 out=mono",
+  "stereo": false,
+  "notes": "LSI Maxon di nuova generazione: banda 16 kHz senza riduzione di rumore, 8-1024 ms in sei gamme 4:1 che raddoppiano; modellato come ADM da 1 Mbit con clock 4-1 MHz (memoria e conversione stimate dalla banda), THD 0,5 %, rumore -90 dBv (catalogo 1987)."
+ },
+ "ib10dml20": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.06,
+    "hi": 13.0
+   },
+   {
+    "label": "D-LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.2,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "FLANGER",
+     "CHORUS",
+     "DOUBLING",
+     "ECHO S",
+     "ECHO M",
+     "ECHO L"
+    ],
+    "short": [
+     "FLG",
+     "CHO",
+     "DBL",
+     "ES",
+     "EM",
+     "EL"
+    ]
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4adm ranges=FLANGER:1:4:4096|CHORUS:4:16:16384|DOUBLING:16:64:65536|ECHO_S:64:256:262144|ECHO_M:128:512:524288|ECHO_L:256:1024:1048576 bw=16000 comp=0 fref=2000000 slew=3000 idle=-46 hiss=-90 lfo=0.06,13 fbmax=0.95 out=inv",
+  "stereo": true,
+  "notes": "Come il DDL20 (stessa scheda) con LFO 0,06-13 Hz e sweep 1:4 dentro la gamma: FLANGER 1-4, CHORUS 4-16, DOUBLING 16-64, ECHO S/M/L fino a 1024 ms, banda 16 kHz; uscite normale e invertita (catalogo 1987).",
+  "control_notes": "Etichette e disposizione dei 6 pomelli stimate come nella scheda (foto 1987)."
+ },
+ "ib10dcl": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.6,
+    "hi": 6.0
+   },
+   {
+    "label": "EFFECT LVL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MANUAL",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 1.0,
+    "hi": 8.0
+   }
+  ],
+  "config": "type=i4adm ranges=Chorus:1:8:2048 bw=12000 comp=1 ctau=15 fref=1000000 slew=3000 idle=-40 hiss=-90 lfo=0.6,6 out=inv",
+  "stereo": true,
+  "notes": "Primo chorus digitale a pedale (1985): I.D.P.C. 1-8 ms con MANUAL e WIDTH che spostano il clock (2 MHz-256 kHz, stima) nella gamma 8:1, LFO 0,6-6 Hz, banda 12 kHz e compander; uscite normale e invertita (catalogo 1985).",
+  "control_notes": "EFFECT LEVEL abbreviato in EFFECT LVL (10 caratteri). Disposizione 2x2 stimata dalla foto 1985."
+ },
+ "ib10ddl": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BALANCE",
+    "role": "balance",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RANGE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "SHORT 14-112ms",
+     "LONG 112-900ms",
+     "HOLD"
+    ],
+    "short": [
+     "S",
+     "L",
+     "HOLD"
+    ]
+   }
+  ],
+  "config": "type=i4adm ranges=SHORT:14:112:16384|LONG:112:900:131072|HOLD:112:900:131072:hold bw=7000 comp=1 ctau=15 fref=600000 slew=3000 idle=-40 hiss=-90 fbmax=0.95 out=mono",
+  "stereo": false,
+  "notes": "Master Series 1985: I.D.P.C. con banda 7 kHz e compander, SHORT 14-112 e LONG 112-900 ms (memoria 16/128 kbit, clock 1,17 MHz-146 kHz stimati); HOLD congela la memoria che ricircola i bit senza degrado; BALANCE miscela diretto ed eco (catalogo 1985).",
+  "control_notes": "In HOLD il tempo resta quello di quando si entra nel modo (sul pedale vero D-TIME cambierebbe velocita' e intonazione del campione)."
+ },
+ "ib10dfl": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.06,
+    "hi": 13.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RANGE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "SHORT 0.5-4ms",
+     "MEDIUM 1-8ms",
+     "LONG 2-16ms"
+    ],
+    "short": [
+     "S",
+     "M",
+     "L"
+    ]
+   }
+  ],
+  "config": "type=i4adm ranges=SHORT:0.5:4:1024|MEDIUM:1:8:2048|LONG:2:16:4096 bw=12000 comp=1 ctau=15 fref=1000000 slew=3000 idle=-40 hiss=-90 lfo=0.06,13 fbmax=0.9 mix=0.6,0.6 out=mono",
+  "stereo": false,
+  "notes": "Flanger digitale I.D.P.C.: tre gamme 0,5-4 / 1-8 / 2-16 ms con sweep 1:8 del clock, FEEDBACK positivo, banda 12 kHz e compander; miscela fissa diretto/effetto (catalogo 1985; velocita' dell'LFO stimata come il DML).",
+  "control_notes": "Gamma di SPEED non dichiarata (stima 0,06-13 Hz). Disposizione stimata dalla foto 1985."
+ },
+ "ib10dml": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.06,
+    "hi": 13.0
+   },
+   {
+    "label": "D-LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-RANGE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "SHORT 1-8ms",
+     "MIDDLE 8-64ms",
+     "LONG 64-512ms"
+    ],
+    "short": [
+     "S",
+     "M",
+     "L"
+    ]
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4adm ranges=SHORT:1:8:2048|MIDDLE:8:64:16384|LONG:64:512:131072 bw=12000 comp=1 ctau=15 fref=1000000 slew=3000 idle=-40 hiss=-90 lfo=0.06,13 fbmax=0.95 out=mono",
+  "stereo": false,
+  "notes": "Master Series 1985: I.D.P.C. con banda 12 kHz e compander, gamme 1-8 / 8-64 / 64-512 ms (memoria da 2 a 128 kbit, clock 2 MHz-256 kHz stimati), LFO 0,06-13 Hz con sweep 1:8 per chorus e flanger (volantino DML dicembre 1985)."
+ },
+ "ib10pdm1": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "SOUND",
+    "role": "preset",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 9.0,
+    "choices": [
+     "MANUAL",
+     "1 FLANGER",
+     "2 JET",
+     "3 CHORUS",
+     "4 ENSEMBLE",
+     "5 DOUBLING",
+     "6 SLAPBACK",
+     "7 ECHO",
+     "8 MOD ECHO",
+     "9 LONG ECHO"
+    ],
+    "short": [
+     "MAN",
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9"
+    ]
+   },
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-RANGE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.8,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "0.25-1 ms",
+     "1-4 ms",
+     "4-16 ms",
+     "16-64 ms",
+     "64-256 ms",
+     "256-1024ms"
+    ],
+    "short": [
+     "0.25",
+     "1",
+     "4",
+     "16",
+     "64",
+     "256"
+    ]
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.06,
+    "hi": 13.0
+   }
+  ],
+  "config": "type=i4adm ranges=0.25-1:0.25:1:1024|1-4:1:4:4096|4-16:4:16:16384|16-64:16:64:65536|64-256:64:256:262144|256-1024:256:1024:1048576 bw=16000 comp=0 fref=2000000 slew=3000 idle=-46 hiss=-90 lfo=0.06,13 fbmax=0.95 out=mono presets=1:0.5:0.6:0.8:0.8:0.25|0:0.6:0.75:0.8:0.9:0.12|2:0.4:0:0.7:0.5:0.35|2:0.6:0.15:0.6:0.7:0.12|3:0.4:0:0.6:0.15:0.3|4:0.3:0.15:0.6:0:0.3|5:0.3:0.35:0.5:0:0.3|5:0.35:0.4:0.5:0.12:0.3|5:0.9:0.55:0.45:0:0.3",
+  "stereo": false,
+  "notes": "DCP programmabile (1988): LSI a 16 kHz senza riduzione di rumore, ritardo in sei gamme 0,25-1024 ms, sweep 1:4 a 0,06-13 Hz; SOUND = MANUAL (i parametri si regolano coi pomelli) oppure una delle 9 memorie (Product News 1988).",
+  "control_notes": "Sul pedale vero i parametri si scrivono con i pulsanti SOUND/BANK-VALUE/PATCH-PARAM/MODE/STORE e un display: qui diventano pomelli, con il selettore SOUND per le memorie. Il contenuto delle 9 memorie di fabbrica non e' documentato (stima: flanger, jet, chorus, ensemble, doubling, slapback, eco, eco modulato, eco lungo); SOUND 0 = bypass e il MIDI via DMI4/SEDI non sono riprodotti."
+ },
+ "ib10pdd1": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "SOUND",
+    "role": "preset",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 9.0,
+    "choices": [
+     "MANUAL",
+     "1 FILTER",
+     "2 DOUBLING",
+     "3 SLAPBACK",
+     "4 SHORT ECHO",
+     "5 ECHO",
+     "6 ECHO 2",
+     "7 LONG ECHO",
+     "8 MULTI",
+     "9 ENDLESS"
+    ],
+    "short": [
+     "MAN",
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9"
+    ]
+   },
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-RANGE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.75,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 4.0,
+    "choices": [
+     "1-4 ms",
+     "4-16 ms",
+     "16-64 ms",
+     "64-256 ms",
+     "256-1024ms"
+    ],
+    "short": [
+     "1",
+     "4",
+     "16",
+     "64",
+     "256"
+    ]
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4adm ranges=1-4:1:4:4096|4-16:4:16:16384|16-64:16:64:65536|64-256:64:256:262144|256-1024:256:1024:1048576 bw=16000 comp=0 fref=2000000 slew=3000 idle=-46 hiss=-90 fbmax=0.95 out=mono presets=0:0.5:0.6:0.8:0:0.3|2:0.3:0:0.7:0:0.3|3:0.3:0.1:0.6:0:0.3|3:0.8:0.35:0.5:0:0.3|4:0.3:0.35:0.5:0:0.3|4:0.6:0.45:0.5:0:0.3|4:1:0.4:0.45:0:0.3|4:0.5:0.7:0.5:0:0.3|4:0.8:0.9:0.5:0:0.3",
+  "stereo": false,
+  "notes": "DCP programmabile senza modulazione (1988): stesso LSI a 16 kHz del PDM1, ritardo 1-1024 ms in cinque gamme; SOUND = MANUAL (pomelli) oppure una delle 9 memorie (Product News 1988).",
+  "control_notes": "Pulsanti e display del pedale vero resi con pomelli e selettore SOUND come il PDM1; memorie di fabbrica stimate."
+ },
+ "ibstdl5": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "D-LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 70.0,
+    "hi": 400.0
+   }
+  ],
+  "config": "type=i4adm ranges=Delay:70:400:65536 bw=7000 comp=0 fref=500000 slew=3000 idle=-40 hiss=-95 fbmax=0.95 out=mono",
+  "stereo": false,
+  "notes": "Mitsubishi M50195 con una DRAM 4164 da 64 kbit: 70-400 ms variando il clock (936-164 kHz di bit), ripetizioni sempre piu' granulose e scure ai tempi lunghi, D-LEVEL fino a eco forte quanto il diretto (catalogo 1991/92, analisi mirosol).",
+  "control_notes": "Il trimmer interno TIME RANGE non e' riprodotto (taratura di fabbrica)."
+ },
+ "ibstem5": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "ECHO",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 50.0,
+    "hi": 600.0
+   }
+  ],
+  "config": "type=i4adm ranges=Echo:50:600:49152 bw=7000 comp=0 fref=500000 slew=3000 idle=-40 hiss=-92 fbmax=1.0 fbclip=0.35 fbtone=2200 out=mono",
+  "stereo": false,
+  "notes": "Mitsubishi M65831 (ADM con SRAM interna da 48 kbit) con clock da VCO a transistor: 50-600 ms, quindi 983-82 kHz di bit e grana da nastro ai tempi lunghi; nell'anello filtro 2,2 kHz e due 1N4148 che saturano le ripetizioni (schema di fabbrica 1996).",
+  "control_notes": "Etichetta ECHO del primo pomello e gamma 50-600 ms da fonti di terzi (stima)."
+ },
+ "ibtlcf7": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REGEN",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "CHORUS",
+     "FLANGER"
+    ],
+    "short": [
+     "CHO",
+     "FLG"
+    ]
+   },
+   {
+    "label": "KRAZY",
+    "role": "alt",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "NORMAL",
+     "WACK'D"
+    ]
+   }
+  ],
+  "config": "type=i4adm ranges=CHORUS:2.52:21.8:4096::0.038:7|FLANGER:1.26:10.9:2048::0.019:4 bw=8000 comp=0 fref=409000 slew=3000 idle=-40 hiss=-92 mod=clamp hiss=-84 fbmax=0.9 mix=0.7,0.7 altpos=1 altlfo=0.92,109 out=inv",
+  "stereo": true,
+  "notes": "Mitsubishi M50198 (ADM, 8 kbit) con clock 1,5-13 MHz: DELAY TIME e LFO (NJM2904) si muovono dentro i limiti del VCO; LFO 0,038-7 Hz in CHORUS, 0,019-4 Hz in FLANGER, 0,92-109 Hz in WACK'D; REGEN in retroazione; uscite normale e invertita (manuale di servizio Ibanez).",
+  "control_notes": "Due selettori a slitta sul pedale vero: MODE reso come selettore a 2 posizioni, KRAZY come levetta (limite di una levetta). Ritardi in ms stimati dalla memoria del chip (4096/2048 bit)."
+ },
+ "ibtltc7": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 8.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "1",
+     "2",
+     "3"
+    ],
+    "short": [
+     "1",
+     "2",
+     "3"
+    ]
+   }
+  ],
+  "config": "type=i4adm ranges=1:6:6:4096:mono|2:6:6:4096:anti|3:12:12:8192:ens bw=8000 comp=0 fref=250000 slew=3000 idle=-40 hiss=-90 mod=free sweep=1.5 lfo=0.1,8 out=dual",
+  "stereo": true,
+  "notes": "Due Mitsubishi M65850 (ADM, 20 kbit) mossi da un solo LFO (TL022): 1 = chorus mono con uscita pulita sulla seconda presa, 2 = due linee in controfase sulle due uscite, 3 = ritardi piu' lunghi incrociati su entrambe (mirosol, ibanez.com 2009; ritardi e profondita' stimati).",
+  "control_notes": "Nomi dei comandi (SPEED, DEPTH, MIX) da ibanez.com 2009; ritardi 6/12 ms e gamma di SPEED stimati."
+ },
+ "ibtlde7": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "DELAY TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY LVL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RANGE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "30-160 ms",
+     "120-650 ms",
+     "480-2600 ms"
+    ],
+    "short": [
+     "S",
+     "M",
+     "L"
+    ]
+   },
+   {
+    "label": "MODE",
+    "role": "alt",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "ECHO",
+     "DELAY"
+    ]
+   }
+  ],
+  "config": "type=i4adm ranges=30-160:30:160:262144|120-650:120:650:262144|480-2600:480:2600:262144 bw=8000 comp=1 ctau=15 fref=1000000 slew=3000 idle=-40 hiss=-80 fbmax=0.92 altpos=0 altbw=1575 altq=0.9 altclip=0.35 altfb=1.0 out=mono",
+  "stereo": false,
+  "notes": "Modulazione delta discreta (NJM311 + integratore) con compander SA571 e DRAM da 256 kbit: tre gamme di clock (8,7 MHz-100 kHz di bit), quindi ripetizioni pulite ai tempi brevi e granulose a 2,6 s; ECHO = filtro a 1,6 kHz e diodi 1SS133 nell'anello, REPEAT al massimo ripete all'infinito (schema di servizio).",
+  "control_notes": "DELAY LEVEL abbreviato in DELAY LVL. Selettore RANGE a slitta reso come selettore a 3 posizioni, MODE come levetta."
+ },
+ "ibmld303": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "MIX",
+    "role": "mix",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FILTER RES",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FILTER CUT",
+    "role": "cutoff",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "hz",
+    "lo": 80.0,
+    "hi": 16000.0
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 40.0,
+    "hi": 1500.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0
+   },
+   {
+    "label": "PAN SPEED",
+    "role": "pan",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 10.0
+   },
+   {
+    "label": "1/16 VOL",
+    "role": "v16",
+    "kind": "outer",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "1/3 VOL",
+    "role": "v3",
+    "kind": "inner",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FILTER",
+    "role": "filter",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=i4layer time=40,1500",
+  "stereo": true,
+  "notes": "Delay DSP del 2026: TIME e' la semiminima (40-1500 ms) e nella battuta successiva suonano le prese a sedicesimi (2/4, 3/4, 4/4) e a terzine (2/3, 3/3); TONE passa da nastro (scuro, saturo, wow) ad analogico a digitale, filtro ladder sul wet, autopan stereo (manuale LD303).",
+  "control_notes": "FILTER RESONANCE e FILTER CUT OFF abbreviati in FILTER RES e FILTER CUT. Pedale con 16 comandi: i volumi 2nd/4-4th/4 e 2nd/3-3rd/3 diventano due anelli concentrici (1/16 VOL, 1/3 VOL; unita' a ore 3, +3 dB a fine corsa), il click del CUT OFF e' la levetta FILTER; omessi TAIL DECAY, INST/LINE, ms/BPM, PRESET, i modi di PAN MODE e il volume 1st."
+ }
+}

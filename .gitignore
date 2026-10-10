@@ -11,3 +11,7 @@ docs/guide/*.toc
 .vscode/
 .idea/
 __pycache__/
+tools/art/qa/tex/
+tools/art/qa/*.pkl
+tools/art/qa/*_issues*.json
+tools/art/qa/inc/

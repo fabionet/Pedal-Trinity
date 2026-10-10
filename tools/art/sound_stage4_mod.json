@@ -1,0 +1,2095 @@
+{
+ "ib7pt999": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 7.0
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=30000 ron=1500 stages=4 u=0.03,1.0 rate=0.1,7 lfo=sine fb=0 wethp=110 mix=0.5,0.5 gain=1.25 spread=0.03 gate=7",
+  "stereo": false,
+  "notes": "Quattro celle passa-tutto JRC1458 da 10k/10k e 47n con JFET 2SK246 accoppiati in parallelo a 30k (fc 180 Hz-2,4 kHz, notch 75 Hz-5,7 kHz), LFO sinusoidale a 500k log (0,1-7 Hz, stima) e miscela passiva 30k/30k con il ramo sfasato accoppiato da 47n (passa-alto ~110 Hz); schema Maxon PT-999 (Dirk Hendrik)."
+ },
+ "ib7pt707": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.2,
+    "hi": 14.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mphase cell=ldr stages=4 c=10e-9 rpar=100000 rmin=4000 rmax=1000000 la=8 lr=60 u=0,1 rate=0.2,14 lfo=relax relax=0.3 fb=0.75 fbsign=-1 fbhp=150 fblp=5000 mix=0.5,0.5 gain=1.25 gate=1",
+  "stereo": false,
+  "notes": "Quattro celle TL022 da 10n con fotoresistenze CdS (doppi fotoaccoppiatori) in parallelo a 100k: la LDR scende veloce e risale lenta, cosi' alle velocita' alte (0,2-14 Hz, LFO LM741 a rilassamento su 15u) lo sweep si accorcia; FEEDBACK 10kC invertito da Q1.A (schema Dirk Hendrik; resistenze minime della LDR stimate)."
+ },
+ "ib7pt909": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.08,
+    "hi": 13.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=30000 ron=1500 stages=4 u=0.02,0.90 rate=0.08,13 lfo=tri fb=0.8 fbhp=100 fblp=6000 mix=0.5,0.5 gain=1.25 gate=3",
+  "stereo": false,
+  "notes": "Quattro celle a JFET 2SK30AY con rete R/C tra gate e drain (bassa distorsione), LFO triangolare 0,08-13 Hz con WIDTH che scala la tensione ai gate e FEEDBACK ('re-phase') dall'uscita delle celle all'ingresso; valori delle celle stimati come nel PT-999, gamme dal catalogo 1981."
+ },
+ "ib7fp777": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "PH.SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.2,
+    "hi": 12.0
+   },
+   {
+    "label": "FB DEPTH",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PH.SELECT",
+    "role": "select",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "LEFT",
+     "STEREO",
+     "RIGHT"
+    ],
+    "short": [
+     "L",
+     "ST",
+     "R"
+    ]
+   },
+   {
+    "label": "PAN SPEED",
+    "role": "rate2",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.25,
+    "hi": 8.0
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=30000 ron=1500 stages=4 u=0.03,1.0 rate=0.2,12 lfo=tri fb=0.8 fbhp=100 mix=0.5,0.5 gain=1.25 pan=1 prate=0.25,8",
+  "stereo": true,
+  "notes": "Phaser a 4 celle JFET (numero di celle stimato come nel PT-999) con FEEDBACK DEPTH, seguito da due attenuatori in controfase pilotati da un secondo LFO sinusoidale (0,25-8 Hz): PHASE SELECT manda il segnale sfasato all'uscita L, a entrambe o alla R; con la sola uscita L il panner diventa un tremolo.",
+  "control_notes": "Etichette abbreviate a 10 caratteri: PHASE SPEED -> PH.SPEED, FEEDBACK DEPTH -> FB DEPTH, PHASE SELECT -> PH.SELECT."
+ },
+ "ib7jl70": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.2,
+    "hi": 12.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIXING",
+    "role": "jetmix",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "jettone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "JET",
+    "role": "jet",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=30000 ron=1500 stages=8 u=0.03,0.95 rate=0.2,12 lfo=tri fb=0.75 fbhp=100 fblp=6000 mix=0.5,0.5 gain=1.3 jet=1 jetf=250,2500 jetq=12",
+  "stereo": false,
+  "notes": "Otto celle TL022 con JFET 2SK30A accoppiati (4 notch), LFO integratore/comparatore su 15u (0,2-12 Hz) e FEEDBACK DEPTH 10kC; la sezione JET e' un filtro passa-banda stretto (JET TONE 5kC, 4n7/3M9) che entra attraverso il fotoaccoppiatore MCD-735, acceso dal raddrizzatore dell'ingresso (schema Dirk Hendrik; gamma del TONE stimata).",
+  "control_notes": "DEPTH e' il FEEDBACK DEPTH (VR6), MIXING il JET MIXING (VR4), TONE il JET TONE (VR7); la levetta JET sostituisce il secondo footswitch JET ON/OFF."
+ },
+ "ib7st800": {
+  "family": "Tremolo",
+  "category": "Tremolo / Pan / Slicer",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.2,
+    "hi": 12.0
+   }
+  ],
+  "config": "type=i4mtrem model=pan rate=0.2,12 pdepth=0.95",
+  "stereo": true,
+  "notes": "Auto-panner a due attenuatori in controfase pilotati da un LFO 0,2-12 Hz: l'uscita A sale mentre la B scende (ping-pong fra due amplificatori); con la sola uscita A e' un tremolo. Topologia interna e forma d'onda stimate."
+ },
+ "ib7fl303": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.08,
+    "hi": 9.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REGEN",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=flanger stages=1024 dly=1.6,12.8 vco=lin ctr=0.5 swing=0.5 rate=0.08,9 lfo=tri fbmax=0.9 aa=12000:0.6 rc=10000:0.6,12000:1.2 sat=3.0 noise=0.0005 mix=0.55,0.55",
+  "stereo": false,
+  "notes": "Reticon SAD1024 (2 x 512 stadi in serie) a 18 V con clock a due fasi dal CD4013 pilotato da un VCO a transistor (1,6-12,8 ms, 40-320 kHz): il VCO lineare rende iperbolica la spazzata del ritardo; LFO TL022 0,08-9 Hz, WIDTH 50kB, REGEN 50kB; nessun compander (fruscio del SAD1024), filtri d'ingresso/uscita stimati."
+ },
+ "ib7fl305": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.08,
+    "hi": 9.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REGEN",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY TIME",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY LVL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=flanger stages=1024 dly=0.8,16 vco=lin swing=0.5 rate=0.08,9 lfo=tri fbmax=0.9 aa=12000:0.6 rc=10000:0.6,12000:1.2 sat=3.0 noise=0.0005 mix=0.55,0.55",
+  "stereo": false,
+  "notes": "Architettura del FL-303 con DELAY TIME (centro del pettine, 0,8-16 ms) e DELAY LEVEL (quantita' di segnale flangiato) in piu'; BBD non documentato (stima SAD1024 a 18 V), LFO come il FL-303.",
+  "control_notes": "DELAY LEVEL abbreviato DELAY LVL; ordine dei pomelli stimato."
+ },
+ "ib7fl301": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 11.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REGEN",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=flanger stages=1024 dly=2.5,12 vco=lin ctr=0.5 swing=0.5 rate=0.05,11 lfo=tri fbmax=0.9 aa=11000:0.6,15000:0 rc=9000:0.6,11000:1.2 sat=3.0 noise=0.00012 mix=0.55,0.55",
+  "stereo": false,
+  "notes": "MN3007 (1024 stadi) a 18 V con clock MN3101 modulato dall'LFO triangolare: ritardo 2,5-12 ms (43-205 kHz), 0,05-11 Hz, WIDTH e REGEN, filtri anti-alias e di ricostruzione a op-amp TL0xx (valori stimati), rumore -100 dB dichiarato."
+ },
+ "ib7fl301dx": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 11.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REGEN",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=flanger stages=1024 dly=1.0,12.8 vco=lin ctr=0.5 swing=0.5 rate=0.05,11 lfo=tri fbmax=0.9 aa=11000:0.6,15000:0 rc=9000:0.6,11000:1.2 sat=1.0 noise=0.0002 mix=0.55,0.55",
+  "stereo": false,
+  "notes": "FL-301 riprogettato per 9 V: BBD a bassa tensione (stima MN3207 + MN3102, dinamica minore), ritardo 1-12,8 ms (catalogo 1981); LFO tenuto come nel FL-301 (il catalogo, a bassa risoluzione, sembra dire 0,3-3 Hz: stima)."
+ },
+ "ib7cs505": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.3,
+    "hi": 3.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=chorus stages=1024 dly=3.2,8.5 vco=exp ctr=0.5 swing=0.5 rate=0.3,3 lfo=tri aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=2.5 noise=0.0002 emph=613,2680 gate=0.004 mix=0.6,0.6 out=cs505",
+  "stereo": true,
+  "notes": "MN3007 da 1024 stadi a 12 V stabilizzati (78L12, ampia dinamica) con clock 60-160 kHz (3,2-8,5 ms), LFO TL022 0,3-3 Hz e noise gate sul ramo ritardato; con un solo jack esce diretto + chorus, con due l'uscita 1 da' solo il chorus e la 2 il diretto (FET sul contatto del jack). Clock e filtri stimati (MN3101, enfasi come i chorus Ibanez successivi)."
+ },
+ "ib7ad80": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "BLEND",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 10.0,
+    "hi": 300.0
+   }
+  ],
+  "config": "type=i4mdelay stages=4096 dly=10,300 emph=410,2340 comp=1 ctau=10 aa=3200:0.7,4200:0 rc=2800:0.6,3200:1.2 sat=2.5 noise=0.0003 loss=4e-5 fbmax=0.95 law=blend timems=150",
+  "stereo": false,
+  "notes": "MN3005 da 4096 stadi a 18 V con clock 6,8-205 kHz (10-300 ms) e compander NE570 ('sophisticated compander'), filtri anti-alias e di ricostruzione, REPEAT con anello < 1 e BLEND fra diretto ed eco; clock, enfasi e filtri stimati come nell'AD9.",
+  "control_notes": "Ordine dei pomelli stimato."
+ },
+ "ib9fl9": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.06,
+    "hi": 13.0
+   },
+   {
+    "label": "REGEN",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY TIME",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=flanger stages=1024 emph=372,2487 clamp=0.6 aa=10000:0.65,14000:0 rc=7220:0.61,9450:1.16 sat=0.9 noise=0.00015 dly=1.0,12.8 vco=lin swing=0.5 rate=0.06,13 lfo=tri fbmax=0.92 mix=0.55,0.55",
+  "stereo": false,
+  "notes": "MN3207 + MN3102 con VCO a convertitore tensione-corrente (40 kHz = 12,8 ms, ~512 kHz = 1 ms): pre-enfasi 91k/16k+4n (+16,5 dB), mixer con limitatore a diodi MA150, passa-basso -12 dB/ott, ricostruzione -24 dB/ott (18k/1n5/1n = 7,2 kHz Q 0,61; 13k/3n/560p = 9,5 kHz Q 1,16), de-enfasi; LFO triangolare 0,06-13 Hz (service manual FL9).",
+  "control_notes": "REGENERATION abbreviato REGEN (10 caratteri)."
+ },
+ "ib9cs9": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.3,
+    "hi": 3.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=chorus stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=3.2,8.5 vco=exp ctr=0.5 swing=0.5 rate=0.3,3 lfo=tri gate=0.003 wethp=78 mix=0.6,0.6 out=inv",
+  "stereo": true,
+  "notes": "MN3207 + MN3102 (schema Dirk Hendrik) con clock 60-160 kHz (3,2-8,5 ms), pre-enfasi 91k/27k+2n2 e de-enfasi uguale, LFO TL022 0,3-3 Hz, gate a JFET (2SK44) comandato dal rivelatore d'inviluppo 741; OUTPUT = diretto + effetto, INVERSE OUTPUT = diretto con l'effetto invertito di 180 gradi."
+ },
+ "ib9pt9": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.08,
+    "hi": 13.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=30000 ron=1500 stages=4 u=0.02,0.90 rate=0.08,13 lfo=tri fb=0.8 fbhp=100 fblp=6000 mix=0.5,0.5 gain=1.25 gate=3",
+  "stereo": false,
+  "notes": "Erede del PT-909 nella serie 9 (stesse gamme dichiarate: 0,08-13 Hz, ingresso max 0 dBm): celle passa-tutto a JFET con WIDTH e FEEDBACK; 4 celle come nel Maxon PT-9 Pro e nel PH5 (il catalogo 1982 parla di 'eight phase shift networks': stima, valori delle celle come il PT-909)."
+ },
+ "ib9ad9": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "DELAY TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 10.0,
+    "hi": 300.0
+   },
+   {
+    "label": "DELAY LVL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mdelay stages=4096 emph=410,2340 comp=1 ctau=10 aa=3200:0.7,4200:0 rc=2800:0.6,3200:1.2 sat=1.0 noise=0.0003 loss=4e-5 dly=10,300 fbmax=0.95 law=level dryr=1 timems=150",
+  "stereo": true,
+  "notes": "MN3205 (4096 stadi) + MN3102 con VCO a coppia di transistor (6,8-205 kHz, 10-300 ms), pre-enfasi 47k/10k+6n8 (+15 dB sopra 2,3 kHz) e de-enfasi nel mixer, compander NE571, passa-basso a emitter follower prima e dopo la linea, REPEAT limitato dal trimmer sotto l'autooscillazione; DELAY LEVEL nell'uscita EFFECT, DRY OUTPUT separata (Dirk Hendrik, prima versione dei valori).",
+  "control_notes": "DELAY LEVEL abbreviato DELAY LVL. Uscita stereo: L = EFFECT OUTPUT, R = DRY OUTPUT."
+ },
+ "ib9bc9": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED A",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.8,
+    "hi": 8.0
+   },
+   {
+    "label": "SPEED B",
+    "role": "rate2",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.3,
+    "hi": 3.0
+   },
+   {
+    "label": "WIDTH A",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "WIDTH B",
+    "role": "depth2",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=chorus stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=4.6,7.7 vco=exp ctr=0.5 swing=0.5 swing2=0.5 rate=0.8,8 rate2=0.3,3 lfo=tri gate=0.003 wethp=78 mix=0.6,0.6 out=inv",
+  "stereo": true,
+  "notes": "Un solo MN3207 (clock 66-111 kHz, 4,6-7,7 ms) modulato dalla somma di due LFO triangolari indipendenti: A veloce 0,8-8 Hz (vibrato/chorus rapido), B lento 0,3-3 Hz; pre-enfasi 91k/27k+2n2, gate a JFET 2SK118, OUTPUT = diretto + effetto e INVERT = diretto - effetto (valori dal BCL, Dirk Hendrik)."
+ },
+ "ib10sc10": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.6,
+    "hi": 6.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-TIME",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=chorus stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=1.0,7.2 vco=exp swing=0.3 rate=0.6,6 lfo=tri wethp=80 mix=0.6,0.6 out=inv",
+  "stereo": true,
+  "notes": "MN3207 + MN3102 con LFO TL022 sulla scheda dei comandi (0,6-6 Hz) e D-TIME che sposta il centro del clock (1-7,2 ms); due driver d'uscita a guadagno unitario: A = diretto + effetto, B = diretto + effetto invertito (circuito quasi uguale al CS5, mirosol; enfasi e filtri stimati come nel CS9).",
+  "control_notes": "La levetta OPEN/BATTERY non e' un comando audio: resta un dettaglio della scatola."
+ },
+ "ib10tc10": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED A",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.8,
+    "hi": 8.0
+   },
+   {
+    "label": "SPEED B",
+    "role": "rate2",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.3,
+    "hi": 3.0
+   },
+   {
+    "label": "WIDTH A",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "WIDTH B",
+    "role": "depth2",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=chorus stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=4.0,9.3 vco=exp ctr=0.5 swing=0.5 swing2=0.5 rate=0.8,8 rate2=0.3,3 lfo=tri gate=0.003 wethp=78 mix=0.6,0.6 out=inv",
+  "stereo": true,
+  "notes": "Ripresa del BCL Bi-Mode: una linea BBD (4-9,3 ms) con due sezioni di sweep sommate, A veloce 0,8-8 Hz (vibrato, pitch bend) e B lenta 0,3-3 Hz (chorus), uscite normale e invertita; circuito dallo schema BCL/TC10 di Dirk Hendrik (MN3207/MN3102 stimati).",
+  "control_notes": "Etichette e ordine stimati dalle 'due sezioni di sweep' come nel BC9 (SPEED A, SPEED B, WIDTH A, WIDTH B)."
+ },
+ "ib10pc10": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED A",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.6,
+    "hi": 6.0
+   },
+   {
+    "label": "SPEED B",
+    "role": "rate2",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.035,
+    "hi": 9.0
+   },
+   {
+    "label": "FLANGE",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "WIDTH A",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "WIDTH B",
+    "role": "depth2",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY TIME",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "A",
+     "A/B",
+     "B"
+    ]
+   }
+  ],
+  "config": "type=i4mbbd model=dual stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=3.2,8.5 bdly=1.3,6.4 vco=exp swing=0.5 swing2=0.5 rate=0.6,6 rate2=0.035,9 lfo=tri fbmax=0.85 wethp=70 mix=0.6,0.6 out=inv",
+  "stereo": true,
+  "notes": "Due linee BBD: A = chorus stereo (3,2-8,5 ms, 0,6-6 Hz), B = chorus speciale/vibrato/flanger con DELAY TIME (1,3-6,4 ms), 0,035-9 Hz e FLANGE (retroazione, anello < 1); MODE sceglie A, B o A/B (entrambe in parallelo, stima); uscita stereo normale + invertita. Ripresa del CCL Dual Chorus (BBD non documentati, stima MN3207).",
+  "control_notes": "Il selettore a slitta MODE e' reso come selettore rotativo; A/B con il footswitch esterno non e' riprodotto (le due sezioni suonano insieme)."
+ },
+ "ib10ph10": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.04,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "stages",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "6 STAGE",
+     "10 STAGE"
+    ]
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=330000 ron=1500 stages=6,10 u=0.03,0.45 rate=0.04,10 lfo=tri fb=0.8 fbhp=100 fblp=6000 mix=0.5,0.5 gain=1.25 gate=3",
+  "stereo": false,
+  "notes": "Celle passa-tutto a JFET commutabili 6/10 (nel modo 10 i primi quattro stadi vengono riusati), LFO 0,04-10 Hz con WIDTH e FEEDBACK dall'uscita all'inizio della catena; valori delle celle stimati come nel PH5 (47n, reti di gate 330k).",
+  "control_notes": "Il pulsante MODE e' reso come levetta a 2 posizioni."
+ },
+ "ib10cd10": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "D-TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 20.0,
+    "hi": 300.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mdelay stages=4096 emph=804,8840 comp=1 ctau=10 aa=3300:0.7,4500:0 rc=3000:0.65,3500:1.2 sat=1.0 noise=0.0003 loss=4e-5 dly=20,300 fbmax=0.95 law=level dryr=1 timems=150",
+  "stereo": true,
+  "notes": "Delay a BBD fino a 300 ms (stima MN3205 a 4096 stadi + MN3102) con i filtri e l'enfasi della seconda versione dell'AD9 (1k + 18n / 10k: +21 dB sopra 8,8 kHz), compander, REPEAT e D-LEVEL; uscita mix e DRY OUT separata.",
+  "control_notes": "Uscita stereo: L = OUTPUT (mix), R = DRY OUT."
+ },
+ "ib10bc10": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.3,
+    "hi": 3.4
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-TIME",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=chorus stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=1.2,12.8 vco=exp swing=0.3 rate=0.3,3.4 lfo=tri wethp=25 mix=0.6,0.6 out=inv",
+  "stereo": true,
+  "notes": "Stessa scheda dell'SC10 (merge con ib10sc10) con i condensatori di accoppiamento maggiorati per i bassi (passa-alto del ramo ritardato ~25 Hz invece di ~80 Hz) e le gamme del catalogo per basso: 1,2-12,8 ms, 0,3-3,4 Hz.",
+  "control_notes": "La levetta OPEN/BATTERY non e' un comando audio."
+ },
+ "ib10csl": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.3,
+    "hi": 3.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=chorus stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=3.2,8.5 vco=exp ctr=0.5 swing=0.5 rate=0.3,3 lfo=tri gate=0.003 wethp=78 mix=0.6,0.6 out=inv",
+  "stereo": true,
+  "notes": "Successore Master Series del CS9 con MN3207 + MN3102 e due uscite (A diretto + effetto, B effetto invertito): ritardo, LFO, enfasi e gate presi dal CS9 (stima, specifiche non trovate)."
+ },
+ "ibstcs5": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.6,
+    "hi": 6.0
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-TIME",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=chorus stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=1.0,7.2 vco=exp swing=0.3 rate=0.6,6 lfo=tri wethp=80 mix=0.6,0.6 out=mono",
+  "stereo": false,
+  "notes": "MN3207 + MN3102 con LFO triangolare TL022 (SPEED, WIDTH) e D-TIME sul centro del clock, mixer 1458 50/50 con uscita mono: e' l'SC10 con un solo driver (mirosol), da cui vengono gamme (0,6-6 Hz, 1-7,2 ms), enfasi e filtri (stima)."
+ },
+ "ibstfl5": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.06,
+    "hi": 13.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REGEN",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=flanger stages=1024 emph=372,2487 clamp=0.6 aa=10000:0.65,14000:0 rc=7220:0.61,9450:1.16 sat=0.9 noise=0.00015 dly=1.0,12.8 vco=lin ctr=0.55 swing=0.45 rate=0.06,13 lfo=tri fbmax=0.92 mix=0.55,0.55",
+  "stereo": false,
+  "notes": "Il circuito del FL9 senza il pomello DELAY (Dirk Hendrik, Skidlz): stessi filtri, enfasi e limitatore a diodi, clock MN3102 con VCO a transistor discreti, centro fissato dal trimmer CLOCK (stima ~3,5 ms) e REGEN limitato da SR3."
+ },
+ "ibstph5": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.025,
+    "hi": 7.2
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=330000 ron=1500 stages=4 u=0.025,0.30 rate=0.025,7.2 lfo=tri fb=0.8 fbhp=110 fblp=6000 wetlp=9000 mix=0.5,0.5 gain=1.25 gate=4",
+  "stereo": false,
+  "notes": "Quattro celle JRC1458 da 10k/10k e 47n con quartetto selezionato di 2SK246GR (reti 330k/220k), mixer e ritorno del FEEDBACK filtrati (33n/6n8) da IC5.B, LFO TL022 su 33u+33u in serie con SPEED 500k rev log (schema Dirk Hendrik); gamma dell'LFO e punto di riposo stimati come nel PH7."
+ },
+ "ibsttl5": {
+  "family": "Tremolo",
+  "category": "Tremolo / Pan / Slicer",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.6,
+    "hi": 12.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mtrem model=vca rate=0.6,12 lvl=0.6,1.6",
+  "stereo": false,
+  "notes": "VCA BA6110 il cui guadagno segue un LFO TL022 (integratore + comparatore) arrotondato dai diodi D1-D4, DEPTH 100k lin, LEVEL 50k lin con un leggero boost (+4 dB al massimo); gamma dell'LFO stimata (schema Dirk Hendrik)."
+ },
+ "ibstbc5": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.3,
+    "hi": 3.4
+   },
+   {
+    "label": "WIDTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D-TIME",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=chorus stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=1.2,12.8 vco=exp swing=0.3 rate=0.3,3.4 lfo=tri wethp=25 mix=0.6,0.6 out=mono",
+  "stereo": false,
+  "notes": "Stesso circuito stampato del CS5 (merge con ibstcs5) con condensatori maggiorati per il basso: ramo ritardato con passa-alto ~25 Hz e gamme del BC10 (1,2-12,8 ms, 0,3-3,4 Hz), valori stimati."
+ },
+ "ibtlph7": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.025,
+    "hi": 7.2
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "stages",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "1 (4 ST)",
+     "2 (6 ST)"
+    ]
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=330000 ron=1500 stages=4,6 u=0.025,0.30 rate=0.025,7.2 lfo=tri fb=0.82 fbhp=110 fblp=6000 mix=0.5,0.5 gain=1.25 gate=4",
+  "stereo": false,
+  "notes": "Celle NJM1458 con JFET 2SK246GR (47n), MODE 1 = 4 stadi vintage, 2 = 6 stadi; LFO NJM022 0,025-7,2 Hz (taratura di servizio), il trimmer di polarizzazione mette il terzo notch a 1,4 kHz (fc di riposo 375 Hz), FEEDBACK limitato dal trimmer sotto l'oscillazione, LEVEL = livello del ramo sfasato.",
+  "control_notes": "Selettore a slitta MODE reso come levetta; sigle '1 (4 ST)' / '2 (6 ST)'."
+ },
+ "ibtlpm7": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.15,
+    "hi": 5.1
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MANUAL",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "WAVE FORM",
+    "role": "wave",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "TRI",
+     "SQUARE",
+     "HI FREQ"
+    ],
+    "short": [
+     "TRI",
+     "SQR",
+     "HF"
+    ]
+   },
+   {
+    "label": "MODE",
+    "role": "stages",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "1",
+     "2",
+     "3"
+    ]
+   }
+  ],
+  "config": "type=i4mphase cell=ota stages=4,6,6 inv=1,1,0 f=40,6000 rate=0.15,5.1 waves=tri,square,tri wmul=1,4.7,57.3 fb=0.8 fbbip=1 fbhp=80 mix=0.5,0.5 gain=1.25 gate=1",
+  "stereo": false,
+  "notes": "Sei celle a OTA NJM13600 da 3,9 nF (fc lineare con la corrente), MODE 1 = 4 stadi con miscela invertita, 2 = 6 stadi invertita, 3 = 6 stadi in fase; LFO NJM2904 con 4,7u/1u/82n commutati (triangolo 0,15-5 Hz, quadra x4,7, alta frequenza x57 fino a ~290 Hz, effetto FM/ring), FEEDBACK bipolare (centro = zero); gamma delle fc stimata.",
+  "control_notes": "I due selettori a slitta a 3 posizioni (WAVE FORM, MODE) sono resi come selettori rotativi."
+ },
+ "ibtlap7": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.03,
+    "hi": 8.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "STAGE",
+    "role": "stages",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "4",
+     "6",
+     "8"
+    ]
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=330000 ron=1500 stages=4,6,8 u=0.025,0.30 rate=0.03,8 lfo=tri fb=0.8 fbhp=110 fblp=6000 mix=0.5,0.5 gain=1.25 gate=4",
+  "stereo": false,
+  "notes": "Phaser analogico a 4/6/8 celle passa-tutto con feedback; circuito non documentato: celle a JFET e LFO stimati come nel PH7 di cui e' il successore nella serie Tone-Lok.",
+  "control_notes": "Selettore a slitta STAGE reso come selettore rotativo a 3 posizioni."
+ },
+ "ibmadmini": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BLEND",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "ms",
+    "lo": 20.0,
+    "hi": 600.0
+   }
+  ],
+  "config": "type=i4mdelay stages=4096 emph=410,2340 comp=1 ctau=10 aa=4500:0.7,6000:0 rc=4500:0.6,5000:1.2 track=0.38 sat=1.0 noise=0.0003 loss=4e-5 dly=20,600 fbmax=0.95 law=blend timems=180",
+  "stereo": false,
+  "notes": "Coolaudio V3208 (Premier Guitar): per arrivare a 600 ms servono 4096 stadi (stima: due chip) con clock 3,4-102 kHz; compander, filtri che scendono col clock (taglio <= 0,38 f_clk, piu' scuro alle ripetizioni lunghe), REPEAT e BLEND (tutto a sinistra solo diretto)."
+ },
+ "ibmcsmini": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LEVEL",
+    "role": "outlvl",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.15,
+    "hi": 8.0
+   }
+  ],
+  "config": "type=i4mbbd model=chorus stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=2.5,9 vco=exp ctr=0.5 swing=0.45 rate=0.15,8 lfo=tri wethp=70 mix=0.6,0.6 out=mono",
+  "stereo": false,
+  "notes": "Chorus mini a BBD (stima V3207/MN3207 + clock) con LFO triangolare, miscela 1:1 e LEVEL d'uscita (unita' a meta' corsa, +6 dB al massimo); ritardo 2,5-9 ms, LFO 0,15-8 Hz ed enfasi stimati sul modello dei chorus Ibanez classici."
+ },
+ "ibmphmini": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "F.BACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 10.0
+   },
+   {
+    "label": "STAGE",
+    "role": "stages",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "4",
+     "6"
+    ]
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=330000 ron=1500 stages=4,6 u=0.025,0.30 rate=0.05,10 lfo=tri fb=0.8 fbhp=110 fblp=6000 mix=0.5,0.5 gain=1.25 gate=4",
+  "stereo": false,
+  "notes": "Phaser analogico mini a 4 o 6 celle (pulsante STAGE) con F.BACK; elementi variabili non documentati (5 mA): celle a JFET e LFO stimati come nel PH7.",
+  "control_notes": "Il pulsante STAGE (rilasciato 4, premuto 6) e' reso come levetta."
+ },
+ "ibmflmini": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REGEN",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.06,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=flanger stages=1024 emph=372,2487 clamp=0.6 aa=10000:0.65,14000:0 rc=7220:0.61,9450:1.16 sat=0.9 noise=0.00015 dly=1.0,12.8 vco=lin ctr=0.55 swing=0.45 rate=0.06,10 lfo=tri fbmax=0.92 mix=0.55,0.55",
+  "stereo": false,
+  "notes": "Flanger mini a BBD 'modellato su un flanger vintage' (Ibanez): catena, filtri e gamme presi dal FL5/FL9 (stima, BBD non documentato)."
+ },
+ "ibmtrmini": {
+  "family": "Tremolo",
+  "category": "Tremolo / Pan / Slicer",
+  "controls": [
+   {
+    "label": "WAVE",
+    "role": "wave",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.5,
+    "hi": 14.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mtrem model=wave rate=0.5,14 lvl=0.5,2.0",
+  "stereo": false,
+  "notes": "Tremolo analogico mini: WAVE squadra progressivamente il triangolo dell'LFO (da triangolare a quadra), DEPTH a zero senza effetto, LEVEL (trimmer a croce) unita' a meta' corsa; modulatore e gamma stimati.",
+  "control_notes": "LEVEL e' un trimmer a croce sul pannello: reso come pomello."
+ },
+ "ibmes2": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "OSCILLATE",
+    "role": "osc",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   },
+   {
+    "label": "MODULATION",
+    "role": "mod",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   },
+   {
+    "label": "DELAY TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "ms",
+    "lo": 30.0,
+    "hi": 1000.0
+   }
+  ],
+  "config": "type=i4mdelay stages=8192 emph=410,2340 comp=1 ctau=10 aa=5000:0.7,6500:0 rc=5000:0.6,5500:1.2 track=0.38 sat=1.0 noise=0.0003 loss=3e-5 dly=30,1000 fbmax=0.96 law=mix modrate=1.2 moddepth=0.012 osc=1.12 timems=200",
+  "stereo": false,
+  "notes": "Percorso audio analogico a BBD (stima 8192 stadi, clock 4-137 kHz per 30-1000 ms) con clock generato dal microcontrollore (tap e cursore) e filtri che lo seguono; MODULATION muove il clock (velocita' fissa ~1,2 Hz, DEPTH), OSCILLATION porta l'anello appena sopra 1 con la limitazione morbida che ne contiene l'ampiezza.",
+  "control_notes": "Il cursore DELAY TIME e' reso come pomello (niente cursori con i pomelli); la levetta OSCILLATION e' resa come selettore a 2 posizioni (massimo una levetta); il tap tempo non e' riprodotto."
+ },
+ "ibmes3": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "MIX",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "ANA/DIG",
+    "role": "digital",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "ANALOG",
+     "DIGITAL"
+    ],
+    "short": [
+     "ANA",
+     "DIG"
+    ]
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "ms",
+    "lo": 40.0,
+    "hi": 600.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODULATION",
+    "role": "mod",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 8.0
+   },
+   {
+    "label": "INST/LINE",
+    "role": "inst",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "INST",
+     "LINE"
+    ]
+   }
+  ],
+  "config": "type=i4mdelay stages=4096 emph=410,2340 comp=1 ctau=10 aa=5000:0.7,6500:0 rc=5000:0.6,5500:1.2 track=0.38 sat=1.0 noise=0.0003 loss=4e-5 dly=40,600 ddly=40,1500 diglp=9000 fbmax=0.96 law=mix modrate=0.1,8 moddepth=0.015 timems=200",
+  "stereo": false,
+  "notes": "Ibrido: ANALOG = linea BBD (stima 4096 stadi, 40-600 ms, filtri che seguono il clock), DIGITAL = ritardo digitale pulito fino a 1500 ms con passa-basso 9 kHz, passaggio con dissolvenza; modulazione con DEPTH e SPEED, INST/LINE abbassa di 10 dB il livello in linea e lo recupera in uscita.",
+  "control_notes": "ANALOG/DIGITAL abbreviato ANA/DIG e reso come selettore, MODULATION come selettore, INST/LINE e' l'unica levetta; il cursore DELAY TIME e' reso come pomello (nel fumetto la gamma analogica; in DIGITAL 40-1500 ms); tap tempo e oscillazione col footswitch non riprodotti."
+ },
+ "ibmaf2": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "MANUAL",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 8.0
+   },
+   {
+    "label": "RANGE",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "ENHANCE",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TAKEOFF SP",
+    "role": "rate3",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "TAXI",
+     "TAKEOFF"
+    ]
+   }
+  ],
+  "config": "type=i4mbbd model=af2 vco=exp stages=1024 dly=0.5,15 swing=0.5 rate=0.05,8 lfo=tri fbmax=0.92 aa=10000:0.65 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.0002 mix=0.55,0.55",
+  "stereo": false,
+  "notes": "Flanger/chorus a BBD: in TAXI MANUAL fissa il ritardo (a destra flanger corto, a sinistra chorus), SPEED e RANGE l'LFO, ENHANCE la retroazione; in TAKEOFF un secondo oscillatore (TAKEOFF SPEED, 0,04-1,5 Hz) allunga lentamente il ritardo e lo riporta indietro di colpo con piu' retroazione: la 'picchiata'. BBD e gamme stimati.",
+  "control_notes": "SPEED (TAKEOFF) abbreviato TAKEOFF SP; la levetta MODE sceglie TAXI/TAKEOFF (sul pedale vero dal footswitch)."
+ },
+ "ibmad99": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "DELAY TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 20.0,
+    "hi": 300.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY LVL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mdelay stages=4096 emph=410,2340 comp=1 ctau=10 aa=3200:0.7,4200:0 rc=2800:0.6,3200:1.2 sat=1.0 noise=0.0003 loss=4e-5 dly=20,300 fbmax=0.95 law=level dryr=1 timems=150",
+  "stereo": true,
+  "notes": "Delay a BBD fino a 300 ms con uscite EFFECT e DRY per la simulazione stereo: catena stimata come nell'AD9 (MN3205 + MN3102, compander, enfasi e filtri).",
+  "control_notes": "DELAY LEVEL abbreviato DELAY LVL. Uscita stereo: L = EFFECT, R = DRY."
+ },
+ "ibmfl99": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 10.0
+   },
+   {
+    "label": "FILTER",
+    "role": "filter",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MANUAL",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REGEN",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "INTENSE",
+    "role": "intense",
+    "kind": "selector",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "NORMAL",
+     "INTENSE"
+    ],
+    "short": [
+     "NORM",
+     "INT"
+    ]
+   }
+  ],
+  "config": "type=i4mbbd model=fl99 stages=1024 bstages=1024 dly=0.6,12 vco=lin swing=0.5 rate=0.05,10 lfo=tri fbmax=0.88 aa=10000:0.65 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.0002 mix=0.55,0.55",
+  "stereo": false,
+  "notes": "Doppio flanger analogico: due linee BBD con LFO in controfase sommate; INTENSE spazza tutta la gamma (0,6-12 ms), NORMAL solo la parte bassa-media; FILTER ferma lo sweep (MANUAL = posizione del pettine, suono metallico). BBD e gamme stimati.",
+  "control_notes": "SPEED/FILTER -> levetta FILTER; il footswitch INTENSE e' reso come selettore NORMAL/INTENSE."
+ },
+ "ibmph99": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 10.0
+   },
+   {
+    "label": "WAVEFORM",
+    "role": "wave",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SINE",
+     "SQUARE"
+    ]
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "EFF.LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "INTENSE",
+    "role": "stages",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "720",
+     "1080"
+    ]
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=330000 ron=1500 stages=4,6 u=0.025,0.30 rate=0.05,10 waves=sine,square fb=0.8 fbhp=110 fblp=6000 mix=0.5,0.5 gain=1.25 gate=5",
+  "stereo": false,
+  "notes": "Phaser a 4 celle (720 gradi) o 6 (1080 gradi, footswitch INTENSE) con LFO sinusoidale o quadro, FEEDBACK ed EFFECT LEVEL; circuito non documentato: celle e gamme stimate come nel PH7, la quadra e' smussata dalla rete RC dei gate.",
+  "control_notes": "EFFECT LEVEL abbreviato EFF.LEVEL; il footswitch INTENSE e' reso come selettore 720/1080 gradi."
+ },
+ "ibmrc99": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY TIME",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=rc99 stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=2,15 vco=exp swing=0.4 rate=0.1,10 lfo=sine wethp=70 mix=0.6,0.6 out=inv",
+  "stereo": true,
+  "notes": "Chorus a BBD con DELAY TIME e MIX LEVEL e uscite A/B (diretto + effetto / diretto - effetto); nella zona alta di SPEED aggiunge la modulazione d'ampiezza in controfase dell'altoparlante rotante. Circuito non documentato: gamme stimate."
+ },
+ "ibmec40": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.3333333333333333,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "SINGLE",
+     "DUAL",
+     "DEEP",
+     "STEP"
+    ],
+    "short": [
+     "SNGL",
+     "DUAL",
+     "DEEP",
+     "STEP"
+    ]
+   },
+   {
+    "label": "SWEEP 1",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 6.0
+   },
+   {
+    "label": "SWEEP 2",
+    "role": "rate2",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 6.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REGEN",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i4mbbd model=ec40 stages=1024 aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 dly=2,15 vco=exp swing=0.35 swing2=0.35 rate=0.1,6 rate2=0.1,6 lfo=tri fbmax=0.7 wethp=70 mix=0.6,0.6 out=inv",
+  "stereo": true,
+  "notes": "Chorus a doppio sweep: SINGLE usa l'LFO 1, DUAL somma i due sweep sullo stesso ritardo, DEEP raddoppia l'escursione dell'LFO 1, REGEN rimanda il ritardato all'ingresso (anello < 1); linea a BBD stimata (2-15 ms), uscite stereo normale/invertita stimate dai 4 jack.",
+  "control_notes": "STEP cicla i modi col footswitch: qui, senza footswitch dedicato, suona come DUAL."
+ },
+ "ibmpt1000": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "PEDAL",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 2.0
+   },
+   {
+    "label": "SLOW/FAST",
+    "role": "range",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SLOW",
+     "FAST"
+    ]
+   }
+  ],
+  "config": "type=i4mphase cell=jfet c=47e-9 r=30000 ron=1500 stages=4 u=0.03,1.0 rate=0.1,2 rate2=0.5,10 lfo=sine fb=0 wethp=110 mix=0.5,0.5 gain=1.25 gate=7",
+  "stereo": false,
+  "notes": "Phase Tone del PT-999 a bilanciere: la pedana regola la velocita' dell'LFO e SLOW/FAST cambia la gamma (0,1-2 Hz / 0,5-10 Hz, stima); celle e miscela come il PT-999 (circuito non documentato).",
+  "control_notes": "Il primo comando e' il bilanciere (velocita'): nel fumetto la gamma SLOW; in FAST va da 0,5 a 10 Hz."
+ }
+}

@@ -18,6 +18,12 @@ raggiere, righe regolari): colori e impostazione del pedale vero, MAI loghi, art
   label        dict(col=..., font=..., size=mm, pos="below"|"above")   scritte dei comandi
   ticks        True: scala attorno ai pomelli
   brand        dict(x=%, y=%) dove va "FabioNET" in modalita' normale (al posto del marchio del pedale vero)
+  keep         [(x0%, y0%, x1%, y1%), ...] zone dove non si stampano scritte (tappa 4)
+  name.zone    (y0%, y1%) fascia dove cercare il posto del blocco del nome (tappa 4)
+look["print_labels"] = {etichetta del modello: scritta del pedale vero}: solo sulle repliche REAL MOD (es. DRIVE ->
+OVERDRIVE), i comandi restano quelli del modello. Coperchi-pedale (look["covers"]): colore, inserti (piastra cromata a
+righe, gomma, etichetta) e piedini disegnati qui; le scritte dei comandi non vanno sui coperchi e sugli inserti (il
+nome si', dove il coperchio o l'inserto ha print=True).
 """
 import math
 import os
@@ -223,9 +229,12 @@ def label_control(c, pl, cx, x, y, rad, h, lab, lg, maxw, kind="knob"):
     col = tuple(lg["col"]) if lg.get("col") else None
     shadow = PL.knob_shadow(h)
     order = ("above", "below") if lg.get("pos") == "above" else ("below", "above")
+    order = order + ("right", "left")
+    if lg.get("pos") == "side":
+        order = ("left", "right", "below", "above") if x < 0 else ("right", "left", "below", "above")
     for scale in (1.0, 0.88, 0.76, 0.66):
         size = MC.fit_size(lab, base * scale, maxw, fnt)
-        for where in order + ("right", "left"):
+        for where in order:
             if where == "below":
                 pos, anc = (x, y - rad - 0.0016 - size * 0.6), "mm"
             elif where == "above":
@@ -299,6 +308,113 @@ def block_place(c, pl, cx, lines, pref_y, x_pct, zone, dry=False):
     return True
 
 
+def rot_text(c, pl, x, y, s, size, fnt, col, angle, spacing=0.0, force=False):
+    """Scritta ruotata di 'angle' gradi (antiorario) centrata in (x, y) m: nomi in diagonale della serie 808, nomi in
+    verticale sulle fasce della serie Master. Occupa nel Placer il riquadro dei glifi ruotati; None se non c'e' posto."""
+    from PIL import Image, ImageDraw, ImageFont
+    f = ImageFont.truetype(fnt, max(6, int(size * MT.PPM)))
+    bb = f.getbbox(s or " ", anchor="mm")
+    w = int(bb[2] - bb[0] + spacing * MT.PPM * max(0, len(s) - 1)) + 12
+    h = int(bb[3] - bb[1]) + 12
+    im = Image.new("L", (w, h), 0)
+    d = ImageDraw.Draw(im)
+    if spacing:
+        widths = [f.getlength(ch) for ch in s]
+        gap = spacing * MT.PPM
+        sx = w / 2 - (sum(widths) + gap * (len(s) - 1)) / 2
+        for ch, wd in zip(s, widths):
+            d.text((sx, h / 2), ch, font=f, fill=255, anchor="lm")
+            sx += wd + gap
+    else:
+        d.text((w / 2, h / 2), s, font=f, fill=255, anchor="mm")
+    imr = im.rotate(angle, resample=Image.BICUBIC, expand=True)
+    gb = imr.getbbox() or (0, 0, imr.width, imr.height)
+    px, py = c.px(x, y)
+    ox, oy = px - imr.width / 2, py - imr.height / 2
+    # riquadro in metri (y verso l'alto)
+    bx0, bx1 = c.x0 + (ox + gb[0]) / MT.PPM, c.x0 + (ox + gb[2]) / MT.PPM
+    by1, by0 = c.y1 - (oy + gb[1]) / MT.PPM, c.y1 - (oy + gb[3]) / MT.PPM
+    box = (bx0, by0, bx1, by1)
+    if not force and not pl.free(box):
+        return None
+    if col is None:
+        col = contrast(bg_at(c, x, y))
+    solid = Image.new("RGB", imr.size, tuple(col))
+    c.img.paste(solid, (int(round(ox)), int(round(oy))), imr)
+    from PIL import ImageDraw as _D
+    c.d = _D.Draw(c.img)
+    pl.rect(box)
+    return box
+
+
+def rot_block(c, pl, cx, lines, x_pct, y_pct, angle, maxlen):
+    """Blocco di righe ruotato (nome, sottotitolo, sigla) centrato in (x%, y%): righe impilate perpendicolarmente
+    alla direzione del testo, rimpicciolite finche' c'e' posto."""
+    a = math.radians(angle)
+    ux, uy = -math.sin(a), math.cos(a)          # direzione 'verso l'alto' delle righe ruotate
+    x0, y0 = cx.X(x_pct), cx.Y(y_pct)
+    for scale in (1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.42):
+        sz = [MC.fit_size(s_, size * scale, maxlen, f_) for s_, size, f_, _, _ in lines]
+        gap = 0.0012
+        hs = [z * 1.0 for z in sz]
+        total = sum(hs) + gap * (len(hs) - 1)
+        off = total / 2
+        boxes, ok = [], True
+        trial = []
+        for (s_, _, f_, col, sp), z, hh in zip(lines, sz, hs):
+            o = off - hh / 2
+            trial.append((s_, z, f_, col, sp, x0 + ux * o, y0 + uy * o))
+            off -= hh + gap
+        # prova a vuoto sul Placer (stessa funzione, senza disegnare): riquadro approssimato
+        for s_, z, f_, col, sp, xx, yy in trial:
+            w = tbox(0, 0, s_, z, f_, "mm", sp)
+            L = (w[2] - w[0]) / 2
+            H = (w[3] - w[1]) / 2
+            ex = abs(math.cos(a)) * L + abs(math.sin(a)) * H
+            ey = abs(math.sin(a)) * L + abs(math.cos(a)) * H
+            bx = (xx - ex, yy - ey, xx + ex, yy + ey)
+            if not pl.free(bx):
+                ok = False
+                break
+        if ok:
+            for s_, z, f_, col, sp, xx, yy in trial:
+                rot_text(c, pl, xx, yy, s_, z, f_, col, angle, sp, force=True)
+            return True
+    for s_, z, f_, col, sp, xx, yy in trial:
+        rot_text(c, pl, xx, yy, s_, z, f_, col, angle, sp, force=True)
+    return False
+
+
+def draw_covers(c, covers, layer):
+    """Coperchi-pedale: layer 0 = fondo del coperchio (prima delle geometrie della grafica), layer 1 = inserti
+    (piastra cromata a righe, gomma, etichetta), righe e piedini (dopo)."""
+    for p in covers:
+        if layer == 0:
+            if p.get("col"):
+                c.rect(p["x0"], p["y0"], p["x1"], p["y1"], fill=tuple(p["col"]), radius_m=p.get("corner", 0.003))
+            continue
+        if p.get("ribs") and p.get("ribs_col"):
+            step = p["ribs"] / 1000.0
+            y = p["y0"] + step
+            while y < p["y1"] - step * 0.5:
+                c.line(p["x0"] + 0.002, y, p["x1"] - 0.002, y, tuple(p["ribs_col"]), step * 0.28)
+                y += step
+        for q in p.get("insets") or []:
+            if q.get("col"):
+                c.rect(q["x0"], q["y0"], q["x1"], q["y1"], fill=tuple(q["col"]), radius_m=q.get("corner", 1.5) / 1000.0)
+            if q.get("ribs") and q.get("ribs_col"):
+                step = q["ribs"] / 1000.0
+                y = q["y0"] + step * 0.7
+                while y < q["y1"] - step * 0.4:
+                    c.line(q["x0"] + 0.0012, y, q["x1"] - 0.0012, y, tuple(q["ribs_col"]), step * 0.30)
+                    y += step
+            if q.get("frame"):
+                c.rect(q["x0"], q["y0"], q["x1"], q["y1"], outline=tuple(q["frame"]), width_m=0.0006,
+                       radius_m=q.get("corner", 1.5) / 1000.0)
+        for (bx, by, br) in p.get("bumps") or []:
+            c.circle(bx, by, br, fill=(16, 16, 17))
+
+
 def draw_name_deco(c, cx, deco, boxes, pl):
     """deco = dict(style=band|box|frame|lines, col=colore, pad=mm): attorno ai riquadri del blocco del nome, senza
     coprire scritte e comandi gia' piazzati (la fascia diventa un riquadro, il margine si riduce)."""
@@ -319,12 +435,15 @@ def draw_name_deco(c, cx, deco, boxes, pl):
         if st == "band":
             st = "box"
     col = tuple(deco["col"])
+    if x1 - x0 < 0.002:
+        print("  decorazione del nome saltata (blocco piu' largo del piano)")
+        return
     if st == "band":
         c.rect(-W / 2 - 0.001, y0, W / 2 + 0.001, y1, fill=col)
     elif st == "box":
-        c.rect(x0, y0, x1, y1, fill=col, radius_m=0.002)
+        c.rect(x0, y0, x1, y1, fill=col, radius_m=0.002 if y1 - y0 >= 0.0042 else (y1 - y0) * 0.45)
     elif st == "frame":
-        c.rect(x0, y0, x1, y1, outline=col, width_m=0.0006, radius_m=0.002)
+        c.rect(x0, y0, x1, y1, outline=col, width_m=0.0006, radius_m=0.002 if y1 - y0 >= 0.0042 else (y1 - y0) * 0.45)
     elif st == "lines":
         c.line(x0 + 0.001, y1, x1 - 0.001, y1, col, 0.0008)
         c.line(x0 + 0.001, y0, x1 - 0.001, y0, col, 0.0008)
@@ -337,9 +456,23 @@ def top_texture(r, lay, out):
     normal = bool(r.get("normal"))
     bgc = tuple(g.get("bg") or r["colour"])
     c = MT.Canvas(-W / 2, W / 2, -D / 2, D / 2, bgc)
+    covers = [p for p in lay["parts"] if p["type"] == "cover"]
+    draw_covers(c, covers, 0)
     draw_panels(c, cx, g.get("panels") or [])
+    draw_covers(c, covers, 1)
     c.speckle(2.5 if r["look"].get("finish") in ("paint", "matte") else 1.5, 0.6)
     pl = placer(cx, lay)
+    for k in g.get("keep") or []:
+        pl.rect((cx.X(k[0]), cx.Y(k[3]), cx.X(k[2]), cx.Y(k[1])))
+    # coperchi e inserti: niente scritte dei comandi; il blocco del nome solo dove print=True
+    cov_obs = []
+    for p in covers:
+        cov_obs.append((("rect", p["x0"], p["y0"], p["x1"], p["y1"] + 0.0006),
+                        bool(p.get("print")) or any(q.get("print") for q in p.get("insets") or [])))
+        for q in p.get("insets") or []:
+            cov_obs.append((("rect", q["x0"] - 0.0004, q["y0"] - 0.0004, q["x1"] + 0.0004, q["y1"] + 0.0004), bool(q.get("print"))))
+    pl.obs.extend(o for o, _ in cov_obs)
+    pmap = {} if normal else {str(k).upper(): v for k, v in (r["look"].get("print_labels") or {}).items()}
     lg = dict(g.get("label") or {})
     # slot dei cursori
     for k, ctl in enumerate(r["controls"]):
@@ -357,14 +490,17 @@ def top_texture(r, lay, out):
     for k, ctl in enumerate(r["controls"]):
         p = lay["controls"][k]
         st = p["strip"]
-        lab = ctl["label"]
+        lab = pmap.get(ctl["label"].upper(), ctl["label"])
+        if st in ("footswitch", "footbutton"):
+            continue
         if st in ("boss", "boss_small", "ts_big", "ts_small", "boss_outer"):
             h = p["h"] + (PL.KNOB_H["boss_inner"] if st == "boss_outer" else 0.0)
             if st == "boss_outer":
                 inner = [j for j, q in enumerate(lay["controls"]) if q["strip"] == "boss_inner" and abs(q["x"] - p["x"]) < 1e-6
                          and abs(q["y"] - p["y"]) < 1e-6]
                 if inner:
-                    lab = lab + "/" + r["controls"][inner[0]]["label"]
+                    il = r["controls"][inner[0]]["label"]
+                    lab = lab + "/" + pmap.get(il.upper(), il)
             label_control(c, pl, cx, p["x"], p["y"], p["r"], h, lab, lg, 0.026)
             if ctl["kind"] == "selector":
                 rings.append((p, h, ctl.get("short") or [str(x)[:4] for x in ctl["choices"]]))
@@ -402,10 +538,15 @@ def top_texture(r, lay, out):
                 if text_at(c, pl, part["x"], yy, s, size, MT.F_NARROW):
                     break
     # ---- nome, sigla, sottotitolo
+    for o, ok in cov_obs:
+        if ok:
+            pl.obs.remove(o)
     foot_ys = [p["y"] for p in lay["parts"] if p["type"] == "footswitch"]
     y_lo = (max(foot_ys) + 0.0085) if foot_ys else -D / 2 + 0.006
     zone = (min(y_lo, D / 2 - 0.02), D / 2 - 0.004)
     nm = g.get("name") or {}
+    if nm.get("zone"):
+        zone = (cx.Y(nm["zone"][1]), cx.Y(nm["zone"][0]))
     cd = g.get("code")
     sb = g.get("sub")
     name = r["real_name"]          # modalita' normale (as_shaped): nome Pedal Trinity; replica: nome reale
@@ -436,7 +577,11 @@ def top_texture(r, lay, out):
         else:
             block.append(code_line)
     pref = cx.Y(nm["y"]) if nm.get("y") is not None else None
-    deco = g.get("name_deco")
+    if nm.get("angle") is not None:
+        # nome in diagonale/verticale (serie 808, fasce della serie Master): blocco ruotato in posizione fissa
+        rot_block(c, pl, cx, block, nm.get("x", 50), nm.get("y", 50), nm["angle"], nm.get("len", 60) / 100.0 * W)
+        block = []
+    deco = g.get("name_deco") if block else None
     if deco:
         # decorazione attorno al blocco del nome (tappa 3B): fascia, riquadro, cornice o filetti che seguono la
         # posizione effettiva del blocco (prova a vuoto, poi disegno della decorazione e del testo)
@@ -444,11 +589,13 @@ def top_texture(r, lay, out):
             block_place(c, pl, cx, block, pref, nm.get("x", 50), (-D / 2 + 0.004, D / 2 - 0.004), dry=True)
         if boxes:
             draw_name_deco(c, cx, deco, boxes, pl)
-    if not block_place(c, pl, cx, block, pref, nm.get("x", 50), zone):
+    if block and not block_place(c, pl, cx, block, pref, nm.get("x", 50), zone):
         block_place(c, pl, cx, block, pref, nm.get("x", 50), (-D / 2 + 0.004, D / 2 - 0.004))
     if sub_line and sb.get("y"):
         block_place(c, pl, cx, [sub_line], cx.Y(sb["y"]), sb.get("x", 50), (-D / 2 + 0.004, D / 2 - 0.004))
-    if code_line and (cd.get("y") or not cd.get("with_name", True)):
+    if code_line and cd.get("angle") is not None:
+        rot_block(c, pl, cx, [code_line], cd.get("x", 50), cd.get("y", 50), cd["angle"], cd.get("len", 40) / 100.0 * D)
+    elif code_line and (cd.get("y") or not cd.get("with_name", True)):
         block_place(c, pl, cx, [code_line], cx.Y(cd["y"]) if cd.get("y") else None, cd.get("x", 50),
                     (-D / 2 + 0.004, D / 2 - 0.004) if cd.get("y") else zone)
     # nomi dei footswitch (solo sui pedali con piu' footswitch, come sui pedali veri)

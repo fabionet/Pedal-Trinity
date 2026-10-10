@@ -1,0 +1,2433 @@
+{
+ "ib7cp830": {
+  "family": "Compressor",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4opto rf=9.4k+pot(0,250k,A) rg=1.6k cg=1u ldrr=4k,5M,0.75 ldrt=8,150 envg=2 envth=0.6 enva=2 envr=600 rail=3 level=taper(1,B)*0.62 os=2",
+  "stereo": false,
+  "notes": "Compressore ottico (schema di fabbrica CP-830): op-amp uA741 non invertente con 4k7 + SUSTAIN 250kA + 4k7 in retroazione in parallelo alla fotocellula MCD735, guadagno fino a ~42 dB; tre 2SC1815 raddrizzano l'uscita e accendono il LED (47u/47k, rilascio lento). Rg (trimmer interno, 470 + VR1) e la legge della fotocellula sono stime.",
+  "control_notes": "Il trimmer interno VR1 (guadagno massimo) e' fisso nella posizione stimata."
+ },
+ "ib7cp835": {
+  "family": "Compressor",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4ross rin=2k rz=16k cz=10n cc=1u vlin=0.0517 rl=150k cl=2n orail=3.8 gsplit=0.98 rabc=potr(1,500k,C)+20k vabc=1.2 vcc=9 rrel=150k cdet=10u ratt=0 beta=250 rsc=10k rse=300 level=taper(0,B)*0.7 os=2",
+  "stereo": false,
+  "notes": "Ross/Dyna in retroazione (schema Dirk Hendrik 2008): ingresso dell'LM3080 su 2k/16k||10n+1u (pre-enfasi), carico 150k||2n, invertitore di fase 10k/10k, due 2SC1815 raddrizzatori (10n, 1M, diodi di bloccaggio) sul 10u caricato da 150k, inseguitore e SUSTAIN 500kC + 20k verso Iabc; LEVEL 100kB."
+ },
+ "ib9cp9": {
+  "family": "Compressor",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 6.0,
+    "hi": 20.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "THRESHOLD",
+    "role": "threshold",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4ross rin=180 rz=10k cz=56n cc=0 vlin=0.0517 rl=150k cl=3.3n orail=3.8 gsplit=0.98 rabc=potr(1,200k,C)+12k vabc=1.2 vcc=9 rrel=74k cdet=10u ratt=50+pot(0,850,B) beta=250 rsc=10k rse=300 level=taper(2,B)*0.5 os=2",
+  "stereo": false,
+  "notes": "Ross/Dyna con meta' LM13600 (schema CP-9, Barend Smits 2004): ingresso differenziale su 180 ohm / 10k||56n, carico 150k||3n3, buffer Darlington, raddrizzatori a 2SC2458 con ATTACK TIME 1k in serie ai collettori (6-20 ms), rilascio 24k + trimmer 100k sul 10u, THRESHOLD 200k + 12k verso Iabc. Trimmer del rilascio a meta' corsa (stima).",
+  "control_notes": "Etichetta della scheda 'THRESHOLD (SUSTAIN)' accorciata in THRESHOLD."
+ },
+ "ib10cp10": {
+  "family": "Compressor",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 5.0,
+    "hi": 22.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4ross rin=180 rz=10k cz=56n cc=0 vlin=0.078 rl=150k cl=3.3n orail=3.8 gsplit=0.98 rabc=potr(1,200k,C)+12k vabc=1.2 vcc=9 rrel=74k cdet=10u ratt=10+pot(0,1k,B) beta=250 rsc=10k rse=300 level=taper(2,B)*0.5 os=2",
+  "stereo": false,
+  "notes": "Adattamento del CP9 con il VCA BA6110 (mirosol, Dirk Hendrik: CPL, CP10 e CP5 sono lo stesso circuito): stessa retroazione Ross con raddrizzatori a transistor, attacco 5-22 ms e compressione 35 dB dal catalogo 1987. Valori dei componenti presi dal CP9, ingresso del BA6110 un po' piu' lineare (stima)."
+ },
+ "ib10bp10": {
+  "family": "Compressor",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 2.0,
+    "hi": 9.6,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4ross rin=180 rz=10k cz=56n cc=0 vlin=0.078 rl=150k cl=3.3n orail=3.8 gsplit=0.98 rabc=potr(1,200k,C)+12k vabc=1.2 vcc=9 rrel=74k cdet=4.7u ratt=10+pot(0,1k,B) beta=250 rsc=10k rse=300 level=taper(2,B)*0.5 os=2",
+  "stereo": false,
+  "notes": "Stesso circuito del CP10 (ib10cp10) con le costanti d'attacco per basso: 2-9.6 ms invece di 5-22 ms (catalogo 1987); il rapporto 0.44 coincide con il condensatore 470p/1n del BP5. Valori del CP9 (stima)."
+ },
+ "ibstcp5": {
+  "family": "Compressor",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 5.0,
+    "hi": 22.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4ross rin=180 rz=10k cz=56n cc=0 vlin=0.078 rl=150k cl=3.3n orail=3.8 gsplit=0.98 rabc=potr(2,200k,C)+12k vabc=1.2 vcc=9 rrel=74k cdet=10u ratt=10+pot(1,1k,B) beta=250 rsc=10k rse=300 level=taper(0,B)*0.5 os=2",
+  "stereo": false,
+  "notes": "Soundtank: stesso circuito di CP10/CPL secondo Dirk Hendrik e mirosol (CP9 con il VCA BA6110), quindi la stessa config di ib10cp10 con i comandi nell'ordine del pannello; C12 1n nel ramo di controllo."
+ },
+ "ibstbp5": {
+  "family": "Compressor",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 2.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4ross rin=180 rz=10k cz=56n cc=0 vlin=0.078 rl=150k cl=3.3n orail=3.8 gsplit=0.98 rabc=potr(2,200k,C)+12k vabc=1.2 vcc=9 rrel=74k cdet=4.7u ratt=10+pot(1,1k,B) beta=250 rsc=10k rse=300 level=taper(0,B)*0.5 os=2",
+  "stereo": false,
+  "notes": "CP5 con C12 470p invece di 1n (unica differenza, Dirk Hendrik/mirosol): attacco circa la meta', come il BP10. Config di ibstcp5 con l'attacco scalato di 0.47."
+ },
+ "ibtstc999": {
+  "family": "Compressor",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MASTER",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "BOOST",
+    "role": "boost",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i4chain mode=ser || Circuit: hpf R=510k C=1u; gain a=taper(0,B)*sw(4,0.5,2.0); hpf R=100k C=10u; triode Rp=39k Rk=1k B=9 byp=0; hpf R=220k C=47n; gain db=-16; triode Rp=39k Rk=1k B=9 byp=0; hpf R=360k C=47n || Compressor: subtype=i4vca rser=470k cser=100n kin=0.0035 gmk=8.8 rf=220+pot(2,100k,A) rg=3k cg=1u cf=330p rail=3.8 kdet=7.2 vb=4.5 vd=0.6 att=log(1,5,22) rel=520 rctl=47k vctl=3.85 level=taper(3,A)*4 os=2",
+  "stereo": false,
+  "notes": "Schema Dirk Hendrik 2008: SENSITIVITY 10kB e BOOST davanti a due triodi 12AX7 alimentati a 9 V (B+ da VCC con 100 ohm), poi il BA6110 come resistenza variabile in derivazione dopo 470k (100n), stadio SUSTAIN 3k / 220 + 100kA (330p), raddrizzatore di precisione C4570 su 4.7u (rilascio 110k), ATTACK 10kB e invertitore 470k/470k verso il pin 4. Transconduttanza del BA6110 e tempi d'attacco stimati.",
+  "control_notes": "SENSITIVITY abbreviato in SENS; il BOOST e' il secondo interruttore a pedale (levetta)."
+ },
+ "ibxec30": {
+  "family": "Compressor",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "toggle",
+    "label": "HUSH MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "IN/OUT",
+     "ALWAYS"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "COMPRESS",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HUSH",
+    "role": "threshold",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ENHANCE",
+    "role": "enhance",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OUTPUT",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4chain mode=ser || Compressor: subtype=i4ross rin=180 rz=10k cz=56n cc=0 vlin=0.078 rl=150k cl=3.3n orail=3.8 gsplit=0.98 rabc=potr(1,200k,C)+12k vabc=1.2 vcc=9 rrel=74k cdet=10u ratt=900 beta=250 level=taper(4,B)*0.5 enh=lin(3,0,12) enhf=2500 os=2 || NoiseGate: subtype=i4hush thr=lin(2,-80,-40) ratio=2.5 lp=1500,18000 t=1,90",
+  "stereo": false,
+  "notes": "Schema non pubblicato (stima): compressore a VCA in retroazione come i Soundtank coevi (CP5), ENHANCE come mensola degli acuti dopo la compressione e HUSH (licenza Rocktron) come espansore verso il basso con passa-basso dinamico.",
+  "control_notes": "HUSH MODE ALWAYS IN (hush attivo anche a effetto spento) non e' riproducibile nel plugin: le due posizioni suonano uguali a effetto acceso."
+ },
+ "ib7ge601": {
+  "family": "GraphicEQ",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "slider",
+    "label": "100",
+    "role": "b0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "200",
+    "role": "b1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "400",
+    "role": "b2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "800",
+    "role": "b3",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "1.6K",
+    "role": "b4",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "3.2K",
+    "role": "b5",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; C in a 1u; R a 0 470k; O a b b; R b P 22k; O P M o1; R o1 M 22k; R P w0 pot(0,5k,B); R w0 M potr(0,5k,B); C w0 x0 3.316e-07; L x0 y0 7.639; R y0 0 2700; R P w1 pot(1,5k,B); R w1 M potr(1,5k,B); C w1 x1 1.658e-07; L x1 y1 3.82; R y1 0 2700; R P w2 pot(2,5k,B); R w2 M potr(2,5k,B); C w2 x2 8.289e-08; L x2 y2 1.91; R y2 0 2700; R P w3 pot(3,5k,B); R w3 M potr(3,5k,B); C w3 x3 4.145e-08; L x3 y3 0.9549; R y3 0 2700; R P w4 pot(4,5k,B); R w4 M potr(4,5k,B); C w4 x4 2.072e-08; L x4 y4 0.4775; R y4 0 2700; R P w5 pot(5,5k,B); R w5 M potr(5,5k,B); C w5 x5 1.036e-08; L x5 y5 0.2387; R y5 0 2700; C o1 o 10u; R o 0 100k; gain=log(6,0.2512,3.9811) rail=3.5 warp=1600",
+  "stereo": false,
+  "notes": "EQ grafico a 6 bande d'ottava +-12 dB e LEVEL +-12 dB (catalogo 1981). Schema non pubblicato: rete a gyrator classica (cursori tra gli ingressi dell'op-amp, risonatori serie LC con 2.7k) dimensionata per +-12 dB con Q proporzionale (stima)."
+ },
+ "ib9ge9": {
+  "family": "GraphicEQ",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "slider",
+    "label": "100",
+    "role": "b0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "200",
+    "role": "b1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "400",
+    "role": "b2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "800",
+    "role": "b3",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "1.6K",
+    "role": "b4",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "3.2K",
+    "role": "b5",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; C in a 1u; R a 0 470k; O a b b; R b P 22k; O P M o1; R o1 M 22k; R P w0 pot(0,5k,B); R w0 M potr(0,5k,B); C w0 x0 3.316e-07; L x0 y0 7.639; R y0 0 1800; R P w1 pot(1,5k,B); R w1 M potr(1,5k,B); C w1 x1 1.658e-07; L x1 y1 3.82; R y1 0 1800; R P w2 pot(2,5k,B); R w2 M potr(2,5k,B); C w2 x2 8.289e-08; L x2 y2 1.91; R y2 0 1800; R P w3 pot(3,5k,B); R w3 M potr(3,5k,B); C w3 x3 4.145e-08; L x3 y3 0.9549; R y3 0 1800; R P w4 pot(4,5k,B); R w4 M potr(4,5k,B); C w4 x4 2.072e-08; L x4 y4 0.4775; R y4 0 1800; R P w5 pot(5,5k,B); R w5 M potr(5,5k,B); C w5 x5 1.036e-08; L x5 y5 0.2387; R y5 0 1800; C o1 o 10u; R o 0 100k; gain=log(6,0.1778,5.6234) rail=3.5 warp=1600",
+  "stereo": false,
+  "notes": "Sei filtri d'ottava 'a minima rotazione di fase' +-15 dB e LEVEL +-15 dB (cataloghi 1982-84). Rete a gyrator stimata: cursori 5k tra gli ingressi + e -, risonatori serie con 1.8k, banda di 0.4 ottave al massimo."
+ },
+ "ib10ge10": {
+  "family": "GraphicEQ",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "slider",
+    "label": "100",
+    "role": "b0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "200",
+    "role": "b1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "400",
+    "role": "b2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "800",
+    "role": "b3",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "1.6k",
+    "role": "b4",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "3.2k",
+    "role": "b5",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "6.4k",
+    "role": "b6",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; C in a 1u; R a 0 470k; O a b b; R b P 22k; O P M o1; R o1 M 22k; R P w0 pot(0,5k,B); R w0 M potr(0,5k,B); C w0 x0 3.316e-07; L x0 y0 7.639; R y0 0 1800; R P w1 pot(1,5k,B); R w1 M potr(1,5k,B); C w1 x1 1.658e-07; L x1 y1 3.82; R y1 0 1800; R P w2 pot(2,5k,B); R w2 M potr(2,5k,B); C w2 x2 8.289e-08; L x2 y2 1.91; R y2 0 1800; R P w3 pot(3,5k,B); R w3 M potr(3,5k,B); C w3 x3 4.145e-08; L x3 y3 0.9549; R y3 0 1800; R P w4 pot(4,5k,B); R w4 M potr(4,5k,B); C w4 x4 2.072e-08; L x4 y4 0.4775; R y4 0 1800; R P w5 pot(5,5k,B); R w5 M potr(5,5k,B); C w5 x5 1.036e-08; L x5 y5 0.2387; R y5 0 1800; R P w6 pot(6,5k,B); R w6 M potr(6,5k,B); C w6 x6 5.181e-09; L x6 y6 0.1194; R y6 0 1800; C o1 o 10u; R o 0 100k; gain=log(7,0.1778,5.6234) rail=3.5 warp=1600",
+  "stereo": false,
+  "notes": "Sette giratori attivi 100 Hz-6.4 kHz +-15 dB e LEVEL +-15 dB (catalogo 1987; stessa tecnica del GEL secondo mirosol). Valori della rete a gyrator stimati.",
+  "control_notes": "La levetta OPEN/BATTERY (sblocco del coperchio) non e' un comando sonoro: omessa."
+ },
+ "ib10be10": {
+  "family": "GraphicEQ",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "slider",
+    "label": "63",
+    "role": "b0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "125",
+    "role": "b1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "250",
+    "role": "b2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "500",
+    "role": "b3",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "1k",
+    "role": "b4",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "2.2k",
+    "role": "b5",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "5k",
+    "role": "b6",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; C in a 1u; R a 0 470k; O a b b; R b P 22k; O P M o1; R o1 M 22k; R P w0 pot(0,5k,B); R w0 M potr(0,5k,B); C w0 x0 5.263e-07; L x0 y0 12.13; R y0 0 1800; R P w1 pot(1,5k,B); R w1 M potr(1,5k,B); C w1 x1 2.653e-07; L x1 y1 6.112; R y1 0 1800; R P w2 pot(2,5k,B); R w2 M potr(2,5k,B); C w2 x2 1.326e-07; L x2 y2 3.056; R y2 0 1800; R P w3 pot(3,5k,B); R w3 M potr(3,5k,B); C w3 x3 6.631e-08; L x3 y3 1.528; R y3 0 1800; R P w4 pot(4,5k,B); R w4 M potr(4,5k,B); C w4 x4 3.316e-08; L x4 y4 0.7639; R y4 0 1800; R P w5 pot(5,5k,B); R w5 M potr(5,5k,B); C w5 x5 1.507e-08; L x5 y5 0.3472; R y5 0 1800; R P w6 pot(6,5k,B); R w6 M potr(6,5k,B); C w6 x6 6.631e-09; L x6 y6 0.1528; R y6 0 1800; C o1 o 10u; R o 0 100k; gain=log(7,0.1778,5.6234) rail=3.5 warp=1600",
+  "stereo": false,
+  "notes": "EQ per basso a 7 filtri passa-banda a gyrator (63-5k Hz) +-15 dB e LEVEL +-15 dB (catalogo 1987); stessa rete del GE10 con le frequenze del basso (stima).",
+  "control_notes": "La levetta OPEN/BATTERY non e' un comando sonoro: omessa."
+ },
+ "ib7ge300": {
+  "family": "GraphicEQ",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "slider",
+    "label": "LOW",
+    "role": "b0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "MID",
+    "role": "b1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "HI",
+    "role": "b2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": -20.0,
+    "hi": 20.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; C in a 1u; R a 0 470k; O a b b; R b P 22k; O P M o1; R o1 M 22k; R P w0 pot(0,5k,B); R w0 M potr(0,5k,B); C w0 x0 2.792e-07; L x0 y0 6.98; R y0 0 5.6k; R P w1 pot(1,5k,B); R w1 M potr(1,5k,B); C w1 x1 4.823e-08; L x1 y1 1.206; R y1 0 3.6k; R P w2 pot(2,5k,B); R w2 M potr(2,5k,B); C w2 x2 2.397e-08; L x2 y2 0.5992; R y2 0 3.6k; C o1 o 10u; R o 0 100k; gain=log(3,0.1000,10.0000) rail=3.5 warp=1600",
+  "stereo": false,
+  "notes": "Power Equalizer: tre filtri attivi a 100 Hz, 600 Hz e 1.5 kHz +-12 dB e guadagno generale +-20 dB (catalogo 1979, manuale del gemello Maxon PE-800). Filtri a gyrator a banda larga (circa 1.5 ottave) stimati, accordati perche' i picchi cadano a 100/600/1500 Hz.",
+  "control_notes": "Il LEVEL reale e' un pomello: qui e' un cursore (cursori e pomelli insieme non sono supportati)."
+ },
+ "ib7pq401": {
+  "family": "ParametricEQ",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LOW",
+    "role": "g0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "g1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HIGH",
+    "role": "g2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -12.0,
+    "hi": 12.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FREQ",
+    "role": "f1",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 75.0,
+    "hi": 5600.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; C in a 100n; R a b 1k; R b 0 510k; O b m1 s1; R s1 m1 4.7k; C s1 m1 30p; R m1 x1 470; C x1 0 10n; C s1 p1 2.2u; R p1 0 100k; R p1 p2 20k; C p1 p2 100n; R p2 p3 20k; O p3 n6 o3; R n6 n7 20k; C n7 o3 100n; R n7 o3 20k; R p2 w1 pot(0,50k,B); R w1 n7 potr(0,50k,B); C w1 q1 2.2u; R q1 0 5.6k; R p3 w3 pot(2,50k,B); R w3 n6 potr(2,50k,B); C w3 q3 10n; R q3 0 5.6k; C o3 r1 2.2u; R r1 M1 27k; O 0 M1 M2; R M1 M2 27k; C M1 M2 30p; R M2 M3 27k; O 0 M3 O; R M3 O 27k; C M3 O 30p; R M1 e1 4.3k; R e1 w2 pot(1,50k,B); R w2 e2 potr(1,50k,B); R e2 M3 4.3k; C w2 S 10u; R S T 15k; C S Qb 10u; R Qb X5 8.3k; R X5 0 10k; R M2 X6 8.3k; R X6 Y 10k; R LP X6 10k; O X5 X6 Y; R Y z1 680+potr(3,50k,C); O 0 z1 T; C z1 T 39n; R T z2 680+potr(3,50k,C); O 0 z2 LP; C z2 LP 39n; C O u 2.2u; R u 0 510k; R u d 4.7k; C d dd 10n; R dd 0 470; O d ob ob; C ob o 10u; R o 0 100k; gain=1 rail=3.5 warp=1500",
+  "stereo": false,
+  "notes": "Stima per analogia con il PQL (schema Dirk Hendrik): mensole a 75 Hz e 5.6 kHz e medi a variabili di stato 75 Hz-5.6 kHz con doppio potenziometro, ridotti a +-12 dB (resistenze dei rami 5.6k/4.3k) e banda fissa di mezza ottava.",
+  "control_notes": "LOW/MID/HIGH reali sono cursori: qui pomelli, perche' cursori e pomelli insieme non sono supportati."
+ },
+ "ib9pq9": {
+  "family": "ParametricEQ",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "HIGH",
+    "role": "g2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "g1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LOW",
+    "role": "g0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID FREQ",
+    "role": "f1",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 75.0,
+    "hi": 5600.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; C in a 100n; R a b 1k; R b 0 510k; O b m1 s1; R s1 m1 4.7k; C s1 m1 30p; R m1 x1 470; C x1 0 10n; C s1 p1 2.2u; R p1 0 100k; R p1 p2 20k; C p1 p2 100n; R p2 p3 20k; O p3 n6 o3; R n6 n7 20k; C n7 o3 100n; R n7 o3 20k; R p2 w1 pot(2,50k,B); R w1 n7 potr(2,50k,B); C w1 q1 2.2u; R q1 0 3k; R p3 w3 pot(0,50k,B); R w3 n6 potr(0,50k,B); C w3 q3 10n; R q3 0 3k; C o3 r1 2.2u; R r1 M1 27k; O 0 M1 M2; R M1 M2 27k; C M1 M2 30p; R M2 M3 27k; O 0 M3 O; R M3 O 27k; C M3 O 30p; R M1 e1 3.3k; R e1 w2 pot(1,50k,B); R w2 e2 potr(1,50k,B); R e2 M3 3.3k; C w2 S 10u; R S T 15k; C S Qb 10u; R Qb X5 8.3k; R X5 0 10k; R M2 X6 8.3k; R X6 Y 10k; R LP X6 10k; O X5 X6 Y; R Y z1 680+potr(3,50k,C); O 0 z1 T; C z1 T 39n; R T z2 680+potr(3,50k,C); O 0 z2 LP; C z2 LP 39n; C O u 2.2u; R u 0 510k; R u d 4.7k; C d dd 10n; R dd 0 470; O d ob ob; C ob o 10u; R o 0 100k; gain=1 rail=3.5 warp=1500",
+  "stereo": false,
+  "notes": "Semiparametrico: mensole +-15 dB a 75 Hz e 5.6 kHz, medi 75 Hz-5.6 kHz larghi mezza ottava (cataloghi 1982-84). Circuito del discendente PQL (schema Dirk Hendrik) con il Q fisso a mezza ottava (stima).",
+  "control_notes": "Cursori reali resi come pomelli; 'MIDDLE FREQUENCY' abbreviato in MID FREQ."
+ },
+ "ib10pql": {
+  "family": "ParametricEQ",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "FREQUENCY",
+    "role": "f1",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 75.0,
+    "hi": 5600.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "Q",
+    "role": "q1",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LOW",
+    "role": "g0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "g1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HIGH",
+    "role": "g2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; C in a 100n; R a b 1k; R b 0 510k; O b m1 s1; R s1 m1 4.7k; C s1 m1 30p; R m1 x1 470; C x1 0 10n; C s1 p1 2.2u; R p1 0 100k; R p1 p2 20k; C p1 p2 100n; R p2 p3 20k; O p3 n6 o3; R n6 n7 20k; C n7 o3 100n; R n7 o3 20k; R p2 w1 pot(2,50k,B); R w1 n7 potr(2,50k,B); C w1 q1 2.2u; R q1 0 3k; R p3 w3 pot(4,50k,B); R w3 n6 potr(4,50k,B); C w3 q3 10n; R q3 0 3k; C o3 r1 2.2u; R r1 M1 27k; O 0 M1 M2; R M1 M2 27k; C M1 M2 30p; R M2 M3 27k; O 0 M3 O; R M3 O 27k; C M3 O 30p; R M1 e1 3.3k; R e1 w2 pot(3,50k,B); R w2 e2 potr(3,50k,B); R e2 M3 3.3k; C w2 S 10u; R S T 15k; C S Qb 10u; R Qb X5 pot(1,50k,A)+820; R X5 0 10k; R M2 X6 pot(1,50k,A)+820; R X6 Y 10k; R LP X6 10k; O X5 X6 Y; R Y z1 680+potr(0,50k,C); O 0 z1 T; C z1 T 39n; R T z2 680+potr(0,50k,C); O 0 z2 LP; C z2 LP 39n; C O u 2.2u; R u 0 510k; R u d 4.7k; C d dd 10n; R dd 0 470; O d ob ob; C ob o 10u; R o 0 100k; gain=1 rail=3.5 warp=1500",
+  "stereo": false,
+  "notes": "Schema Dirk Hendrik 2008 tradotto stadio per stadio: pre/de-enfasi 4k7/470/10n, LOW/HI attivi su U3.B (+-15 dB a 75 Hz e 5.6 kHz), medi a variabili di stato 80 Hz-6 kHz (680 + 50kC doppio, 39n) con Q 50kA doppio da 3 a 0.1 ottave, MID 50kB a due invertenti 27k.",
+  "control_notes": "LOW/MID/HIGH reali sono cursori: qui pomelli (cursori e pomelli insieme non supportati)."
+ },
+ "ib10ppe1": {
+  "family": "ParametricEQ",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LOW",
+    "role": "g0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "g1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "M-FREQ",
+    "role": "f1",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 100.0,
+    "hi": 9900.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "M-Q",
+    "role": "q1",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "0.5",
+     "2",
+     "5"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HIGH",
+    "role": "g2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": -20.0,
+    "hi": 20.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4peq t0=ls f0=75 g0=lin(0,-15,15) q0=0.7 t1=pk fc1=2 n1=41 fr1=100,9900 g1=lin(1,-15,15) q1=sw(3,0.5,2,5) t2=hs f2=5600 g2=lin(4,-15,15) q2=0.7 lvl=lin(5,-20,20)",
+  "stereo": false,
+  "notes": "Parametrico a controllo digitale DCP (manuale 1988): LOW/MID/HIGH +-15 dB, medi 100 Hz-9.9 kHz in 41 passi da 1/6 d'ottava, Q 0.5/2/5, LEVEL +-20 dB. Frequenze delle mensole come PQL (stima); memorie e MIDI non emulati.",
+  "control_notes": "I parametri digitali (SOUND, BANK, PATCH, STORE) diventano comandi diretti: LOW, MID, M-FREQ (a scatti di 1/6 d'ottava), M-Q, HIGH, LEVEL."
+ },
+ "ibmpteq": {
+  "family": "ParametricEQ",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "outer",
+    "label": "LOW",
+    "role": "g0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "LO FREQ",
+    "role": "f0",
+    "default": 0.815,
+    "units": "hz",
+    "lo": 30.0,
+    "hi": 100.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "LOW MID",
+    "role": "g1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "LM FREQ",
+    "role": "f1",
+    "default": 0.747,
+    "units": "hz",
+    "lo": 85.0,
+    "hi": 360.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "MID",
+    "role": "g2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "MID FREQ",
+    "role": "f2",
+    "default": 0.727,
+    "units": "hz",
+    "lo": 200.0,
+    "hi": 1300.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "HIGH MID",
+    "role": "g3",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "HM FREQ",
+    "role": "f3",
+    "default": 0.726,
+    "units": "hz",
+    "lo": 620.0,
+    "hi": 4000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "HIGH",
+    "role": "g4",
+    "default": 0.5,
+    "units": "db",
+    "lo": -10.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "HI FREQ",
+    "role": "f4",
+    "default": 0.679,
+    "units": "hz",
+    "lo": 1500.0,
+    "hi": 14500.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4peq t0=pk fc0=1 fr0=30,100 g0=lin(0,-10,10) q0=1.2 t1=pk fc1=3 fr1=85,360 g1=lin(2,-10,10) q1=1.2 t2=pk fc2=5 fr2=200,1300 g2=lin(4,-10,10) q2=1.2 t3=pk fc3=7 fr3=620,4000 g3=lin(6,-10,10) q3=1.2 t4=pk fc4=9 fr4=1500,14500 g4=lin(8,-10,10) q4=1.2 lvl=lin(10,-15,15)",
+  "stereo": false,
+  "notes": "Pentatone: 5 bande semiparametriche +-10 dB (manuale: Low 30-100 Hz, Low mid 85-360 Hz, Mid 200 Hz-1.3 kHz, High mid 620 Hz-4 kHz, High 1.5-14.5 kHz) e LEVEL. Filtri a campana a variabili di stato con Q a meta' corsa (stima).",
+  "control_notes": "16 comandi reali: ogni banda e' un concentrico (esterno = cursore del guadagno, interno = Frequency); i 5 pomellini Q sono fissi a meta' corsa (Q 1.2) per il limite di 12 comandi."
+ },
+ "ib7af201": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PEAK",
+    "role": "peak",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "filter",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "LP",
+     "BP",
+     "HP"
+    ],
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "DRIVE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "UP",
+     "DOWN"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "RANGE",
+    "role": "range",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "HIGH",
+     "LOW"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i4af sens=0 peak=1 filt=2 filts=lp,bp,hp dir=3 dirs=up,down rng=4 ranges=200:4000,100:2000 q=0.7,10 sg=4,80 env=3,120 sat=2.5 bpn=0.5 rail=3.5 out=-2",
+  "stereo": false,
+  "notes": "Filtro d'inviluppo serie 808 (catalogo 1981): rivelatore con SENS, VCF a variabili di stato con uscite LP/BP/HP, PEAK = risonanza, direzione UP/DOWN, gamme 100 Hz-2 kHz e 200 Hz-4 kHz. Schema non pubblicato: costanti dell'inviluppo e gamma del Q stimate.",
+  "control_notes": "SENS e PEAK reali sono cursori: qui pomelli; MODE e RANGE a slitta resi come selettori (una sola levetta)."
+ },
+ "ib9af9": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PEAK",
+    "role": "peak",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "FILTER",
+    "role": "filter",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "HP",
+     "BP",
+     "LP"
+    ],
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "DRIVE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "UP",
+     "DOWN"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "RANGE",
+    "role": "range",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "HI",
+     "LO"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i4af sens=0 peak=1 filt=2 filts=hp,bp,lp dir=3 dirs=up,down rng=4 ranges=200:4000,100:2000 q=0.7,10 sg=4,80 env=3,150 sat=2.5 bpn=0.5 rail=3.5 out=-2",
+  "stereo": false,
+  "notes": "Auto filter della serie 9: inviluppo con SENS che pilota un filtro a variabili di stato HP/BP/LP, PEAK, UP/DOWN e gamme HI 200 Hz-4 kHz / LO 100 Hz-2 kHz (cataloghi 1982-84, mirosol). Nessuno schema: stesso modello dell'AF-201 con le levette del pannello AF9.",
+  "control_notes": "Cursori SENS/PEAK resi come pomelli; FILTER e RANGE come selettori."
+ },
+ "ib10afl": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PEAK",
+    "role": "peak",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "TYPE",
+    "role": "filter",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LPF",
+     "BPF"
+    ],
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "DRIVE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "UP",
+     "DOWN"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "RANGE",
+    "role": "range",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LOW",
+     "HIGH"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i4af sens=0 peak=1 filt=2 filts=lp,bp dir=3 dirs=up,down rng=4 ranges=100:2000,200:4000 q=0.7,10 sg=4,80 env=3,150 sat=2.5 bpn=0.5 rail=3.5 out=-2",
+  "stereo": false,
+  "notes": "Serie Master, discendente dell'AF9: inviluppo, due tipi di filtro, direzione e gamme LOW 100 Hz-2 kHz / HIGH 200 Hz-4 kHz (catalogo 1985). I due tipi sono resi come passa-basso e passa-banda (stima).",
+  "control_notes": "SENSITIVITY abbreviato in SENS; i due tipi del selettore TYPE sono stimati (LPF/BPF)."
+ },
+ "ibtlaw7": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MANUAL",
+    "role": "manual",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "TYPE",
+    "role": "filter",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LPF",
+     "WAH"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "DISTORTION",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OFF",
+     "DIST+WAH",
+     "WAH+DIST"
+    ],
+    "short": [
+     "OFF",
+     "D>W",
+     "W>D"
+    ]
+   }
+  ],
+  "config": "type=i4af sens=0 manual=1 drive=2 level=3 filt=4 filts=lp,bp rng=4 ranges=150:1800,250:3500 dsw=5 q=2.2,2.2 sg=4,80 env=2,110 sat=1.2 bpn=0.6 dg=3,250 vk=0.3 dtone=3200 rail=3.5 out=16 os=2",
+  "stereo": false,
+  "notes": "Ibrido Tone-Lok: filtro d'inviluppo a variabili di stato con l'OTA LM13600 (passa-banda WAH, passa-basso LPF con corsa piu' corta, mirosol), MANUAL = frequenza di riposo, SENS = escursione; distorsione a op-amp con diodi prima o dopo il filtro (DRIVE). Valori non pubblicati: gamme e Q stimati."
+ },
+ "ibstaw5": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "RANGE",
+    "role": "range",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DEPTH",
+    "role": "depth",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; C in a 1u; R a n1 1k; C n1 A 2.2n; R A n2 15k; R n2 0 potr(0,20k,B)+10; R A Cn 1k; O A Cn O1; C Cn O1 10n; R O1 B 47k; R B 0 6.8k; R B Cn 1k; O B Cn O2; R Cn D 1.8k; R D O2 47k; W D O2; C A O2 3.3n; C O1 wv 2.2u; R in e1 100k; R e1 wv pot(1,10k,B); R wv mx potr(1,10k,B); R in mx 10k; C mx u 100n; R u 0 510k; O u ob ob; C ob o 2.2u; R o 0 100k; ldr=env ldrr=2k,1M,0.9 ldrt=5,40 envg=lin(2,0,90) envth=1.2 enva=1 envr=32 envmax=4 gain=0.7 rail=2.6 warp=1000",
+  "stereo": false,
+  "notes": "Schema Dirk Hendrik 2008 tradotto: passa-banda a due 4558 (1k, 2n2, 15k + RANGE 20k, 10n, 47k/6k8/1k, 1k8, 47k || fotoresistenza, 3n3) con la fotoresistenza P873 accesa dall'inviluppo (U1.A x45 con SENS, duplicatore 0.47u/68k); DEPTH 10k tra il secco e il filtro. Legge e tempi della fotocellula stimati."
+ },
+ "ibtllf7": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LO",
+    "role": "lo",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HI",
+    "role": "hi",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "GUITAR",
+     "DRUMS",
+     "MIC"
+    ],
+    "short": [
+     "GTR",
+     "DRM",
+     "MIC"
+    ]
+   }
+  ],
+  "config": "type=i4lofi drive=0 lo=1 hi=2 level=3 mode=4 mgain=1,0.5,6 dg=1.2,120 lof=80,1000 hif=1000,10000 q=0.8 vk=0.35 sat=1.5 out=11 rail=3.5 os=2",
+  "stereo": false,
+  "notes": "Tone-Lok (distinta base Ibanez): distorsione a NJM4558 con DRIVE 50kA e 1SS133, poi passa-alto LO 80 Hz-1 kHz e passa-basso HI 1-10 kHz a OTA NJM13600 (12 dB/ottava); MODE sceglie il guadagno d'ingresso (GUITAR, DRUMS per le sorgenti di linea, MIC con il preamplificatore). Guadagni e Q stimati."
+ },
+ "ib10nb10": {
+  "family": "NoiseGate",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "FREQUENCY",
+    "role": "threshold",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 350.0,
+    "hi": 9000.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4dnr bwmin=log(0,350,9000) bw=350,20000 ctlhp=6000 g=1 thr=-62 span=36 t=0.5,60",
+  "stereo": false,
+  "notes": "Schema Dirk Hendrik 2010: LM1894 (DNR National), passa-basso dinamico del primo ordine che si apre con il contenuto di acuti (ramo di controllo passa-alto, rivelatore di picco 0.5/60 ms); FREQUENCY fissa la banda minima 350 Hz-9 kHz (catalogo 1987).",
+  "control_notes": "La levetta OPEN/BATTERY non e' un comando sonoro: omessa."
+ },
+ "ibmptgate": {
+  "family": "NoiseGate",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "THRESHOLD",
+    "role": "threshold",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "MODE",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "HIGH",
+     "LOW"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i4gate thr=sw(1,-62,-80)+lin(0,0,40) hyst=6 t=0.5,60,20",
+  "stereo": false,
+  "notes": "Pentatone: gate con rilevamento separato; THRESHOLD e gamma HIGH (si chiude prima) / LOW. Nel plugin rilevamento e gate sono sullo stesso segnale (i jack GATE IN/OUT del loop non hanno equivalente). Soglie e tempi stimati.",
+  "control_notes": "Etichetta 'THRESHOLD mode' resa come MODE (HIGH/LOW)."
+ },
+ "ib10wh10": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DEPTH",
+    "role": "depth",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "RANGE",
+    "role": "range",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "GUITAR",
+     "BASS"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; C in g 10n; R g 0 510k; O g s s; C s n1 10u; R n1 A 2.2k+potr(0,50k,C); R A 0 3.9k; C A M 12n; C A M sw(2,1p,12n); C A F 12n; C A F sw(2,1p,12n); R F M 22k+potr(0,500k,C); O 0 M F; C s d1 2.2u; R d1 d2 6.8k; R d2 0 4.7k; R d2 d3 15k; R d3 w pot(1,50k,B); R w d4 potr(1,50k,B); C F d4 10u; C w d5 1u; R d5 M2 100k; R M2 O2 430k; C M2 O2 47p; O 0 M2 O2; C O2 o 100n; R o 0 100k; gain=0.25 rail=0.9 warp=1500",
+  "stereo": false,
+  "notes": "Schema Dirk Hendrik (WH10, versione a doppio potenziometro): niente induttore, passa-banda MFB a LM358 con 2.2k + 50k e 22k + 500k mossi insieme dal pedale (guadagno di picco costante), 12n+12n raddoppiati in BASS: 305 Hz-2.36 kHz / 153 Hz-1.19 kHz; DEPTH 50k tra il secco e il filtro, uscita 430k/100k.",
+  "control_notes": "La presa DRY OUT non ha equivalente."
+ },
+ "ibmwh10v3": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "BYPASS",
+    "role": "bypass",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "TRUE",
+     "BUFFERED"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DEPTH",
+    "role": "depth",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "GTR/BASS",
+    "role": "range",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "GTR",
+     "BASS"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; C in g 10n; R g 0 510k; O g s s; C s n1 10u; R n1 A 2.2k+potr(0,50k,C); R A 0 3.9k; C A M 12n; C A M sw(3,1p,12n); C A F 12n; C A F sw(3,1p,12n); R F M 22k+potr(0,500k,C); O 0 M F; C s d1 2.2u; R d1 d2 6.8k; R d2 0 4.7k; R d2 d3 15k; R d3 w pot(2,50k,B); R w d4 potr(2,50k,B); C F d4 10u; C w d5 1u; R d5 M2 100k; R M2 O2 430k; C M2 O2 47p; O 0 M2 O2; C O2 o 100n; R o 0 100k; gain=0.25 rail=0.9 warp=1500",
+  "stereo": false,
+  "notes": "Riedizione 2010+: stesso filtro MFB a doppio potenziometro del WH10/WH10V2 (schema V2 di Dirk Hendrik identico), 350 Hz-2.2 kHz / 175 Hz-1.1 kHz, DEPTH come il WH10; uscita a bassa impedenza.",
+  "control_notes": "La levetta TRUE/BUFFERED agisce solo a effetto spento: nel plugin non cambia il suono."
+ },
+ "ib10wf10": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "WAH DEPTH",
+    "role": "depth",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FUZZ",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FUZZ LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "FUZZ SW",
+    "role": "dist",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i4chain mode=ser || Circuit@on=4,1: hpf R=100k C=100n; lpf R=100k C=1n; bjt g=log(2,4,40) vp=3.5 vn=4.2 soft=2.5; hpf R=68k C=100n; vol a=taper(3,B)*0.12 || Wah: type=i4net; in in; out o; C in g 10n; R g 0 510k; O g s s; C s n1 10u; R n1 A 2.2k+potr(0,50k,C); R A 0 3.9k; C A M 12n; C A M 1p; C A F 12n; C A F 1p; R F M 22k+potr(0,500k,C); O 0 M F; C s d1 2.2u; R d1 d2 6.8k; R d2 0 4.7k; R d2 d3 150k; R d3 w pot(1,50k,B); R w d4 potr(1,50k,B); C F d4 10u; C w d5 1u; R d5 M2 100k; R M2 O2 430k; C M2 O2 47p; O 0 M2 O2; C O2 o 100n; R o 0 100k; gain=0.25 rail=0.9 warp=1500",
+  "stereo": false,
+  "notes": "Schema Dirk Hendrik 2009: fuzz a due 2SC1815 accoppiati in continua (100k, 1n di Miller, FUZZ 10k log sul condensatore d'emettitore, fino a +32 dB) con FUZZ LEVEL 5k dopo 68k, inserito con l'interruttore a JFET; poi il wah del WH10 (solo gamma chitarra) con il secco di DEPTH attraverso 150k.",
+  "control_notes": "FUZZ ON/OFF reso come levetta FUZZ SW."
+ },
+ "ibtlwd7": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "Q",
+    "role": "q",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LO",
+    "role": "lo",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "RANGE",
+    "role": "range",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "NORMAL",
+     "LOW"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OFF DELAY",
+    "role": "delay",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FINE TUNE",
+    "role": "fine",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "FOOT SW",
+     "AUTO SW"
+    ],
+    "short": [
+     "FOOT",
+     "AUTO"
+    ]
+   }
+  ],
+  "config": "type=i4net; in in; out o; R in A 10k; R A B sw(4,47k,1m); C A B sw(4,18n,1p); R B n8 pot(2,250k,A)+11k; O B n2 n3; R n2 n3 24k; R n2 n4 22k; R n3 n5 650k; W n3 n5; R n5 n6 potr(6,50k,C)+1k; O 0 n6 n8; C n6 n8 2.7n; C n6 n8 sw(4,1p,10n); R n8 n10 15k; O 0 n10 n4; C n10 n4 10n; R n4 n12 potr(3,100k,C)+5.1k; R n12 0 4.7k; O n12 n11 ou; R n8 n11 3.6k; R n11 ou pot(1,10k,B)+10; C ou o 10u; R o 0 100k; ldr=pedal ldrctl=0 ldrr=27k,3.2M ldrt=4,30 auto=7,1 pedal=0 delay=log(5,0.03,2.5) gain=1 rail=3.8 warp=1200",
+  "stereo": false,
+  "notes": "Ricostruzione CCRMA (Gnegy & Werner, DAFx 2015) con i valori misurati: filtro a variabili di stato a 4 op-amp senza induttore, frequenza dalla fotoresistenza (27k in punta, ~3 MOhm al tallone, legge esponenziale misurata, ritardo della CdS) in parallelo a 650k; Q A250k, LO C100k, LEVEL B10k, RANGE LOW = 10n in piu' e ingresso senza 47k||18n. AUTO SW: si accende alzando la punta e si spegne al tallone dopo OFF DELAY.",
+  "control_notes": "PEDAL FRICTION e SPRING TENSION sono viti meccaniche e i trimmer interni restano nella posizione misurata (VR7 450k): omessi. Il ritorno a molla del bilanciere in AUTO SW e' meccanico: nel plugin lo spegnimento automatico scatta quando il pedale torna al tallone."
+ },
+ "ibmwd7jr": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OFF DELAY",
+    "role": "delay",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4net; in in; out o; R in A 10k; R A B 47k; C A B 18n; R B n8 40k+11k; O B n2 n3; R n2 n3 24k; R n2 n4 22k; R n3 n5 650k; W n3 n5; R n5 n6 8k+1k; O 0 n6 n8; C n6 n8 2.7n; C n6 n8 1p; R n8 n10 15k; O 0 n10 n4; C n10 n4 10n; R n4 n12 100k+5.1k; R n12 0 4.7k; O n12 n11 ou; R n8 n11 3.6k; R n11 ou pot(2,10k,B)+10; C ou o 10u; R o 0 100k; ldr=pedal ldrctl=0 ldrr=27k,3.2M ldrt=4,30 auto=-2 pedal=0 delay=log(1,0.03,2.5) gain=1 rail=3.8 warp=1200",
+  "stereo": false,
+  "notes": "Versione economica del WD7 con sensore ottico e accensione automatica: stesso filtro a variabili di stato con Q, LO e RANGE fissi (Q a meta', LO al minimo, gamma normale: stima, schema non pubblicato), OFF DELAY e LEVEL."
+ },
+ "ibmtwp10": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BALANCE",
+    "role": "balance",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "HIGH",
+     "LOW"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i4chain mode=par || Wah@w=sw(3,1,0)*lin(2,1.2,0)*lin(1,0,2): subtype=inductor L=500m Rl=35 C=4.0n Rq=33k Re=390 taper=hot travel=0.10,0.97 || Wah@w=sw(3,0,1)*lin(2,1.2,0)*lin(1,0,2): subtype=inductor L=500m Rl=35 C=8.2n Rq=33k Re=390 taper=hot travel=0.10,0.97 || Wah@w=sw(3,1,0)*lin(2,0,1.2)*lin(1,0,2): subtype=inductor L=500m Rl=60 C=29n Rq=27k Re=390 taper=hot travel=0.15,0.82 || Wah@w=sw(3,0,1)*lin(2,0,1.2)*lin(1,0,2): subtype=inductor L=500m Rl=60 C=54n Rq=27k Re=390 taper=hot travel=0.15,0.82",
+  "stereo": false,
+  "notes": "Due wah a induttore in parallelo sullo stesso pedale (manuale): picco alto 670 Hz-3 kHz (HIGH) / 450 Hz-2 kHz (LOW), picco basso 300 Hz-1 kHz / 220-750 Hz, BALANCE tra i due, LEVEL unitario a meta' fino a +6 dB. Circuito a induttore Cry Baby con C e corsa del potenziometro tarati sulle gamme del manuale (stima).",
+  "control_notes": "'Master LEVEL' reso come LEVEL."
+ },
+ "ibmno93": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=inductor L=620m C=10n Rq=33k Rf=1.5k Ri=68k Ci=10n Rc=22k Re=470 R4=470k R5=470k R8=100k C2=10u C4=220n C5=220n R9=10k pot=100k hfe=250 vcc=9 taper=A hp=1",
+  "stereo": false,
+  "notes": "Blubber (anche Maxon): wah a induttore con 2 transistor e ingresso a FET da 1 MOhm (manuale Maxon). Valori del wah della Double Sound (schema Dirk Hendrik 2009, 'come il Blubber' nel catalogo 1981): 620 mH, 33k, 10n, 22k/470, 100k/10u, pedale 100k."
+ },
+ "ibmno57": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=inductor L=620m C=10n Rq=33k Rf=1.5k Ri=68k Ci=10n Rc=22k Re=470 R4=470k R5=470k R8=100k C2=10u C4=220n C5=220n R9=10k pot=100k hfe=250 vcc=9 taper=A hp=1",
+  "stereo": false,
+  "notes": "Wau-Wau degli anni '70 a batteria: nessuno schema; stesso costruttore del Blubber, quindi lo stesso circuito a induttore Vox-like con i valori della Double Sound (stima)."
+ },
+ "ibmno84": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BALANCE",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DEPTH",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "1",
+     "2"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "FUZZ",
+    "role": "dist",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i4chain mode=ser || Circuit@on=4,1: hpf R=1M C=47n; gain a=taper(2,B); hpf R=27k C=2.2u; bjt g=30 vp=6 vn=2 soft=2.5; hpf R=47k C=47n; dclip R=47k C=1n d=ge up=1 dn=1; lpf R=sw(3,22k,4.7k) C=10n; vol a=taper(1,B)*1.6 || Wah: subtype=inductor L=620m C=10n Rq=33k Rf=1.5k Ri=68k Ci=10n Rc=22k Re=470 R4=470k R5=470k R8=100k C2=10u C4=220n C5=220n R9=10k pot=100k hfe=250 vcc=9 taper=A hp=1",
+  "stereo": false,
+  "notes": "Schema Dirk Hendrik 2009: JFET d'ingresso, FUZZ DEPTH 50k (divisore) + 27k su un 2SC644 con 1M collettore-base e 47k, diodi al germanio verso massa, TONE CHANGE a interruttore, BALANCE 50k; poi il wah a induttore del Blubber (620 mH).",
+  "control_notes": "I cursori FUZZ BALANCE / FUZZ DEPTH sono pomelli; TONE CHANGE e l'inserimento del fuzz (interruttori a pedale) sono una levetta e un selettore a 2 posizioni."
+ },
+ "ibmno58": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "FUZZ",
+    "role": "dist",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4chain mode=ser || Circuit@on=1,1: hpf R=470k C=47n; bjt g=40 vp=4 vn=4 soft=2.5; lpf R=10k C=33n; rect g=1 mix=0.85 vk=0.05; bjt g=3 vp=1.5 vn=1.5 soft=3; dclip R=1k C=0 d=si; lpf R=10k C=10n; peak f=1000 Q=0.7 g=-10; vol a=taper(2,B)*0.9 || Wah: subtype=inductor L=620m C=10n Rq=33k Rf=1.5k Ri=68k Ci=10n Rc=22k Re=470 R4=470k R5=470k R8=100k C2=10u C4=220n C5=220n R9=10k pot=100k hfe=250 vcc=9 taper=A hp=1",
+  "stereo": false,
+  "notes": "Wau-Wau & Fuzz costruito da Shin-ei: fuzz della famiglia Super-Fuzz (coppia che raddrizza, ottava, scavo dei medi) seguito dal wah a induttore. Nessuno schema: fuzz e wah stimati (wah della Double Sound).",
+  "control_notes": "Comandi del fuzz non documentati (levette/pomellini sul fianco): stimati come interruttore FUZZ e VOLUME."
+ },
+ "ib10vl10": {
+  "family": "Volume",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "volume",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "VOL",
+     "BAL"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIN. VOL",
+    "role": "min",
+    "default": 0.0,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 50.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4vol taper=A minmax=0.5",
+  "stereo": true,
+  "notes": "Volume stereo passivo a doppio potenziometro: VOL muove A e B insieme, BAL alza A mentre abbassa B; MIN. VOL 0-50 % (cataloghi 1986-90). Curva audio dei potenziometri (stima)."
+ },
+ "ibmst810": {
+  "family": "Volume",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "pan",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4pan law=0.5 gain=1",
+  "stereo": true,
+  "notes": "Pan stereo attivo a pedale tra due amplificatori (catalogo 1976, gemello dell'ST-800 automatico): legge a potenza costante (stima); con la catena mono resta l'uscita A."
+ },
+ "ib10ls10": {
+  "family": "Router",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL A",
+    "role": "levelA",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL B",
+    "role": "levelB",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "LOOP",
+    "role": "select",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "A",
+     "B"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i4loop gmax=2",
+  "stereo": true,
+  "notes": "Selettore elettronico di due loop con livello per loop fino a +6 dB (catalogo 1987). Nel plugin il loop A e' il canale sinistro e il B il destro come nel Router LS-2; con la catena mono cambia il livello del loop scelto.",
+  "control_notes": "Il footswitch di scelta del loop e' reso come levetta LOOP (A/B)."
+ },
+ "ibxec50": {
+  "family": "AmpSim",
+  "category": "Amp / IR",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "INPUT FROM",
+    "role": "mode",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "PRE-AMP",
+     "GUITAR",
+     "DISTORTION"
+    ],
+    "short": [
+     "PRE",
+     "GTR",
+     "DIST"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "INPUT",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "CABINET",
+    "role": "cab",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OPEN",
+     "SEALED"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "REACTANCE",
+    "role": "reactance",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HUSH",
+    "role": "threshold",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PHONES",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4chain mode=ser || AmpSim@on=0,0: hpf R=470k C=100n; gain a=log(1,0.25,4); lpf R=10k C=2.2n; bjt g=1.5 vp=2.5 vn=2 soft=4 || AmpSim@on=0,1: hpf R=470k C=100n; gain a=log(1,0.25,4); lpf R=10k C=1n; bjt g=6 vp=2.5 vn=2 soft=2 || AmpSim@on=0,2: hpf R=470k C=100n; gain a=log(1,0.25,4); lpf R=10k C=4.7n; bjt g=1.2 vp=2.5 vn=2 soft=4 || AmpSim: hpf2 f=sw(2,85,65) Q=sw(2,0.6,1.0); peak f=sw(2,120,100) Q=lin(3,1,3) g=lin(3,0,9); peak f=2400 Q=1.2 g=lin(3,1,6); peak f=700 Q=0.8 g=sw(2,1.5,-2); lpf2 f=4800 Q=0.9; lpf2 f=6500 Q=0.6; vol a=taper(5,A)*1.4; rail rail=3.5 || NoiseGate: subtype=i4hush thr=lin(4,-80,-40) ratio=2.5 lp=1500,18000 t=1,90",
+  "stereo": false,
+  "notes": "Simulatore analogico d'amplificatore e cassa (catalogo 1994): tre voci d'ingresso (GUITAR con la saturazione del preamplificatore), cassa aperta (medi pieni) o chiusa (bassi incisivi), REACTANCE che esalta le risonanze bassa e alta dell'altoparlante, HUSH e uscita cuffie. Schema non pubblicato: filtri e saturazione stimati.",
+  "control_notes": "CABINET OPEN BACK abbreviato in OPEN; l'uscita PHONES e' l'uscita del pedale nel plugin."
+ }
+}

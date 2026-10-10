@@ -149,3 +149,23 @@ Wah a induttore (famiglia `Wah`, `type=inductor`): ruoli `freq q range voice fin
   place_spec=[(etichetta, "L"|"R", pct dal tallone, tipo), ...])` (stile `treadle`, forme di `shaped_layout.py`): il
   bilanciere e' sempre il primo comando (dal JSON per etichetta/ruolo da bilanciere, altrimenti quello del segnaposto) e i
   comandi del JSON prendono le posizioni di `place_spec` per somiglianza dell'etichetta.
+
+## Ibanez (tappa 4: `catalog_ibanez.py`, `catalog_ibanez_b.py`)
+I due cataloghi sono GENERATI da `gen_catalog_ibanez.py` a partire dalle schede `~/.config/PedalTrinity/stage4/stage4_specs.json`
+(forma per serie, misure, posizioni x%/y% dei comandi, LED, footswitch; colori nella tabella `COL`, ritocchi per modello in
+`TWEAKS`): per cambiare l'aspetto si modifica il generatore e si rigenera. Parte funzionale da `sound_stage4_drive.json`,
+`sound_stage4_dyn.json`, `sound_stage4_mod.json`, `sound_stage4_digital.json` (stesso formato della tappa 3).
+Chiavi nuove di `look()` (facoltative; i pedali che non le usano restano identici), vedi `stomp_layout.py`:
+* `profile=[(y%, h mm), ...]` piano a spezzata (parte rialzata coi pomelli, fronte inclinato, ripiano del coperchio);
+* `covers=[dict(foot=j, x0, x1, y0, y1, h0, h1, kind=paint|chrome|metal|rubber|plastic, col=, insets=[...], bumps=[...],
+  print=)]` coperchio-pedale incernierato (serie 9/10/L, Soundtank, Tone-Lok, tasto quadrato 808, Effect Component): il
+  footswitch j e' tutto il coperchio (zona "foot" dell'interfaccia); `insets` = piastra cromata a righe, gomma, etichetta;
+* `outline=[(x%, y%), ...]` contorno poligonale convesso (Tube King a rombo, TC999 trapezio); `extra=[("rails", w, h)]`;
+* `param_row=(y%, x0%, x1%)` fila dei parametri per i pedali senza pomelli (DCP programmabili);
+* `label_side=True` scritte dei pomelli a lato (serie 9/10); `adapt=True` il tipo della posizione segue il comando del
+  JSON con la stessa etichetta (cursore <-> pomello, levetta);
+* `gfx`: `name=dict(zone=(y0%, y1%))` fascia del nome, `name/code=dict(angle=gradi, x=, y=)` scritta ruotata (nomi in
+  diagonale della serie 808, fasce verticali), `keep=[...]` zone senza scritte;
+* `print_labels={etichetta: scritta}` solo sulle repliche REAL MOD.
+* `REAL_ONLY = {id: dict(look=..., real=dict(code, name))}` in un file dei gruppi: replica REAL MOD con la forma del pedale
+  vero per un modello che in modalita' normale ha un altro stile (ed9 -> TS-808, la versione normale non cambia).

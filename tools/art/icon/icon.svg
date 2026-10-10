@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Pedal Trinity: icona in stile metal. Tre stompbox (nero, rosso sangue, acciaio) su una pedaliera in lamiera
+       mandorlata, fiamme sul fondo nero, cornice d'acciaio con borchie -->
+  <defs>
+    <radialGradient id="bg" cx="0.5" cy="0.62" r="0.7">
+      <stop offset="0" stop-color="#6e0000"/>
+      <stop offset="0.55" stop-color="#220000"/>
+      <stop offset="1" stop-color="#050505"/>
+    </radialGradient>
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8ecef"/><stop offset="0.35" stop-color="#7c848c"/>
+      <stop offset="0.6" stop-color="#d2d7dc"/><stop offset="1" stop-color="#3c4248"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#ffd23a"/><stop offset="0.35" stop-color="#ff5a00"/><stop offset="0.75" stop-color="#c00000"/><stop offset="1" stop-color="#7a0000" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="black" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3d42"/><stop offset="1" stop-color="#0c0d0f"/></linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3121b"/><stop offset="1" stop-color="#6d0006"/></linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2f4f6"/><stop offset="0.45" stop-color="#8d959d"/><stop offset="0.7" stop-color="#d9dde1"/><stop offset="1" stop-color="#5a6168"/>
+    </linearGradient>
+    <radialGradient id="knob" cx="0.38" cy="0.32" r="0.75"><stop offset="0" stop-color="#5a5f66"/><stop offset="1" stop-color="#0b0c0e"/></radialGradient>
+    <linearGradient id="foot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f6f8"/><stop offset="1" stop-color="#8a939d"/></linearGradient>
+    <pattern id="tread" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="22" height="22" fill="#3b4148"/>
+      <rect x="4" y="9" width="14" height="4" rx="2" fill="#6c757e"/>
+    </pattern>
+    <clipPath id="tile"><rect x="28" y="28" width="456" height="456" rx="96"/></clipPath>
+    <filter id="shadow" x="-30%" y="-20%" width="160%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#000" flood-opacity="0.75"/>
+    </filter>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4"/></filter>
+    <!-- comandi di uno stompbox 150 x 210 con l'origine al centro -->
+    <g id="knobs">
+      <rect x="-60" y="-92" width="120" height="78" rx="10" fill="#0e0f11" stroke="#000" stroke-width="2"/>
+      <circle cx="-28" cy="-53" r="21" fill="url(#knob)" stroke="#000" stroke-width="2"/>
+      <line x1="-28" y1="-53" x2="-14" y2="-68" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="28" cy="-53" r="21" fill="url(#knob)" stroke="#000" stroke-width="2"/>
+      <line x1="28" y1="-53" x2="46" y2="-60" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="0" cy="-80" r="9" fill="#ff1a1a" filter="url(#glow)"/>
+      <circle cx="0" cy="-80" r="5" fill="#ff4d4d"/>
+      <circle cx="0" cy="50" r="27" fill="url(#foot)" stroke="#3d444b" stroke-width="2.5"/>
+      <circle cx="0" cy="50" r="15" fill="none" stroke="#6f7983" stroke-width="2.5"/>
+      <!-- viti agli angoli -->
+      <g fill="#9aa2aa" stroke="#30353a" stroke-width="1.2">
+        <circle cx="-63" cy="93" r="4"/><circle cx="63" cy="93" r="4"/>
+      </g>
+    </g>
+    <!-- borchia a punta -->
+    <g id="stud">
+      <circle r="13" fill="#1a1c1f"/>
+      <path d="M0 -12 L 10.4 6 L -10.4 6 Z" fill="url(#steel)" stroke="#2a2e33" stroke-width="1"/>
+      <circle r="12" fill="none" stroke="url(#steel)" stroke-width="3"/>
+    </g>
+  </defs>
+  <!-- cornice d'acciaio e fondo -->
+  <rect x="12" y="12" width="488" height="488" rx="110" fill="url(#frame)"/>
+  <rect x="28" y="28" width="456" height="456" rx="96" fill="url(#bg)"/>
+  <g clip-path="url(#tile)">
+    <!-- fiamme che salgono da dietro la pedaliera -->
+    <g transform="translate(0 330) scale(1 1.38) translate(0 -340)">
+    <path d="M28 340 C 40 300, 52 250, 70 196 C 82 250, 100 256, 110 214 C 124 256, 138 246, 150 180
+             C 164 240, 182 236, 194 168 C 208 230, 226 220, 238 140 C 250 210, 262 210, 274 140 C 286 220, 304 230, 318 168
+             C 330 236, 348 240, 362 180 C 374 246, 388 256, 402 214 C 412 256, 430 250, 442 196 C 460 250, 472 300, 484 340 Z"
+          fill="url(#flame)" opacity="0.95"/>
+    </g>
+    <!-- pedaliera in lamiera mandorlata -->
+    <rect x="40" y="304" width="432" height="150" rx="18" fill="url(#tread)" stroke="#1b1f23" stroke-width="4"/>
+    <rect x="40" y="304" width="432" height="150" rx="18" fill="none" stroke="#9aa3ac" stroke-width="2" opacity="0.6"/>
+    <g fill="#c9ced3" stroke="#2a2e33" stroke-width="1.5">
+      <circle cx="58" cy="322" r="5"/><circle cx="454" cy="322" r="5"/><circle cx="58" cy="436" r="5"/><circle cx="454" cy="436" r="5"/>
+    </g>
+    <!-- cavi d'ingresso e d'uscita della catena -->
+    <g stroke="#000" stroke-width="13" fill="none" stroke-linecap="round">
+      <path d="M10 362 C 40 362, 50 332, 70 320"/>
+      <path d="M442 320 C 462 332, 472 362, 502 362"/>
+    </g>
+  </g>
+  <!-- pedale sinistro (nero) e destro (acciaio), inclinati e dietro -->
+  <g filter="url(#shadow)">
+    <g transform="translate(138 262) rotate(-9)">
+      <rect x="-75" y="-105" width="150" height="210" rx="16" fill="url(#black)" stroke="#000" stroke-width="3"/>
+      <use xlink:href="#knobs"/>
+    </g>
+    <g transform="translate(374 262) rotate(9)">
+      <rect x="-75" y="-105" width="150" height="210" rx="16" fill="url(#steel)" stroke="#3a4046" stroke-width="3"/>
+      <use xlink:href="#knobs"/>
+    </g>
+  </g>
+  <!-- pedale centrale rosso sangue, davanti e piu' grande, con il fulmine -->
+  <g filter="url(#shadow)">
+    <g transform="translate(256 250) scale(1.18)">
+      <rect x="-75" y="-105" width="150" height="210" rx="16" fill="url(#red)" stroke="#3a0003" stroke-width="3"/>
+      <use xlink:href="#knobs"/>
+      <path d="M-8 -6 L 14 -6 L 2 10 L 16 10 L -14 40 L -4 18 L -18 18 Z" fill="url(#steel)" stroke="#2a0002" stroke-width="1.5" transform="translate(-44 4) scale(0.9)"/>
+    </g>
+  </g>
+  <!-- borchie sulla cornice -->
+  <use xlink:href="#stud" x="256" y="22"/>
+  <use xlink:href="#stud" x="22" y="256"/>
+  <use xlink:href="#stud" x="490" y="256"/>
+  <use xlink:href="#stud" x="98" y="56"/>
+  <use xlink:href="#stud" x="414" y="56"/>
+</svg>

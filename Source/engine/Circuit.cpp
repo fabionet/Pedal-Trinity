@@ -384,10 +384,22 @@ namespace pt::engine
                 vneg = arg ("railn", p, def, vpos);
                 diodes = diodesFromArgs (*this, p, def, diodeName);
                 gcf = cf > 0 ? 2.0 * cf / T : 0.0;
+                // tappa 4: op-amp reale (facoltativo) = integratore con prodotto guadagno-banda gbw (Hz), slew rate
+                // sr (V/us) e uscita bloccata ai binari dentro l'anello; senza gbw/sr resta l'op-amp ideale di prima
+                opamp = has ("gbw") || has ("sr") || has ("Rg2");
+                rg2 = arg ("Rg2", p, def, 0.0);          // secondo ramo verso massa (Rg2 + Cg2), solo con l'op-amp reale
+                cg2 = arg ("Cg2", p, def, 0.0);
+                if (opamp)
+                {
+                    const double gbw = std::max (1e3, arg ("gbw", p, def, 1e8));
+                    kInt = T * 2.0 * pi * gbw;          // integratore a Eulero all'indietro (L-stabile)
+                    slew = std::max (1e-3, arg ("sr", p, def, 1e3)) * 1e6 * T;
+                }
             }
-            void reset() override { for (auto& s : st) s = {}; }
+            void reset() override { for (auto& s : st) s = {}; for (auto& s : so) s = {}; }
             void process (int ch, double* x, int n) override
             {
+                if (opamp) { processOpamp (ch, x, n); return; }
                 auto& s = st[ch];
                 for (int i = 0; i < n; ++i)
                 {
@@ -427,8 +439,68 @@ namespace pt::engine
             }
             std::string diodeName = "si";
         private:
+            /** Op-amp reale: y' = wt (v+ - v-) (Eulero all'indietro: i poli veloci dell'anello non suonano a Nyquist e
+                l'integratore non si carica quando l'uscita e' limitata), slew |dy| <= sr*T, y bloccata a [-railn, rail];
+                il resto della rete (rami verso massa, Cf) con i trapezi. Incognita u = y - v- (tensione ai capi della
+                retroazione), risolta con Newton come nel caso ideale. */
+            void processOpamp (int ch, double* x, int n)
+            {
+                auto& s = so[ch];
+                const double kg = cg > 0 ? T / (2.0 * cg) : 0.0;
+                const double kg2 = cg2 > 0 ? T / (2.0 * cg2) : 0.0;
+                const bool leg2 = rg2 > 0;
+                const double dig2 = leg2 ? 1.0 / (rg2 + kg2) : 0.0;
+                const double dig = 1.0 / (rg + kg) + dig2;
+                const double K = kInt, iK = 1.0 / (1.0 + K);
+                const double maxStep = diodes.up > 0 || diodes.dn > 0 ? 0.5 : 1e3;   // passo limitato solo con i diodi
+                for (int i = 0; i < n; ++i)
+                {
+                    const double vin = x[i];
+                    // corrente verso massa lineare in v-: ig = vm*dig - ig0 (rami Rg+Cg e Rg2+Cg2, trapezi)
+                    const double ig0 = (cg > 0 ? (s.vc + kg * s.ig) / (rg + kg) : 0.0) + (leg2 && cg2 > 0 ? (s.vc2 + kg2 * s.ig2) * dig2 : 0.0);
+                    const double c0 = s.y + K * vin;
+                    // anello chiuso: vm = (c0 - u)/(1+K)
+                    double u = s.u;
+                    for (int it = 0; it < 40; ++it)
+                    {
+                        double id, did;
+                        diodes.eval (u, id, did);
+                        const double vm = (c0 - u) * iK;
+                        const double F = u / rf + gcf * u - s.ih + id - (vm * dig - ig0);
+                        const double dF = 1.0 / rf + gcf + did + dig * iK;
+                        const double step = std::clamp (F / dF, -maxStep, maxStep);
+                        u -= step;
+                        if (std::abs (step) < 1e-10) break;
+                    }
+                    double vm = (c0 - u) * iK, y = u + vm;
+                    const double yl = std::clamp (std::clamp (y, s.y - slew, s.y + slew), -vneg, vpos);
+                    if (std::fpclassify (yl - y) != FP_ZERO)
+                    {
+                        // uscita limitata (slew o binario): l'anello si apre, v- segue la rete con y fissa
+                        y = yl;
+                        for (int it = 0; it < 40; ++it)
+                        {
+                            double id, did;
+                            diodes.eval (u, id, did);
+                            const double F = u / rf + gcf * u - s.ih + id - ((y - u) * dig - ig0);
+                            const double dF = 1.0 / rf + gcf + did + dig;
+                            const double step = std::clamp (F / dF, -maxStep, maxStep);
+                            u -= step;
+                            if (std::abs (step) < 1e-10) break;
+                        }
+                        vm = y - u;
+                    }
+                    if (cg > 0) { const double i1 = (vm - s.vc - kg * s.ig) / (rg + kg); s.vc = vm - i1 * rg; s.ig = i1; }
+                    if (leg2 && cg2 > 0) { const double i2 = (vm - s.vc2 - kg2 * s.ig2) * dig2; s.vc2 = vm - i2 * rg2; s.ig2 = i2; }
+                    if (gcf > 0) { const double ic = gcf * u - s.ih; s.ih = gcf * u + ic; }
+                    s.u = u; s.y = y;
+                    x[i] = y;
+                }
+            }
             struct State { double vc = 0, ig = 0, x = 0, ih = 0; } st[2];
-            double T = 0, rg = 0, cg = 0, rf = 0, cf = 0, gcf = 0, vpos = 4, vneg = 4;
+            struct OpState { double vc = 0, ig = 0, vc2 = 0, ig2 = 0, ih = 0, u = 0, y = 0; } so[2];
+            double T = 0, rg = 0, cg = 0, rf = 0, cf = 0, gcf = 0, vpos = 4, vneg = 4, kInt = 0, slew = 1, rg2 = 0, cg2 = 0;
+            bool opamp = false;
             DiodePair diodes;
         };
 
@@ -617,7 +689,10 @@ namespace pt::engine
                 const bool byp = arg ("byp", p, def, 1.0) > 0.5;
                 const double mu = arg ("mu", p, def, 100.0), ex = arg ("ex", p, def, 1.4), kg1 = arg ("kg1", p, def, 1060.0),
                              kp = arg ("kp", p, def, 600.0), kvb = arg ("kvb", p, def, 300.0);
-                const double key = rp + rk * 1.37 + b + (byp ? 1 : 0) + mu;
+                // tappa 4 (facoltativi): vg = polarizzazione di griglia in volt (Nutube: griglia positiva), gc = inizio della
+                // conduzione di griglia rispetto al catodo, gw = ampiezza del ginocchio (default 0 / 0 / 0.5 = come prima)
+                const double vg0 = arg ("vg", p, def, 0.0), gcv = arg ("gc", p, def, 0.0), gw = arg ("gw", p, def, 0.5);
+                const double key = rp + rk * 1.37 + b + (byp ? 1 : 0) + mu + vg0 * 7.13 + gcv * 3.71 + (gw - 0.5) * 1.93 + ex * 0.517 + kvb * 0.0131;
                 if (key == lastKey) return;
                 lastKey = key;
                 auto ip = [&] (double vgk, double vpk)
@@ -648,15 +723,16 @@ namespace pt::engine
                 };
                 // punto di lavoro (griglia a 0 V, catodo autopolarizzato)
                 double iq = 1e-3;
-                for (int it = 0; it < 60; ++it) iq = 0.5 * iq + 0.5 * solve (0.0, iq * rk, iq);
+                for (int it = 0; it < 60; ++it) iq = 0.5 * iq + 0.5 * solve (vg0, iq * rk, iq);
                 const double vkq = iq * rk;
                 const double vpq = b - iq * rp;
                 for (int k = 0; k < N; ++k)
                 {
-                    double vin = lo + (hi - lo) * k / (N - 1);
+                    double vin = vg0 + (lo + (hi - lo) * k / (N - 1));
                     // conduzione di griglia: oltre il potenziale del catodo la griglia assorbe corrente
                     // (resistenza di griglia) e la tensione effettiva si "appiattisce"
-                    if (vin > vkq) vin = vkq + 0.5 * std::tanh ((vin - vkq) / 0.5);
+                    const double vgc = vkq + gcv;
+                    if (vin > vgc) vin = vgc + gw * std::tanh ((vin - vgc) / gw);
                     const double i = solve (vin, vkq, iq);
                     table[k] = (b - i * rp) - vpq;     // variazione della tensione anodica (invertente)
                 }
@@ -1994,6 +2070,256 @@ namespace pt::engine
             double tgtL[2] {}, tgtR[2] {}, curL[2] {}, curR[2] {};
         };
 
+        //==============================================================================
+        // Stadi aggiunti nella tappa 4 (overdrive, distorsioni e fuzz Ibanez)
+        //==============================================================================
+
+        /** Rete lineare descritta per nodi, di ordine qualsiasi, risolta nel tempo (Ibanez: toni a giratori, EQ attivi):
+                mna R.a.b=33k C.b.0=10n L.c.d=2H O.p.m.o=1 E.p.m.o=guadagno OUT.w=k rail=.. railn=..
+            stessi elementi di 'nodal' (piu' le induttanze L). Analisi nodale modificata con i modelli compagni trapezoidali
+            di condensatori e induttanze (= trasformata bilineare): a frequenza di controllo si fattorizza la matrice e si
+            ricava la forma di stato discreta h' = M h + m x, y = c.h + d x sulle memorie dei soli elementi reattivi, quindi
+            per campione il costo e' (numero di condensatori)^2. Nessun polinomio ne' radice: esatta anche con molti poli. */
+        class MnaStage : public Stage
+        {
+        public:
+            void update (double f, const float* p, const ModelDef& def) override
+            {
+                fs = f;
+                if (! parsed) parse();
+                vpos = arg ("rail", p, def, 0.0);
+                vneg = arg ("railn", p, def, vpos);
+                if (! ok) return;
+                bool same = vals.size() == elems.size() && std::abs (lastFs - fs) < 1e-9;
+                for (size_t k = 0; k < elems.size(); ++k)
+                {
+                    const double v = args[(size_t) elems[k].arg].second.eval (p, def);
+                    if (! same || ! isZero (v - vals[k])) same = false;
+                    vals[k] = v;
+                }
+                const double ko = args[(size_t) outArg].second.eval (p, def);
+                if (same && isZero (ko - lastK)) return;
+                lastK = ko; lastFs = fs;
+                const int N = nodes + extra;
+                const double T = 1.0 / fs;
+                std::fill (A.begin(), A.end(), 0.0);
+                auto at = [&] (int r, int c) -> double& { return A[(size_t) (r * N + c)]; };
+                auto stampY = [&] (int a, int b, double y)
+                {
+                    if (a >= 0) at (a, a) += y;
+                    if (b >= 0) at (b, b) += y;
+                    if (a >= 0 && b >= 0) { at (a, b) -= y; at (b, a) -= y; }
+                };
+                int row = nodes;
+                at (inNode, row) += 1.0; at (row, inNode) += 1.0;
+                const int inRow = row++;
+                int kr = 0;
+                for (size_t k = 0; k < elems.size(); ++k)
+                {
+                    const auto& e = elems[k];
+                    const double v = vals[k];
+                    if (e.type == 'R') stampY (e.a, e.b, 1.0 / std::max (1e-6, v));
+                    else if (e.type == 'C') { g[(size_t) kr] = 2.0 * std::max (1e-18, v) / T; stampY (e.a, e.b, g[(size_t) kr]); ++kr; }
+                    else if (e.type == 'L') { g[(size_t) kr] = T / (2.0 * std::max (1e-12, v)); stampY (e.a, e.b, g[(size_t) kr]); ++kr; }
+                    else
+                    {
+                        if (e.c >= 0) at (e.c, row) += 1.0;
+                        if (e.type == 'O')
+                        {
+                            if (e.a >= 0) at (row, e.a) += 1.0;
+                            if (e.b >= 0) at (row, e.b) -= 1.0;
+                        }
+                        else
+                        {
+                            if (e.c >= 0) at (row, e.c) += 1.0;
+                            if (e.a >= 0) at (row, e.a) -= v;
+                            if (e.b >= 0) at (row, e.b) += v;
+                        }
+                        ++row;
+                    }
+                }
+                // fattorizzazione LU con pivot parziale
+                for (int i = 0; i < N; ++i) perm[(size_t) i] = i;
+                for (int c = 0; c < N; ++c)
+                {
+                    int piv = c;
+                    for (int r = c + 1; r < N; ++r) if (std::abs (at (r, c)) > std::abs (at (piv, c))) piv = r;
+                    if (std::abs (at (piv, c)) < 1e-300) { singular = true; return; }
+                    if (piv != c) { for (int j = 0; j < N; ++j) std::swap (at (c, j), at (piv, j)); std::swap (perm[(size_t) c], perm[(size_t) piv]); }
+                    for (int r = c + 1; r < N; ++r)
+                    {
+                        const double m = at (r, c) / at (c, c);
+                        at (r, c) = m;
+                        if (isZero (m)) continue;
+                        for (int j = c + 1; j < N; ++j) at (r, j) -= m * at (c, j);
+                    }
+                }
+                singular = false;
+                auto solve = [&] (std::vector<double>& b)       // b: termine noto (indici originali) -> soluzione
+                {
+                    for (int i = 0; i < N; ++i) tmp[(size_t) i] = b[(size_t) perm[(size_t) i]];
+                    for (int i = 0; i < N; ++i) for (int j = 0; j < i; ++j) tmp[(size_t) i] -= at (i, j) * tmp[(size_t) j];
+                    for (int i = N - 1; i >= 0; --i)
+                    {
+                        for (int j = i + 1; j < N; ++j) tmp[(size_t) i] -= at (i, j) * tmp[(size_t) j];
+                        tmp[(size_t) i] /= at (i, i);
+                    }
+                    b = tmp;
+                };
+                auto vab = [] (const std::vector<double>& x, const Elem& e)
+                { return (e.a >= 0 ? x[(size_t) e.a] : 0.0) - (e.b >= 0 ? x[(size_t) e.b] : 0.0); };
+                // risposta all'ingresso
+                std::fill (col.begin(), col.end(), 0.0);
+                col[(size_t) inRow] = 1.0;
+                solve (col);
+                d = ko * col[(size_t) outNode];
+                for (int k = 0; k < K; ++k) mvec[(size_t) k] = 2.0 * g[(size_t) k] * vab (col, elems[(size_t) reac[(size_t) k]]);
+                // risposta a ciascuna memoria (sorgente di corrente del modello compagno)
+                for (int j = 0; j < K; ++j)
+                {
+                    const auto& ej = elems[(size_t) reac[(size_t) j]];
+                    const double sgn = ej.type == 'C' ? 1.0 : -1.0;
+                    std::fill (col.begin(), col.end(), 0.0);
+                    if (ej.a >= 0) col[(size_t) ej.a] += sgn;
+                    if (ej.b >= 0) col[(size_t) ej.b] -= sgn;
+                    solve (col);
+                    cvec[(size_t) j] = ko * col[(size_t) outNode];
+                    for (int k = 0; k < K; ++k)
+                    {
+                        const auto& ek = elems[(size_t) reac[(size_t) k]];
+                        M[(size_t) (k * K + j)] = 2.0 * g[(size_t) k] * vab (col, ek) + (k == j ? (ek.type == 'C' ? -1.0 : 1.0) : 0.0);
+                    }
+                }
+            }
+            void reset() override { for (auto& h : hs) std::fill (h.begin(), h.end(), 0.0); }
+            void process (int ch, double* x, int n) override
+            {
+                if (! ok || singular) return;
+                auto& h = hs[ch];
+                double* hn = hnew[ch].data();
+                for (int i = 0; i < n; ++i)
+                {
+                    const double v = x[i];
+                    double y = d * v;
+                    for (int k = 0; k < K; ++k) y += cvec[(size_t) k] * h[(size_t) k];
+                    for (int k = 0; k < K; ++k)
+                    {
+                        const double* mr = M.data() + (size_t) (k * K);
+                        double acc = mvec[(size_t) k] * v;
+                        for (int j = 0; j < K; ++j) acc += mr[j] * h[(size_t) j];
+                        hn[k] = acc;
+                    }
+                    for (int k = 0; k < K; ++k) h[(size_t) k] = hn[k];
+                    if (vpos > 0) y = railClip (y, vpos, vneg);
+                    x[i] = y;
+                }
+            }
+        private:
+            struct Elem { char type; int a = -1, b = -1, c = -1; int arg = 0; };
+            void parse()
+            {
+                parsed = true;
+                std::map<std::string, int> map;
+                auto node = [&] (const std::string& nm) -> int
+                {
+                    if (nm == "0" || nm == "gnd") return -1;
+                    auto it = map.find (nm);
+                    if (it != map.end()) return it->second;
+                    const int id = (int) map.size();
+                    map[nm] = id;
+                    return id;
+                };
+                inNode = node ("i");
+                for (size_t k = 0; k < args.size(); ++k)
+                {
+                    const auto parts = split (args[k].first, '.');
+                    const auto& t = parts[0];
+                    if (t == "OUT" && parts.size() == 2) { outNode = node (parts[1]); outArg = (int) k; continue; }
+                    if ((t == "R" || t == "C" || t == "L") && parts.size() == 3)
+                    {
+                        Elem e; e.type = t[0]; e.a = node (parts[1]); e.b = node (parts[2]); e.arg = (int) k;
+                        if (e.type != 'R') reac.push_back ((int) elems.size());
+                        elems.push_back (e); continue;
+                    }
+                    if ((t == "O" || t == "E") && parts.size() == 4)
+                    {
+                        Elem e; e.type = t[0]; e.a = node (parts[1]); e.b = node (parts[2]); e.c = node (parts[3]); e.arg = (int) k;
+                        elems.push_back (e); ++extra; continue;
+                    }
+                }
+                nodes = (int) map.size();
+                extra += 1;
+                K = (int) reac.size();
+                const int N = nodes + extra;
+                ok = outNode >= 0 && nodes > 0 && N <= 64 && K <= 48;
+                A.assign ((size_t) (N * N), 0.0); perm.assign ((size_t) N, 0); tmp.assign ((size_t) N, 0.0); col.assign ((size_t) N, 0.0);
+                g.assign ((size_t) K, 0.0); mvec.assign ((size_t) K, 0.0); cvec.assign ((size_t) K, 0.0); M.assign ((size_t) (K * K), 0.0);
+                vals.assign (elems.size(), 0.0);
+                for (int c = 0; c < 2; ++c) { hs[c].assign ((size_t) K, 0.0); hnew[c].assign ((size_t) K, 0.0); }
+            }
+            std::vector<Elem> elems;
+            std::vector<int> reac, perm;
+            std::vector<double> A, tmp, col, g, mvec, cvec, M, vals, hs[2], hnew[2];
+            double d = 0, vpos = 0, vneg = 0, lastK = 0, lastFs = 0;
+            bool parsed = false, ok = false, singular = true;
+            int nodes = 0, extra = 0, inNode = 0, outNode = -1, outArg = 0, K = 0;
+        };
+
+        /** Linea di ritardo a BBD modulata (chorus / delay analogici degli Ibanez multi-effetto SS10/SS20): ritardo
+            ms (+- mod ms con LFO triangolare a rate Hz), retroazione fb con saturazione morbida a sat volt, passa-basso
+            del secondo ordine a bw Hz (filtri anti-alias/ricostruzione) nel ramo ritardato; max = ritardo massimo (ms) per la
+            memoria. Uscita = solo segnale ritardato (il diretto si miscela con tap/mix). */
+        class BbdStage : public Stage
+        {
+        public:
+            void update (double f, const float* p, const ModelDef& def) override
+            {
+                const int L = (int) (std::clamp (arg ("max", p, def, 100.0), 1.0, 2000.0) * 1e-3 * f) + 8;
+                if (L != len || std::abs (f - fs) > 1e-9)
+                {
+                    len = L;
+                    for (auto& s : st) { s.buf.assign ((size_t) L, 0.0); s.w = 0; s.svf.reset(); s.last = 0; }
+                }
+                fs = f;
+                dms = std::max (0.05, arg ("ms", p, def, 10.0));
+                mms = std::max (0.0, arg ("mod", p, def, 0.0));
+                inc = std::clamp (arg ("rate", p, def, 1.0), 0.0, 50.0) / fs;
+                fb = std::clamp (arg ("fb", p, def, 0.0), -0.98, 0.98);
+                sat = std::max (0.05, arg ("sat", p, def, 2.0));
+                gl = tanApprox (pi * std::min (std::max (100.0, arg ("bw", p, def, 6000.0)), 0.2 * fs) / fs);
+            }
+            void reset() override { for (auto& s : st) { std::fill (s.buf.begin(), s.buf.end(), 0.0); s.w = 0; s.svf.reset(); s.last = 0; } ph = 0; }
+            void process (int ch, double* x, int n) override
+            {
+                auto& s = st[ch];
+                if (s.buf.empty()) return;
+                double p = ph;
+                for (int i = 0; i < n; ++i)
+                {
+                    const double lfo = 1.0 - 4.0 * std::abs (p - 0.5);          // triangolo -1..1
+                    p += inc; if (p >= 1.0) p -= 1.0;
+                    const double dsm = std::clamp ((dms + mms * lfo) * 1e-3 * fs, 2.0, (double) len - 4.0);
+                    s.buf[(size_t) s.w] = x[i] + sat * std::tanh (fb * s.last / sat);
+                    double rp = s.w - dsm;
+                    if (rp < 0) rp += len;
+                    const int i0 = (int) rp;
+                    const double fr = rp - i0;
+                    const int i1 = i0 + 1 >= len ? 0 : i0 + 1;
+                    const double v = s.buf[(size_t) i0] + fr * (s.buf[(size_t) i1] - s.buf[(size_t) i0]);
+                    double lp, bp, hp;
+                    s.svf.tick (v, gl, 1.4142, lp, bp, hp);
+                    s.last = lp;
+                    x[i] = lp;
+                    if (++s.w >= len) s.w = 0;
+                }
+                if (ch == 0) ph = p;
+            }
+        private:
+            struct State { std::vector<double> buf; int w = 0; Svf svf; double last = 0; } st[2];
+            int len = 0;
+            double dms = 10, mms = 0, inc = 0, fb = 0, sat = 2, gl = 0.1, ph = 0;
+        };
+
         std::unique_ptr<Stage> makeStage (const std::string& type, std::vector<double>* tapBuf, std::string& err)
         {
             using LS = LinearStage;
@@ -2134,6 +2460,8 @@ namespace pt::engine
             if (type == "lfovcf") return std::make_unique<LfoVcfStage>();
             if (type == "chgain") return std::make_unique<ChannelGainStage>();
             if (type == "pan")    return std::make_unique<PanStage> (tapBuf + 2 * CircuitEffect::maxTaps);
+            if (type == "mna")    return std::make_unique<MnaStage>();
+            if (type == "bbd")    return std::make_unique<BbdStage>();
             if (type == "rail")
                 return std::make_unique<LS> ([] (const LS&, const float*, const ModelDef&, AnalogTF& tf, double&)
                 { setTF (tf, { 1 }, { 1 }); });

@@ -34,7 +34,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small\color{steel}\textbf{PEDAL TRINITY} \,·\, Guida all'uso}
-\fancyhead[R]{\small\color{steel}v1.2.5 beta}
+\fancyhead[R]{\small\color{steel}v1.2.6 beta}
 \fancyfoot[L]{\small\color{steel}© 2026 FabioNET \,·\, GNU GPL v3}
 \fancyfoot[R]{\small\color{steel}\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -62,7 +62,7 @@
       {{\heavy\fontsize{54}{58}\selectfont PEDAL TRINITY}\\[0.6em]
        {\Large\color{gold}Pedaliera virtuale fino a 100 pedali \,·\, \modelcount\ modelli}\\[2.2em]
        {\LARGE\bfseries Guida illustrata all'uso}\\[0.4em]
-       {\large Versione 1.2.5 beta}};
+       {\large Versione 1.2.6 beta}};
   \node[anchor=south west,text width=17cm,align=left,text=white] at ([xshift=2cm,yshift=2.2cm]current page.south west)
       {\large by \textbf{FabioNET}\\[0.3em]
        \color{white!70}Plugin VST3 \,·\, LV2 \,·\, Standalone \quad per Linux e Windows (ASIO)\\
@@ -110,13 +110,13 @@ informazioni disponibili per ogni modello (alta = schema di fabbrica verificato)
 \subsection{Linux (pacchetto .deb)}
 Per Ubuntu 22.04 o successivi, Debian 12, Linux Mint 21 e derivate (64 bit):
 \begin{tcolorbox}[colback=charcoal,colupper=white,boxrule=0pt,arc=2mm]
-\texttt{sudo apt install ./pedal-trinity\_1.2.5-beta\_amd64.deb}
+\texttt{sudo apt install ./pedal-trinity\_1.2.6-beta\_amd64.deb}
 \end{tcolorbox}
 Installa il VST3 in \texttt{/usr/lib/vst3}, l'LV2 in \texttt{/usr/lib/lv2}, l'applicazione
 \texttt{pedal-trinity} (menu \emph{Audio}) e questa guida in \texttt{/usr/share/doc/pedal-trinity/}.
 
 \subsection{Windows 10/11}
-Avvia \texttt{PedalTrinity-1.2.5-beta-Windows-x64-Setup.exe}: installa lo Standalone (con driver
+Avvia \texttt{PedalTrinity-1.2.6-beta-Windows-x64-Setup.exe}: installa lo Standalone (con driver
 \textbf{ASIO}), il VST3 in \texttt{C:\textbackslash Program Files\textbackslash Common Files\textbackslash VST3}
 e l'LV2 in \texttt{...\textbackslash Common Files\textbackslash LV2}.
 
@@ -422,6 +422,25 @@ Alcuni pedali digitali con molti comandi sono semplificati per stare nei 12 coma
 (per esempio inviluppi e filtri dell'HOG, preset del POG2): i comandi reali non modellati restano disegnati
 ma fissi. I valori non pubblicati sono stimati dalle specifiche e segnati nelle note di ciascun pedale.
 
+\subsection{Ibanez dagli anni '70 a oggi}
+Il catalogo comprende 166 pedali \textbf{Ibanez} (più la replica REAL MOD del TS-808 per l'Emerald Drive), ciascuno con
+la forma del proprio contenitore e i comandi nelle posizioni reali:
+\begin{itemize}
+  \item gli anni '70 (OD-850, OD-855, Phase Tone, Flying Pan, Jetlyzer, Standard Fuzz, i primi compressori, flanger
+        ed equalizzatori) e la serie 808 (CS-505, AD-80, AF-201, FL-301, TS-808);
+  \item tutte le \textbf{Tube Screamer}: TS808 e riedizioni, TS9, TS10, TS5, TS7, TSMINI, TS808DX e TS9DX con i loro
+        boost e modi, TSV808, TS9B per basso e NTS con la valvola Nutube; le differenze reali (op-amp, stadio d'uscita,
+        condensatori) si misurano come nei pedali veri;
+  \item la serie 9 (SD9, ST9, SM9, FL9, CS9, PT9, AD9, CP9, GE9, BC9\dots), le serie Master/L, Power/10 e i programmabili
+        DCP, i delay e i chorus digitali dell'epoca emulati con la loro conversione delta a 1 bit;
+  \item Soundtank, Tone-Lok, la serie Mini, i Tube King a valvola, la serie Effect Component, i pedali Neo Classic, Echo
+        Shifter, Airplane Flanger (Paul Gilbert) e Jemini (Steve Vai);
+  \item i wah e i pedali a bilanciere: WH10 (filtro attivo), Weeping Demon WD7 (filtro a variabili di stato con
+        fotoresistenza e accensione automatica), TWP10, No.57/58/84/93, PT-1000, VL10 e ST-810.
+\end{itemize}
+I pedali a bilanciere della serie Weeping Demon con l'accensione automatica si spengono quando il bilanciere torna al
+tallone. I valori non pubblicati sono stimati dalle specifiche e segnati nelle note di ciascun pedale.
+
 % ------------------------------------------------------------------
 \section{REAL MOD PEDALBOARD}\label{sec:realmod}
 Il tasto rosso \textbf{REAL MOD PEDALBOARD}, accanto a \emph{Preset}, trasforma la pedaliera: ogni
@@ -587,7 +606,7 @@ Lo Standalone ascolta l'ingresso: con microfono e altoparlanti del portatile usa
 \includegraphics[width=\linewidth]{../images/guide_info.jpg}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.46\linewidth}\vspace{0pt}
-Il tasto \textbf{INFO} mostra versione (\textbf{1.2.5 beta}), autore (\textbf{FabioNET}), il testo
+Il tasto \textbf{INFO} mostra versione (\textbf{1.2.6 beta}), autore (\textbf{FabioNET}), il testo
 completo della \textbf{GNU GPL v3} seguito dalle licenze dei componenti del NAM-A1A2 (MIT ed
 Eigen MPL 2.0), i crediti e apre questa guida.
 \end{minipage}
@@ -602,7 +621,8 @@ di NeuralAmpModelerPlugin di Steven Atkinson, il lettore \texttt{.namb} di TONE3
 \texttt{THIRD-PARTY-NAM.txt} installato con il programma.
 
 \textbf{Marchi.} BOSS, Roland e tutte le sigle dei pedali BOSS (DS-1, MT-2, GE-7, \dots) sono marchi
-di Roland Corporation; Ibanez e Tube Screamer di Hoshino Gakki; Fender di Fender Musical Instruments.
+di Roland Corporation; Ibanez, Tube Screamer, Tube King, Weeping Demon, Soundtank, Tone-Lok e Jemini di Hoshino
+Gakki; Maxon di Nisshin Onpa; Nutube di Korg; Fender di Fender Musical Instruments.
 Pedal Trinity è un progetto indipendente, non affiliato né approvato: i modelli hanno nomi e sigle
 originali e i riferimenti servono solo a indicare il suono di riferimento; in modalità REAL MOD le
 repliche 3D, modellate da zero e senza loghi, riportano sigla e nome del pedale solo per identificarlo. Le immagini sono render 3D
@@ -631,5 +651,5 @@ La pedaliera MIDI non risponde & Nello Standalone attiva il dispositivo in \emph
 Un pedale non si sente & Se mostra \textsc{staccato} il cavo lo scavalca: infila una spina nel pedale o usa \emph{Ricollega tutti i pedali staccati} (tasto destro sull'intestazione dello slot). \\ \bottomrule
 \end{tabularx}
 \vfill
-\begin{center}\small\color{steel}Pedal Trinity 1.2.5 beta \,·\, © 2026 FabioNET \,·\, GNU General Public License v3\end{center}
+\begin{center}\small\color{steel}Pedal Trinity 1.2.6 beta \,·\, © 2026 FabioNET \,·\, GNU General Public License v3\end{center}
 \end{document}
