@@ -30,6 +30,7 @@ namespace pt::engine
     std::unique_ptr<Effect> makeInstrument (const ModelDef&, const std::string& type);     // FxInstrument.cpp
     /** Tappa 3B: tipi nuovi riconosciuti per nome (FxClassicB*.cpp), nullptr per tutti gli altri. */
     std::unique_ptr<Effect> makeStage3B (const ModelDef&, const std::string& type);         // FxClassicB.cpp
+    std::unique_ptr<Effect> makeStage4 (const ModelDef&, const std::string& type);          // FxStage4.cpp
 
     namespace cx
     {

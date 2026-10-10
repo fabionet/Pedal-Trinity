@@ -18,6 +18,8 @@ namespace pt::engine
         const auto type = cfg.str ("type");
         // tappa 3B: tipi con nomi nuovi ("b3..."), mai usati dai modelli precedenti
         if (auto fx = makeStage3B (d, type)) return fx;
+        // tappa 4 (Ibanez): tipi "i4..."
+        if (auto fx = makeStage4 (d, type)) return fx;
         const auto f = d.family;
         if (f == Family::Phaser || f == Family::Tremolo || f == Family::BBDChorus || f == Family::BBDFlanger)
             return makeClassicMod (d, type);
