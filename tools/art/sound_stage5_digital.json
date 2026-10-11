@@ -1,0 +1,2751 @@
+{
+ "bhcd400": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "EQ",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 6.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5wrap || itype=dimension stages=1024 clk=85000,130000 rate=0.1,6 lfo=0 aa=20000 comp=0 stereo=1",
+  "stereo": true,
+  "notes": "Chorus/dimension stereo RSM (Behringer CD400, clone dichiarato del DC-3): stessa config del Pink Space (dc3), due linee in controfase senza rumore, EQ sugli acuti del wet; conversione 24 bit dichiarata, campionamento non pubblicato (manuale CD400).",
+  "control_notes": "Il Behringer chiama LEVEL il livello dell'effetto (E.LEVEL sul DC-3)."
+ },
+ "bhsf400": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "MANUAL",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.056,
+    "hi": 10.0
+   },
+   {
+    "label": "RES",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "STANDARD",
+     "ULTRA",
+     "GATE/PAN",
+     "MOMENTARY"
+    ],
+    "short": [
+     "STD",
+     "ULTR",
+     "GATE",
+     "MOM"
+    ]
+   }
+  ],
+  "config": "type=i5wrap || itype=flanger stages=1024 clk=35500,1700000 rate=0.056,10 lfo=0 aa=20000 comp=0 fbmax=0.95 stereo=1",
+  "stereo": true,
+  "notes": "Flanger stereo RSM a 4 modi (Behringer SF400, clone del BF-3): stessa config del Violet Jet Digital (bf3); MANUAL e RES sono pomelli separati come sul pedale Behringer (concentrici sul BF-3). Tap tempo dal pedale non riprodotto.",
+  "control_notes": "Ingresso BASS IN non riprodotto (stessa elaborazione). MOMENTARY: nel plugin l'effetto e' attivo finche' il pedale e' acceso."
+ },
+ "bhsp400": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.062,
+    "hi": 5.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RES",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 6.0,
+    "choices": [
+     "4",
+     "8",
+     "10",
+     "12",
+     "FALL",
+     "RISE",
+     "STEP"
+    ],
+    "short": [
+     "4",
+     "8",
+     "10",
+     "12",
+     "FALL",
+     "RISE",
+     "STEP"
+    ]
+   }
+  ],
+  "config": "type=i5wrap || stages=4,8,10,12,12,12,12 f=100,6000 rate=0.0625,5 fbmax=0.8 lfo=0 depth=1",
+  "stereo": false,
+  "notes": "Phaser RSM a 4/8/10/12 stadi piu' FALL, RISE e STEP (Behringer SP400, clone del PH-3): stessa config dello Swirl Shifter (ph3); funzioni dichiarate uguali.",
+  "control_notes": "Sul PH-3 il selettore si chiama STAGE, sul Behringer MODE. Ingresso EXP/CTL e tap non riprodotti."
+ },
+ "bhso400": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "POLY",
+     "OCT 2",
+     "DRIVE"
+    ],
+    "short": [
+     "POLY",
+     "OCT2",
+     "DRV"
+    ]
+   },
+   {
+    "label": "DIRECT",
+    "role": "direct",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "OCT 1",
+    "role": "oct1",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "OCT2/DRIVE",
+    "role": "oct2",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5oct range=110,900",
+  "stereo": false,
+  "notes": "Octaver RSM (Behringer SO400, clone dell'OC-3): ottava -1 polifonica dal banco di filtri complessi; POLY = l'ottava nasce solo sotto la gamma scelta col terzo pomello (110-900 Hz, stima), OCT 2 = -1 e -2 ottave, DRIVE = distorsione su diretto e ottava con DIRECT come volume generale (manuale SO400).",
+  "control_notes": "Il terzo pomello e' 'RANGE / OCT 2 / DRIVE' sul pedale (funzione secondo MODE). DIR OUT e BASS IN non riprodotti."
+ },
+ "bhus600": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "D.TIME/SPD",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BALANCE",
+    "role": "balance",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "HR KEY",
+    "role": "key",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 11.0,
+    "choices": [
+     "C (Am)",
+     "G (Em)",
+     "D (Bm)",
+     "A (F#m)",
+     "E (C#m)",
+     "B (G#m)",
+     "Gb (D#m)",
+     "Db (Bbm)",
+     "Ab (Fm)",
+     "Eb (Cm)",
+     "Bb (Gm)",
+     "F (Dm)"
+    ],
+    "short": [
+     "C",
+     "G",
+     "D",
+     "A",
+     "E",
+     "B",
+     "Gb",
+     "Db",
+     "Ab",
+     "Eb",
+     "Bb",
+     "F"
+    ]
+   },
+   {
+    "label": "PITCH",
+    "role": "shift",
+    "kind": "selector",
+    "default": 0.9090909090909091,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 11.0,
+    "choices": [
+     "-24/-2oct",
+     "-12/-1oct",
+     "-7/-6th",
+     "-5/-5th",
+     "-2/-4th",
+     "-1/-3rd",
+     "+3/+3rd",
+     "+4/+4th",
+     "+5/+5th",
+     "+7/+6th",
+     "+12/+1oct",
+     "+24/+2oct"
+    ],
+    "short": [
+     "-24",
+     "-12",
+     "-7",
+     "-5",
+     "-2",
+     "-1",
+     "+3",
+     "+4",
+     "+5",
+     "+7",
+     "+12",
+     "+24"
+    ]
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 4.0,
+    "choices": [
+     "PITCH SHIFTER",
+     "HARMONIST",
+     "DETUNE",
+     "TREM BAR",
+     "FLUTTER"
+    ],
+    "short": [
+     "PS",
+     "HARM",
+     "DET",
+     "TBAR",
+     "FLUT"
+    ]
+   }
+  ],
+  "config": "type=i5shift unit=us",
+  "stereo": true,
+  "notes": "Pitch shifter/armonizzatore RSM a 5 modi (Behringer US600, clone del PS-5): trasposizione polifonica fino a +-2 ottave (ottave esatte dal banco di filtri, resto granulare), HARMONIST diatonico nelle 12 tonalita', DETUNE +-30 cent con ritardo, TREM BAR/FLUTTER a ogni attacco (nel pedale a pedale premuto).",
+  "control_notes": "D TIME/SPEED e BALANCE separati (concentrici sul PS-5). TREM BAR e FLUTTER: nel pedale agiscono tenendo premuto il coperchio, qui partono a ogni nota (stima). OUT B col diretto non riprodotta."
+ },
+ "bhfl600": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 10.0
+   },
+   {
+    "label": "F.BACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.3,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": [
+     "TRG DWN",
+     "TRG UP",
+     "CHORUS",
+     "VINTAGE",
+     "RANDOM",
+     "STEP",
+     "SINE",
+     "ENV UP",
+     "ENV DOWN",
+     "SAW UP",
+     "SAW DOWN"
+    ],
+    "short": [
+     "TDN",
+     "TUP",
+     "CHO",
+     "VINT",
+     "RND",
+     "STEP",
+     "SINE",
+     "EUP",
+     "EDN",
+     "SUP",
+     "SDN"
+    ]
+   },
+   {
+    "label": "TYPE",
+    "role": "type",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "DIGI",
+     "ANALOG",
+     "TAPE"
+    ],
+    "short": [
+     "DIGI",
+     "ANLG",
+     "TAPE"
+    ]
+   },
+   {
+    "label": "POL",
+    "role": "pol",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "NEG",
+     "POS"
+    ]
+   }
+  ],
+  "config": "type=i5flm",
+  "stereo": true,
+  "notes": "Flanger stereo RSM (Behringer FL600, da Line 6 Liqua Flange): 11 forme di modulazione (trigger, random, step, sinusoide, inviluppo, dente di sega), TYPE digitale piatto / BBD filtrato e saturato / nastro a passaggio per lo zero, feedback a polarita' scelta; uscite con LFO in controfase.",
+  "control_notes": "TYPE e' una levetta a 3 posizioni sul pedale: resa come selettore (una sola levetta ammessa, usata per POL). Tap dal pedale non riprodotto."
+ },
+ "bhrm600": {
+  "family": "Tremolo",
+  "category": "Vibrato / Rotary",
+  "controls": [
+   {
+    "label": "FAST",
+    "role": "fast",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 3.5,
+    "hi": 8.0
+   },
+   {
+    "label": "SLOW",
+    "role": "slow",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 0.3,
+    "hi": 1.8
+   },
+   {
+    "label": "DRIVE",
+    "role": "drive",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BLEND",
+    "role": "balance",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RAMP",
+    "role": "ramp",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "FAST",
+     "MED",
+     "SLOW"
+    ],
+    "short": [
+     "FAST",
+     "MED",
+     "SLOW"
+    ]
+   },
+   {
+    "label": "MODEL",
+    "role": "model",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "145",
+     "L16",
+     "122"
+    ],
+    "short": [
+     "145",
+     "L16",
+     "122"
+    ]
+   },
+   {
+    "label": "SPEED",
+    "role": "speed",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SLOW",
+     "FAST"
+    ]
+   }
+  ],
+  "config": "type=i5rot fast=3.5,8 slow=0.3,1.8",
+  "stereo": true,
+  "notes": "Altoparlante rotante RSM (Behringer RM600): tromba e tamburo con Doppler e diagrammi direzionali, inerzie separate secondo RAMP, drive valvolare escluso al minimo, BLEND tamburo/tromba; modelli 145 e 122 a due rotori, L16 a deflettore unico (tipo Vibratone).",
+  "control_notes": "Sul pedale il lento/veloce si commuta tenendo premuto il coperchio 2 s: qui c'e' la levetta SPEED. RAMP e MODEL sono levette a slitta a 3 posizioni rese come selettori. Gamme di FAST/SLOW stimate."
+ },
+ "bhdd400": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.8333333333333334,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 6.0,
+    "choices": [
+     "S 1300ms",
+     "S 500ms",
+     "S 200ms",
+     "HOLD",
+     "M 200ms",
+     "M 500ms",
+     "M 1300ms"
+    ],
+    "short": [
+     "S1.3",
+     "S500",
+     "S200",
+     "HOLD",
+     "M200",
+     "M500",
+     "M1.3"
+    ]
+   }
+  ],
+  "config": "type=i5wrap || modes=S1300:325:1300:pan|S500:125:500:pan|S200:50:200:pan|HOLD:200:1300:hold|M200:50:200|M500:125:500|M1300:325:1300 bw=11000 fbmax=1.0",
+  "stereo": true,
+  "notes": "Delay digitale a 7 modi (Behringer DD400 = DD100, clone del DD-3): famiglia del Ice Delay (dd3) con le gamme Behringer 200/500/1300 ms (stima 4:1 come il DD-3 per il minimo, non pubblicato) e banda d'anello 11 kHz dal campionamento a 24 kHz dichiarato per il DD100 (misura DIYstompboxes ~11 kHz); modi S stereo su OUT A/B, HOLD fino a 1,3 s.",
+  "control_notes": "S = stereo (resi come ripetizioni alternate tra le due uscite, stima), M = mono. Il 'tap tempo' citato dal PID non esiste sul pedale."
+ },
+ "bhdd600": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "F.BACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "D.TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.2,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": [
+     "1-50ms",
+     "50-200ms",
+     "200-800ms",
+     "800-2000ms",
+     "HOLD",
+     "REVERSE",
+     "E/D",
+     "1/4",
+     "1/8",
+     "1/8 DOT",
+     "TRIPLET"
+    ],
+    "short": [
+     "50",
+     "200",
+     "800",
+     "2000",
+     "HOLD",
+     "REV",
+     "E/D",
+     "1/4",
+     "1/8",
+     "1/8.",
+     "3"
+    ]
+   }
+  ],
+  "config": "type=i5wrap || modes=50ms:1:50|200ms:50:200|800ms:200:800|2000ms:800:2000|HOLD:50:2000:hold|REVERSE:1000:2000:reverse|E/D:1:400|Q:100:2000|8:50:1000|Q.8:75:1500|T4:67:1333 bw=14000 fbmax=1.0",
+  "stereo": true,
+  "notes": "Delay digitale a 11 modi (Behringer DD600, clone del DD-5): config del Frost Delay (dd5) con l'ordine Behringer dei modi TEMPO (1/4, 1/8, 1/8 puntato, terzina); 24 bit dichiarati, campionamento non pubblicato: banda d'anello lasciata a 14 kHz come il DD-5 (nessuna differenza documentata). Uscite OUT A + PAN OUT.",
+  "control_notes": "Nei modi TEMPO il tempo si batte da un footswitch esterno (jack TEMPO): nel plugin lo regola D.TIME."
+ },
+ "bhem600": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "MIX",
+    "role": "mix",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REPEAT",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": [
+     "TAP 1/4",
+     "TAP 1/8T",
+     "TAP 1/8.",
+     "SLAP",
+     "SWELL",
+     "SWEEP",
+     "DUCKING",
+     "MULTI 1",
+     "MULTI 2",
+     "PING PONG",
+     "REVERSE"
+    ],
+    "short": [
+     "1/4",
+     "1/8T",
+     "1/8.",
+     "SLAP",
+     "SWEL",
+     "SWEP",
+     "DUCK",
+     "MLT1",
+     "MLT2",
+     "PING",
+     "REV"
+    ]
+   },
+   {
+    "label": "MOD",
+    "role": "mod",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TYPE",
+    "role": "color",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "TAPE",
+     "DIGI",
+     "ANALOG"
+    ],
+    "short": [
+     "TAPE",
+     "DIGI",
+     "ANLG"
+    ]
+   }
+  ],
+  "config": "type=i5dly modes=TAP_1/4:tap:60:2500:1|TAP_1/8T:tap:60:2500:0.3333|TAP_1/8.:tap:60:2500:0.75|SLAP:slap:20:300|SWELL:swell:50:2000|SWEEP:sweep:50:2000|DUCKING:duck:50:2000|MULTI_1:multi1:50:2000|MULTI_2:multi2:50:2000|PING_PONG:pingpong:50:2000|REVERSE:reverse:100:2000 color=1 mixlaw=wet bw=12000 fbmax=1.0",
+  "stereo": true,
+  "notes": "Delay a modelli RSM (Behringer EM600, da Line 6 Echo Park): 11 programmi (prese in 1/4, terzina, 1/8 puntato, slap, swell, sweep, ducking, due multi-tap, ping-pong, reverse) con carattere TAPE (alti smorzati, wow & flutter), DIGI (pulito, chorus) o ANALOG (scuro, saturato, vibrato) dosato da MOD; tempi massimi non pubblicati (stimati 2-2,5 s).",
+  "control_notes": "TYPE (levetta a 3 posizioni) reso come selettore; TRAILS non riprodotto (la catena del plugin non elabora i pedali spenti); tap tempo dal coperchio non riprodotto: nei modi TAP il TIME e' la semiminima."
+ },
+ "bhdr600": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "HALL",
+     "SPRING",
+     "PLATE",
+     "MODULATE",
+     "ROOM",
+     "GATE"
+    ],
+    "short": [
+     "HALL",
+     "SPR",
+     "PLAT",
+     "MOD",
+     "ROOM",
+     "GATE"
+    ]
+   }
+  ],
+  "config": "type=i5wrap || modes=HALL:hall|SPRING:spring|PLATE:plate|MODULATE:modulate|ROOM:room|GATE:gate decay=0.3,8 predelay=10 bw=12000",
+  "stereo": true,
+  "notes": "Riverbero stereo a 6 modi (Behringer DR600 = DR100, clone del RV-5): config dello Slate Reverb (rv5) con l'ordine dei modi del pannello Behringer; 24 bit / 40 kHz dichiarati per il DR100: la banda di 12 kHz del modello non ne e' limitata.",
+  "control_notes": "Ordine dei modi in senso orario dal disegno del manuale (stima)."
+ },
+ "bhdr400": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "BALANCE",
+    "role": "mix",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE/F.BK",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "R/D.TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.9,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": [
+     "DELAY 1",
+     "DELAY 2",
+     "DELAY 3",
+     "DLY+S.ROOM",
+     "DLY+B.ROOM",
+     "DLY+HALL",
+     "DLY+PLATE",
+     "S.ROOM",
+     "B.ROOM",
+     "HALL",
+     "PLATE"
+    ],
+    "short": [
+     "D1",
+     "D2",
+     "D3",
+     "D+SR",
+     "D+BR",
+     "D+H",
+     "D+P",
+     "SR",
+     "BR",
+     "HALL",
+     "PLAT"
+    ]
+   }
+  ],
+  "config": "type=i5verb modes=DELAY_1:dly:32:128|DELAY_2:dly:128:500|DELAY_3:dly:500:2000|DLY+S.ROOM:dlysroom:32:2000|DLY+B.ROOM:dlybroom:32:2000|DLY+HALL:dlyhall:32:2000|DLY+PLATE:dlyplate:32:2000|S.ROOM:sroom:0.3:3|B.ROOM:broom:0.5:5|HALL:hall:0.8:8|PLATE:plate:0.5:6 mixlaw=xfade dual=1 bw=12000 fbmax=0.95",
+  "stereo": true,
+  "notes": "Riverbero/delay a 11 modi (Behringer DR400, clone del RV-3): delay veri 32-128, 128-500, 500-2000 ms, delay 32-2000 ms piu' stanza piccola/grande, sala o piastra, e 4 riverberi; TONE/F.BACK e R.TIME/D.TIME a doppia funzione come sul pedale.",
+  "control_notes": "Tap del delay (coperchio premuto 2 s) non riprodotto. Il modello rv3 a catalogo rende i modi delay con un pre-delay fisso: qui le gamme documentate sono delay veri (tipo nuovo)."
+ },
+ "bhrv600": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "MIX",
+    "role": "mix",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DECAY",
+    "role": "decay",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": [
+     "ECHO",
+     "TILE",
+     "CAVE",
+     "SPACE",
+     "DUCKNG",
+     "HALL",
+     "CHMBR",
+     "ROOM",
+     "PLATE",
+     "SPRING",
+     "'63 SP"
+    ],
+    "short": [
+     "ECHO",
+     "TILE",
+     "CAVE",
+     "SPCE",
+     "DUCK",
+     "HALL",
+     "CHMB",
+     "ROOM",
+     "PLAT",
+     "SPR",
+     "63SP"
+    ]
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5verb modes=ECHO:echo:0.3:10|TILE:tile:0.2:4|CAVE:cave:1:12|SPACE:space:1:12|DUCKNG:duck:0.8:10|HALL:hall:0.8:10|CHMBR:chamber:0.4:6|ROOM:room:0.3:5|PLATE:plate:0.5:8|SPRING:spring:1:6|'63_SP:spring63:1:6 timerole=predelay pre=0,250 mixlaw=wet bw=12000",
+  "stereo": true,
+  "notes": "Riverbero a modelli RSM (Behringer RV600, da Line 6 Verbzilla): 11 modi su motore FDN/piastra/molle (eco con riverbero, piastrelle, caverna, SPACE ottavato, hall con ducking, camera, stanza, piastra, molla e molla del '63 con DWELL valvolare); TIME = pre-delay (SPACE: densita' armonica, ECHO: tempo d'eco), DECAY = coda (ECHO: feedback).",
+  "control_notes": "TRAILS non riprodotto (la catena del plugin non elabora i pedali spenti). Gamme di DECAY e TIME stimate."
+ },
+ "bhfx600": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PAR 1",
+    "role": "par1",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PAR 2",
+    "role": "par2",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FX",
+    "role": "fx",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "CHORUS",
+     "FLANGER",
+     "PHASER",
+     "DELAY",
+     "TREMOLO",
+     "PITCH SHIFTER"
+    ],
+    "short": [
+     "CHO",
+     "FLG",
+     "PHA",
+     "DLY",
+     "TREM",
+     "PS"
+    ]
+   }
+  ],
+  "config": "type=i5fx6 bw=18000",
+  "stereo": true,
+  "notes": "Multi-effetto RSM a 6 effetti (Behringer FX600 = FX100, 24 bit / 40 kHz dichiarati): chorus, flanger, phaser (PAR 1 velocita', PAR 2 profondita'), delay (tempo, feedback), tremolo (velocita', forma d'onda) e pitch shifter (detune, intervallo in semitoni); banda 18 kHz dal campionamento a 40 kHz.",
+  "control_notes": "Ordine degli effetti sulla corona non verificato (manuale letto come testo). LEVEL = livello dell'effetto (nel tremolo la profondita')."
+ },
+ "bhdw400": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "label": "DECAY",
+    "role": "decay",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MANUAL",
+    "role": "freq",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SENS",
+    "role": "sens",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 4.0,
+    "choices": [
+     "UP",
+     "DOWN",
+     "SYNTH",
+     "HUMAN VOICE",
+     "TEMPO"
+    ],
+    "short": [
+     "UP",
+     "DOWN",
+     "SYN",
+     "VOX",
+     "TMPO"
+    ]
+   }
+  ],
+  "config": "type=i5env unit=dw f=250,3000",
+  "stereo": false,
+  "notes": "Wah dinamico RSM (Behringer DW400, clone dell'AW-3): UP/DOWN a inviluppo, SYNTH a sweep risonante ripartito a ogni nota, HUMAN VOICE con passaggio tra due vocali A/E/I/O/U (SENS = prima, MANUAL = seconda, DECAY = tempo) e leggero overdrive, TEMPO auto-wah a LFO con DECAY dalla sinusoide alla quadra.",
+  "control_notes": "TEMPO: senza tap (coperchio premuto 2 s o EXP/CTL) la velocita' resta a 2 Hz (stima). BASS IN ed EXP non riprodotti."
+ },
+ "bhfm600": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "label": "SENS",
+    "role": "sens",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RANGE",
+    "role": "range",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PEAK",
+    "role": "peak",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FILTER",
+    "role": "filter",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "BP",
+     "TF",
+     "LP"
+    ],
+    "short": [
+     "BP",
+     "TF",
+     "LP"
+    ]
+   },
+   {
+    "label": "POL",
+    "role": "dir",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "UP",
+     "DOWN"
+    ]
+   }
+  ],
+  "config": "type=i5env unit=fm f=200,3200",
+  "stereo": false,
+  "notes": "Filtro a inviluppo RSM (Behringer FM600, da Line 6 Otto Filter, a sua volta sul Mu-Tron III): filtro di stato risonante passa-banda, doppio passa-banda (TF) o passa-basso la cui frequenza segue la dinamica, RANGE = escursione, PEAK = risonanza, POL = verso dello sweep.",
+  "control_notes": "FILTER e' una levetta a slitta a 3 posizioni resa come selettore (POL resta levetta)."
+ },
+ "bham400": {
+  "family": "Acoustic",
+  "category": "Acustica",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RES",
+    "role": "body",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "ATTACK",
+    "role": "top",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "STANDARD",
+     "LARGE",
+     "PIEZO",
+     "BRIGHT"
+    ],
+    "short": [
+     "STD",
+     "LRG",
+     "PIEZ",
+     "BRT"
+    ]
+   },
+   {
+    "label": "REVERB",
+    "role": "reverb",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5wrap || modes=110:6:1.2|220:3:1.5|650:-3:1.0;95:7:1.1|190:4:1.4|700:-4:1.0;120:4:1.2|250:2:1.5|1500:-3:1.2;115:5:1.3|230:3:1.5|3500:4:0.9 top=5000 cut=600",
+  "stereo": false,
+  "notes": "Simulatore acustico RSM (Behringer AM400, clone dell'AC-3): corpi della config dello Spruce Top (ac3) nell'ordine Behringer (STANDARD, LARGE = JUMBO, PIEZO, BRIGHT = ENHANCE), RES = risonanza del corpo, ATTACK = attacco/armoniche alte; LEVEL e REVERB su pomelli separati.",
+  "control_notes": "Uscita DIR OUT (funzione A/B) non riprodotta."
+ },
+ "bhbsy600": {
+  "family": "Synth",
+  "category": "Basso",
+  "controls": [
+   {
+    "label": "DIRECT",
+    "role": "direct",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "EFFECT",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RES",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FREQ",
+    "role": "freq",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 60.0,
+    "hi": 4000.0
+   },
+   {
+    "label": "DECAY/RATE",
+    "role": "decay",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "wave",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": [
+     "1 SAW",
+     "2 SAW+SUB",
+     "3 SAW LFO",
+     "4 SQUARE",
+     "5 SQR+SUB",
+     "6 SQR LFO",
+     "7 PULSE",
+     "8 PULSE AP",
+     "9 PWM",
+     "10 WAVE UP",
+     "11 WAVE DN"
+    ],
+    "short": [
+     "SAW",
+     "S+SB",
+     "SLFO",
+     "SQR",
+     "Q+SB",
+     "QLFO",
+     "PLS",
+     "PAP",
+     "PWM",
+     "WUP",
+     "WDN"
+    ]
+   }
+  ],
+  "config": "type=i5wrap || itype=digital f=60,4000",
+  "stereo": false,
+  "notes": "Synth per basso (Behringer BSY600, clone del SYB-5; DSP Freescale DSP56364 + codec AKM AK4552, schema di servizio): stessa config del Low Synth II (syb5), oscillatori dalla nota rilevata e passa-basso risonante con DECAY; DECAY/RATE su un solo pomello.",
+  "control_notes": "DECAY/RATE e' un pomello unico (sul SYB-5 sono concentrici): qui regola DECAY. DIR OUT, EXP e PITCH HOLD non riprodotti."
+ },
+ "cvcubebaby": {
+  "family": "AmpSim",
+  "category": "Amp / IR",
+  "controls": [
+   {
+    "label": "VOLUME",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "IR CAB",
+    "role": "cab",
+    "kind": "selector",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "1 OFF",
+     "2 VETTA 1x12",
+     "3 1960AV 4x12",
+     "4 1960A T75",
+     "5 VHT 2x12",
+     "6 SOLDANO 2x12",
+     "7 5150+OS 4x12",
+     "8 JSX+STILETTO",
+     "9 DIEZEL V30"
+    ],
+    "short": [
+     "OFF",
+     "VET",
+     "60AV",
+     "T75",
+     "VHT",
+     "SLD",
+     "5150",
+     "JSX",
+     "DZL"
+    ]
+   },
+   {
+    "label": "REVERB",
+    "role": "reverb",
+    "kind": "knob",
+    "default": 0.25,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX",
+    "role": "mix",
+    "kind": "outer",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FB",
+    "role": "feedback",
+    "kind": "inner",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "ms",
+    "lo": 50.0,
+    "hi": 1000.0
+   },
+   {
+    "label": "MOD",
+    "role": "mod",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "outer",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "GAIN",
+    "role": "gain",
+    "kind": "inner",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TYPE",
+    "role": "type",
+    "kind": "selector",
+    "default": 0.875,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "1 POWER-ZONE CL",
+     "2 US GOLD 100 CL",
+     "3 2 STONE CORAL OD",
+     "4 DOCTOR3 B",
+     "5 CALI JP A",
+     "6 DAY TRIPPER OD",
+     "7 SHITTCOW DIST",
+     "8 WO STONE CORAL",
+     "9 MR SMITH DIST"
+    ],
+    "short": [
+     "PZC",
+     "USG",
+     "TSC",
+     "DR3",
+     "CALI",
+     "DAYT",
+     "SHCW",
+     "WSC",
+     "MRS"
+    ]
+   }
+  ],
+  "config": "type=i5cube unit=cube",
+  "stereo": false,
+  "notes": "Multi tascabile Cuvave/M-VAVE Cube Baby (48 kHz / 24 bit): 9 preampli a netlist di triodi e stack tonali (Koch Powertone, Friedman BE-100, Two-Rock Coral, Dr. Z, Mesa JP-2C, Vox AC30, distorsione generica, Coral ad alto guadagno, PRS: identificazioni dai nomi in stile Mooer, confidenza bassa-media), MOD chorus a sinistra / phaser a destra, delay a nastro, riverbero e 8 IR di cabinet GENERATE (nessuna IR copiata).",
+  "control_notes": "10 pomelli in fila sul pedale: MIX/FB e TONE/GAIN raggruppati in concentrici per stare in 8 posizioni. Footswitch A/B/C (preset e moduli), accordatore, Bluetooth e interruttore POWER non riprodotti. Le IR di fabbrica (Vetta, 1960AV, ...) sono sostituite da risposte procedurali che ne imitano il carattere; si puo' caricare un IR .wav come nel pedale."
+ },
+ "cvcubebabybass": {
+  "family": "AmpSim",
+  "category": "Basso",
+  "controls": [
+   {
+    "label": "VOLUME",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "IR CAB",
+    "role": "cab",
+    "kind": "selector",
+    "default": 0.375,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "1 OFF",
+     "2 JENSEN 10",
+     "3 STUDIO 22",
+     "4 SWR 15",
+     "5 WORK 15 EDGE",
+     "6 TP5 421",
+     "7 TP5 D112",
+     "8 WORK 15 4050",
+     "9 EV 12"
+    ],
+    "short": [
+     "OFF",
+     "J10",
+     "S22",
+     "SWR",
+     "W15E",
+     "T421",
+     "T112",
+     "W15",
+     "EV12"
+    ]
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "outer",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPACE",
+    "role": "space",
+    "kind": "inner",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MOD",
+    "role": "mod",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "COMP",
+    "role": "comp",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BASS",
+    "role": "bass",
+    "kind": "outer",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MID",
+    "role": "mid",
+    "kind": "inner",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TREB",
+    "role": "treble",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BOOST",
+    "role": "boost",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5cube unit=bass",
+  "stereo": false,
+  "notes": "Multi tascabile per basso Cube Baby Bass: boost, EQ a 3 bande, compressore, MOD chorus/phaser, SPACE riverbero a sinistra / delay a destra con TIME, 8 IR di cabinet da basso generate proceduralmente (Jensen 10\", SWR 15\", Peavey TP, EV 12\" imitati, nessuna IR copiata).",
+  "control_notes": "TIME/SPACE e BASS/MID raggruppati in concentrici (10 pomelli sul pedale). Footswitch A/B/C, accordatore e Bluetooth non riprodotti; frequenze dell'EQ stimate."
+ },
+ "cvcubebabyac": {
+  "family": "Acoustic",
+  "category": "Acustica",
+  "controls": [
+   {
+    "label": "VOLUME",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "IR CAB",
+    "role": "cab",
+    "kind": "selector",
+    "default": 0.125,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "1 OFF",
+     "2 MART45 PIEZO",
+     "3 ACOUSTIC2",
+     "4 WURLITZER",
+     "5 MART45 HOLE",
+     "6 SOLDANO 2IN",
+     "7 ON AXIS",
+     "8 TAYLOR 314",
+     "9 PRO JR FLOOR"
+    ],
+    "short": [
+     "OFF",
+     "M45P",
+     "AC2",
+     "WURL",
+     "M45H",
+     "SLD",
+     "AXIS",
+     "T314",
+     "PJR"
+    ]
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "outer",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPACE",
+    "role": "space",
+    "kind": "inner",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MOD",
+    "role": "mod",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "ANTI FB",
+    "role": "antifb",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "COMP",
+    "role": "comp",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BASS",
+    "role": "bass",
+    "kind": "outer",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MID",
+    "role": "mid",
+    "kind": "inner",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TREB",
+    "role": "treble",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5cube unit=ac",
+  "stereo": false,
+  "notes": "Multi tascabile per elettroacustica Cube Baby AC: EQ a 3 bande, compressore, anti-feedback a notch, MOD chorus/tremolo, SPACE riverbero/delay, 8 risposte di corpo e cabinet generate proceduralmente (Martin D-45 piezo e buca, Taylor 314ce, Pro Junior... imitati, nessuna IR copiata).",
+  "control_notes": "TIME/SPACE e BASS/MID in concentrici. ANTI FB: nel pedale fino a 8 notch automatici; qui notch sulle risonanze tipiche di corpo (100-330 Hz) dosati dal pomello (semplificazione). Footswitch A/B/C non riprodotti."
+ },
+ "cvminiamp": {
+  "family": "AmpSim",
+  "category": "Amp / IR",
+  "controls": [
+   {
+    "label": "GAIN",
+    "role": "gain",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TYPE",
+    "role": "type",
+    "kind": "selector",
+    "default": 0.625,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "1 DARK DLX",
+     "2 TWEED DLX",
+     "3 ECSTASY BLUE",
+     "4 HOT CAT 30",
+     "5 BROWN EYE",
+     "6 JCM800",
+     "7 POWERBALL",
+     "8 DUAL RECT",
+     "9 SLO-100 LEAD"
+    ],
+    "short": [
+     "DLX",
+     "TWD",
+     "XTC",
+     "HCAT",
+     "BE",
+     "800",
+     "PWB",
+     "RECT",
+     "SLO"
+    ]
+   },
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BASS",
+    "role": "bass",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MID",
+    "role": "mid",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TREBLE",
+    "role": "treble",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5cube unit=amp",
+  "stereo": false,
+  "notes": "Preampli digitale M-VAVE MINI-AMP (PD33): 9 netlist di preampli valvolari con stack tonale BASS/MID/TREBLE (Fender Deluxe blackface e tweed, Bogner Ecstasy blu, Bad Cat Hot Cat, Friedman BE, JCM800, ENGL Powerball, Dual Rectifier, SLO-100 lead, nominati nel manuale), senza simulazione di cabinet come il pedale.",
+  "control_notes": "Il manuale consiglia un simulatore di cabinet a valle: usarlo prima di cuffie/mixer."
+ },
+ "cvminiefx": {
+  "family": "Circuit",
+  "category": "Distorsione",
+  "controls": [
+   {
+    "label": "GAIN",
+    "role": "gain",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TYPE",
+    "role": "type",
+    "kind": "selector",
+    "default": 0.125,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "1 BOOST",
+     "2 ODRIVE-TS",
+     "3 ODRIVE-BLUES",
+     "4 ODRIVE-DB",
+     "5 ODRIVE-AMP",
+     "6 DIST-SC1",
+     "7 DIST-BRITISH",
+     "8 DIST-METAL1",
+     "9 DIST-METAL2"
+    ],
+    "short": [
+     "BST",
+     "TS",
+     "BLUS",
+     "DB",
+     "AMP",
+     "SC1",
+     "BRIT",
+     "MTL1",
+     "MTL2"
+    ]
+   },
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "BASS",
+    "role": "bass",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MID",
+    "role": "mid",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TREBLE",
+    "role": "treble",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5cube unit=efx",
+  "stereo": false,
+  "notes": "Saturatore digitale M-VAVE MINI-EFX (PD32): 9 netlist che riprendono i mini pedali Cuvave (booster, TS808, Bluesbreaker, Dumble in a box, amp in a box a triodi, distorsione a medi scavati tipo DS-1, JCM in a box, due metal tipo MT-2) seguite da EQ a 3 bande +-12 dB e LEVEL.",
+  "control_notes": "Frequenze dell'EQ (120 Hz, 800 Hz, 3,2 kHz) stimate."
+ },
+ "cvdigdelay": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 30.0,
+    "hi": 1000.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TYPE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "CLEAN",
+     "BUBBLE",
+     "MOD",
+     "REVERSE",
+     "SWEEP ECHO",
+     "TAPE",
+     "MIC",
+     "ANALOG",
+     "LOFI"
+    ],
+    "short": [
+     "CLN",
+     "BUBL",
+     "MOD",
+     "REV",
+     "SWP",
+     "TAPE",
+     "MIC",
+     "ANLG",
+     "LOFI"
+    ]
+   }
+  ],
+  "config": "type=i5dly modes=CLEAN:clean:30:1000|BUBBLE:bubble:30:1000|MOD:trem:30:1000|REVERSE:reverse:100:1000|SWEEP_ECHO:sweep:30:1000|TAPE:tape:30:1000|MIC:mic:30:1000|ANALOG:analog:30:1000|LOFI:lofi:30:1000 mixlaw=fixed wet=0.6 mod=0.4 param=0.4 bw=12000 fbmax=0.98",
+  "stereo": false,
+  "notes": "Mini delay digitale Cuvave DIG Delay: 9 tipi (pulito, BUBBLE 'subacqueo' con wow, MOD con tremolo, reverse, eco con sweep, nastro, MIC in banda telefonica, analogico con passa-basso, lo-fi); senza comando di miscela (livello del wet fisso, stima), tempi non dichiarati (30-1000 ms stimati)."
+ },
+ "cvdigpitch": {
+  "family": "Pitch",
+  "category": "Pitch / Ottave",
+  "controls": [
+   {
+    "label": "WET",
+    "role": "wet",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DRY",
+    "role": "dry",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PITCH",
+    "role": "shift",
+    "kind": "selector",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "-12",
+     "-7",
+     "-3",
+     "-1",
+     "+1",
+     "+3",
+     "+5",
+     "+7",
+     "+12"
+    ],
+    "short": [
+     "-12",
+     "-7",
+     "-3",
+     "-1",
+     "+1",
+     "+3",
+     "+5",
+     "+7",
+     "+12"
+    ]
+   }
+  ],
+  "config": "type=i5shift unit=dig",
+  "stereo": false,
+  "notes": "Mini pitch shifter Cuvave DIG Pitch: 9 intervalli fissi (-12, -7, -3, -1, +1, +3, +5, +7, +12 semitoni) polifonici, WET e DRY indipendenti (manuale)."
+ },
+ "cvdigreverb": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "DECAY",
+    "role": "decay",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX",
+    "role": "mix",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TYPE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "HALL",
+     "ROOM",
+     "PLATE",
+     "ECHO",
+     "TILE",
+     "FLANGER",
+     "DUCKING",
+     "CHORUS",
+     "LOFI"
+    ],
+    "short": [
+     "HALL",
+     "ROOM",
+     "PLAT",
+     "ECHO",
+     "TILE",
+     "FLNG",
+     "DUCK",
+     "CHOR",
+     "LOFI"
+    ]
+   }
+  ],
+  "config": "type=i5verb modes=HALL:hall:0.8:8|ROOM:room:0.3:4|PLATE:plate:0.5:6|ECHO:echo:0.4:6|TILE:tile:0.2:3|FLANGER:flanger:0.5:6|DUCKING:duck:0.8:8|CHORUS:chorus:0.8:8|LOFI:lofi:0.3:5 mixlaw=xfade bw=11000",
+  "stereo": false,
+  "notes": "Mini riverbero Cuvave DIG Reverb: 9 tipi (hall, stanza, piastra, eco 'di valle', bagno piastrellato, riverbero con flanger, ducking, chorus prima della hall, lo-fi) con DECAY e MIX; gamme di DECAY non dichiarate (stimate)."
+ },
+ "cvlooper": {
+  "family": "Looper",
+  "category": "Tuner / Looper",
+  "controls": [
+   {
+    "label": "LOOP",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REC/PLAY",
+    "role": "rec",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "STOP",
+    "role": "stop",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "CLEAR",
+    "role": "clear",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "UNDO",
+    "role": "undo",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "maxs=90",
+  "stereo": false,
+  "notes": "Mini looper Cuvave LOOPER (48 kHz / 24 bit): registrazione, riproduzione, sovraincisioni illimitate e undo/redo dell'ultimo strato; 5 minuti nel pedale, 90 s per istanza nel plugin (famiglia Looper).",
+  "control_notes": "Il pedale usa un solo footswitch (tocco, doppio tocco, tenuto): qui pulsanti REC/PLAY, STOP, CLEAR, UNDO. Import/export WAV non riprodotto."
+ },
+ "cvlooperpro": {
+  "family": "Looper",
+  "category": "Tuner / Looper",
+  "controls": [
+   {
+    "label": "LOOP LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REC/PLAY",
+    "role": "rec",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "STOP",
+    "role": "stop",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "CLEAR",
+    "role": "clear",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "UNDO",
+    "role": "undo",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "maxs=90",
+  "stereo": false,
+  "notes": "Looper Cuvave Looper Plus / M-VAVE Looper PRO con display: 9 loop da 10 minuti (40 totali) e accordatore nel pedale; nel plugin un loop da 90 s con sovraincisione e undo (famiglia Looper).",
+  "control_notes": "UP/DOWN (cambio loop, accordatore) non riprodotti; pulsanti REC/PLAY, STOP, CLEAR, UNDO al posto del footswitch unico."
+ },
+ "cvloop2": {
+  "family": "Looper",
+  "category": "Tuner / Looper",
+  "controls": [
+   {
+    "label": "LOOP",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REC/PLAY",
+    "role": "rec",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "STOP",
+    "role": "stop",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "CLEAR",
+    "role": "clear",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "UNDO",
+    "role": "undo",
+    "kind": "button",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "maxs=90",
+  "stereo": false,
+  "notes": "Looper M-VAVE LOOP II (PD44): 3 memorie, 11 minuti totali, pre-registrazione e 3 velocita' nel pedale; nel plugin un loop da 90 s con sovraincisione e undo/redo (famiglia Looper).",
+  "control_notes": "Pulsanti delle memorie, della velocita' e READY-RECORD non riprodotti."
+ },
+ "cvminiuniverse": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "DECAY",
+    "role": "decay",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TYPE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.125,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "ROOM",
+     "HALL",
+     "PLATE",
+     "SPRING",
+     "SHIMMER",
+     "CLOUD",
+     "BLOOM",
+     "SWELL",
+     "LOFI"
+    ],
+    "short": [
+     "ROOM",
+     "HALL",
+     "PLAT",
+     "SPR",
+     "SHIM",
+     "CLD",
+     "BLOM",
+     "SWEL",
+     "LOFI"
+    ]
+   },
+   {
+    "label": "MIX",
+    "role": "mix",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PARAM1",
+    "role": "p1",
+    "kind": "knob",
+    "default": 0.1,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PARAM2",
+    "role": "p2",
+    "kind": "knob",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PARAM3",
+    "role": "p3",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5verb modes=ROOM:room:0.3:10|HALL:hall:3:18|PLATE:plate:0.3:10|SPRING:spring:3:10|SHIMMER:shimmer:0.3:10|CLOUD:cloud:1:21|BLOOM:bloom:1:21|SWELL:swell:0.3:10|LOFI:lofi:0.3:10 params=universe mixlaw=xfade bw=14000",
+  "stereo": false,
+  "notes": "Riverbero M-VAVE MINI-UNIVERSE (PD38), stessi algoritmi del Galaxia: 9 riverberi con PARAM1 passa-alto (LOFI: frequenza di campionamento), PARAM2 passa-basso (SHIMMER: intonazione fino a +2 ottave, LOFI: rumore bianco), PARAM3 drift / dwell / amount / diffusion / length / rise time; gamme di DECAY del Galaxia."
+ },
+ "cvelemental": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TYPE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "1 ANALOG",
+     "2 DUAL",
+     "3 DUCK",
+     "4 TREM",
+     "5 REVERSE",
+     "6 dTAPE",
+     "7 ICE",
+     "8 LOFI",
+     "9 PATTERN"
+    ],
+    "short": [
+     "ANLG",
+     "DUAL",
+     "DUCK",
+     "TREM",
+     "REV",
+     "TAPE",
+     "ICE",
+     "LOFI",
+     "PATT"
+    ]
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX",
+    "role": "mix",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PARAM",
+    "role": "param",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MOD",
+    "role": "mod",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5dly modes=ANALOG:analog:100:2000|DUAL:dual:100:2000|DUCK:duck:100:3000|TREM:trem:100:3000|REVERSE:reverse:100:1000|dTAPE:dtape:100:2500|ICE:ice:100:1000|LOFI:lofi:100:3000|PATTERN:pattern:100:1000 elemental=1 mixlaw=xfade bw=12000 fbmax=0.98",
+  "stereo": false,
+  "notes": "Delay 'di modellazione' M-VAVE ELEMENTAL (PD42): 9 tipi con le gamme del manuale (ANALOG/DUAL 100-2000, DUCK/TREM/LOFI 100-3000, REVERSE/ICE/PATTERN 100-1000, dTAPE 100-2500 ms); PARAM = phaser / scarto tra le due eco / unpack / velocita' del tremolo / bias del nastro / intonazione / grit / ritmo, MOD = detune o velocita' del chorus (dTAPE: crinkle).",
+  "control_notes": "TAP (2-3 tocchi) e HOLD (footswitch tenuto 1 s) non riprodotti."
+ },
+ "cvelementalpro": {
+  "family": "DigitalDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TYPE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "1 ANALOG",
+     "2 DUAL",
+     "3 DUCK",
+     "4 TREM",
+     "5 REVERSE",
+     "6 dTAPE",
+     "7 ICE",
+     "8 LOFI",
+     "9 PATTERN"
+    ],
+    "short": [
+     "ANLG",
+     "DUAL",
+     "DUCK",
+     "TREM",
+     "REV",
+     "TAPE",
+     "ICE",
+     "LOFI",
+     "PATT"
+    ]
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX",
+    "role": "mix",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PARAM",
+    "role": "param",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MOD",
+    "role": "mod",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "PING-PONG",
+    "role": "pingpong",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=i5dly modes=ANALOG:analog:100:1200|DUAL:dual:100:1200|DUCK:duck:100:1200|TREM:trem:100:1200|REVERSE:reverse:100:1100|dTAPE:dtape:100:1200|ICE:ice:100:1000|LOFI:lofi:100:1200|PATTERN:pattern:100:1000 elemental=1 mixlaw=xfade bw=12000 fbmax=1.0 stereo=1",
+  "stereo": true,
+  "notes": "M-VAVE ELEMENTAL PRO: stesso motore dell'ELEMENTAL (stessi 9 tipi e comandi) in stereo, tempo massimo 1,2 s, FEEDBACK al massimo = ripetizioni infinite (anello a guadagno unitario con limitazione morbida), PING-PONG tra le uscite.",
+  "control_notes": "Il PING-PONG (footswitch A tenuto) e' reso con una levetta; TAP e HOLD (footswitch B) non riprodotti. Unificabile con cvelemental (merge_suggestion): stesso tipo i5dly."
+ },
+ "cvgalaxia": {
+  "family": "Reverb",
+  "category": "Riverbero",
+  "controls": [
+   {
+    "label": "DECAY",
+    "role": "decay",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TYPE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.125,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 8.0,
+    "choices": [
+     "ROOM",
+     "HALL",
+     "PLATE",
+     "SPRING",
+     "SHIMMER",
+     "CLOUD",
+     "BLOOM",
+     "SWELL",
+     "LOFI"
+    ],
+    "short": [
+     "ROOM",
+     "HALL",
+     "PLAT",
+     "SPR",
+     "SHIM",
+     "CLD",
+     "BLOM",
+     "SWEL",
+     "LOFI"
+    ]
+   },
+   {
+    "label": "MIX",
+    "role": "mix",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LEND",
+    "role": "lend",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MOD",
+    "role": "mod",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "HOLD",
+    "role": "hold",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ]
+   }
+  ],
+  "config": "type=i5verb modes=ROOM:room:0.3:10|HALL:hall:3:18|PLATE:plate:0.3:10|SPRING:spring:3:10|SHIMMER:shimmer:0.3:10|CLOUD:cloud:1:21|BLOOM:bloom:1:21|SWELL:swell:0.3:10|LOFI:lofi:0.3:10 params=galaxia mixlaw=xfade bw=14000",
+  "stereo": true,
+  "notes": "Riverbero stereo M-VAVE GALAXIA: 9 algoritmi (ROOM 0,3-10 s, HALL 3-18 s, PLATE EMT 140, SPRING con DWELL, SHIMMER fino a +2 ottave, CLOUD e BLOOM 1-21 s, SWELL, LOFI con wow/flutter, bit crush e rumore), TONE e LEND (basse nella coda), MOD secondo il modo; HOLD = congelamento infinito della coda.",
+  "control_notes": "Il footswitch B (HOLD momentaneo) e' reso con la levetta HOLD. Code allo spegnimento non riprodotte."
+ },
+ "cvirbox": {
+  "family": "CabIR",
+  "category": "Amp / IR",
+  "controls": [
+   {
+    "label": "LOW CUT",
+    "role": "locut",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "hz",
+    "lo": 30.0,
+    "hi": 360.0
+   },
+   {
+    "label": "VOL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "HI CUT",
+    "role": "hicut",
+    "kind": "knob",
+    "default": 0.0,
+    "units": "hz",
+    "lo": 18000.0,
+    "hi": 1000.0
+   },
+   {
+    "label": "PRESET",
+    "role": "cab",
+    "kind": "selector",
+    "default": 0.1935483870967742,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 31.0,
+    "choices": [
+     "01 TWEED 2x12 BLUE",
+     "02 SHOWMAN D130",
+     "03 JC-120 U47",
+     "04 1960B V30 414",
+     "05 BASKETWEAVE G12L",
+     "06 1960B T75 U47",
+     "07 1960B V30 57",
+     "08 BSKWV H30 U47",
+     "09 UBERKAB",
+     "10 ENGL PRO V30",
+     "11 5150 SHEFF",
+     "12 TWIN D120 U87",
+     "13 TWIN C12N KM84",
+     "14 AC30 SILVER 57",
+     "15 AC30 SILVER U87",
+     "16 TWIN D120 OFF",
+     "17 SHOWMAN U47",
+     "18 ORANGE V30",
+     "19 DIEZEL V30",
+     "20 MESA U87",
+     "21 EV 414",
+     "22 4x12 'R'",
+     "23 SUPRO 1x15",
+     "24 MATCHLESS H30",
+     "25 RECTO V30",
+     "26 B 4x10 JENSEN",
+     "27 B STUDIO 22",
+     "28 B SVT-410",
+     "29 B DB 410",
+     "30 B TP 6x10",
+     "31 B EDEN",
+     "32 B WORK 15"
+    ],
+    "short": [
+     "01",
+     "02",
+     "03",
+     "04",
+     "05",
+     "06",
+     "07",
+     "08",
+     "09",
+     "10",
+     "11",
+     "12",
+     "13",
+     "14",
+     "15",
+     "16",
+     "17",
+     "18",
+     "19",
+     "20",
+     "21",
+     "22",
+     "23",
+     "24",
+     "25",
+     "26",
+     "27",
+     "28",
+     "29",
+     "30",
+     "31",
+     "32"
+    ]
+   }
+  ],
+  "config": "type=i5cab bank=irbox",
+  "stereo": false,
+  "notes": "Simulatore di cabinet M-VAVE IR BOX (SK14, 44,1 kHz / 24 bit, IR da 2048 campioni): 32 preset (25 chitarra, 7 basso) GENERATI proceduralmente sul carattere dichiarato di cabinet, altoparlante e microfono (nessuna IR copiata), LOW CUT 30-360 Hz e HI CUT 18-1 kHz globali; caricamento di un IR .wav come il pedale.",
+  "control_notes": "I preset si scelgono coi pulsanti < > e il display: qui un selettore a 32 posizioni. EQ a 9 bande dell'app e uscita XLR non riprodotti."
+ }
+}

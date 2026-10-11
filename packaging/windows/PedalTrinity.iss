@@ -6,7 +6,7 @@
   #define BuildDir "..\..\build\PedalTrinity_artefacts\Release"
 #endif
 #define AppName "Pedal Trinity"
-#define AppVersion "1.2.7-beta"
+#define AppVersion "1.3.0-beta"
 #define AppPublisher "FabioNET"
 #define AppURL "https://github.com/fabionet/Pedal-Trinity"
 

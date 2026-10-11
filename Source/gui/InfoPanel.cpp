@@ -78,7 +78,7 @@ namespace pt::ui
         body.setText (juce::String (juce::CharPointer_UTF8 (
             "Pedaliera virtuale: fino a 100 pedali in catena, scelti da un catalogo di ")) + juce::String (pedalCount())
             + juce::String (juce::CharPointer_UTF8 (" modelli ispirati ai pedali BOSS, ai wah Cry Baby, ai pedali di volume classici, alle signature MXR, ai pedali "
-            "Electro-Harmonix e all'intero catalogo Ibanez (Tube Screamer comprese), "
+            "Electro-Harmonix, all'intero catalogo Ibanez (Tube Screamer comprese), ai pedali Behringer e Cuvave/M-VAVE, "
             "con emulazione dei circuiti reali stadio per stadio, BBD a clock e modelli digitali dalle specifiche. "
             "Lo splitter SPL-3 divide la catena in due linee mono (dual) o in una catena stereo; i cavi jack "
             "e i meter INPUT/OUTPUT mostrano il percorso del segnale.\n"
@@ -96,7 +96,9 @@ namespace pt::ui
             "Technologies GmbH. ASIO \xc3\xa8 un marchio e software di Steinberg Media Technologies GmbH. "
             "LV2 \xc2\xa9 lv2plug.in (licenza ISC).\n\n"
             "MARCHI: BOSS, Roland e le sigle dei pedali BOSS sono marchi di Roland Corporation; Ibanez, Tube Screamer, "
-            "Tube King, Weeping Demon, Soundtank, Tone-Lok e Jemini di Hoshino Gakki; Maxon di Nisshin Onpa; Nutube di Korg; Fender di Fender Musical Instruments; Dunlop, Cry Baby e MXR di Dunlop Manufacturing; "
+            "Tube King, Weeping Demon, Soundtank, Tone-Lok e Jemini di Hoshino Gakki; Maxon di Nisshin Onpa; Nutube di Korg; "
+            "Behringer, V-Tone e Hellbabe di Music Tribe; Cuvave, M-VAVE e Cube Baby di Zhuhai Sinco; SansAmp di Tech 21; Klon di Klon LLC; "
+            "Moogerfooger di Moog Music; Line 6 di Yamaha Guitar Group; Mu-Tron, Uni-Vibe, Tycobrahe e Lovetone dei rispettivi titolari; Fender di Fender Musical Instruments; Dunlop, Cry Baby e MXR di Dunlop Manufacturing; "
             "Ernie Ball di Ernie Ball Inc.; Electro-Harmonix, Big Muff, Memory Man, POG e Holy Grail di New Sensor Corp.; "
             "Sovtek, Morley e DeArmond dei rispettivi titolari. I nomi degli artisti delle "
             "versioni signature servono solo a identificare il modello di riferimento. Pedal Trinity \xc3\xa8 un progetto indipendente, "

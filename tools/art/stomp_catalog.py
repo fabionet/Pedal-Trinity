@@ -21,7 +21,10 @@ SOUND_FILES = [os.path.join(HERE, "sound_stage3_analog.json"), os.path.join(HERE
                os.path.join(HERE, "sound_stage3b_analog.json"), os.path.join(HERE, "sound_stage3b_digital.json"),
                # tappa 4 (Ibanez)
                os.path.join(HERE, "sound_stage4_drive.json"), os.path.join(HERE, "sound_stage4_dyn.json"),
-               os.path.join(HERE, "sound_stage4_mod.json"), os.path.join(HERE, "sound_stage4_digital.json")]
+               os.path.join(HERE, "sound_stage4_mod.json"), os.path.join(HERE, "sound_stage4_digital.json"),
+               # tappa 5 (Behringer, Cuvave / M-VAVE)
+               os.path.join(HERE, "sound_stage5_drive.json"), os.path.join(HERE, "sound_stage5_dyn.json"),
+               os.path.join(HERE, "sound_stage5_mod.json"), os.path.join(HERE, "sound_stage5_digital.json")]
 _SOUND = None
 SOUND_ERRORS = []
 

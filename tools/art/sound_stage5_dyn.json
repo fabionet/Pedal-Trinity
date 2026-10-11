@@ -1,0 +1,1886 @@
+{
+ "bhcs400": {
+  "family": "Compressor",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TONE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "release",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5smooth reprep=1 || Compressor: subtype=sustainer topo=fb attack=0.5,2 releaseRange=1280,103 maxgain=30 thr=-45,-10 ratio=3,12 knee=6 tone=1250",
+  "stereo": false,
+  "notes": "Clone dichiarato del CS-3: VCA in retroazione con rivelatore di picco, ATTACK = recupero 103 ms-1.28 s, SUSTAIN limita il guadagno massimo, TONE a mensola ~1.25 kHz +-10 dB (config del cs3 invariata). Il VCA Behringer SMT non e' documentato: nessuna differenza misurabile nota.",
+  "control_notes": "Stesso ordine e stesse etichette del CS-3 (LEVEL, TONE, ATTACK, SUSTAIN); ATTACK ha il ruolo 'release' come nel cs3 (sul CS-3 regola il recupero del rivelatore)."
+ },
+ "bhble400": {
+  "family": "Compressor",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ENHANCE",
+    "role": "enhance",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RATIO",
+    "role": "ratio",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "THRESH",
+    "role": "threshold",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5smooth reprep=1 || Compressor: subtype=limiter topo=ff attack=1,1 release=150 thr=-5,-40 ratio=1,20 knee=6 enhance=2000",
+  "stereo": false,
+  "notes": "Clone del LMB-3: limiter per basso con RATIO continuo da 1:1 alla limitazione, THRESHOLD, ENHANCE armonico e LEVEL (config del lmb3). Circuito Behringer non documentato: costanti di tempo stimate come nel modello di partenza.",
+  "control_notes": "Etichetta THRESH come stampata sul BLE400."
+ },
+ "bhcl9": {
+  "family": "Compressor",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 6.0,
+    "hi": 20.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "threshold",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4ross rin=180 rz=10k cz=56n cc=0 vlin=0.0517 rl=150k cl=3.3n orail=3.8 gsplit=0.98 rabc=potr(2,200k,C)+12k vabc=1.2 vcc=9 rrel=74k cdet=10u ratt=50+pot(0,850,B) beta=250 rsc=10k rse=300 level=taper(1,B)*0.5 os=2",
+  "stereo": false,
+  "notes": "Clone del CP9: Ross/Dyna a OTA (schema CP-9: 180 ohm / 10k||56n, carico 150k||3n3, raddrizzatori a transistor, ATTACK TIME 1k in serie ai collettori = 6-20 ms, rilascio 24k + trimmer sul 10u, SUSTAIN = THRESHOLD 200k C + 12k). Stessa config dell'ib9cp9 con gli indici dei comandi nell'ordine Behringer; OTA del CL9 non documentato.",
+  "control_notes": "Ordine del pannello CL9: ATTACK TIME (accorciato in ATTACK), LEVEL, SUSTAIN; SUSTAIN e' il THRESHOLD del CP9."
+ },
+ "bhdc9": {
+  "family": "Compressor",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "OUTPUT",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4ross rin=2k rz=16k cz=10n cc=1u vlin=0.0517 rl=150k cl=2n orail=3.8 gsplit=0.98 rabc=potr(1,500k,C)+20k vabc=1.2 vcc=9 rrel=150k cdet=10u ratt=0 beta=250 rsc=10k rse=300 level=taper(0,A)*2.3 os=2",
+  "stereo": false,
+  "notes": "Clone del Dyna Comp (OTA CA3080 come VCA in un anello di retroazione: limitatore, Valve Wizard): ingresso 1u su 16k||10n e 2k fra gli ingressi dell'OTA, carico 150k||2n, invertitore di fase 10k/10k, raddrizzatori a transistor su 10n/1M, rivelatore 10u caricato da 150k (rilascio ~0.8 s), SENSITIVITY 500k C + 20k verso Iabc, OUTPUT 10k A. Valori della topologia Ross/Dyna (CP-835, schema Dirk Hendrik); componenti SMT Behringer non verificati (stima).",
+  "control_notes": "SENSITIVITY accorciato in SENS (massimo 10 caratteri)."
+ },
+ "cvcompressor": {
+  "family": "Compressor",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SUSTAIN",
+    "role": "sustain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 5.0,
+    "hi": 20.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i4ross rin=180 rz=10k cz=56n cc=0 vlin=0.0517 rl=150k cl=3.3n orail=3.8 gsplit=0.98 rabc=potr(0,200k,C)+12k vabc=1.2 vcc=9 rrel=74k cdet=10u ratt=50+pot(2,850,B) beta=250 rsc=10k rse=300 level=taper(1,B)*0.5 os=2",
+  "stereo": false,
+  "notes": "Mini compressore a basso rumore con SUSTAIN, LEVEL e ATTACK: circuito non pubblicato. Stima: topologia Ross/Dyna a OTA con resistenza d'attacco in serie ai raddrizzatori (come il CP9), la piu' comune nei mini compressori a tre pomelli; ingresso 1 Mohm, uscita 10 kohm (pagina 2019).",
+  "control_notes": "Posizioni dei pomelli stimate dalla scheda; ATTACK in senso orario = attacco piu' lento (piu' pennata)."
+ },
+ "bhnr300": {
+  "family": "NoiseGate",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "toggle",
+    "label": "MODE",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "MUTE",
+     "REDUCTION"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "THRESH",
+    "role": "threshold",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DECAY",
+    "role": "decay",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5gate thr=lin(1,-80,-20) dec=log(2,30,2000) mute=sw(0,1,0) atk=0.3 hold=0 det=0.3,20 hyst=6",
+  "stereo": false,
+  "notes": "Clone dichiarato dell'NS-2: VCA comandato da un rivelatore d'inviluppo veloce (attacco ~0.3 ms, isteresi 6 dB), soglia -80..-20 dBFS e decadimento 30 ms-2 s come il modello ns2; MUTE silenzia l'uscita (5 ms). Differenza: guadagno unitario a gate aperto (la famiglia NoiseGate dell'ns2 applica un livello fisso -10 dB) e MODE a slitta. Il loop SEND/RETURN non e' emulato: il gate agisce sul segnale che attraversa il modello.",
+  "control_notes": "MODE e' un deviatore a slitta MUTE/REDUCTION (non il pomello del NS-2); THRESH come stampato."
+ },
+ "bhig9": {
+  "family": "NoiseGate",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "THRESHOLD",
+    "role": "threshold",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "FREQUENCY",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "FULL",
+     "MID",
+     "HIGH"
+    ],
+    "short": [
+     "FULL",
+     "MID",
+     "HIGH"
+    ]
+   }
+  ],
+  "config": "type=i5gate thr=lin(0,-80,-30) dec=60 adapt=1 band=sw(1,0,1,2) xo=250,2500 atk=0.1 det=0.1,10 hold=5 hyst=4",
+  "stereo": false,
+  "notes": "Gate selettivo in frequenza tipo Smart Gate: attacco rapidissimo (0.1 ms), rilascio adattivo al programma (note brevi ~15 ms, note tenute fino a ~180 ms); FULL riduce tutta la banda, MID solo sopra 250 Hz, HIGH solo sopra 2.5 kHz (fruscio), con incroci del primo ordine complementari. Circuito non documentato: frequenze d'incrocio, tempi e gamma della soglia stimati.",
+  "control_notes": "Etichette e tipo dei comandi stimati dalla scheda ('frequency dial' a tre posizioni)."
+ },
+ "cvnoisegate": {
+  "family": "NoiseGate",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "THRESHOLD",
+    "role": "threshold",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5gate thr=lin(0,-80,-30) dec=80 atk=0.5 hold=10 det=0.3,15 hyst=6",
+  "stereo": false,
+  "notes": "Mini noise gate a un comando: soglia -80..-30 dBFS, attacco 0.5 ms, tenuta 10 ms, rilascio 80 ms a guadagno unitario. Circuito non pubblicato (ingresso 2,2 Mohm dichiarato): tempi stimati.",
+  "control_notes": "Solo THRESHOLD secondo la scheda tecnica 2026 (il testo cita anche un DECAY: non confermato, omesso)."
+ },
+ "bheq700": {
+  "family": "GraphicEQ",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "slider",
+    "label": "100 Hz",
+    "role": "b0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "200 Hz",
+    "role": "b1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "400 Hz",
+    "role": "b2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "800 Hz",
+    "role": "b3",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "1.6 kHz",
+    "role": "b4",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "3.2 kHz",
+    "role": "b5",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "6.4 kHz",
+    "role": "b6",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5smooth || GraphicEQ: freqs=95.6,204,394,790,1549,3303,6400 qs=3.36,3.47,3.71,4.07,3.11,3.74,0.9 qmin=0.9 range=15 lvl=15",
+  "stereo": false,
+  "notes": "Clone dichiarato del GE-7: sette bande +-15 dB a gyrator RLC serie con Q proporzionale al guadagno (100 Hz Q 3.4 ... 3.2 kHz Q 3.7, 6.4 kHz a mensola) e LEVEL +-15 dB: config del gq7 invariata (topologia Behringer non verificata, nessuna differenza documentata)."
+ },
+ "bhbeq700": {
+  "family": "GraphicEQ",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "slider",
+    "label": "50 Hz",
+    "role": "b0",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "120 Hz",
+    "role": "b1",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "400 Hz",
+    "role": "b2",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "500 Hz",
+    "role": "b3",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "800 Hz",
+    "role": "b4",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "4.5 kHz",
+    "role": "b5",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "10 kHz",
+    "role": "b6",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "slider",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": -15.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5smooth || GraphicEQ: freqs=50,120,400,500,800,4500,10000 qs=3.5,3.5,3.5,3.5,3.5,3.5,0.9 qmin=0.9 range=15 lvl=15",
+  "stereo": false,
+  "notes": "Clone del GEB-7: sette bande per basso 50 Hz-10 kHz +-15 dB (gyrator con Q ~3.5, 10 kHz a mensola) e LEVEL +-15 dB: config del geb7 invariata (valori dei componenti Behringer non confrontati)."
+ },
+ "bhse200": {
+  "family": "Circuit",
+  "category": "Equalizzatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "BALANCE",
+    "role": "mix",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SPECTRUM",
+    "role": "freq",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 500.0,
+    "hi": 5000.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "hpf R=220k C=47n; tap; bpf f=log(1,500,5k) Q=3; gain db=12; mix wet=taper(0,B) dry=lin(0,1,0.5)",
+  "stereo": false,
+  "notes": "Clone dello SP-1: passa-banda 500 Hz-5 kHz (Q ~3) sommato al segnale diretto, BALANCE dosa il filtrato: config dello sp1 con gli indici nell'ordine Behringer (BALANCE a sinistra). Circuito Behringer non documentato.",
+  "control_notes": "Ordine del pannello SE200: BALANCE, SPECTRUM."
+ },
+ "bham300": {
+  "family": "Acoustic",
+  "category": "Acustica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "LEVEL",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ENHANCE",
+    "role": "top",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RES",
+    "role": "body",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "STANDARD",
+     "LARGE",
+     "PIEZO",
+     "BRIGHT"
+    ],
+    "short": [
+     "STD",
+     "LRG",
+     "PZO",
+     "BRT"
+    ]
+   }
+  ],
+  "config": "type=i5acou modes=110:6:1.2,220:3:1.5,650:-3:1.0/95:7:1.1,190:4:1.3,600:-4:0.9,2800:1:1.0/200:2:1.0,1200:3:1.2,5000:4:0.9/115:5:1.3,230:3:1.5,3500:4:0.9,7000:3:0.8 top=5000 cut=600 lvl=4.5",
+  "stereo": false,
+  "notes": "Simulatore acustico a 4 modi (indicato come clone dell'AC-2, confidenza bassa): STANDARD = voce STD dell'ac2, LARGE con risonanza del corpo piu' bassa e piena, PIEZO sottile e nasale (meno corpo, picco 1.2 kHz e brillantezza 5 kHz), BRIGHT = ENHANCE dell'ac2 con piu' aria; RES dosa le risonanze, ENHANCE la mensola acuta. Circuito non documentato: risonanze stimate; l'uscita DIR OUT / A-B non e' emulata.",
+  "control_notes": "ENHANCE ha il ruolo 'top' e RES il ruolo 'body' della famiglia Acoustic."
+ },
+ "bhsm200": {
+  "family": "SlowGear",
+  "category": "Dinamica",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5smooth reprep=1 || SlowGear: attack=300,2000",
+  "stereo": false,
+  "notes": "Clone dello SG-1: a ogni nuova nota il guadagno riparte da zero e risale (rivelatore d'attacco con soglia SENS, fade-in 0.3-2 s con ATTACK): config dello sg1 invariata; reinterpretazione SMT non documentata."
+ },
+ "bhuw300": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "RATE",
+    "role": "rate",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.2,
+    "hi": 9.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DEPTH",
+    "role": "depth",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MANUAL",
+    "role": "freq",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5smooth || Wah: subtype=lfo f=300,2500 q=2,8 filt=bp attack=1 release=68 rate=0.2,9",
+  "stereo": false,
+  "notes": "Clone dell'AW-2: passa-banda risonante pilotato da MANUAL + inviluppo (attacco 1 ms, rilascio 68 ms) + LFO 0.2-9 Hz (DEPTH al minimo = solo inviluppo): config dell'aw2 invariata. Circuito Behringer non documentato (analogico per analogia, stima)."
+ },
+ "bhvb1": {
+  "family": "Circuit",
+  "category": "Basso",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SENS",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "DIST",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=200k C=47n; tap n=0; gain a=taper(0,B)*47; rail rail=4; tap n=1; hpf R=100k C=220n; dclip R=100k C=0 d=si; gain a=0.6; mix n=0 wet=sw(1,0,1) dry=sw(1,1,0); tap n=2; envf src=1 mode=1 flo=51 fhi=330 q=1.7 qhi=11 sens=0.45 atk=0.5 rel=220 half=1 bpn=1; gain a=0.5; tap n=3; recall n=2; envf src=1 mode=1 flo=240 fhi=1600 q=1.7 qhi=11 sens=0.45 atk=0.5 rel=220 half=1 bpn=1; gain a=0.5; mix n=3 wet=1 dry=1; gain db=20; hpf R=10k C=220n; rail rail=4.4",
+  "stereo": false,
+  "notes": "Clone del Bassballs: preamp x47 dopo SENSITIVITY, ramo DIST a diodi, inviluppo a semionda (0.5/220 ms) e due passa-banda a transistor 51->330 Hz e 240->1.6 kHz (Q 1.7-11) sommati: config dell'ehbassball invariata. Ingresso 220 kohm; bypass non verificato.",
+  "control_notes": "SENSITIVITY accorciato in SENS (massimo 10 caratteri); DIST e' una levetta a slitta."
+ },
+ "bhbtron3": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "sens",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PEAK",
+    "role": "peak",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "filter",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "LO-PASS",
+     "BAND PASS",
+     "HI-PASS"
+    ],
+    "short": [
+     "LP",
+     "BP",
+     "HP"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "RANGE",
+    "role": "range",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LOW",
+     "HIGH"
+    ],
+    "short": [
+     "LOW",
+     "HIGH"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "DRIVE",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "DOWN",
+     "UP"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i5envf opto=1 pre=log(0,1,100) rail=4 envg=0.4 atk=3 dec=100 q=log(1,1.5,14) mode=sw(2,0,1,2) dir=sw(4,1,0) cr=sw(3,2.5,1) rs=4.7k rp=150k c=5.2n ldrr=4k,2M,0.75 ldrt=5,60 imax=1 bpn=0.5 sat=1.5 out=0.5",
+  "stereo": false,
+  "notes": "Mu-Tron III: preamp GAIN 0..+40 dB (binari 4 V) -> raddrizzatore e RC (3/100 ms) -> LED su fotoresistenze accoppiate (CdS: 5 ms in accensione, 60 ms in spegnimento) che sono i resistori degli integratori di un filtro a variabili di stato: f = 1/(2 pi (4k7 + Rldr||150k) C), HIGH 200 Hz-3.5 kHz, LOW 2.5 volte piu' basso; PEAK Q 1.5-14 (dato Behringer), uscita LP/BP/HP; DOWN = LED acceso a riposo e spento dall'inviluppo. Valori dei componenti stimati (schema originale non verificato, elemento di controllo Behringer non documentato).",
+  "control_notes": "RANGE e DRIVE sono due interruttori a bilanciere: DRIVE resta levetta, RANGE diventa un selettore a 2 posizioni (limite grafico di una levetta)."
+ },
+ "bhmeatball": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "SENS.",
+    "role": "sens",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "ATTACK",
+    "role": "attack",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "DECAY",
+    "role": "decay",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "COLOUR",
+    "role": "peak",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "INTENS.",
+    "role": "depth",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "SWEEP",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "UP",
+     "DOWN"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "BANDWIDTH",
+    "role": "range",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "OFF",
+     "FULL",
+     "1/2"
+    ],
+    "short": [
+     "OFF",
+     "FULL",
+     "1/2"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "RANGE",
+    "role": "voice",
+    "default": 0.4,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "short": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "filter",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "HIGH-PASS",
+     "BAND-PASS",
+     "LOW-PASS"
+    ],
+    "short": [
+     "HP",
+     "BP",
+     "LP"
+    ]
+   }
+  ],
+  "config": "type=i5envf opto=0 pre=1 rail=4 envg=log(0,1,60) atk=log(1,1,200) dec=log(2,10,2000) q=log(3,0.7,25) mode=sw(9,2,1,0) dir=sw(6,0,1) flo=sw(8,40,80,160,320,640,1280) span=sw(7,0,5,2.5) man=sw(7,1,0,0)*lin(4,0,5) depth=lin(4,0,1) blend=lin(5,0,1) bpn=1 sat=2 out=3",
+  "stereo": false,
+  "notes": "Filtro d'inviluppo multimodo: inviluppo con SENS, ATTACK e DECAY separati (1-200 ms, 10 ms-2 s) -> filtro a variabili di stato HP/BP/LP con COLOUR (Q 0.7-25, fin quasi all'auto-oscillazione), sweep UP/DOWN di 5 ottave (FULL) o 2.5 (1/2) scalato da INTENS., BANDWIDTH OFF = filtro statico accordato da INTENS., RANGE a passi d'ottava (40 Hz-1.28 kHz di partenza), BLEND secco/filtrato, guadagno 0 dB. Topologia e valori stimati (circuito non pubblicato); loop effetti e ingressi pedale non emulati.",
+  "control_notes": "ATTACK e DECAY sono un pomello concentrico (limite di 8 posizioni rotative: sul pedale sono due pomelli); FILTER SWEEP abbreviato in SWEEP (levetta), FILTER RANGE in RANGE (6 passi stimati), FILTER MODE in MODE."
+ },
+ "bhbm11m": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "CUTOFF",
+    "role": "freq",
+    "default": 0.6,
+    "units": "hz",
+    "lo": 20.0,
+    "hi": 12000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "FILTER",
+    "role": "filter",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "2-POLE",
+     "4-POLE"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RESONANCE",
+    "role": "peak",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "AMOUNT",
+    "role": "depth",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "ENVELOPE",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SMOOTH",
+     "FAST"
+    ],
+    "short": [
+     "SMTH",
+     "FAST"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "MIX",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5ladder drive=log(0,0.25,8) fc=log(1,20,12000) poles=sw(2,0,1) res=lin(3,0,3.95) amt=lin(4,0,5) envg=4 atk=sw(5,8,1) rel=sw(5,250,40) mix=lin(6,0,1) out=log(0,1.8,4) vt=0.5 comp=0.5 os=2",
+  "stereo": false,
+  "notes": "Moogerfooger MF-101: DRIVE verso un passa-basso a scala di transistor a 4 poli (TPT con la saturazione tanh della coppia differenziale), uscita a 2 o 4 poli, RESONANCE fino al limite dell'auto-oscillazione, CUTOFF 20 Hz-12 kHz, inseguitore d'inviluppo SMOOTH (8/250 ms) o FAST (1/40 ms) che apre il filtro fino a 5 ottave con AMOUNT, MIX secco/filtrato. Valori stimati (schema non pubblicato); MIDI, CV ed espressione non emulati.",
+  "control_notes": "I due interruttori a bilanciere: FILTER 2-POLE/4-POLE resta levetta, ENVELOPE SMOOTH/FAST diventa un selettore a 2 posizioni (limite di una levetta)."
+ },
+ "bhbm12": {
+  "family": "Synth",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIX",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "MODULATOR",
+    "role": "range",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LO",
+     "HI"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FREQUENCY",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "AMOUNT",
+    "role": "depth",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "LFO",
+    "role": "wave",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SQUARE",
+     "SINE"
+    ],
+    "short": [
+     "SQR",
+     "SIN"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "RATE",
+    "role": "rate",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 25.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5ring drive=log(0,0.3,6) cf=sw(2,1,0)*log(3,0.6,80)+sw(2,0,1)*log(3,30,4000) wave=0 rate=log(6,0.1,25) lshape=sw(5,1,0) ltgt=0 lamt=lin(4,0,2) lon=1 mix=lin(1,0,1) out=1.4 feed=0.003 vk=0.6",
+  "stereo": false,
+  "notes": "Moogerfooger MF-102: DRIVE (saturazione morbida) -> moltiplicatore analogico con portante sinusoidale LO 0.6-80 Hz (tremolo) o HI 30 Hz-4 kHz, LFO 0.1-25 Hz sinusoidale o quadro che modula la frequenza della portante fino a +-2 ottave (AMOUNT), MIX secco/modulato; fuga di portante -50 dB. Gamme dal MF-102 (il QSG Behringer ha un refuso), circuito stimato; CARRIER IN/OUT e CV non emulati.",
+  "control_notes": "MODULATOR LO/HI resta levetta, LFO SQUARE/SINE diventa un selettore a 2 posizioni."
+ },
+ "bhringstinger": {
+  "family": "Synth",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DEPTH/MAN",
+    "role": "depth",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RATE",
+    "role": "rate",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VCO FREQ.",
+    "role": "freq",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TIMBRE",
+    "role": "tone",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BLEND",
+    "role": "mix",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "LFO",
+    "role": "mode",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 4.0,
+    "choices": [
+     "PW TRI",
+     "PW SQUARE",
+     "FREQ TRI",
+     "FREQ SQ",
+     "MANUAL"
+    ],
+    "short": [
+     "PWT",
+     "PWS",
+     "FRT",
+     "FRS",
+     "MAN"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "VCO",
+    "role": "wave",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "SINE",
+     "TRIANGLE",
+     "SAW",
+     "PULSE"
+    ],
+    "short": [
+     "SIN",
+     "TRI",
+     "SAW",
+     "PLS"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "OCT/RING",
+    "role": "voice",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "RING",
+     "OCT"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i5ring drive=log(3,0.3,8) cf=log(2,0.5,3000) wave=sw(7,0,1,2,3) rate=log(1,0.1,15) tri=1 lshape=sw(6,0,1,0,1,0) ltgt=sw(6,1,1,0,0,0) lamt=sw(6,1,1,2,2,0)*lin(0,0,1)+sw(6,0,0,0,0,2) lon=sw(6,1,1,1,1,0) lman=lin(0,-1,1) oct=sw(8,0,1) octg=4 timbre=1 tim=lin(4,0,1) mix=lin(5,0,1) out=1.2 feed=0.004 vk=0.6",
+  "stereo": false,
+  "notes": "Ring Stinger: RING = DRIVE -> moltiplicatore con il VCO interno (seno, triangolo, dente di sega, impulso; da sub-audio a 3 kHz) modulato dall'LFO triangolare o quadro sulla frequenza (+-2 ottave) o sulla larghezza d'impulso/simmetria; OCT = fuzz d'ottava a raddrizzatore con il guadagno modulato dall'LFO; TIMBRE (estremi che tagliano gli acuti, medi da -12 a +12 dB), BLEND secco/effetto, guadagno d'uscita ~+15 dB. Circuito stimato.",
+  "control_notes": "OCT./RING MODE e LFO/UNLOCK sono footswitch: OCT/RING diventa la levetta, LFO/UNLOCK (LFO fermo) diventa la quinta posizione MANUAL del selettore LFO, in cui DEPTH/MANUAL sposta a mano la frequenza del VCO. Il trimmer interno del volume resta a meta' (omesso); DRIVE(I) accorciato in DRIVE."
+ },
+ "bhbm15m": {
+  "family": "Synth",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "toggle",
+    "label": "LFO",
+    "role": "depth",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ENVELOPE",
+    "role": "decay",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "FREQ",
+    "role": "range",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "BASS",
+     "MIDS"
+    ],
+    "short": [
+     "BASS",
+     "MIDS"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "RATE",
+    "role": "rate",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 0.5,
+    "hi": 20.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "PATTERN",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 11.0,
+    "choices": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9",
+     "10",
+     "11",
+     "12"
+    ],
+    "short": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9",
+     "10",
+     "11",
+     "12"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "MIX",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OUTPUT",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5murf banks=110:160:240:350:525:775:1200:1800|200:300:450:675:1000:1500:2200:3400 q=6 drive=log(7,0.3,6) out=lin(6,0,4) mix=lin(5,0,1) rate=log(3,0.5,20) env=lin(1,0,1) pat=lin(4,0,11) bank=sw(2,0,1) lfo=sw(0,0,1) lfod=0.6 lfor=0.125 stereo=1",
+  "stereo": true,
+  "notes": "MuRF: DRIVE -> 8 passa-banda risonanti (Q 6) in parallelo, banco BASS 110(stima)-1800 Hz o MIDS 200-3400 Hz, ciascuno con un VCA animato da 12 sequenze di 16 passi per banco (RATE 0.5-20 passi/s, ENVELOPE = forma attacco/decadimento, 5 simmetrica), LFO sinusoidale che sposta le frequenze di +-0.6 ottave, filtri dispari a sinistra e pari a destra in stereo, MIX e OUTPUT. Le sequenze originali non sono pubblicate: pattern stimati.",
+  "control_notes": "Gli 8 cursori dei filtri non entrano con i pomelli (limite grafico): restano tutti al massimo. LFO OFF/ON resta levetta, FREQ BASS/MIDS diventa un selettore a 2 posizioni; TAP/STEP, MIDI e USB non emulati."
+ },
+ "bhbm17": {
+  "family": "Synth",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "DRIVE",
+    "role": "drive",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OUTPUT",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "ENV AMOUNT",
+    "role": "decay",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FM AMOUNT",
+    "role": "depth",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIX",
+    "role": "mix",
+    "default": 1.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FREQUENCY",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "SYNC",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "WAVEFORM",
+    "role": "wave",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5freqbox drive=log(0,0.3,8) out=lin(1,0,2) envamt=lin(2,0,4) fm=lin(3,0,3) mix=lin(4,0,1) freq=log(5,20,4000) sync=sw(6,0,1) wave=lin(7,0,1) envg=4 atk=2 rel=80 vk=0.5 os=2",
+  "stereo": false,
+  "notes": "Moogerfooger MF-107 FreqBox: VCO 20 Hz-4 kHz con forma continua (triangolo -> rampa discendente -> quadra -> impulso), sincronizzazione forte sul fronte del segnale d'ingresso (comparatore dopo DRIVE), FM esponenziale dal segnale (FM AMOUNT fino a 3 ottave/V), inviluppo dell'ingresso sulla frequenza (ENV AMOUNT fino a +4 ottave) e VCA d'inviluppo sull'uscita del VCO, MIX e OUTPUT LEVEL. Circuito stimato.",
+  "control_notes": "OUTPUT LEVEL accorciato in OUTPUT, VCO SYNC in SYNC."
+ },
+ "bhwahwah": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=inductor L=500m Rl=35 C=12.7n Rq=7k Re=390 taper=hot travel=0,0.68",
+  "stereo": false,
+  "notes": "Wah a induttore anni '60 (Clyde McCoy/V846, induttore tipo Halo 500 mH, due transistor) dal modello cm95 con le differenze dichiarate da Behringer: gamma 500 Hz-2 kHz (C 10n3 -> 12n7, corsa del potenziometro limitata al 68% verso il tallone) e guadagno del filtro 10 dB invece di ~19 (Rq 33k -> 7k); ingresso bufferizzato (1 Mohm). Misure del banco: 489-1979 Hz, picco 10.0-10.5 dB. Valori dei componenti stimati.",
+  "control_notes": "Nessun comando oltre al bilanciere (interruttore sotto la punta)."
+ },
+ "bhhb01": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RANGE",
+    "role": "range",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "BOOST ON",
+    "role": "boost",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BOOST",
+    "role": "level",
+    "default": 0.5,
+    "units": "db",
+    "lo": 0.0,
+    "hi": 15.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "Q",
+    "role": "q",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FINE",
+    "role": "fine",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TIMER ADJ",
+    "role": "delay",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5auto pedal=0 thr=0.02 delay=log(6,0.5,6) lag=4,30 || Wah: subtype=inductor L=500m C=10n~33n@range:L Rq=20k Re=470 Rl=2k~56@q:L Rt=5k~0@fine taper=hot boost=0~15@level brail=3.8",
+  "stereo": false,
+  "notes": "Clone del DB01 (circuito Cry Baby a induttore 500 mH, Q variabile 2k->56 ohm in serie all'induttore, FINE 5k->0 sul ramo basso del potenziometro) con le differenze documentate: posizione letta otticamente (LED + fotocellula: ritardo 4 ms in salita, 30 ms in discesa sul bilanciere), RANGE continuo (condensatore 10n->33n, tallone 440->250 Hz), accensione automatica appoggiando il piede e spegnimento dopo TIMER ADJ (0.5-6 s, stima) al tallone, BOOST 0..+15 dB con il deviatore, attivo solo a wah acceso. Misure: tallone 435 Hz, punta 1.76 kHz (FINE max 2.2 kHz), RANGE max ~250 Hz al tallone. Il filtro Behringer non e' documentato (induttore non confermato): stima.",
+  "control_notes": "Etichette del manuale: PEDAL, RANGE, BOOST (deviatore, qui 'BOOST ON'), BOOST (pomello), Q, FINE, TIMER ADJ (trimmer da un foro). La vite del bilanciere e' meccanica: omessa. Nel modello RANGE sposta tutta la corsa (anche la punta scende, come i condensatori del DB01)."
+ },
+ "bhparapedal": {
+  "family": "Wah",
+  "category": "Wah / Filtri",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "freq",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5para f=760,2200 q=6 g=18 r2=2.6 q2=4 g2=-9 floor=0.1 out=-2 dive=0.08 fdive=180 att=-10",
+  "stereo": false,
+  "notes": "Wah a filtro di picco a gamma estesa: due picchi risonanti che si spostano insieme col bilanciere (principale 760 Hz-2.2 kHz, Q 6, +18 dB come da scheda Behringer; secondo picco a 2.6 volte, -9 dB) sopra un 10% di segnale diretto; nell'ultimo 8% di corsa verso il tallone (arresto in gomma) il filtro scende fino a 180 Hz e il volume cala di 10 dB ('dive bomb'). Ingresso 50 kohm, uscita 1.5 kohm. Circuito non pubblicato: Q, secondo picco e legge del dive bomb stimati.",
+  "control_notes": "Nessun comando oltre al bilanciere (interruttore sotto la punta)."
+ },
+ "bhfc600": {
+  "family": "Volume",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "volume",
+    "default": 1.0,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIN VOL",
+    "role": "min",
+    "default": 0.0,
+    "units": "percent",
+    "lo": 0.0,
+    "hi": 100.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5smooth reprep=1 || Volume: ",
+  "stereo": false,
+  "notes": "Volume passivo a potenziometro per strumenti ad alta impedenza con MIN VOL che alza il minimo a tallone senza cambiare il massimo (tutto a sinistra = muto per accordare); TUNER prelevata prima del volume e presa EXP non emulate. Valore e curva del potenziometro non pubblicati: curva audio come il FV-500H (stima).",
+  "control_notes": "La vite TENSION SCREW e' meccanica: omessa."
+ },
+ "bhfcv100": {
+  "family": "Volume",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PEDAL",
+    "role": "volume",
+    "default": 1.0,
+    "units": "db",
+    "lo": -70.0,
+    "hi": 0.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "CV / NORM",
+    "role": "mode",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "CV",
+     "NORM"
+    ],
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIN VOL",
+    "role": "min",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "type=i5vca range=70 cvstep=0",
+  "stereo": true,
+  "notes": "Volume doppio a VCA: il bilanciere genera una tensione di controllo per due VCA in dB lineari, attenuazione 0-70 dB (manuale) con MIN VOL che alza il minimo a tallone fino a 0 dB; in CV l'uscita 2 diventa un partitore da 50 kohm per l'espressione (nel plugin il canale destro copia il sinistro: un solo canale audio). Legge del VCA stimata (dB lineare con la corsa)."
+ },
+ "bhab100": {
+  "family": "Router",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "direction",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "IN 1 > A/B",
+     "IN 1/2 > A"
+    ],
+    "short": [
+     "SPLT",
+     "SEL"
+    ]
+   },
+   {
+    "kind": "knob",
+    "label": "A LEVEL",
+    "role": "levelA",
+    "default": 0.71,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "B LEVEL",
+    "role": "levelB",
+    "default": 0.71,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "toggle",
+    "label": "A/B",
+    "role": "select",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "A",
+     "B"
+    ],
+    "short": null
+   }
+  ],
+  "config": "type=i5ab mode=sel gmax=2",
+  "stereo": true,
+  "notes": "Selettore A/B attivo: MODE alto = IN 1 verso OUT A o OUT B (due amplificatori), basso = IN 1 o IN 2 verso OUT A (due strumenti), commutazione elettronica silenziosa (10 ms) e livello regolabile per uscita (da muto a +6 dB, unitario a ~7). Nel plugin A = canale sinistro, B = destro (come il Router AB-2). Circuito non documentato (stima).",
+  "control_notes": "MODE e' un deviatore a slitta (selettore a 2 posizioni); il coperchio-pedale A/B diventa la levetta A/B."
+ },
+ "bhab200": {
+  "family": "Router",
+  "category": "Utility / Routing",
+  "controls": [
+   {
+    "kind": "selector",
+    "label": "LATCH 1",
+    "role": "latch1",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LATCH",
+     "NON LATCH"
+    ],
+    "short": [
+     "LAT",
+     "MOM"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "LATCH 2",
+    "role": "latch2",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "LATCH",
+     "NON LATCH"
+    ],
+    "short": [
+     "LAT",
+     "MOM"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "A/B 1",
+    "role": "select",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "A",
+     "B"
+    ],
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "A/B 2",
+    "role": "select2",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "A",
+     "B"
+    ],
+    "short": [
+     "A",
+     "B"
+    ]
+   }
+  ],
+  "config": "type=i5ab mode=dual",
+  "stereo": true,
+  "notes": "Doppio commutatore A/B a rele' passivo (hard bypass, guadagno unitario): nel plugin il canale 1 e' il sinistro e il 2 il destro; in B il segnale del canale esce dall'uscita dell'altro canale (dissolvenza di 3 ms al posto del contatto). LATCH/NON LATCH decide solo il comportamento dei footswitch (momentaneo con NON LATCH): nel plugin non cambia il suono.",
+  "control_notes": "I due deviatori a slitta LATCH/NON LATCH diventano selettori a 2 posizioni; i due footswitch diventano A/B 1 (levetta) e A/B 2 (selettore): limite di una levetta."
+ }
+}

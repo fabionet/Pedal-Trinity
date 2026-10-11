@@ -169,3 +169,21 @@ Chiavi nuove di `look()` (facoltative; i pedali che non le usano restano identic
 * `print_labels={etichetta: scritta}` solo sulle repliche REAL MOD.
 * `REAL_ONLY = {id: dict(look=..., real=dict(code, name))}` in un file dei gruppi: replica REAL MOD con la forma del pedale
   vero per un modello che in modalita' normale ha un altro stile (ed9 -> TS-808, la versione normale non cambia).
+
+## Behringer e Cuvave / M-VAVE (tappa 5: `catalog_behringer.py`, `catalog_behringer_b.py`, `catalog_cuvave.py`)
+I tre cataloghi sono GENERATI da `gen_catalog_behringer.py` a partire dalle schede `~/.config/PedalTrinity/stage5/stage5_specs.json`
+(per cambiare l'aspetto si modifica il generatore e si rigenera). Uno stampo per famiglia di contenitori: `bhpl` (serie in
+plastica a coperchio-pedale, 62 schede), `bhsheet` (serie Vintage in lamiera con la grande 'V' nera), `bh9` (serie 9),
+`bhvtone` (V-Tone Driver/DI), `bhbox` (AB200 e serie moderne in metallo), `bhbm` (serie BM), `cvmini`, `cvbox`, `cvbar`
+(Cube Baby); bilancieri con le forme di `shaped_layout.py`. Colori nella tabella `COL` (verificati o stimati), ritocchi per
+modello in `TWEAKS`. Parte funzionale da `sound_stage5_drive.json`, `sound_stage5_dyn.json`, `sound_stage5_mod.json`,
+`sound_stage5_digital.json`. Chiavi nuove di `look()` (facoltative, i pedali che non le usano restano identici):
+* `plan=dict(rear_w=mm, step=y%, base_h=mm, corner=mm)` parte posteriore coi comandi piu' stretta e base a tutta larghezza
+  sotto il coperchio-pedale (serie Behringer in plastica); `jack_at=(y%, quota mm)` posizione delle prese;
+* `knob_pad=mm` margine tra i pomelli (default 1 mm) e `nolab=True` nessuno spazio riservato sotto i pomelli (scritte sopra);
+* `inner_skip=True` la posizione del pedale vero che corrisponde all'interno di un concentrico non diventa decorativa;
+* `outline_profile=True` il contorno poligonale segue anche `profile` (fronte a U della V-Tone, Fuzz Bender a bara);
+* `foot_kind="big"` grande pulsante nero (V-Tone), `"flat"` pulsante basso (mini Cuvave, Cube Baby);
+* inserti dei coperchi con `arch=mm` (gomma col bordo lontano bombato);
+* `gfx`: `name.lines=2` nome su due righe, `code.box=dict(col, padx, pady, radius)` sigla in un riquadro pieno,
+  `real_texts=[("text", ...)]` scritte solo sulle repliche (nome della serie), `real_code=False` niente sigla sulla replica.
