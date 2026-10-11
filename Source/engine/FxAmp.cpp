@@ -71,8 +71,10 @@ namespace pt::engine
                     loadedFile.clear();
                 if (! userIR) loadIfNeeded (true);
                 conv.prepare ({ sr, (juce::uint32) maxBlock, 2 });
+                snapped = false;
+                kS = (float) std::exp (-1.0 / (0.010 * sr));
             }
-            void reset() override { conv.reset(); }
+            void reset() override { conv.reset(); snapped = false; }
 
             void messageThreadUpdate() override { if (prepared) loadIfNeeded (false); }
             bool acceptsFiles() const override { return true; }
@@ -90,9 +92,25 @@ namespace pt::engine
                 for (int c = 0; c < numCh; ++c) dry.copyFrom (c, 0, ch[c], n);
                 juce::dsp::AudioBlock<float> block (ch, (size_t) numCh, (size_t) n);
                 conv.process (juce::dsp::ProcessContextReplacing<float> (block));
-                for (int c = 0; c < numCh; ++c)
-                    for (int i = 0; i < n; ++i)
-                        ch[c][i] = lvl * (mix * ch[c][i] + (1.0f - mix) * dry.getSample (c, i));
+                if (! snapped) { lvlS = lvlM = lvl; mixS = mixM = mix; snapped = true; }
+                if (lvlS == lvl && lvlM == lvl && mixS == mix && mixM == mix)
+                {
+                    for (int c = 0; c < numCh; ++c)
+                        for (int i = 0; i < n; ++i)
+                            ch[c][i] = lvl * (mix * ch[c][i] + (1.0f - mix) * dry.getSample (c, i));
+                    return;
+                }
+                // LEVEL o MIX in movimento: due poli da 10 ms campione per campione (prima il gradino al bordo del blocco
+                // faceva click); al bersaglio si torna alla formula a comandi fermi, identica a prima
+                for (int i = 0; i < n; ++i)
+                {
+                    lvlM = lvl + kS * (lvlM - lvl); lvlS = lvlM + kS * (lvlS - lvlM);
+                    mixM = mix + kS * (mixM - mix); mixS = mixM + kS * (mixS - mixM);
+                    for (int c = 0; c < numCh; ++c)
+                        ch[c][i] = lvlS * (mixS * ch[c][i] + (1.0f - mixS) * dry.getSample (c, i));
+                }
+                if (std::abs (lvlS - lvl) < 1.0e-6f && std::abs (lvlM - lvl) < 1.0e-6f) lvlS = lvlM = lvl;
+                if (std::abs (mixS - mix) < 1.0e-6f && std::abs (mixM - mix) < 1.0e-6f) mixS = mixM = mix;
             }
 
             /** Caricamento di un IR dell'utente (thread del messaggio). */
@@ -182,7 +200,8 @@ namespace pt::engine
             std::vector<CabModel> cabs;
             double sr = 48000;
             int loaded = -1;
-            bool userIR = false, prepared = false;
+            bool userIR = false, prepared = false, snapped = false;
+            float lvlS = 1, lvlM = 1, mixS = 1, mixM = 1, kS = 0.998f;     // LEVEL e MIX lisciati (due poli)
             RoleParam pCab, pMic, pDist, pLevel, pMix;
             juce::dsp::Convolution conv;
             juce::AudioBuffer<float> dry;

@@ -2,7 +2,7 @@
     Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
 
     Applicazione Standalone personalizzata:
-      * finestra con titolo "Pedal Trinity 1.3.0 beta";
+      * finestra con titolo "Pedal Trinity 1.3.1 beta";
       * su Windows, al primo avvio, seleziona i driver ASIO se presenti;
       * ingresso audio attivo di default (e' un effetto per chitarra);
       * riga di comando:
@@ -980,12 +980,16 @@ namespace
         }
 
         // i wah esistenti non cambiano: livello d'uscita con chitarra di prova e pedale in movimento, confrontato con
-        // i valori misurati prima dell'introduzione del wah a induttore (tolleranza 0.005 dB)
+        // i valori misurati prima dell'introduzione del wah a induttore (tolleranza 0.005 dB). Dalla 1.3.1 il pedale in movimento
+        // passa per l'involucro senza click delle famiglie vecchie (due poli da 5 ms, un campione alla volta invece di un
+        // valore per blocco da 256): livelli nuovi, scarto dai vecchi 0.04-0.20 dB (prima: pw1 -32.374/-32.374, fw3
+        // -32.812/-31.392, pw3 -31.789/-31.296, pw10 -15.292/-13.569, ft2 -44.138/-25.702, aw2 -35.252/-35.613, aw3 -32.331/-43.706;
+        // TW-1 senza pedale: invariato)
         {
             struct Ref { const char* id; double a, b; };
-            static const Ref refs[] = { { "pw1", -32.374, -32.374 }, { "fw3", -32.812, -31.392 }, { "pw3", -31.789, -31.296 },
-                                        { "pw10", -15.292, -13.569 }, { "tw1", -40.609, -25.074 }, { "ft2", -44.138, -25.702 },
-                                        { "aw2", -35.252, -35.613 }, { "aw3", -32.331, -43.706 } };
+            static const Ref refs[] = { { "pw1", -32.414, -32.414 }, { "fw3", -32.845, -31.459 }, { "pw3", -31.833, -31.352 },
+                                        { "pw10", -15.368, -13.646 }, { "tw1", -40.609, -25.074 }, { "ft2", -44.079, -25.830 },
+                                        { "aw2", -35.161, -35.625 }, { "aw3", -32.529, -43.706 } };
             juce::String detail;
             bool ok = true;
             for (const auto& r : refs)
@@ -1017,7 +1021,7 @@ namespace
                 ok = ok && same;
                 detail << r.id << " " << juce::String (lv[0], 3) << "/" << juce::String (lv[1], 3) << (same ? "" : " (DIVERSO)") << " ";
             }
-            report ("Wah esistenti invariati (PW-1, FW-3, PW-3, PW-10, TW-1, FT-2, AW-2, AW-3)", ok, detail.trim());
+            report ("Wah esistenti invariati (PW-1, FW-3, PW-3, PW-10, TW-1, FT-2, AW-2, AW-3; pedale lisciato dalla 1.3.1)", ok, detail.trim());
         }
     }
 
@@ -1365,12 +1369,13 @@ namespace
         //    default poi spostati di +0.37 a meta'. 'fixed' = prima meta' (comandi fermi): hash misurati prima della tappa 3 sul
         //    banco s1, mai cambiati; 'hash' = segnale intero: dalla 1.2.7 i comandi del motore Circuit si muovono senza scatti
         //    (lisciatura per sotto-blocchi, dissolvenze dei selettori), quindi la parte dopo lo spostamento ha impronte nuove
-        //    (DS-1, SD-1, BD-2, MT-2; GCB95 e 535Q non sono Circuit e restano quelle di prima)
+        //    (DS-1, SD-1, BD-2, MT-2); dalla 1.3.1 anche il BOOST del 535Q (wah a induttore, involucro senza click delle famiglie
+        //    vecchie) passa per una dissolvenza: 'hash' nuovo, 'fixed' invariato (GCB95 senza levette: invariato)
         {
             struct Ref { const char* id; uint64_t fixed, hash; };
             static const Ref refs[] = { { "ds1", 0x7edafc3b1e613077ull, 0xae0a3f3ff8388e33ull }, { "sd1", 0x4c903f272789401dull, 0x83cedf5bfcc97beeull },
                                         { "bd2", 0x2346b27b6ea0948full, 0xdd87015347914ccfull }, { "mt2", 0xc92c8b58fe1dc55full, 0xa4cfa044ec26ddb8ull },
-                                        { "gcb95", 0x3d724d79eefef810ull, 0xb596b28c390cf713ull }, { "cb535q", 0x33a59d947203c0a2ull, 0xa98b47398be0c7cbull } };
+                                        { "gcb95", 0x3d724d79eefef810ull, 0xb596b28c390cf713ull }, { "cb535q", 0x33a59d947203c0a2ull, 0xd492a77db7111091ull } };
             const Buf x = rawSignalS1 (sr);
             bool ok = true;
             juce::String detail;
@@ -4469,33 +4474,42 @@ namespace
         auto fq = [] (double f, double ref) { return std::abs (f / ref - 1.0) <= 0.06; };
         auto hz = [] (double f) { return juce::String (juce::roundToInt (f)); };
 
-        // 1. pedali esistenti invariati bit per bit (FxFilters, FxDynamics, FxUtility non toccati): banco s1 'raw' come la 3A
-        //    (GCB95 e 535Q sono gia' controllati dalla 3A)
+        // 1. pedali esistenti invariati bit per bit (FxFilters, FxDynamics, FxUtility): banco s1 'raw' come la 3A (GCB95 e 535Q sono gia'
+        //    controllati dalla 3A). 'fixed' = prima meta' a comandi fermi, invariata dalla tappa 4; 'hash' = segnale intero: dalla 1.3.1 le
+        //    famiglie vecchie hanno l'involucro senza click (Effects.cpp), quindi la parte dopo lo spostamento dei comandi ha impronte nuove
+        //    (FV-500H e FV60, famiglia Volume senza involucro: invariate). Impronte del banco ~/.config/PedalTrinity/work131/bench
         {
-            struct Ref { const char* id; uint64_t hash; };
-            static const Ref refs[] = { { "cs3", 0x6fdc24c6a389d2c4ull }, { "cp1x", 0x92e285ccf8211c83ull }, { "gq7", 0xfd3a4f1817a037e0ull },
-                                        { "eq200", 0xbbb9a8dc0af48785ull }, { "aw3", 0xd416340cf1fb2140ull }, { "fv500h", 0x37efb2ce81bff398ull },
-                                        { "ge7b", 0x1ff326c60e76a089ull }, { "pq4", 0x054ada23da9bdb7eull }, { "lmb3", 0x143006ce4ed4b57dull },
-                                        { "ehsoulpreacher", 0x851613863b16c460ull }, { "ehbasspreacher", 0x729438fd2ea4a2a5ull },
-                                        { "mc404", 0x1a2b9a742f18af64ull }, { "dd95fw", 0x3cb7aaf74c2613a3ull }, { "fv60", 0x38a9d37e24b9a79bull } };
+            struct Ref { const char* id; uint64_t fixed, hash; };
+            static const Ref refs[] = {
+                { "cs3", 0x70e0f050fc09bf80ull, 0x99de31d19387f6d4ull }, { "cp1x", 0xd0a80903950f504full, 0xe6f39b961ec6c3f5ull },
+                { "gq7", 0xad6ff35c46abd26cull, 0x8c22ad1b7170c34full }, { "eq200", 0xad6ff35c46abd26cull, 0x9043d94c3a6d442dull },
+                { "aw3", 0x30cad961679d4f46ull, 0x17239d4a5bb9bdb1ull }, { "fv500h", 0x6c802cf5c813b57cull, 0x37efb2ce81bff398ull },
+                { "ge7b", 0xad6ff35c46abd26cull, 0x56bd0d497567baebull }, { "pq4", 0xad6ff35c46abd26cull, 0x2b4358b81a850756ull },
+                { "lmb3", 0xbf2bac6783cabccbull, 0x35dc63df4e390eddull }, { "ehsoulpreacher", 0x6f10e9a4616bb9b5ull, 0x69076385c2133acdull },
+                { "ehbasspreacher", 0x8bc981c3d09e2b6bull, 0x68bc45a1740deaecull }, { "mc404", 0x383307e741b9b288ull, 0x527ba7c5a09b362eull },
+                { "dd95fw", 0x94b33e04874df812ull, 0x5e620130c64421edull }, { "fv60", 0x6c802cf5c813b57cull, 0x38a9d37e24b9a79bull } };
             static const Buf raw = rawSignalS1 (48000.0);
             std::vector<int> h;
             for (const auto& r : refs)
                 h.push_back (lab.add (r.id, [] (const ModelDef& d)
                 {
-                    const uint64_t v = rawHashS1 (d, raw);
-                    return std::vector<double> { (double) (uint32_t) (v >> 32), (double) (uint32_t) v };
+                    uint64_t f = 0;
+                    const uint64_t v = rawHashS1 (d, raw, &f);
+                    return std::vector<double> { (double) (uint32_t) (v >> 32), (double) (uint32_t) v, (double) (uint32_t) (f >> 32), (double) (uint32_t) f };
                 }));
-            lab.check (h, "Tappa 4: CS-3, CP-1X, GE-7, EQ-200, AW-3, FV-500H, GE-7B, PQ-4, LMB-3, Soul/Bass Preacher, MC404, DD95FW, FV60 invariati bit per bit",
+            lab.check (h, "Tappa 4: CS-3, CP-1X, GE-7, EQ-200, AW-3, FV-500H, GE-7B, PQ-4, LMB-3, Soul/Bass Preacher, MC404, DD95FW, FV60 invariati bit per bit "
+                          "(comandi fermi; mossi: impronte 1.3.1)",
                        [&lab, h] {
                 if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
                 juce::String bad;
                 for (size_t k = 0; k < h.size(); ++k)
                 {
                     const uint64_t v = ((uint64_t) lab.v (h[k], 0) << 32) | (uint64_t) lab.v (h[k], 1);
+                    const uint64_t f = ((uint64_t) lab.v (h[k], 2) << 32) | (uint64_t) lab.v (h[k], 3);
+                    if (f != refs[k].fixed) bad << refs[k].id << " DIVERSO a comandi fermi (" << juce::String::toHexString ((juce::int64) f) << ") ";
                     if (v != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) v) << ") ";
                 }
-                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici" : bad.trim() };
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici (comandi fermi e mossi)" : bad.trim() };
             });
         }
 
@@ -5602,13 +5616,15 @@ namespace
         constexpr int numDig = countOf (kStage4Digital);
         Lab lab;
 
-        // 0. pedali esistenti invariati bit per bit (banco s4 'hash': frase di 4 s, poi comandi spostati di +0.37 e frase di 3 s)
+        // 0. pedali esistenti invariati bit per bit (banco s4 'hash': frase di 4 s, poi comandi spostati di +0.37 e frase di 3 s). La prima
+        //    impronta (comandi fermi) e' invariata; dalla 1.3.1 la seconda e' nuova per DD-2/3/8/5 e RV-6/5 (famiglie vecchie con
+        //    l'involucro senza click: i comandi spostati scorrono e i selettori passano per una dissolvenza)
         {
             struct Ref { const char* id; uint64_t a, b; };
             static const Ref refs[] = {
-                { "dd2", 0x590d15b01a380403ull, 0x1ea8adcd65f03752ull }, { "dd3", 0x590d15b01a380403ull, 0x1ea8adcd65f03752ull },
-                { "dd8", 0x92261ccdd28adf26ull, 0xa2997543c6fb4f74ull }, { "dd5", 0x014f09a9444e70e3ull, 0x90563655310ca654ull },
-                { "rv6", 0x54957206ce566aa3ull, 0xf4011ffa6fb89d98ull }, { "rv5", 0x8c9485d03f8c184full, 0xa343e7cb9ddf7bb0ull },
+                { "dd2", 0x590d15b01a380403ull, 0x16e77bd823cda5aaull }, { "dd3", 0x590d15b01a380403ull, 0x16e77bd823cda5aaull },
+                { "dd8", 0x92261ccdd28adf26ull, 0xa84adb5c422de4eaull }, { "dd5", 0x014f09a9444e70e3ull, 0xb6528be26e2e4e01ull },
+                { "rv6", 0x54957206ce566aa3ull, 0x951f21dfedb1271aull }, { "rv5", 0x8c9485d03f8c184full, 0x576bdf45498fc8fcull },
                 { "eh16sec", 0x4134d161fc535ce3ull, 0x677caddc91298e5full }, { "ehcanyon", 0x4289809e604536b6ull, 0xf57051122a5de3cdull },
                 { "eh1echo", 0x88666b012b77805dull, 0xc664bcb07ecc79e3ull }, { "ehhgmax", 0x71e1b361f48ef709ull, 0x334c52fa5ca473c6ull },
                 { "ehdmm", 0x701dabd49a1c457full, 0xa638f22f4e8bb063ull }, { "ehcanecho", 0xb6f86f1122f524bbull, 0x8b68562fea06b6c3ull },
@@ -5640,7 +5656,8 @@ namespace
                 for (size_t k = 0; k < h.size(); ++k)
                 {
                     const uint64_t a = ((uint64_t) lab.v (h[k], 0) << 32) | (uint64_t) lab.v (h[k], 1), b = ((uint64_t) lab.v (h[k], 2) << 32) | (uint64_t) lab.v (h[k], 3);
-                    if (a != refs[k].a || b != refs[k].b) bad << refs[k].id << " DIVERSO ";
+                    if (a != refs[k].a || b != refs[k].b)
+                        bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) a) << " " << juce::String::toHexString ((juce::int64) b) << ") ";
                 }
                 return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " doppie impronte identiche" : bad.trim() };
             });
@@ -6532,16 +6549,22 @@ namespace
         auto hz = [] (double f) { return juce::String (juce::roundToInt (f)); };
 
         // 1. pedali esistenti invariati bit per bit (famiglie riusate dai cloni: Compressor, NoiseGate, GraphicEQ, Wah, Volume, SlowGear,
-        //    Acoustic, i4ross...): banco s1 'raw' con i comandi mossi a meta' (impronte del banco s2, motore di d691877)
+        //    Acoustic, i4ross...): banco s1 'raw' con i comandi mossi a meta' (impronte del banco s2, motore di d691877). 'fixed' = prima
+        //    meta' a comandi fermi, invariata; 'hash' = segnale intero, nuovo dalla 1.3.1 per i modelli delle famiglie vecchie con
+        //    l'involucro senza click (CS-3, GE-7, AW-3, DB01, AW-2, GEB-7, LMB-3) e per l'AC-2 (modo ENH con le sue risonanze)
         {
-            struct Ref { const char* id; uint64_t hash; };
+            struct Ref { const char* id; uint64_t fixed, hash; };
             static const Ref refs[] = {
-                { "cs3", 0x6fdc24c6a389d2c4ull }, { "ns2", 0x6d2a220e1f2606cdull }, { "gq7", 0xfd3a4f1817a037e0ull }, { "aw3", 0xd416340cf1fb2140ull },
-                { "db01", 0x7ab01fa0bd5b03ceull }, { "cm95", 0xddf79b2d624209b4ull }, { "ib9cp9", 0x3b98bc5f58d192dbull }, { "ibtlwd7", 0xe349826cf3b27e89ull },
-                { "ib10wh10", 0xc6330f5d6759a483ull }, { "fv500h", 0x37efb2ce81bff398ull }, { "aw2", 0xbf774e16dbf4273full }, { "geb7", 0x1c7a3c91d9dff571ull },
-                { "lmb3", 0x143006ce4ed4b57dull }, { "sg1", 0x444d626e621cc584ull }, { "sp1", 0x05bcc99392f77b43ull }, { "ac2", 0xfd32ab2b3e35807eull },
-                { "ehbassball", 0x9e71d3ad24f12914ull }, { "ib7cp835", 0x20624c04cbadc54eull }, { "ibtstc999", 0x9fa88979c0c410afull },
-                { "ib10ls10", 0xc663814a38597cabull } };
+                { "cs3", 0x70e0f050fc09bf80ull, 0x99de31d19387f6d4ull }, { "ns2", 0x6a46559e7a871eacull, 0x6d2a220e1f2606cdull },
+                { "gq7", 0xad6ff35c46abd26cull, 0x8c22ad1b7170c34full }, { "aw3", 0x30cad961679d4f46ull, 0x17239d4a5bb9bdb1ull },
+                { "db01", 0x2cfbf616c023487aull, 0xdcfbc63d70c1a222ull }, { "cm95", 0xc29afcc68ef265afull, 0xddf79b2d624209b4ull },
+                { "ib9cp9", 0x0262093f69e029c0ull, 0x3b98bc5f58d192dbull }, { "ibtlwd7", 0x3822843607280daeull, 0xe349826cf3b27e89ull },
+                { "ib10wh10", 0x33f905797a39aae8ull, 0xc6330f5d6759a483ull }, { "fv500h", 0x6c802cf5c813b57cull, 0x37efb2ce81bff398ull },
+                { "aw2", 0x496855df098fda0cull, 0xe7a3f5e93b8dc66full }, { "geb7", 0xad6ff35c46abd26cull, 0x76d2d5726134eddcull },
+                { "lmb3", 0xbf2bac6783cabccbull, 0x35dc63df4e390eddull }, { "sg1", 0x66d346e0ce71a543ull, 0x444d626e621cc584ull },
+                { "sp1", 0xade09fee1bcc3dfdull, 0x05bcc99392f77b43ull }, { "ac2", 0x1cc0f54bfc9e31ccull, 0xc1c6eebe8c108790ull },
+                { "ehbassball", 0x587ed74c4464352aull, 0x9e71d3ad24f12914ull }, { "ib7cp835", 0x56257d3d483ed850ull, 0x20624c04cbadc54eull },
+                { "ibtstc999", 0x1fa09c2212162f3bull, 0x9fa88979c0c410afull }, { "ib10ls10", 0xad6ff35c46abd26cull, 0xc663814a38597cabull } };
             std::vector<int> h;
             for (const auto& r : refs) h.push_back (addRawHashS5 (lab, r.id));
             lab.check (h, "Tappa 5: 20 pedali delle famiglie riusate (CS-3, NS-2, GE-7, AW-3, DB01, CM95, CP9, WD7, WH10, FV-500H, AW-2, GEB-7, LMB-3, SG-1, SP-1, AC-2, "
@@ -6549,8 +6572,12 @@ namespace
                 if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
                 juce::String bad;
                 for (size_t k = 0; k < h.size(); ++k)
+                {
+                    if (hashOfS5 (lab, h[k], 2) != refs[k].fixed)
+                        bad << refs[k].id << " DIVERSO a comandi fermi (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k], 2)) << ") ";
                     if (hashOfS5 (lab, h[k]) != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k])) << ") ";
-                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici" : bad.trim() };
+                }
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici (comandi fermi e mossi)" : bad.trim() };
             });
         }
 
@@ -7260,14 +7287,17 @@ namespace
         Lab lab;
 
         // 0. pedali esistenti invariati bit per bit: le 8 config di partenza dei cloni avvolti (i5wrap), banco s4 'hash' (frase stereo di 2 s,
-        //    comandi spostati di +0.37 e frase di 1.5 s, poi 1 s in mono; impronte del banco col motore di d691877)
+        //    comandi spostati di +0.37 e frase di 1.5 s, poi 1 s in mono; impronte del banco col motore di d691877). La prima impronta
+        //    (comandi fermi) e' invariata; dalla 1.3.1 la seconda e la terza (dopo lo spostamento) sono nuove: involucro senza click delle
+        //    famiglie vecchie e, per l'AC-3, i modi con le loro risonanze. I cloni i5wrap usano createEffectRaw() e non cambiano.
+        //    AC-3: dalla 1.3.1 il pomello REVERB (default 0.3) suona davvero, quindi cambiano tutte e tre le impronte
         {
             struct Ref { const char* id; uint64_t a, b, c; };
             static const Ref refs[] = {
-                { "dc3", 0xfc0f89e3a622bf5full, 0xa57acaa155f38a18ull, 0x1a0c338157845e1cull }, { "bf3", 0xd864318671fb3e9eull, 0xe9df62d6c6ee99fdull, 0xe44873aaf193c1bcull },
-                { "ph3", 0x6eaaf9c72048269bull, 0xf3e769a0ff826367ull, 0xe59a0063a734e3baull }, { "dd3", 0xe871a6ed7c3c5c59ull, 0x5d50ae9863141bf3ull, 0x2ec6d661487e45f8ull },
-                { "dd5", 0x5046891b5eba4039ull, 0x636c44cd9d7465abull, 0x571775cb31288451ull }, { "rv5", 0x1391d68f452bce73ull, 0x2ef721be0556014bull, 0xf974c06fd278db01ull },
-                { "ac3", 0xef177c380bc97032ull, 0xe8f1152f0a45b981ull, 0x29736cc31fa3517eull }, { "syb5", 0x9171cfef480ac8ebull, 0xdd0bbde1faac4bd3ull, 0x9e19171d22ff3606ull } };
+                { "dc3", 0xfc0f89e3a622bf5full, 0xd67bb19468f68d43ull, 0x0083f230894c6d44ull }, { "bf3", 0xd864318671fb3e9eull, 0x755c050ae929c188ull, 0x0ada0173397964d8ull },
+                { "ph3", 0x6eaaf9c72048269bull, 0x3f5f8a15bf0e941eull, 0x19479aa9528c78e9ull }, { "dd3", 0xe871a6ed7c3c5c59ull, 0x637bc50eb7764950ull, 0xb48f8668c8588490ull },
+                { "dd5", 0x5046891b5eba4039ull, 0xd3b1b1daf770e4d7ull, 0x5d11fa96f9e26791ull }, { "rv5", 0x1391d68f452bce73ull, 0x48dc6abfc82625bcull, 0xef1bd6551dfc8582ull },
+                { "ac3", 0x1ca0de8d22294eb9ull, 0x4bdcee84ebcd996aull, 0xd5a5b370501fc9adull }, { "syb5", 0x9171cfef480ac8ebull, 0xf40dea716089dc13ull, 0xa026590176efa742ull } };
             static const Buf g1 = guitarS4 (2.0, 3), g2 = guitarS4 (1.5, 5), g3 = guitarS4 (1.0, 7);
             std::vector<int> h;
             for (const auto& r : refs)
@@ -7620,6 +7650,214 @@ namespace
         lab.run (report);
     }
 
+    /** 1.3.1: involucro senza click delle famiglie della prima versione del motore (Effects.cpp, SmoothFamily), dissolvenze
+        del MUTE dei tuner e di LEVEL/MIX degli IR loader, modi separati della famiglia Acoustic. */
+    void runSmoothFamilyTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        const int nm = numModels();
+
+        // 1. a comandi fermi l'involucro non cambia niente: uscita identica bit per bit all'effetto della famiglia senza
+        //    involucro (createEffectRaw), con i comandi scritti prima di prepare, dopo prepare e prima del primo blocco,
+        //    dopo un reset, mono e stereo, blocchi da 64/256/480. Confronto interno (stesso compilatore): vale ovunque
+        {
+            const Buf riff = guitarS1 (true, 48000.0, 1.0, -12.0), chord = guitarS1 (false, 48000.0, 1.0, -6.0);
+            std::vector<int> bad ((size_t) nm, 0);
+            parallelFor (nm, [&] (int i)
+            {
+                const ModelDef& d = model (i);
+                if (d.family == Family::Nam) return;
+                std::mt19937 rng ((unsigned) (77 + i));
+                std::uniform_real_distribution<float> U (0, 1);
+                std::vector<float> rnd ((size_t) d.numControls);
+                for (auto& v : rnd) v = U (rng);
+                auto render = [&] (bool raw, int kase)
+                {
+                    auto fx = raw ? createEffectRaw (d) : createEffect (d);
+                    const int blk = kase == 0 ? 256 : kase == 1 ? 64 : 480;
+                    const int nch = kase == 1 ? 1 : 2;
+                    if (kase == 1) for (int k = 0; k < d.numControls; ++k) fx->params[k].store (rnd[(size_t) k]);
+                    fx->prepare (48000.0, blk);
+                    if (kase == 2) for (int k = 0; k < d.numControls; ++k) fx->params[k].store (1.0f - rnd[(size_t) k]);
+                    std::vector<Buf> ch ((size_t) nch, riff);
+                    if (nch == 2) for (auto& v : ch[1]) v *= 0.7f;
+                    auto run = [&] (std::vector<Buf>& c)
+                    {
+                        std::vector<float*> p (c.size());
+                        for (size_t pos = 0; pos < c[0].size(); pos += (size_t) blk)
+                        {
+                            const int n = (int) std::min ((size_t) blk, c[0].size() - pos);
+                            for (size_t q = 0; q < c.size(); ++q) p[q] = c[q].data() + pos;
+                            fx->process (p.data(), (int) c.size(), n);
+                        }
+                    };
+                    run (ch);
+                    if (kase == 2)
+                    {
+                        fx->reset();
+                        std::vector<Buf> c2 (2, chord);
+                        run (c2);
+                        ch.insert (ch.end(), c2.begin(), c2.end());
+                    }
+                    return ch;
+                };
+                for (int kase = 0; kase < 3; ++kase)
+                    if (render (false, kase) != render (true, kase)) bad[(size_t) i] |= 1 << kase;
+            });
+            juce::String detail;
+            int nBad = 0;
+            for (int i = 0; i < nm; ++i)
+                if (bad[(size_t) i] != 0) { ++nBad; if (nBad <= 6) detail << model (i).id << "(" << bad[(size_t) i] << ") "; }
+            report ("Involucro senza click: a comandi fermi uscita identica bit per bit alla famiglia senza involucro (tutti i modelli)",
+                    nBad == 0, nBad == 0 ? juce::String (nm) + " modelli, 3 casi ciascuno" : juce::String (nBad) + " diversi: " + detail.trim());
+        }
+
+        // 2. click dei comandi su TUTTO il catalogo (clicksS2: ogni pomello a 0.9/0.1/default, ogni posizione di ogni
+        //    selettore e levetta): <= 10x senza eccezioni. Fino alla 1.3.0 le famiglie vecchie arrivavano a 2360x (PQ-4),
+        //    i tuner a 543x (MUTE) e gli IR loader a 526x (LEVEL)
+        {
+            std::vector<ClickRes> res ((size_t) nm);
+            parallelFor (nm, [&] (int i) { res[(size_t) i] = clicksS2 (model (i).id); });
+            std::vector<int> order;
+            int over = 0, found = 0;
+            for (int i = 0; i < nm; ++i)
+            {
+                if (! res[(size_t) i].found) continue;
+                ++found;
+                if (res[(size_t) i].worst > 10.0) ++over;
+                order.push_back (i);
+            }
+            std::sort (order.begin(), order.end(), [&] (int a, int b) { return res[(size_t) a].worst > res[(size_t) b].worst; });
+            juce::String detail;
+            detail << found << " modelli, oltre 10x: " << over << "; peggiori:";
+            for (int k = 0; k < std::min (5, (int) order.size()); ++k)
+                detail << " " << model (order[(size_t) k]).id << " " << juce::String (res[(size_t) order[(size_t) k]].worst, 1) << "x ("
+                       << res[(size_t) order[(size_t) k]].what << ")";
+            report ("Click dei comandi <= 10x su tutto il catalogo (clicksS2)", over == 0 && found == nm, detail);
+        }
+
+        // 3. famiglia Acoustic: ogni modo ha le sue risonanze (fino alla 1.3.0 la config si fermava al primo ';' e tutti i
+        //    modi suonavano come il primo). Guadagno a 95 / 190 / 700 / 1500 / 3500 Hz con BODY/TOP a meta': i modi sono
+        //    tutti diversi fra loro (almeno 0.5 dB a una frequenza) e ENHANCE/BRIGHT ha i 3.5 kHz piu' alti di STANDARD
+        {
+            auto gainAt = [] (const ModelDef& d, int mode, double f)
+            {
+                auto fx = createEffect (d);
+                for (int k = 0; k < d.numControls; ++k)
+                    if (std::strcmp (d.controls[k].role, "mode") == 0)
+                        fx->params[k].store (d.controls[k].steps > 1 ? (float) mode / (float) (d.controls[k].steps - 1) : 0.0f);
+                fx->prepare (48000.0, 256);
+                Buf x (24000);
+                for (size_t i = 0; i < x.size(); ++i) x[i] = (float) (0.1 * std::sin (2 * kPi * f * (double) i / 48000.0));
+                processMono (*fx, x, 256);
+                double e = 0;
+                for (size_t i = 12000; i < x.size(); ++i) e += (double) x[i] * x[i];
+                return dbOf (std::sqrt (e / 12000.0) / (0.1 / std::sqrt (2.0)));
+            };
+            bool ok = true;
+            juce::String detail;
+            for (const char* id : { "ac2", "ac3", "bham400" })
+            {
+                const auto* d = findModel (id);
+                if (d == nullptr) { ok = false; detail << id << " assente "; continue; }
+                int modeCtl = -1;
+                for (int k = 0; k < d->numControls; ++k) if (std::strcmp (d->controls[k].role, "mode") == 0) modeCtl = k;
+                const int nModes = modeCtl >= 0 ? std::max (1, (int) d->controls[modeCtl].steps) : 1;
+                static const double fr[5] = { 95.0, 190.0, 700.0, 1500.0, 3500.0 };
+                std::vector<std::array<double, 5>> g ((size_t) nModes);
+                for (int m = 0; m < nModes; ++m)
+                    for (int k = 0; k < 5; ++k) g[(size_t) m][(size_t) k] = gainAt (*d, m, fr[k]);
+                for (int a = 0; a < nModes; ++a)
+                    for (int b = a + 1; b < nModes; ++b)
+                    {
+                        double diff = 0;
+                        for (int k = 0; k < 5; ++k) diff = std::max (diff, std::abs (g[(size_t) a][(size_t) k] - g[(size_t) b][(size_t) k]));
+                        if (diff < 0.5) { ok = false; detail << id << " modi " << a << "/" << b << " uguali "; }
+                    }
+                // modo ENHANCE/BRIGHT (ac2: 1, ac3: 2, bham400: 3): 3.5 kHz almeno 3 dB sopra STANDARD (modo 0)
+                const int enh = std::strcmp (id, "ac2") == 0 ? 1 : std::strcmp (id, "ac3") == 0 ? 2 : 3;
+                if (! (enh < nModes && g[(size_t) enh][4] > g[0][4] + 3.0)) { ok = false; detail << id << " ENHANCE non piu' brillante "; }
+                detail << id << ":";
+                for (int m = 0; m < nModes; ++m)
+                {
+                    detail << " [";
+                    for (int k = 0; k < 5; ++k) detail << (k > 0 ? "/" : "") << juce::String (g[(size_t) m][(size_t) k] - g[0][(size_t) k], 1);
+                    detail << "]";
+                }
+                detail << " dB rispetto al modo 0; ";
+            }
+            report ("Acoustic (AC-2, AC-3, AM400): ogni modo con le sue risonanze (95 Hz - 3.5 kHz per modo)", ok, detail.trim());
+        }
+
+        // AC-3: il pomello REVERB (fino alla 1.3.0 letto ma non usato) aggiunge una coda d'ambiente; a zero il percorso e' quello di prima
+        {
+            const auto* d = findModel ("ac3");
+            bool ok = d != nullptr;
+            juce::String detail;
+            if (d != nullptr)
+            {
+                int rc = -1;
+                for (int k = 0; k < d->numControls; ++k) if (std::strcmp (d->controls[k].role, "reverb") == 0) rc = k;
+                auto tail = [d, rc] (float rv, double& peak)
+                {
+                    auto fx = createEffect (*d);
+                    fx->prepare (48000.0, 256);
+                    if (rc >= 0) fx->params[rc].store (rv);
+                    Buf x (48000);
+                    for (size_t i = 0; i < 14400; ++i) x[i] = (float) (0.2 * std::sin (2 * kPi * 220.0 * (double) i / 48000.0));
+                    processMono (*fx, x, 256);
+                    double e = 0; peak = 0;
+                    for (size_t i = 0; i < x.size(); ++i) peak = std::max (peak, (double) std::abs (x[i]));
+                    for (size_t i = 14400 + 2400; i < 14400 + 14400; ++i) e += (double) x[i] * x[i];      // 50-300 ms dopo la fine
+                    return dbOf (std::sqrt (e / 12000.0) + 1e-12);
+                };
+                double p0 = 0, p1 = 0;
+                const double t0 = tail (0.0f, p0), t1 = tail (1.0f, p1);
+                ok = rc >= 0 && t1 > t0 + 60.0 && t1 > -60.0 && p1 < 2.0 && std::isfinite (t1);    // a zero resta solo la coda dei filtri di risonanza
+                detail << "coda 50-300 ms: REVERB 0 " << juce::String (t0, 1) << " dB, REVERB 10 " << juce::String (t1, 1)
+                       << " dB (> -60 e almeno 60 dB sopra); picco " << juce::String (p1, 2) << " V";
+            }
+            report ("AC-3: REVERB aggiunge una coda d'ambiente, a zero nessuna coda", ok, detail);
+        }
+
+        // RV-200 REVERSE: alla fine di ogni swell (0.45 s) il guadagno scende in ~3 ms, senza gradino (fino alla 1.3.0 da 1 a 0 in un campione)
+        {
+            const auto* d = findModel ("rv200");
+            bool ok = d != nullptr;
+            juce::String detail;
+            if (d != nullptr)
+            {
+                int mc = -1, lc = -1;
+                for (int k = 0; k < d->numControls; ++k)
+                {
+                    if (std::strcmp (d->controls[k].role, "mode") == 0) mc = k;
+                    if (std::strcmp (d->controls[k].role, "level") == 0) lc = k;
+                }
+                auto fx = createEffect (*d);
+                fx->prepare (48000.0, 256);
+                if (mc >= 0) fx->params[mc].store (1.0f);                 // REVERSE (ultima posizione)
+                if (lc >= 0) fx->params[lc].store (1.0f);
+                Buf x (96000), dry (96000);
+                for (size_t i = 0; i < x.size(); ++i) dry[i] = x[i] = (float) (0.2 * std::sin (2 * kPi * 220.0 * (double) i / 48000.0));
+                processMono (*fx, x, 256);
+                // solo il riverbero: differenza seconda dell'uscita meno il diretto; gradino = picco rispetto al 99.9 percentile
+                std::vector<double> d2;
+                for (size_t i = 24002; i < x.size(); ++i)
+                {
+                    const double w0 = x[i] - dry[i], w1 = x[i - 1] - dry[i - 1], w2 = x[i - 2] - dry[i - 2];
+                    d2.push_back (std::abs (w0 - 2 * w1 + w2));
+                }
+                auto sorted = d2;
+                std::sort (sorted.begin(), sorted.end());
+                const double p999 = std::max (1e-9, sorted[(size_t) (0.999 * (double) (sorted.size() - 1))]), mx = sorted.back();
+                const double ratio = mx / p999;
+                ok = mc >= 0 && ratio < 3.0 && std::isfinite (mx);
+                detail << "picco della differenza seconda / 99.9 percentile = " << juce::String (ratio, 2) << " (< 3)";
+            }
+            report ("RV-200 REVERSE: fine dello swell senza gradino", ok, detail);
+        }
+    }
+
     void runCabIRTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
     {
         using namespace pt::engine;
@@ -7792,6 +8030,7 @@ namespace
         runStage5DynTests (report);
         runStage5ModTests (report);
         runStage5DigitalTests (report);
+        runSmoothFamilyTests (report);
 
         // 7. processore completo e bypass
         {

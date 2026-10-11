@@ -335,16 +335,33 @@ namespace pt::engine
                 pMode = role (*this, "mode", 1.0f);
                 pRef = role (*this, "ref", 0.5f);
             }
-            void prepare (double s, int) override { detector.prepare (s); }
-            void reset() override {}
+            void prepare (double s, int) override { detector.prepare (s); fadeStep = (float) (1.0 / std::max (1.0, 0.008 * s)); thru = -1; }
+            void reset() override { thru = -1; }
             void process (float* const* ch, int numCh, int n) override
             {
                 const bool mute = pMode.step (*this) > 0 || ! pMode.present();
-                for (int i = 0; i < n; ++i)
+                const float target = mute ? 0.0f : 1.0f;
+                if (thru < 0) thru = target;
+                if (thru == target)
                 {
-                    const float x = numCh > 1 ? 0.5f * (ch[0][i] + ch[1][i]) : ch[0][i];
-                    detector.push (x);
-                    if (mute) for (int c = 0; c < numCh; ++c) ch[c][i] = 0.0f;
+                    for (int i = 0; i < n; ++i)
+                    {
+                        const float x = numCh > 1 ? 0.5f * (ch[0][i] + ch[1][i]) : ch[0][i];
+                        detector.push (x);
+                        if (mute) for (int c = 0; c < numCh; ++c) ch[c][i] = 0.0f;
+                    }
+                }
+                else
+                {
+                    // THRU <-> MUTE: dissolvenza a coseno rialzato di 8 ms invece del gradino (click)
+                    for (int i = 0; i < n; ++i)
+                    {
+                        const float x = numCh > 1 ? 0.5f * (ch[0][i] + ch[1][i]) : ch[0][i];
+                        detector.push (x);
+                        thru = target > thru ? std::min (target, thru + fadeStep) : std::max (target, thru - fadeStep);
+                        const float g = 0.5f - 0.5f * std::cos (3.14159265f * thru);
+                        for (int c = 0; c < numCh; ++c) ch[c][i] = thru <= 0.0f ? 0.0f : ch[c][i] * g;
+                    }
                 }
                 const float f = detector.frequency();
                 if (detector.confidence() > 0.7f && f > 20)
@@ -366,6 +383,7 @@ namespace pt::engine
             }
         private:
             RoleParam pMode, pRef;
+            float thru = -1, fadeStep = 0.0026f;        // 1 = THRU, 0 = MUTE; -1 = da allineare al comando al prossimo blocco
             PitchDetector detector;
             std::atomic<float> freq { 0 }, cents { 0 }, note { 0 }, valid { 0 };
         };

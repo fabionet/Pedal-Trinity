@@ -820,13 +820,16 @@ namespace pt::engine
         public:
             explicit AcousticEffect (const ModelDef& d) : Effect (d), cfg (d.config)
             {
-                // modes=f:g:q|f:g:q;f:g:q|...  (';' separa i modi, '|' le risonanze)
-                const auto m = cfg.str ("modes", "110:6:1.2|220:3:1.5|3000:4:0.8");
+                // modes=f:g:q|f:g:q;f:g:q|...  (';' separa i modi, '|' le risonanze). Config spezza le opzioni anche
+                // sui ';', quindi fino alla 1.3.0 arrivava solo il primo modo e tutti i modi suonavano come il primo (bug
+                // dell'AC-2): il valore si legge dal testo grezzo, fino al primo spazio
+                const auto m = rawModes (d.config, "110:6:1.2|220:3:1.5|3000:4:0.8");
                 size_t i = 0;
                 while (i <= m.size() && numModes < 4)
                 {
                     auto j = m.find (';', i); if (j == std::string::npos) j = m.size();
                     const auto mode = m.substr (i, j - i);
+                    if (mode.empty() && numModes > 0) { i = j + 1; continue; }   // ';' finale o doppio
                     size_t a = 0; int k = 0;
                     while (a <= mode.size() && k < 4)
                     {
@@ -848,8 +851,27 @@ namespace pt::engine
                 pMode = role (*this, "mode", 0.0f);
                 pReverb = role (*this, "reverb", 0.0f);
             }
-            void prepare (double s, int) override { sr = s; reset(); }
-            void reset() override { for (auto& c : f) for (auto& b : c) b.reset(); }
+            void prepare (double s, int) override
+            {
+                sr = s;
+                // riverbero d'ambiente (REVERB dell'AC-3): 4 pettini con smorzamento + 2 passa-tutto per canale
+                static const double combMs[4] = { 29.7, 37.1, 41.1, 43.7 }, apMs[2][2] = { { 5.0, 1.7 }, { 5.3, 1.9 } };
+                for (int c = 0; c < 2; ++c)
+                {
+                    for (int k = 0; k < 4; ++k) comb[c][k].assign ((size_t) std::max (1.0, (combMs[k] + 1.1 * c) * 0.001 * s), 0.0f);
+                    for (int k = 0; k < 2; ++k) ap[c][k].assign ((size_t) std::max (1.0, apMs[c][k] * 0.001 * s), 0.0f);
+                }
+                reset();
+            }
+            void reset() override
+            {
+                for (auto& c : f) for (auto& b : c) b.reset();
+                for (auto& c : comb) for (auto& v : c) std::fill (v.begin(), v.end(), 0.0f);
+                for (auto& c : ap) for (auto& v : c) std::fill (v.begin(), v.end(), 0.0f);
+                for (auto& c : combPos) for (auto& p : c) p = 0;
+                for (auto& c : apPos) for (auto& p : c) p = 0;
+                for (auto& c : combLp) for (auto& z : c) z = 0;
+            }
             void process (float* const* ch, int numCh, int n) override
             {
                 const int m = std::clamp (pMode.step (*this), 0, std::max (0, numModes - 1));
@@ -865,15 +887,63 @@ namespace pt::engine
                     f[c][5].highShelf (sr, topHz, 0.7, top);
                 }
                 const float lvl = taperA (pLevel.get (*this)) * 2.0f;
+                // REVERB: a zero (e nei modelli senza il comando, come l'AC-2) il percorso e' quello di sempre, bit per bit
+                const float rv = pReverb.get (*this);
+                if (rv <= 0.0f || comb[0][0].empty())
+                {
+                    for (int i = 0; i < n; ++i)
+                        for (int c = 0; c < numCh; ++c)
+                        {
+                            float y = ch[c][i];
+                            for (auto& b : f[c]) y = b.process (y);
+                            ch[c][i] = y * lvl;
+                        }
+                    return;
+                }
+                const float wet = 0.45f * rv * rv, fb = 0.80f, dampK = 0.35f;
                 for (int i = 0; i < n; ++i)
                     for (int c = 0; c < numCh; ++c)
                     {
                         float y = ch[c][i];
                         for (auto& b : f[c]) y = b.process (y);
-                        ch[c][i] = y * lvl;
+                        // pettini in parallelo (retroazione < 1 con passa-basso nell'anello), poi due passa-tutto in serie
+                        float r = 0;
+                        for (int k = 0; k < 4; ++k)
+                        {
+                            auto& buf = comb[c][k]; auto& p = combPos[c][k];
+                            const float o = buf[p];
+                            combLp[c][k] = o + dampK * (combLp[c][k] - o);
+                            buf[p] = y + fb * combLp[c][k];
+                            if (++p >= buf.size()) p = 0;
+                            r += o;
+                        }
+                        r *= 0.25f;
+                        for (int k = 0; k < 2; ++k)
+                        {
+                            auto& buf = ap[c][k]; auto& p = apPos[c][k];
+                            const float d = buf[p], u = r + 0.5f * d;
+                            buf[p] = u;
+                            if (++p >= buf.size()) p = 0;
+                            r = d - 0.5f * u;
+                        }
+                        ch[c][i] = (y + wet * r) * lvl;
                     }
             }
         private:
+            /** Valore dell'opzione modes= preso dal testo della config fino al primo spazio (';' compresi). */
+            static std::string rawModes (const char* text, const char* fallback)
+            {
+                const std::string s = text != nullptr ? text : "";
+                for (size_t pos = s.find ("modes="); pos != std::string::npos; pos = s.find ("modes=", pos + 1))
+                {
+                    if (pos > 0 && s[pos - 1] != ' ' && s[pos - 1] != ';' && s[pos - 1] != '\n') continue;
+                    const size_t a = pos + 6;
+                    size_t b = a;
+                    while (b < s.size() && s[b] != ' ' && s[b] != '\n') ++b;
+                    return s.substr (a, b - a);
+                }
+                return fallback;
+            }
             struct Res { float f, g, q; };
             Config cfg;
             Res res[4][4] {};
@@ -881,6 +951,9 @@ namespace pt::engine
             double topHz = 5000, cutHz = 600, sr = 48000;
             RoleParam pTop, pBody, pLevel, pMode, pReverb;
             pt::dsp::Biquad f[2][6];
+            std::vector<float> comb[2][4], ap[2][2];
+            size_t combPos[2][4] {}, apPos[2][2] {};
+            float combLp[2][4] {};
         };
     }
 
