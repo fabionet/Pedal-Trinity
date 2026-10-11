@@ -17,6 +17,21 @@
 
 namespace pt::engine
 {
+    namespace cx
+    {
+        /** Lisciatura del secondo ordine (due poli in cascata, ciascuno a meta' della costante di tempo: stesso ritardo medio
+            del polo singolo) per i comandi che spostano un tempo di ritardo: la velocita' parte da zero, quindi niente salto
+            d'intonazione all'istante del cambio. A comando fermo restituisce il valore esatto (come Smooth). */
+        struct Smooth2
+        {
+            Smooth a, b;
+            void set (double sr, double ms) { a.set (sr, 0.5 * ms); b.set (sr, 0.5 * ms); }
+            void snap (float v) { a.snap (v); b.snap (v); }
+            void unset() { a.init = b.init = false; }
+            inline float next (float t) noexcept { return b.next (a.next (t)); }
+        };
+    }
+
     std::unique_ptr<Effect> makeI4Dyn (const ModelDef&, const std::string& type);     // FxStage4Dyn.cpp
     std::unique_ptr<Effect> makeI4Mod (const ModelDef&, const std::string& type);     // FxStage4Mod.cpp
     std::unique_ptr<Effect> makeI4Time (const ModelDef&, const std::string& type);    // FxStage4Time.cpp

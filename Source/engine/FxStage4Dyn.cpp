@@ -246,6 +246,19 @@ namespace pt::engine
                 z2[ch] = b2 * x - a2 * y;
                 return y;
             }
+            // comandi in movimento: i coefficienti scorrono campione per campione da quelli precedenti (keepFrom() prima del
+            // ricalcolo) ai nuovi; l'interpolazione lineare fra due biquad stabili e' stabile (triangolo di stabilita' convesso)
+            double f0 = 1, f1 = 0, f2 = 0, fa1 = 0, fa2 = 0;
+            void keepFrom() noexcept { f0 = b0; f1 = b1; f2 = b2; fa1 = a1; fa2 = a2; }
+            inline double tickLerp (int ch, double x, double u) noexcept
+            {
+                const double c0 = f0 + u * (b0 - f0), c1 = f1 + u * (b1 - f1), c2 = f2 + u * (b2 - f2);
+                const double d1 = fa1 + u * (a1 - fa1), d2 = fa2 + u * (a2 - fa2);
+                const double y = c0 * x + z1[ch];
+                z1[ch] = c1 * x - d1 * y + z2[ch];
+                z2[ch] = c2 * x - d2 * y;
+                return y;
+            }
         };
 
         /** Passa-alto / passa-basso del primo ordine (bilineare). */
@@ -971,11 +984,21 @@ namespace pt::engine
                 for (int i0 = 0; i0 < N; i0 += sub)
                 {
                     const int len = std::min (sub, N - i0);
-                    if (sm.tick (*this)) update (false);
+                    const double gainFrom = gainV, lpFrom = lpK;
+                    const bool moved = sm.tick (*this);
+                    if (moved) update (false);
                     const double gStep = (gTgt - gOut) / len;
                     for (int k = 0; k < len; ++k)
                     {
                         gOut += gStep;
+                        // SUSTAIN in movimento: guadagno e passa-basso del ramo amplificato scorrono nel sotto-blocco
+                        double gainK = gainV, lpKK = lpK;
+                        if (moved)
+                        {
+                            const double u = (double) (k + 1) / (double) len;
+                            gainK = gainFrom + u * (gainV - gainFrom);
+                            lpKK = lpFrom + u * (lpK - lpFrom);
+                        }
                         // tensione di controllo -> Iabc -> resistenza dell'OTA in derivazione
                         const double iabc = softplus (vctlS - vctl, 0.03) / rctl;
                         const double gm = std::max (1e-12, iabc / (2 * kVt) * kin * gmk);
@@ -990,8 +1013,8 @@ namespace pt::engine
                             vc[c] += T / cser * i;
                             // SUSTAIN: parte amplificata passa-alto (Rg, Cg) e passa-basso (Rf, Cf)
                             const double hp = hpG.tick (c, vx);
-                            lpf[c] += lpK * (hp - lpf[c]);
-                            const double y = softRail (vx + gainV * lpf[c], rail);
+                            lpf[c] += lpKK * (hp - lpf[c]);
+                            const double y = softRail (vx + gainK * lpf[c], rail);
                             peak = std::max (peak, std::abs (y));
                             x[k] = (float) (y * gOut);
                         }
@@ -1473,15 +1496,18 @@ namespace pt::engine
                 for (int i0 = 0; i0 < n; i0 += 8)
                 {
                     const int len = std::min (8, n - i0);
-                    if (sm.tick (*this)) update();
+                    const bool moved = sm.tick (*this);
+                    if (moved) { for (auto& b : bands) b.bq.keepFrom(); update(); }
                     const double st = (gT - gOut) / len;
                     for (int k = 0; k < len; ++k)
                     {
                         gOut += st;
+                        const double u = (double) (k + 1) / (double) len;
                         for (int c = 0; c < numCh; ++c)
                         {
                             double y = ch[c][i0 + k];
-                            for (auto& b : bands) y = b.bq.tick (c, y);
+                            if (moved) for (auto& b : bands) y = b.bq.tickLerp (c, y, u);      // coefficienti in rampa
+                            else       for (auto& b : bands) y = b.bq.tick (c, y);
                             ch[c][i0 + k] = (float) softRail (y * gOut, rail);
                         }
                     }

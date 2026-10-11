@@ -27,6 +27,8 @@ Chiavi facoltative (tappa 4, Ibanez; i pedali che non le usano restano identici)
            quadrato della serie 808...): il footswitch j e' tutto il coperchio (zona "foot" dell'interfaccia)
   outline  [(x%, y%), ...] contorno poligonale convesso in pianta (es. contenitore a rombo) al posto del rettangolo
   margin   (sinistra, destra, lontano, vicino) mm di margine in piu' per i comandi
+  foot_leds {j: k}: il LED k di leds e' quello del footswitch di sezione j (altrimenti il LED piu' vicino sopra il
+           footswitch o uno nuovo), es. LED BOOST al centro del piano del TC999
 I comandi del modello si assegnano alle posizioni per etichetta (poi per tipo, nell'ordine); le posizioni
 del pedale vero senza un comando del modello diventano comandi decorativi (fissi) e i comandi del modello
 senza posizione vanno nello spazio libero. Le sovrapposizioni si risolvono spostando i comandi il meno possibile.
@@ -503,7 +505,7 @@ def stomp_layout(r):
     leds = [tuple(l) for l in (lk.get("leds") or [])]
     for k, l in enumerate(leds):
         items.append(dict(t="led", i=None, label="", x=G.x(l[0]), y=G.y(l[1]), colour=l[2] if len(l) > 2 else "red",
-                          main=(k == 0), fixed=bool(lk.get("fixed_leds"))))
+                          main=(k == 0), fixed=bool(lk.get("fixed_leds")), k=k))
     # elementi decorativi grandi
     for ex in lk.get("extra") or []:
         if ex[0] == "tubes":
@@ -626,6 +628,11 @@ def stomp_layout(r):
                     # LED del footswitch: quello della scheda piu' vicino sopra il footswitch, se c'e'
                     lp = [p for p in out["parts"] if p["type"] == "led" and abs(p["x"] - x) < 0.012 and 0 < p["y"] - y < 0.030]
                     lp.sort(key=lambda p: p["y"] - y)
+                    fl = (lk.get("foot_leds") or {}).get(j)
+                    if fl is not None:
+                        # LED del footswitch indicato dalla scheda (look["foot_leds"] = {footswitch: indice in look["leds"]}),
+                        # anche lontano dal footswitch (es. LED BOOST al centro del piano del TC999)
+                        lp = [dict(x=o["x"], y=o["y"], z=z_at(o["y"])) for o in items if o["t"] == "led" and o.get("k") == fl]
                     if lp:
                         led = (lp[0]["x"], lp[0]["y"], lp[0]["z"])
                     else:

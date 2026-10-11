@@ -209,6 +209,18 @@ namespace pt::engine
         return true;
     }
 
+    void Expr::addControls (uint32_t& mask) const
+    {
+        for (const auto& t : terms)
+            for (const auto& f : t)
+            {
+                if (f.kind == Factor::Par || f.kind == Factor::Inv || f.kind == Factor::Div)
+                    for (const auto& e : f.sub) e.addControls (mask);
+                else if (f.kind != Factor::Const)
+                    mask |= 1u << std::clamp (f.idx, 0, maxControls - 1);
+            }
+    }
+
     double Expr::eval (const float* p, const ModelDef& def) const
     {
         double sum = 0;
@@ -329,24 +341,42 @@ namespace pt::engine
     //==============================================================================
     namespace
     {
+        /** Base degli stadi: copyFrom() con l'assegnazione di copia del tipo concreto (stato e coefficienti). */
+        template <class D>
+        class StageT : public Stage
+        {
+        public:
+            void copyFrom (const Stage& other) override { static_cast<D&> (*this) = static_cast<const D&> (other); }
+        };
+
         /** Stadio lineare generico descritto da H(s) calcolata dai componenti. */
-        class LinearStage : public Stage
+        class LinearStage : public StageT<LinearStage>
         {
         public:
             using Designer = std::function<void (const LinearStage&, const float*, const ModelDef&, AnalogTF&, double&)>;
             explicit LinearStage (Designer d, bool inv = false) : designer (std::move (d)), invert (inv) {}
+            LinearStage (const LinearStage&) = delete;
+            // copia di stato e coefficienti (il progettista e' lo stesso: niente copia della std::function)
+            LinearStage& operator= (const LinearStage& o) { Stage::operator= (o); tf = o.tf; vpos = o.vpos; vneg = o.vneg; return *this; }
             void update (double f, const float* p, const ModelDef& def) override
             {
                 fs = f;
                 double prewarp = 0;
                 designer (*this, p, def, tf, prewarp);
                 tf.design (fs, prewarp);
+                tf.armRamp();
                 vpos = arg ("rail", p, def, 0.0);
                 vneg = arg ("railn", p, def, vpos);
             }
             void reset() override { tf.reset(); }
+            void settle() override { tf.settle(); }
             void process (int ch, double* x, int n) override
             {
+                if (tf.ramp[ch])
+                {
+                    tf.rampBlock (ch, x, n, [this] (double y) { if (invert) y = -y; return vpos > 0 ? railClip (y, vpos, vneg) : y; });
+                    return;
+                }
                 for (int i = 0; i < n; ++i)
                 {
                     double y = tf.tick (ch, x[i]);
@@ -370,7 +400,7 @@ namespace pt::engine
         }
 
         /** Op-amp non invertente con diodi nella retroazione (Tube Screamer, OD-1, SD-1...). */
-        class FeedbackClipper : public Stage
+        class FeedbackClipper : public StageT<FeedbackClipper>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -395,14 +425,38 @@ namespace pt::engine
                     kInt = T * 2.0 * pi * gbw;          // integratore a Eulero all'indietro (L-stabile)
                     slew = std::max (1e-3, arg ("sr", p, def, 1e3)) * 1e6 * T;
                 }
+                for (int c = 0; c < 2; ++c) rfRamp[c] = std::fpclassify (rfFrom[c] - rf) != FP_ZERO;   // comando in movimento: Rf scorre nella chiamata
             }
-            void reset() override { for (auto& s : st) s = {}; for (auto& s : so) s = {}; }
+            void reset() override { for (auto& s : st) s = {}; for (auto& s : so) s = {}; settle(); }
+            void settle() override { for (int c = 0; c < 2; ++c) { rfFrom[c] = rf; rfRamp[c] = false; } }
             void process (int ch, double* x, int n) override
             {
-                if (opamp) { processOpamp (ch, x, n); return; }
+                if (rfRamp[ch])
+                {
+                    if (opamp) processOpamp<true> (ch, x, n); else processIdeal<true> (ch, x, n);
+                    rfFrom[ch] = rf;
+                    rfRamp[ch] = false;
+                    return;
+                }
+                if (opamp) { processOpamp<false> (ch, x, n); return; }
+                processIdeal<false> (ch, x, n);
+            }
+            std::string diodeName = "si";
+        private:
+            /** Rf del campione i: con la rampa scorre linearmente da rfFrom a rf nella chiamata. */
+            template <bool Ramp>
+            inline double rfAt (int ch, int i, int n) const noexcept
+            {
+                if constexpr (Ramp) return rfFrom[ch] + (rf - rfFrom[ch]) * (double) (i + 1) / (double) n;
+                else { (void) ch; (void) i; (void) n; return rf; }
+            }
+            template <bool Ramp>
+            void processIdeal (int ch, double* x, int n)
+            {
                 auto& s = st[ch];
                 for (int i = 0; i < n; ++i)
                 {
+                    const double rfi = rfAt<Ramp> (ch, i, n);
                     const double vin = x[i];
                     // corrente nel ramo verso massa (Rg + Cg in serie)
                     double ig;
@@ -421,8 +475,8 @@ namespace pt::engine
                     {
                         double id, did;
                         diodes.eval (v, id, did);
-                        const double F = v / rf + gcf * v - s.ih + id - ig;
-                        const double dF = 1.0 / rf + gcf + did;
+                        const double F = v / rfi + gcf * v - s.ih + id - ig;
+                        const double dF = 1.0 / rfi + gcf + did;
                         double step = F / dF;
                         step = std::clamp (step, -0.5, 0.5);
                         v -= step;
@@ -437,12 +491,11 @@ namespace pt::engine
                     x[i] = railClip (vin + v, vpos, vneg);
                 }
             }
-            std::string diodeName = "si";
-        private:
             /** Op-amp reale: y' = wt (v+ - v-) (Eulero all'indietro: i poli veloci dell'anello non suonano a Nyquist e
                 l'integratore non si carica quando l'uscita e' limitata), slew |dy| <= sr*T, y bloccata a [-railn, rail];
                 il resto della rete (rami verso massa, Cf) con i trapezi. Incognita u = y - v- (tensione ai capi della
                 retroazione), risolta con Newton come nel caso ideale. */
+            template <bool Ramp>
             void processOpamp (int ch, double* x, int n)
             {
                 auto& s = so[ch];
@@ -455,6 +508,7 @@ namespace pt::engine
                 const double maxStep = diodes.up > 0 || diodes.dn > 0 ? 0.5 : 1e3;   // passo limitato solo con i diodi
                 for (int i = 0; i < n; ++i)
                 {
+                    const double rfi = rfAt<Ramp> (ch, i, n);
                     const double vin = x[i];
                     // corrente verso massa lineare in v-: ig = vm*dig - ig0 (rami Rg+Cg e Rg2+Cg2, trapezi)
                     const double ig0 = (cg > 0 ? (s.vc + kg * s.ig) / (rg + kg) : 0.0) + (leg2 && cg2 > 0 ? (s.vc2 + kg2 * s.ig2) * dig2 : 0.0);
@@ -466,8 +520,8 @@ namespace pt::engine
                         double id, did;
                         diodes.eval (u, id, did);
                         const double vm = (c0 - u) * iK;
-                        const double F = u / rf + gcf * u - s.ih + id - (vm * dig - ig0);
-                        const double dF = 1.0 / rf + gcf + did + dig * iK;
+                        const double F = u / rfi + gcf * u - s.ih + id - (vm * dig - ig0);
+                        const double dF = 1.0 / rfi + gcf + did + dig * iK;
                         const double step = std::clamp (F / dF, -maxStep, maxStep);
                         u -= step;
                         if (std::abs (step) < 1e-10) break;
@@ -482,8 +536,8 @@ namespace pt::engine
                         {
                             double id, did;
                             diodes.eval (u, id, did);
-                            const double F = u / rf + gcf * u - s.ih + id - ((y - u) * dig - ig0);
-                            const double dF = 1.0 / rf + gcf + did + dig;
+                            const double F = u / rfi + gcf * u - s.ih + id - ((y - u) * dig - ig0);
+                            const double dF = 1.0 / rfi + gcf + did + dig;
                             const double step = std::clamp (F / dF, -maxStep, maxStep);
                             u -= step;
                             if (std::abs (step) < 1e-10) break;
@@ -500,12 +554,13 @@ namespace pt::engine
             struct State { double vc = 0, ig = 0, x = 0, ih = 0; } st[2];
             struct OpState { double vc = 0, ig = 0, vc2 = 0, ig2 = 0, ih = 0, u = 0, y = 0; } so[2];
             double T = 0, rg = 0, cg = 0, rf = 0, cf = 0, gcf = 0, vpos = 4, vneg = 4, kInt = 0, slew = 1, rg2 = 0, cg2 = 0;
-            bool opamp = false;
+            double rfFrom[2] {};
+            bool opamp = false, rfRamp[2] {};
             DiodePair diodes;
         };
 
         /** Diodi verso massa dopo una resistenza, con condensatore in parallelo (DS-1, RAT...). */
-        class ShuntClipper : public Stage
+        class ShuntClipper : public StageT<ShuntClipper>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -552,7 +607,7 @@ namespace pt::engine
         };
 
         /** Stadio a transistor ad emettitore comune: guadagno + saturazione asimmetrica. */
-        class TransistorStage : public Stage
+        class TransistorStage : public StageT<TransistorStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -583,7 +638,7 @@ namespace pt::engine
         };
 
         /** Guadagno / volume: y = a*x (a espressione, es. taper(0,A)*2). */
-        class GainStage : public Stage
+        class GainStage : public StageT<GainStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -613,7 +668,7 @@ namespace pt::engine
         }
 
         /** Salva un punto del segnale (per miscelazioni clean/drive e rami paralleli). */
-        class TapStage : public Stage
+        class TapStage : public StageT<TapStage>
         {
         public:
             explicit TapStage (std::vector<double>* buf) : store (buf) {}
@@ -629,7 +684,7 @@ namespace pt::engine
         };
 
         /** Miscela il segnale corrente con quello salvato da 'tap': y = wet*x + dry*tap. */
-        class MixStage : public Stage
+        class MixStage : public StageT<MixStage>
         {
         public:
             explicit MixStage (std::vector<double>* buf) : store (buf) {}
@@ -653,7 +708,7 @@ namespace pt::engine
         };
 
         /** Riprende il segnale salvato da 'tap n=k' (inizio di un ramo parallelo): y = a*tap. */
-        class RecallStage : public Stage
+        class RecallStage : public StageT<RecallStage>
         {
         public:
             explicit RecallStage (std::vector<double>* buf) : store (buf) {}
@@ -679,7 +734,7 @@ namespace pt::engine
         /** Stadio a triodo 12AX7 a catodo comune (modello di Koren), tabulato.
             Argomenti: Rp (carico anodico), Rk (catodo), B (alimentazione), byp=1 catodo bypassato,
             mu ex kg1 kp kvb (parametri del modello; default 12AX7). Uscita invertente in volt. */
-        class TriodeStage : public Stage
+        class TriodeStage : public StageT<TriodeStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -756,7 +811,7 @@ namespace pt::engine
         };
 
         /** Stadio finale push-pull con "sag" dell'alimentazione a raddrizzatore. */
-        class PowerStage : public Stage
+        class PowerStage : public StageT<PowerStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -787,7 +842,7 @@ namespace pt::engine
 
 
         /** Diodi antiparalleli IN SERIE al segnale con carico RL (zona morta, es. HM-2 al germanio). */
-        class SeriesDiodeStage : public Stage
+        class SeriesDiodeStage : public StageT<SeriesDiodeStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -824,7 +879,7 @@ namespace pt::engine
         };
 
         /** Raddrizzatore a doppia semionda (coppia differenziale del Superfuzz): genera l'ottava. */
-        class RectifierStage : public Stage
+        class RectifierStage : public StageT<RectifierStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -889,7 +944,7 @@ namespace pt::engine
             Argomenti: Ri Ci (condensatore d'ingresso in serie a Ri, 0 = assente) Rf Cf Rb (resistenza verso massa del
             nodo d'ingresso: polarizzazione + base) A (guadagno ad
             anello aperto; con Ahf e fp diventa A(s) = Ahf + (A - Ahf)/(1 + s/2 pi fp)) d up dn Cd rail railn soft. */
-        class InvClipper : public Stage
+        class InvClipper : public StageT<InvClipper>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -1008,7 +1063,7 @@ namespace pt::engine
             'i' = ingresso (generatore ideale), '0' = massa; O = op-amp ideale (v+ = v-), E = generatore di tensione
             controllato (vo = k (vp - vm)), OUT.nodo = uscita moltiplicata per k. I coefficienti di H(s) si ricavano
             dal determinante della matrice MNA valutato su 8 punti del cerchio |s| = 2 pi fref (DFT inversa). */
-        class NodalStage : public Stage
+        class NodalStage : public StageT<NodalStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -1024,7 +1079,8 @@ namespace pt::engine
                 constexpr int M = 8;
                 const int N = nodes + extra;
                 std::complex<double> Dk[M], Nk[M];
-                std::vector<std::complex<double>> Am ((size_t) (N * N)), z ((size_t) N);
+                auto& Am = cAm;     // memorie dimensionate in parse(): niente allocazioni a frequenza di controllo
+                auto& z = cz;
                 for (int k = 0; k < M; ++k)
                 {
                     const std::complex<double> s = std::polar (rho, 2.0 * pi * k / M);
@@ -1084,7 +1140,8 @@ namespace pt::engine
                             z[(size_t) r] -= m * z[(size_t) c];
                         }
                     }
-                    std::vector<std::complex<double>> xs ((size_t) N);
+                    auto& xs = cxs;
+                    std::fill (xs.begin(), xs.end(), std::complex<double> (0));
                     if (det != std::complex<double> (0))
                         for (int r = N - 1; r >= 0; --r)
                         {
@@ -1134,10 +1191,17 @@ namespace pt::engine
                     for (int j = 0; j < 4; ++j) { tf.as[j] /= a0; tf.bs[j] /= a0; }
                 }
                 tf.design (fs);
+                tf.armRamp();
             }
             void reset() override { tf.reset(); }
+            void settle() override { tf.settle(); }
             void process (int ch, double* x, int n) override
             {
+                if (tf.ramp[ch])
+                {
+                    tf.rampBlock (ch, x, n, [this] (double y) { return vpos > 0 ? railClip (y, vpos, vneg) : y; });
+                    return;
+                }
                 for (int i = 0; i < n; ++i)
                 {
                     double y = tf.tick (ch, x[i]);
@@ -1183,8 +1247,11 @@ namespace pt::engine
                 nodes = (int) map.size();
                 extra += 1;      // generatore d'ingresso
                 ok = outNode >= 0 && nodes > 0 && nodes + extra <= 24;
+                const size_t N = (size_t) std::max (0, nodes + extra);
+                cAm.assign (N * N, {}); cz.assign (N, {}); cxs.assign (N, {});
             }
             AnalogTF tf;
+            std::vector<std::complex<double>> cAm, cz, cxs;
             std::vector<Elem> elems;
             bool parsed = false, ok = false;
             int nodes = 0, extra = 0, inNode = 0, outNode = -1, outArg = 0;
@@ -1256,7 +1323,7 @@ namespace pt::engine
             sens * inviluppo), atk rel (ms), half (1 = raddrizzatore a semionda), dir (+1 su, -1 giu'), bpn (BP:
             1 = picco unitario, 0 = picco Q), trill (profondita' 0..1) trate (Hz), src (memoria tap da cui
             ricavare l'inviluppo, -1 = ingresso), drive (V: saturazione OTA degli integratori, 0 = lineare). */
-        class EnvFilterStage : public Stage
+        class EnvFilterStage : public StageT<EnvFilterStage>
         {
         public:
             explicit EnvFilterStage (std::vector<double>* buf) : store (buf) {}
@@ -1333,7 +1400,7 @@ namespace pt::engine
             7 ER, 8 UH; 9/10 = wah (un solo picco 400 -> 2200 Hz), 11/12 = doppio filtro tipo Bassballs.
             Argomenti: v1 v2 [v3] pos sens (negativo = sweep invertito) atk rel dir q shift (fattore sulle frequenze)
             pan (0..1: panoramica sincronizzata con lo sweep sui due canali). */
-        class FormantStage : public Stage
+        class FormantStage : public StageT<FormantStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -1350,8 +1417,18 @@ namespace pt::engine
                 q = std::max (0.5, arg ("q", p, def, 6.0));
                 shift = std::max (0.25, arg ("shift", p, def, 1.0));
                 env.set (fs, arg ("atk", p, def, 10.0), arg ("rel", p, def, 200.0));
+                // posizione o sensibilita' mosse da un comando: per 40 ms (e finche' non la raggiunge) la posizione delle formanti
+                // la insegue con un polo di 6 ms. SENS e' bipolare: attraversando il centro la posizione di riposo passa da una
+                // vocale all'altra e, con lo sweep saturo, le formanti correrebbero per tutta la gamma in pochi ms
+                const bool moved = ! isZero (pos - lastPos) || ! isZero (sens - lastSens) || ! isZero (dir - lastDir);
+                lastPos = pos; lastSens = sens; lastDir = dir;
+                followTicks = std::max (1, (int) (0.04 * fs / 8));
+                followK = 1.0 - std::exp (-8.0 / (0.006 * fs));
+                if (moved) follow[0] = follow[1] = followTicks;
             }
-            void reset() override { env.reset(); for (auto& c : svf) for (auto& s : c) s.reset(); }
+            void reset() override { env.reset(); for (auto& c : svf) for (auto& s : c) s.reset(); settle(); }
+            // a comandi fermi (e nel comportamento a blocchi) nessun inseguimento: calcolo identico a prima
+            void settle() override { follow[0] = follow[1] = 0; }
             void process (int ch, double* x, int n) override
             {
                 static const double tab[13][6] = {
@@ -1377,6 +1454,13 @@ namespace pt::engine
                         cnt[ch] = 8;
                         double c = std::clamp (pos + sens * e, 0.0, 1.0);
                         if (dir < 0) c = 1.0 - c;
+                        if (follow[ch] > 0)
+                        {
+                            cFollow[ch] += followK * (c - cFollow[ch]);
+                            if (--follow[ch] == 0 && std::abs (c - cFollow[ch]) > 1e-3) follow[ch] = 1;   // finisce quando la raggiunge
+                            c = cFollow[ch];
+                        }
+                        else cFollow[ch] = c;
                         if (pan > 0) gpan[ch] = 1.0 - pan * (ch == 0 ? c : 1.0 - c);
                         int a = vw (v1), b = vw (v2);
                         double t = c;
@@ -1402,13 +1486,14 @@ namespace pt::engine
             EnvFollower env;
             Svf svf[2][3];
             double gk[2][3] {}, amp[2][3] {}, gpan[2] { 1, 1 }, pos = 0, sens = 0, dir = 1, q = 6, shift = 1, pan = 0;
-            int v1 = 0, v2 = 2, v3 = -1, cnt[2] {};
+            double cFollow[2] {}, followK = 0.1, lastPos = 0, lastSens = 0, lastDir = 1;
+            int v1 = 0, v2 = 2, v3 = -1, cnt[2] {}, follow[2] {}, followTicks = 1;
         };
 
         /** Generatore di sub-ottava / squadratore: trigger di Schmitt con isteresi relativa al picco, flip-flop
             divisore (div = 1 squadra, 2 ottava sotto, 4 due ottave sotto), onda quadra modulata dall'inviluppo
             (VCA a JFET/OTA) con correzione polyBLEP delle transizioni. Argomenti: div hys atk rel thr g. */
-        class SubOctaveStage : public Stage
+        class SubOctaveStage : public StageT<SubOctaveStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -1477,7 +1562,7 @@ namespace pt::engine
             chitarra per il rilevatore), trig (V), start stop (Hz), rate (ms), res (0..1), kmax, drive (V).
             In alternativa a start/stop: fc (Hz) mod (-1..1) oct (ottave): mod > 0 sale da fc/2^(oct*mod) a fc,
             mod < 0 scende da fc a fc*2^(oct*mod), mod = 0 fermo su fc (Pico Swello). */
-        class SweepVcfStage : public Stage
+        class SweepVcfStage : public StageT<SweepVcfStage>
         {
         public:
             explicit SweepVcfStage (std::vector<double>* buf) : store (buf) {}
@@ -1543,7 +1628,7 @@ namespace pt::engine
         };
 
         /** VCA d'attacco ritardato (ATTACK DELAY): a ogni nuova nota il guadagno riparte da 0 e sale in 'time' ms. */
-        class AttackVcaStage : public Stage
+        class AttackVcaStage : public StageT<AttackVcaStage>
         {
         public:
             explicit AttackVcaStage (std::vector<double>* buf) : store (buf) {}
@@ -1577,7 +1662,7 @@ namespace pt::engine
         /** Noise gate a soglia (EVH 5150, Deluxe Big Muff): thr in volt (0 = escluso), atk/rel in ms, isteresi 6 dB,
             floor = attenuazione a gate chiuso (dB); fdb (facoltativo) = guadagno a gate chiuso in dB con segno
             (Silencer: da +4 a -70 dB), se presente sostituisce floor. */
-        class GateStage : public Stage
+        class GateStage : public StageT<GateStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -1616,7 +1701,7 @@ namespace pt::engine
         /** Compressore/limitatore a controllo in avanti (attenuatore ottico LED/lampada, JFET): soglia thr (V), ratio,
             atk/rel (ms), lag (ms: inerzia termica della lampada, 0 = LED), knee (dB), dlp (Hz: passa-basso sul
             rivelatore, la lampada comprime meno gli acuti). */
-        class CompStage : public Stage
+        class CompStage : public StageT<CompStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -1630,12 +1715,23 @@ namespace pt::engine
                 lagC = lag > 0.05 ? std::exp (-1.0 / (lag * 1e-3 * fs)) : 0.0;
                 const double dlp = arg ("dlp", p, def, 0.0);
                 dlpC = dlp > 0 ? std::exp (-2.0 * pi * dlp / fs) : 0.0;
+                for (int c = 0; c < 2; ++c) ramp[c] = ! isZero (from[c][0] - thr) || ! isZero (from[c][1] - ratio) || ! isZero (from[c][2] - knee);
             }
-            void reset() override { det.reset(); for (auto& s : st) s = {}; }
+            void reset() override { det.reset(); for (auto& s : st) s = {}; settle(); }
+            void settle() override { for (int c = 0; c < 2; ++c) { from[c][0] = thr; from[c][1] = ratio; from[c][2] = knee; ramp[c] = false; } }
             void process (int ch, double* x, int n) override
+            {
+                if (ramp[ch]) { run<true> (ch, x, n); from[ch][0] = thr; from[ch][1] = ratio; from[ch][2] = knee; ramp[ch] = false; }
+                else run<false> (ch, x, n);
+            }
+        private:
+            /** Ramp: soglia (in dB), rapporto e ginocchio scorrono dai valori precedenti (comando in movimento). */
+            template <bool Ramp>
+            void run (int ch, double* x, int n)
             {
                 auto& s = st[ch];
                 const double thrDb = 20.0 * std::log10 (thr);
+                [[maybe_unused]] const double thrDb0 = 20.0 * std::log10 (from[ch][0]);
                 for (int i = 0; i < n; ++i)
                 {
                     double d = x[i];
@@ -1644,10 +1740,18 @@ namespace pt::engine
                     if (s.cnt-- <= 0)
                     {
                         s.cnt = 4;
-                        const double over = 20.0 * std::log10 (std::max (e, 1e-9)) - thrDb;
+                        double tDb = thrDb, rt = ratio, kn = knee;
+                        if constexpr (Ramp)
+                        {
+                            const double u = (double) (i + 1) / (double) n;
+                            tDb = thrDb0 + u * (thrDb - thrDb0);
+                            rt = from[ch][1] + u * (ratio - from[ch][1]);
+                            kn = from[ch][2] + u * (knee - from[ch][2]);
+                        }
+                        const double over = 20.0 * std::log10 (std::max (e, 1e-9)) - tDb;
                         double gr = 0;
-                        if (over > knee * 0.5) gr = over * (1.0 - 1.0 / ratio);
-                        else if (over > -knee * 0.5) { const double t = over + knee * 0.5; gr = (1.0 - 1.0 / ratio) * t * t / (2.0 * knee); }
+                        if (over > kn * 0.5) gr = over * (1.0 - 1.0 / rt);
+                        else if (over > -kn * 0.5) { const double t = over + kn * 0.5; gr = (1.0 - 1.0 / rt) * t * t / (2.0 * kn); }
                         s.target = std::pow (10.0, -gr / 20.0);
                     }
                     s.g = s.target + lagC * (s.g - s.target);
@@ -1657,11 +1761,12 @@ namespace pt::engine
         private:
             struct State { double lp = 0, g = 1, target = 1; int cnt = 0; } st[2];
             EnvFollower det;
-            double thr = 0.1, ratio = 4, knee = 6, lagC = 0, dlpC = 0;
+            double thr = 0.1, ratio = 4, knee = 6, lagC = 0, dlpC = 0, from[2][3] {};
+            bool ramp[2] {};
         };
 
         /** Modulatore ad anello: y = x * portante (seno o triangolo, wave=0/1) di frequenza f (Hz). */
-        class RingStage : public Stage
+        class RingStage : public StageT<RingStage>
         {
         public:
             void update (double fsNew, const float* p, const ModelDef& def) override
@@ -1689,7 +1794,7 @@ namespace pt::engine
 
         /** Eliminatore di ronzio sincrono: stima la forma d'onda periodica alla frequenza di rete (media esponenziale
             periodo per periodo, costante tau in s) e la sottrae; mode 0 = solo armoniche dispari, 1 = tutte. */
-        class HumStage : public Stage
+        class HumStage : public StageT<HumStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -1733,7 +1838,7 @@ namespace pt::engine
             sovrapposti con finestra di Hann (posizioni pseudo-casuali), con dissolvenza d'ingresso fin ms.
             L'uscita contiene solo la parte congelata (il diretto si somma con tap/mix). auto=1: a ogni nuova nota
             (soglia trig in V) la cattura riparte (modo AUTO del Superego/Deep Freeze). */
-        class FreezeStage : public Stage
+        class FreezeStage : public StageT<FreezeStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -1806,7 +1911,7 @@ namespace pt::engine
             morbida (softplus con ginocchio s) e saturazione morbida verso 1 (esponente k). Uscita = variazione della
             tensione di collettore (vsw = escursione totale in volt), invertente salvo inv=0. Con q basso i segnali
             piccoli non passano (fuzz 'strozzato'/gated, sputter) e la forma d'onda si raddrizza (pseudo-ottava). */
-        class BiasStage : public Stage
+        class BiasStage : public StageT<BiasStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -1847,7 +1952,7 @@ namespace pt::engine
         /** VCA comandato dall'inviluppo (DYNAMICS del Graphic Fuzz, espansore dello Steel Leather): guadagno
             gv = clamp((e/ref)^pw, gmin, gmax), g = 1 - depth + depth*gv; e = inviluppo (attacco atk, rilascio rel in ms)
             della memoria tap 'src' (-1 = ingresso dello stadio), raddrizzato a onda intera. */
-        class EnvVcaStage : public Stage
+        class EnvVcaStage : public StageT<EnvVcaStage>
         {
         public:
             explicit EnvVcaStage (std::vector<double>* buf) : store (buf) {}
@@ -1892,7 +1997,7 @@ namespace pt::engine
             frazionari) sulla scala +-fs volt con un livello a zero (a pochi bit i segnali deboli spariscono: 'effetto
             gate' dei livelli fissi del Mainframe); env=1: la scala segue l'inviluppo del segnale (1.2 x picco, attacco 1 ms,
             rilascio 60 ms), cioe' la stessa risoluzione relativa per segnali forti e deboli. */
-        class CrushStage : public Stage
+        class CrushStage : public StageT<CrushStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -1942,7 +2047,7 @@ namespace pt::engine
             percorre in scala logaritmica la finestra [fmin..fmax] larga 'span' (0..1 della gamma) e posizionata da
             'center' (0 = in basso, 1 = in alto); LFO a 'rate' Hz di forma shape (0 triangolo, 1 dente di sega salente,
             2 discendente, 3 seno); res 0..1 (kmax = retroazione massima, 4 = auto-oscillazione), drive (V). */
-        class LfoVcfStage : public Stage
+        class LfoVcfStage : public StageT<LfoVcfStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -2001,7 +2106,7 @@ namespace pt::engine
 
         /** Guadagno per canale (pedali stereo a due canali indipendenti, instradamento A/B): canale sinistro x l,
             destro x r, con rampa lineare a ogni blocco. */
-        class ChannelGainStage : public Stage
+        class ChannelGainStage : public StageT<ChannelGainStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -2027,7 +2132,7 @@ namespace pt::engine
             riempita da CircuitEffect) e ignora il segnale corrente. mode 0 = volume mono (ingresso sinistro), 1 = blend
             (punta = solo ingresso sinistro, tallone = solo destro), 2 = pan (punta = solo uscita sinistra, tallone = solo
             destra), 3 = volume stereo; pos 0..1 (tallone..punta), g = volume; leggi a potenza costante. */
-        class PanStage : public Stage
+        class PanStage : public StageT<PanStage>
         {
         public:
             explicit PanStage (std::vector<double>* buf) : store (buf) {}
@@ -2080,7 +2185,7 @@ namespace pt::engine
             di condensatori e induttanze (= trasformata bilineare): a frequenza di controllo si fattorizza la matrice e si
             ricava la forma di stato discreta h' = M h + m x, y = c.h + d x sulle memorie dei soli elementi reattivi, quindi
             per campione il costo e' (numero di condensatori)^2. Nessun polinomio ne' radice: esatta anche con molti poli. */
-        class MnaStage : public Stage
+        class MnaStage : public StageT<MnaStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -2269,7 +2374,7 @@ namespace pt::engine
             ms (+- mod ms con LFO triangolare a rate Hz), retroazione fb con saturazione morbida a sat volt, passa-basso
             del secondo ordine a bw Hz (filtri anti-alias/ricostruzione) nel ramo ritardato; max = ritardo massimo (ms) per la
             memoria. Uscita = solo segnale ritardato (il diretto si miscela con tap/mix). */
-        class BbdStage : public Stage
+        class BbdStage : public StageT<BbdStage>
         {
         public:
             void update (double f, const float* p, const ModelDef& def) override
@@ -2475,44 +2580,60 @@ namespace pt::engine
     //==============================================================================
     CircuitEffect::CircuitEffect (const ModelDef& d) : Effect (d)
     {
-        static_assert (maxControls >= 8);
+        static_assert (maxControls >= 8 && maxControls <= 32);
         // 2 x maxTaps memorie 'tap' + 2 memorie riservate agli ingressi dei due canali (stadio 'pan')
         tapStore = std::make_unique<std::vector<double>[]> (2 * maxTaps + 2);
         auto* taps = tapStore.get();
 
-        for (const auto& stmtRaw : split (d.config != nullptr ? d.config : "", ';'))
+        // due catene identiche dalla stessa netlist: la principale e la riserva delle dissolvenze (stesse memorie 'tap':
+        // le due catene si eseguono una dopo l'altra su ogni sotto-blocco)
+        auto build = [&] (std::vector<std::unique_ptr<Stage>>& chain, std::string& err)
         {
-            const auto stmt = trim (stmtRaw);
-            if (stmt.empty()) continue;
-            std::istringstream is (stmt);
-            std::string type;
-            is >> type;
-            auto st = makeStage (type, taps, error);
-            if (st == nullptr) continue;
-            std::string tok, rest;
-            std::getline (is, rest);
-            // argomenti key=value separati da spazi (le espressioni non contengono spazi)
-            std::istringstream as (rest);
-            while (as >> tok)
+            for (const auto& stmtRaw : split (d.config != nullptr ? d.config : "", ';'))
             {
-                const auto eq = tok.find ('=');
-                if (eq == std::string::npos) { error += "argomento senza '=': " + tok + "; "; continue; }
-                const auto key = tok.substr (0, eq), value = tok.substr (eq + 1);
-                if (key == "d")
+                const auto stmt = trim (stmtRaw);
+                if (stmt.empty()) continue;
+                std::istringstream is (stmt);
+                std::string type;
+                is >> type;
+                auto st = makeStage (type, taps, err);
+                if (st == nullptr) continue;
+                std::string tok, rest;
+                std::getline (is, rest);
+                // argomenti key=value separati da spazi (le espressioni non contengono spazi)
+                std::istringstream as (rest);
+                while (as >> tok)
                 {
-                    if (auto* fb = dynamic_cast<FeedbackClipper*> (st.get())) fb->diodeName = value;
-                    if (auto* sh = dynamic_cast<ShuntClipper*> (st.get())) sh->diodeName = value;
-                    if (auto* se = dynamic_cast<SeriesDiodeStage*> (st.get())) se->diodeName = value;
-                    if (auto* iv = dynamic_cast<InvClipper*> (st.get())) iv->diodeName = value;
-                    continue;
+                    const auto eq = tok.find ('=');
+                    if (eq == std::string::npos) { err += "argomento senza '=': " + tok + "; "; continue; }
+                    const auto key = tok.substr (0, eq), value = tok.substr (eq + 1);
+                    if (key == "d")
+                    {
+                        if (auto* fb = dynamic_cast<FeedbackClipper*> (st.get())) fb->diodeName = value;
+                        if (auto* sh = dynamic_cast<ShuntClipper*> (st.get())) sh->diodeName = value;
+                        if (auto* se = dynamic_cast<SeriesDiodeStage*> (st.get())) se->diodeName = value;
+                        if (auto* iv = dynamic_cast<InvClipper*> (st.get())) iv->diodeName = value;
+                        continue;
+                    }
+                    st->args.emplace_back (key, Expr::parse (value, err));
                 }
-                st->args.emplace_back (key, Expr::parse (value, error));
+                for (const auto& a : st->args) a.second.addControls (st->controls);
+                if (dynamic_cast<PanStage*> (st.get()) != nullptr) needInputs = true;
+                chain.push_back (std::move (st));
             }
-            if (dynamic_cast<PanStage*> (st.get()) != nullptr) needInputs = true;
-            stages.push_back (std::move (st));
-        }
+        };
         for (int i = 0; i < maxControls; ++i)
+        {
             smoothed[i] = params[i].load();
+            glide1[i] = glide2[i] = smoothed[i];
+            if (i < d.numControls && d.controls[i].steps > 1) steppedMask |= 1u << i;
+        }
+        build (stages, error);
+        if (steppedMask != 0)       // la riserva serve solo ai modelli con selettori o levette
+        {
+            std::string ignored;
+            build (spare, ignored);
+        }
     }
 
     void CircuitEffect::prepare (double sampleRate, int maxBlock)
@@ -2523,15 +2644,22 @@ namespace pt::engine
         os->initProcessing ((size_t) maxBlock);
         osr = sr * 4.0;
         work.assign ((size_t) maxBlock * 4 + 16, 0.0);
+        workSpare.assign ((size_t) maxBlock * 4 + 16, 0.0);
         for (size_t c = 0; c < 2 * (size_t) maxTaps + 2; ++c) tapStore[c].reserve ((size_t) maxBlock * 4 + 16);
+        fadeLen = std::max (1, (int) std::lround (kFadeMs * 1e-3 * osr));
+        fading = false;
         first = true;
         updateStages();
+        for (int i = 0; i < maxControls; ++i) glide1[i] = glide2[i] = smoothed[i];
+        for (auto& s : spare) { s->update (osr, smoothed, def); s->settle(); }     // memorie della riserva gia' dimensionate (copie senza allocazioni)
         reset();
     }
 
     void CircuitEffect::reset()
     {
         for (auto& s : stages) s->reset();
+        for (auto& s : spare) s->reset();
+        fading = false;
         if (os) os->reset();
     }
 
@@ -2543,12 +2671,29 @@ namespace pt::engine
             smoothed[i] = first ? target : smoothed[i] + 0.35f * (target - smoothed[i]);
         }
         first = false;
-        for (auto& s : stages) s->update (osr, smoothed, def);
+        for (auto& s : stages) { s->update (osr, smoothed, def); s->settle(); }
     }
 
-    void CircuitEffect::process (float* const* ch, int numCh, int n)
+    void CircuitEffect::updateMasked (uint32_t mask, bool ramp)
     {
-        if (os == nullptr || n <= 0) return;
+        // solo gli stadi che dipendono dai comandi cambiati: update() e' una funzione dei soli argomenti, saltarla per
+        // gli altri equivale a ricalcolare gli stessi coefficienti
+        for (auto& s : stages)
+            if ((s->controls & mask) != 0)
+            {
+                s->update (osr, smoothed, def);
+                if (! ramp) s->settle();
+            }
+    }
+
+    void CircuitEffect::runStages (std::vector<std::unique_ptr<Stage>>& chain, int c, double* x, int n)
+    {
+        for (auto& s : chain) s->process (c, x, n);
+    }
+
+    /** Fino alla 1.2.6 (e per i SubCircuit): coefficienti ricalcolati una volta per blocco, lisciatura 0.35 per blocco. */
+    void CircuitEffect::processLegacy (float* const* ch, int numCh, int n)
+    {
         bool changed = false;
         for (int i = 0; i < def.numControls; ++i)
             if (std::abs (params[i].load (std::memory_order_relaxed) - smoothed[i]) > 1e-5f) changed = true;
@@ -2571,6 +2716,150 @@ namespace pt::engine
             for (int i = 0; i < N; ++i) work[(size_t) i] = d[i];
             for (auto& s : stages) s->process (c, work.data(), N);
             for (int i = 0; i < N; ++i) d[i] = (float) work[(size_t) i];
+        }
+        os->processSamplesDown (block);
+    }
+
+    void CircuitEffect::process (float* const* ch, int numCh, int n)
+    {
+        if (os == nullptr || n <= 0) return;
+        if (blockSmoothing) { processLegacy (ch, numCh, n); return; }
+
+        const int nc = std::clamp (def.numControls, 0, maxControls);
+        float target[maxControls] {};
+        bool stepChange = false, glide = false;
+        for (int i = 0; i < nc; ++i)
+        {
+            target[i] = params[i].load (std::memory_order_relaxed);
+            if ((steppedMask >> i) & 1u) stepChange = stepChange || ! isZero (target[i] - smoothed[i]);
+            else glide = glide || ! isZero (target[i] - smoothed[i]) || ! isZero (glide1[i] - target[i]) || ! isZero (glide2[i] - target[i]);
+        }
+
+        juce::dsp::AudioBlock<float> block (ch, (size_t) numCh, (size_t) n);
+        auto up = os->processSamplesUp (block);
+        const int N = (int) up.getNumSamples();
+
+        if (! stepChange && ! glide && ! fading)
+        {
+            // comandi fermi: lo stesso percorso di sempre (uscita identica bit per bit alle versioni precedenti)
+            if (needInputs)      // ingressi di entrambi i canali per gli stadi che li incrociano (pan / blend)
+                for (int c = 0; c < 2; ++c)
+                {
+                    const float* s = up.getChannelPointer ((size_t) std::min (c, numCh - 1));
+                    auto& b = tapStore[2 * (size_t) maxTaps + (size_t) c];
+                    b.resize ((size_t) N);
+                    for (int i = 0; i < N; ++i) b[(size_t) i] = s[i];
+                }
+            for (int c = 0; c < numCh; ++c)
+            {
+                float* d = up.getChannelPointer ((size_t) c);
+                for (int i = 0; i < N; ++i) work[(size_t) i] = d[i];
+                for (auto& s : stages) s->process (c, work.data(), N);
+                for (int i = 0; i < N; ++i) d[i] = (float) work[(size_t) i];
+            }
+            os->processSamplesDown (block);
+            return;
+        }
+
+        // selettori e levette: nuovo valore subito, con dissolvenza dalla catena di riserva (copia della principale con la
+        // vecchia topologia) a quella principale; un altro scatto durante la dissolvenza aspetta la fine di questa
+        if (stepChange && ! fading)
+        {
+            for (size_t k = 0; k < stages.size() && k < spare.size(); ++k) spare[k]->copyFrom (*stages[k]);
+            uint32_t m = 0;
+            for (int i = 0; i < nc; ++i)
+                if (((steppedMask >> i) & 1u) && ! isZero (target[i] - smoothed[i]))
+                {
+                    smoothed[i] = target[i];
+                    glide1[i] = glide2[i] = target[i];
+                    m |= 1u << i;
+                }
+            updateMasked (m, false);       // topologia nuova di colpo (la dissolvenza copre il passaggio)
+            fading = true;
+            fadePos = 0;
+        }
+
+        // pomelli: due poli in cascata (pendenza continua), stadi ricalcolati a sotto-blocchi di kSub campioni. Con piu' canali
+        // la stessa sequenza si ripete per ogni canale (gli stadi elaborano un canale alla volta, come a comandi fermi)
+        const int S = std::max (1, (int) std::lround (osr / sr) * kSub);
+        const double kT = 1.0 / (kTauMs * 1e-3 * osr);
+        const double aFull = 1.0 - std::exp (-kT * S);
+        double g1s[maxControls], g2s[maxControls], g1e[maxControls], g2e[maxControls];
+        float sms[maxControls], sme[maxControls];
+        std::copy (glide1, glide1 + maxControls, g1s); std::copy (glide2, glide2 + maxControls, g2s); std::copy (smoothed, smoothed + maxControls, sms);
+        const int fadePos0 = fadePos;
+        const bool fading0 = fading;
+        int fadePosE = fadePos;
+        bool fadingE = fading;
+        uint32_t blockMask = 0;
+        for (int c = 0; c < numCh; ++c)
+        {
+            if (c > 0)
+            {
+                std::copy (g1s, g1s + maxControls, glide1); std::copy (g2s, g2s + maxControls, glide2); std::copy (sms, sms + maxControls, smoothed);
+                fadePos = fadePos0;
+                fading = fading0;
+                // coefficienti come a inizio blocco; le rampe del canale c partono dai suoi coefficienti di fine blocco
+                // precedente, quelle del canale 0 tornano spente con l'ultimo ricalcolo della stessa sequenza
+                updateMasked (blockMask, true);
+            }
+            float* d = up.getChannelPointer ((size_t) c);
+            for (int off = 0; off < N; off += S)
+            {
+                const int len = std::min (S, N - off);
+                const double a = len == S ? aFull : 1.0 - std::exp (-kT * len);
+                uint32_t m = 0;
+                for (int i = 0; i < nc; ++i)
+                {
+                    const double t = target[i];
+                    if (((steppedMask >> i) & 1u) || (isZero (glide1[i] - t) && isZero (glide2[i] - t))) continue;
+                    glide1[i] += a * (t - glide1[i]);
+                    glide2[i] += a * (glide1[i] - glide2[i]);
+                    if (std::abs (t - glide1[i]) < 1e-5 && std::abs (t - glide2[i]) < 1e-5) glide1[i] = glide2[i] = t;
+                    const float v = (float) glide2[i];
+                    if (! isZero (v - smoothed[i])) { smoothed[i] = v; m |= 1u << i; }
+                }
+                if (m != 0) { updateMasked (m, true); blockMask |= m; }
+                if (needInputs)
+                    for (int k = 0; k < 2; ++k)
+                    {
+                        const float* s = up.getChannelPointer ((size_t) std::min (k, numCh - 1)) + off;
+                        auto& b = tapStore[2 * (size_t) maxTaps + (size_t) k];
+                        b.resize ((size_t) len);
+                        for (int i = 0; i < len; ++i) b[(size_t) i] = s[i];
+                    }
+                double* w = work.data();
+                for (int i = 0; i < len; ++i) w[i] = d[off + i];
+                if (fading)
+                {
+                    double* ws = workSpare.data();
+                    for (int i = 0; i < len; ++i) ws[i] = w[i];
+                    runStages (spare, c, ws, len);
+                    runStages (stages, c, w, len);
+                    for (int i = 0; i < len; ++i)
+                    {
+                        const int fp = fadePos + i;
+                        const double g = fp >= fadeLen ? 1.0 : 0.5 - 0.5 * std::cos (pi * (fp + 0.5) / fadeLen);
+                        w[i] = ws[i] + g * (w[i] - ws[i]);
+                    }
+                    fadePos += len;
+                    if (fadePos >= fadeLen) fading = false;
+                }
+                else runStages (stages, c, w, len);
+                for (int i = 0; i < len; ++i) d[off + i] = (float) w[i];
+            }
+            if (c == 0)
+            {
+                std::copy (glide1, glide1 + maxControls, g1e); std::copy (glide2, glide2 + maxControls, g2e); std::copy (smoothed, smoothed + maxControls, sme);
+                fadePosE = fadePos;
+                fadingE = fading;
+            }
+        }
+        if (numCh > 1)
+        {
+            std::copy (g1e, g1e + maxControls, glide1); std::copy (g2e, g2e + maxControls, glide2); std::copy (sme, sme + maxControls, smoothed);
+            fadePos = fadePosE;
+            fading = fadingE;
         }
         os->processSamplesDown (block);
     }

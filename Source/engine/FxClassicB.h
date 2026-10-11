@@ -405,6 +405,7 @@ namespace pt::engine
                 }
                 def.numControls = k;
                 fx = std::make_unique<CircuitEffect> (def);
+                fx->setBlockSmoothing (true);       // i comandi arrivano gia' lisciati dall'effetto che lo contiene
             }
             void prepare (double sr, int maxBlock) { if (fx) fx->prepare (sr, std::max (16, maxBlock)); }
             void reset() { if (fx) fx->reset(); }
