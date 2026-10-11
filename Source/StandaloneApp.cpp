@@ -2,7 +2,7 @@
     Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
 
     Applicazione Standalone personalizzata:
-      * finestra con titolo "Pedal Trinity 1.2.6 beta";
+      * finestra con titolo "Pedal Trinity 1.2.7 beta";
       * su Windows, al primo avvio, seleziona i driver ASIO se presenti;
       * ingresso audio attivo di default (e' un effetto per chitarra);
       * riga di comando:
@@ -1249,24 +1249,30 @@ namespace
         return x;
     }
 
-    /** Hash FNV-1a dell'uscita (byte per byte) con i comandi di default, poi spostati di +0.37 a meta' segnale. */
-    uint64_t rawHashS1 (const pt::engine::ModelDef& d, const Buf& x)
+    /** Hash FNV-1a dell'uscita (byte per byte) con i comandi di default, poi spostati di +0.37 a meta' segnale.
+        'fixedHalf' (facoltativo): hash della sola prima meta', a comandi fermi. */
+    uint64_t rawHashS1 (const pt::engine::ModelDef& d, const Buf& x, uint64_t* fixedHalf = nullptr)
     {
         auto fx = makeS1 (d, {});
         const size_t half = x.size() / 2;
         Buf y1 (x.begin(), x.begin() + (long) half), y2 (x.begin() + (long) half, x.end());
         processMono (*fx, y1, 512);
+        auto fnv = [] (const Buf& y)
+        {
+            uint64_t h = 1469598103934665603ull;
+            for (float v : y)
+            {
+                uint32_t u;
+                std::memcpy (&u, &v, 4);
+                for (int k = 0; k < 4; ++k) { h ^= (u >> (8 * k)) & 255u; h *= 1099511628211ull; }
+            }
+            return h;
+        };
+        if (fixedHalf != nullptr) *fixedHalf = fnv (y1);
         for (int i = 0; i < d.numControls; ++i) fx->params[i].store (std::fmod (fx->params[i].load() + 0.37f, 1.0f));
         processMono (*fx, y2, 512);
         y1.insert (y1.end(), y2.begin(), y2.end());
-        uint64_t h = 1469598103934665603ull;
-        for (float v : y1)
-        {
-            uint32_t u;
-            std::memcpy (&u, &v, 4);
-            for (int k = 0; k < 4; ++k) { h ^= (u >> (8 * k)) & 255u; h *= 1099511628211ull; }
-        }
-        return h;
+        return fnv (y1);
     }
 
     juce::String dbList (const std::vector<double>& v, int decimals = 2)
@@ -1333,11 +1339,15 @@ namespace
         const double sr = 48000.0;
 
         // 1. pedali esistenti invariati bit per bit: riff 3 s + accordo 2 s + seno a 440 Hz crescente 1 s, comandi di
-        //    default poi spostati di +0.37 a meta' (hash FNV-1a misurati prima della tappa 3 sul banco s1)
+        //    default poi spostati di +0.37 a meta'. 'fixed' = prima meta' (comandi fermi): hash misurati prima della tappa 3 sul
+        //    banco s1, mai cambiati; 'hash' = segnale intero: dalla 1.2.7 i comandi del motore Circuit si muovono senza scatti
+        //    (lisciatura per sotto-blocchi, dissolvenze dei selettori), quindi la parte dopo lo spostamento ha impronte nuove
+        //    (DS-1, SD-1, BD-2, MT-2; GCB95 e 535Q non sono Circuit e restano quelle di prima)
         {
-            struct Ref { const char* id; uint64_t hash; };
-            static const Ref refs[] = { { "ds1", 0x4dafee9176bb36b4ull }, { "sd1", 0xf1764965540f55daull }, { "bd2", 0x6b73a36faee6cbf3ull },
-                                        { "mt2", 0xaf69af8f033d93fbull }, { "gcb95", 0xb596b28c390cf713ull }, { "cb535q", 0xa98b47398be0c7cbull } };
+            struct Ref { const char* id; uint64_t fixed, hash; };
+            static const Ref refs[] = { { "ds1", 0x7edafc3b1e613077ull, 0xae0a3f3ff8388e33ull }, { "sd1", 0x4c903f272789401dull, 0x83cedf5bfcc97beeull },
+                                        { "bd2", 0x2346b27b6ea0948full, 0xdd87015347914ccfull }, { "mt2", 0xc92c8b58fe1dc55full, 0xa4cfa044ec26ddb8ull },
+                                        { "gcb95", 0x3d724d79eefef810ull, 0xb596b28c390cf713ull }, { "cb535q", 0x33a59d947203c0a2ull, 0xa98b47398be0c7cbull } };
             const Buf x = rawSignalS1 (sr);
             bool ok = true;
             juce::String detail;
@@ -1345,17 +1355,19 @@ namespace
             {
                 const auto* d = findModel (r.id);
                 if (d == nullptr) { ok = false; detail << r.id << " assente "; continue; }
-                const uint64_t h = rawHashS1 (*d, x);
-                const bool same = h == r.hash;
+                uint64_t f = 0;
+                const uint64_t h = rawHashS1 (*d, x, &f);
+                const bool same = h == r.hash && f == r.fixed;
                 ok = ok && same;
-                if (! same) detail << r.id << " DIVERSO (" << juce::String::toHexString ((juce::int64) h) << ") ";
+                if (f != r.fixed) detail << r.id << " DIVERSO a comandi fermi (" << juce::String::toHexString ((juce::int64) f) << ") ";
+                if (h != r.hash) detail << r.id << " DIVERSO (" << juce::String::toHexString ((juce::int64) h) << ") ";
             }
             if (! kBitExactRefs)
                 report ("Tappa 3A: DS-1, SD-1, BD-2, MT-2, GCB95, 535Q invariati bit per bit", true,
                         "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore");
             else
-            report ("Tappa 3A: DS-1, SD-1, BD-2, MT-2, GCB95, 535Q invariati bit per bit (riff, accordo, seno; comandi mossi)", ok,
-                    ok ? juce::String ("6/6 hash identici") : detail.trim());
+            report ("Tappa 3A: DS-1, SD-1, BD-2, MT-2, GCB95, 535Q invariati bit per bit (riff, accordo, seno; comandi fermi, poi mossi)", ok,
+                    ok ? juce::String ("6/6 hash identici (comandi fermi e mossi)") : detail.trim());
         }
 
         // 2. blocchi nuovi del motore (netlist di prova)
@@ -2563,20 +2575,21 @@ namespace
             return lab.add (target, [s, &riff] (const ModelDef& d) { return stIdx (d, s, riff); });
         };
 
-        // 1. pedali della tappa 3A invariati bit per bit (stessa prova della 3A; hash del banco s1b prima della tappa 3B, uguali al
-        //    JSON 3A: fbinv, envf, freeze, sweep3, formant)
+        // 1. pedali della tappa 3A invariati bit per bit (stessa prova della 3A; a comandi fermi hash del banco s1b prima della
+        //    tappa 3B, uguali al JSON 3A: fbinv, envf, freeze, sweep3, formant; con i comandi mossi hash della 1.2.7, vedi la 3A)
         {
-            struct Ref { const char* id; uint64_t hash; };
-            static const Ref refs[] = { { "bmtriangle", 0x8f5f636b2df4fd84ull }, { "ehqtronp", 0x9cae23213cded777ull },
-                                        { "ehfreeze", 0xec49f9784dab7eb4ull }, { "ehmicrosyn", 0x6bbe9a0a03aa82dcull },
-                                        { "ehstm", 0x5d23c09cb6316021ull } };
+            struct Ref { const char* id; uint64_t fixed, hash; };
+            static const Ref refs[] = { { "bmtriangle", 0xe24e02c0d41b273cull, 0x8e7cd77dfbd686abull }, { "ehqtronp", 0x19fd6c43f0f99724ull, 0x019d235d72e9ce37ull },
+                                        { "ehfreeze", 0xe730543b76a7212aull, 0x6309a599c75964a2ull }, { "ehmicrosyn", 0xfccd6258c5d77740ull, 0x2a8598688845bcd4ull },
+                                        { "ehstm", 0x5f40190409ef17c7ull, 0xc7cb59c7ddf3d468ull } };
             static const Buf raw = rawSignalS1 (48000.0);
             std::vector<int> h;
             for (const auto& r : refs)
                 h.push_back (lab.add (r.id, [] (const ModelDef& d)
                 {
-                    const uint64_t x = rawHashS1 (d, raw);
-                    return std::vector<double> { (double) (x >> 32), (double) (x & 0xffffffffull) };
+                    uint64_t f = 0;
+                    const uint64_t x = rawHashS1 (d, raw, &f);
+                    return std::vector<double> { (double) (x >> 32), (double) (x & 0xffffffffull), (double) (f >> 32), (double) (f & 0xffffffffull) };
                 }));
             lab.check (h, "Tappa 3B: Big Muff Triangle, Q-Tron+, Freeze, Micro Synth, Stereo Talking Machine (3A) invariati bit per bit",
                        [&lab, h] {
@@ -2585,8 +2598,10 @@ namespace
                            for (size_t k = 0; k < h.size(); ++k)
                            {
                                const uint64_t x = ((uint64_t) lab.v (h[k], 0) << 32) | (uint64_t) lab.v (h[k], 1);
-                               if (x == refs[k].hash) ++same;
-                               else bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) x) << ") ";
+                               const uint64_t f = ((uint64_t) lab.v (h[k], 2) << 32) | (uint64_t) lab.v (h[k], 3);
+                               if (x == refs[k].hash && f == refs[k].fixed) ++same;
+                               if (f != refs[k].fixed) bad << refs[k].id << " DIVERSO a comandi fermi (" << juce::String::toHexString ((juce::int64) f) << ") ";
+                               if (x != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) x) << ") ";
                            }
                            if (! kBitExactRefs)
                                return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
@@ -4010,19 +4025,23 @@ namespace
         };
 
         // 1. pedali esistenti invariati bit per bit dopo le modifiche della tappa 4 a Circuit.cpp (fbclip, triodo, stadi nuovi):
-        //    banco s1 'raw', impronte misurate con GCC su Linux x86-64 (il banco ha confrontato tutti i 190 modelli Circuit)
+        //    banco s1 'raw', impronte misurate con GCC su Linux x86-64 (il banco ha confrontato tutti i 190 modelli Circuit).
+        //    'fixed' = prima meta' a comandi fermi (invariata dalla tappa 4); 'hash' = segnale intero con i comandi mossi, nuovo
+        //    dalla 1.2.7 (comandi senza scatti; il banco della 1.2.7 ha confrontato a comandi fermi tutti i 672 modelli)
         {
-            struct Ref { const char* id; uint64_t hash; };
-            static const Ref refs[] = { { "ed9", 0x9d5088d7529ea894ull }, { "hm2", 0xfacabf6572d23079ull }, { "ds2", 0x6f12f6569ba10332ull },
-                                        { "bmramshead", 0x9a2c98b5b36082aeull }, { "metalmuff", 0x257c6c449ecc1776ull },
-                                        { "ehbritvalve", 0xd4fbd62a4258e874ull }, { "ehtortion", 0xaf482d1a2f64f817ull } };
+            struct Ref { const char* id; uint64_t fixed, hash; };
+            static const Ref refs[] = { { "ed9", 0x5a9b673524c55b7eull, 0xa0db19c13960768dull }, { "hm2", 0xb9650518c5ae4865ull, 0x7ca0e7af09f6df15ull },
+                                        { "ds2", 0x6a0c81c9e25a17a3ull, 0x9d703e6507803b33ull }, { "bmramshead", 0x819df799488b6b5full, 0xa3b0c7312a14f40dull },
+                                        { "metalmuff", 0xde23ddf28496fd25ull, 0x63834e3f03f90469ull },
+                                        { "ehbritvalve", 0xc553564d983ef672ull, 0xaa9d2210cf1d5947ull }, { "ehtortion", 0x1feba8352382348aull, 0x9d1cd18ba70b16acull } };
             static const Buf raw = rawSignalS1 (48000.0);
             std::vector<int> h;
             for (const auto& r : refs)
                 h.push_back (lab.add (r.id, [] (const ModelDef& d)
                 {
-                    const uint64_t v = rawHashS1 (d, raw);
-                    return std::vector<double> { (double) (uint32_t) (v >> 32), (double) (uint32_t) v };
+                    uint64_t f = 0;
+                    const uint64_t v = rawHashS1 (d, raw, &f);
+                    return std::vector<double> { (double) (uint32_t) (v >> 32), (double) (uint32_t) v, (double) (uint32_t) (f >> 32), (double) (uint32_t) f };
                 }));
             for (int k : h) lab.first (k);
             lab.check (h, "Tappa 4: ED-9, HM-2, DS-2, Ram's Head, Metal Muff, British Valve, Tortion invariati bit per bit (Circuit.cpp)", [&lab, h] {
@@ -4031,9 +4050,11 @@ namespace
                 for (size_t k = 0; k < h.size(); ++k)
                 {
                     const uint64_t v = ((uint64_t) lab.v (h[k], 0) << 32) | (uint64_t) lab.v (h[k], 1);
+                    const uint64_t f = ((uint64_t) lab.v (h[k], 2) << 32) | (uint64_t) lab.v (h[k], 3);
+                    if (f != refs[k].fixed) bad << refs[k].id << " DIVERSO a comandi fermi (" << juce::String::toHexString ((juce::int64) f) << ") ";
                     if (v != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) v) << ") ";
                 }
-                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici" : bad.trim() };
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici (comandi fermi e mossi)" : bad.trim() };
             });
         }
 
@@ -4321,10 +4342,29 @@ namespace
             });
         }
 
-        // click: il motore Circuit aggiorna i comandi a blocchi (lisciatura 0.35 per blocco di 512 campioni, filtri ricalcolati a ogni
-        // blocco, selettori a scatto); i 189 pedali Circuit gia' a catalogo stanno sotto 47x (mediana 2.7x), salvo 18 commutazioni
-        // brusche oltre 100x (fino a 2271x): soglia 100x invece dei 10x dei modelli digitali
-        addClickAndDeterminism (lab, kStage4Drive, numDrive, "Tappa 4 drive", 100.0, false);
+        // click: fino alla 1.2.6 il motore Circuit aggiornava i comandi a blocchi (lisciatura 0.35 per blocco di 512 campioni,
+        // selettori a scatto: 74 pedali Circuit oltre 10x, fino a 2271x, e qui una soglia di 100x). Dalla 1.2.7 i pomelli sono
+        // lisciati da due poli e ricalcolati a sotto-blocchi di 16 campioni con i coefficienti in rampa, i selettori passano con
+        // una dissolvenza di 15 ms: soglia normale di 10x (peggiore dei drive della tappa 4: 1.4x)
+        addClickAndDeterminism (lab, kStage4Drive, numDrive, "Tappa 4 drive", 10.0, false);
+
+        // tutti i modelli del motore Circuit (famiglie Circuit e AmpSim con netlist, 249): click <= 10x e determinismo. Il piu'
+        // difficile e' SENS dello Stereo Talking Machine (bipolare: attraversando il centro la posizione di riposo del filtro
+        // passa da una vocale all'altra e con lo sweep saturo le formanti correvano per tutta la gamma in pochi ms, 287x): con un
+        // comando in movimento la posizione delle formanti insegue il valore con un polo di 6 ms (8x)
+        {
+            static const std::vector<const char*> circuitIds = [] {
+                std::vector<const char*> v;
+                for (int i = 0; i < numModels(); ++i)
+                {
+                    const auto& d = model (i);
+                    if ((d.family == Family::Circuit || d.family == Family::AmpSim) && ! (d.config != nullptr && std::strncmp (d.config, "type=", 5) == 0))
+                        v.push_back (d.id);
+                }
+                return v;
+            }();
+            addClickAndDeterminism (lab, circuitIds.data(), (int) circuitIds.size(), "Motore Circuit (tutti i modelli)", 10.0, false);
+        }
         lab.run (report);
     }
 
@@ -4748,12 +4788,12 @@ namespace
             });
         }
 
-        // click oltre 10x analizzati e segnalati: PPE1 HIGH (18.5x: biquad in forma diretta ricalcolati ogni 8 campioni con 6 ms di
-        // lisciatura, una mensola di +-16 dB a 5.6 kHz lascia un transitorio) e TC999 SUSTAIN (11.8x a 4 ms dal cambio: il VCA si
-        // riassesta con il suo attacco); col metodo del banco s2 (seno + 1 kHz, 15 ms) entrambi < 3 (2.89 / 2.24). Il reset() di AF-201,
-        // AF9, AFL, AW7 e AW5 non riporta l'inviluppo allo stato iniziale (innocuo: reset() si usa riaccendendo il pedale)
-        addClickAndDeterminism (lab, kStage4Dyn, numDyn, "Tappa 4 dinamica/EQ/filtri", 10.0, false,
-                                { { "ib10ppe1", "HIGH", 20.0 }, { "ibtstc999", "SUSTAIN", 15.0 } });
+        // click: fino alla 1.2.6 PPE1 HIGH (18.5x: biquad ricalcolati ogni 8 campioni, una mensola di +-15 dB a 5.6 kHz lasciava
+        // un gradino a ogni ricalcolo) e TC999 SUSTAIN (11.8x: guadagno del ramo amplificato a gradini ogni 16 campioni) avevano
+        // una soglia propria; dalla 1.2.7 coefficienti e guadagno scorrono campione per campione fra un ricalcolo e l'altro
+        // (1.1x / 1.0x), quindi nessuna eccezione. Il reset() di AF-201, AF9, AFL, AW7 e AW5 non riporta l'inviluppo allo stato
+        // iniziale (innocuo: reset() si usa riaccendendo il pedale)
+        addClickAndDeterminism (lab, kStage4Dyn, numDyn, "Tappa 4 dinamica/EQ/filtri", 10.0, false);
         lab.run (report);
     }
 
@@ -5906,13 +5946,12 @@ namespace
             });
         }
 
-        // click oltre 10x analizzati e segnalati (DE7 MODE ECHO/DELAY, prima 143x, ora con dissolvenza di 10 ms e senza eccezione):
-        // LD303 TIME e DML20 WIDTH (16x: lisciatura a un polo, glissato con la velocita' massima
-        // all'istante del cambio), PDM1 / PDD1 SOUND (15x / 21x: memorie con tempo e larghezza diversi). Col metodo del banco s4
-        // (passa-alto a 3 kHz, 100 ms) tutti <= 0.92x
-        addClickAndDeterminism (lab, kStage4Digital, numDig, "Tappa 4 digitali", 10.0, true,
-                                { { "ibmld303", "TIME", 20.0 }, { "ib10dml20", "WIDTH", 20.0 }, { "ib10pdm1", "SOUND", 20.0 },
-                                  { "ib10pdd1", "SOUND", 25.0 } });
+        // click: DE7 MODE ECHO/DELAY (143x) ha una dissolvenza di 10 ms dalla 1.2.6; fino alla 1.2.6 avevano una soglia propria
+        // anche LD303 TIME e DML20 WIDTH (16x: lisciatura a un polo, il glissato partiva con la velocita' massima all'istante del
+        // cambio) e PDM1 / PDD1 SOUND (15x / 21x: il tempo della memoria nuova cominciava a scorrere mentre l'eco vecchia usciva
+        // ancora). Dalla 1.2.7 tempo e larghezza hanno una lisciatura del secondo ordine e i valori di una memoria nuova entrano
+        // al cambio, a wet spento: tutti sotto 2x, nessuna eccezione
+        addClickAndDeterminism (lab, kStage4Digital, numDig, "Tappa 4 digitali", 10.0, true);
         lab.run (report);
     }
 

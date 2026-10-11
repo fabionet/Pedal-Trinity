@@ -385,8 +385,8 @@ def dims_of(m, key):
     a = m["appearance"].get("dimensions") or {}
     w, l, h = a.get("width_mm"), a.get("length_mm"), a.get("height_mm")
     est = {"ib70": (90, 125, 56), "ibflat": (165, 110, 46), "ib59": (180, 120, 56), "ib70big": (120, 150, 60),
-           "ib808n": (60, 111, 36), "ib808w": (74, 125, 56), "ibneo": (96, 128, 50), "ibtk": (150, 140, 66),
-           "ibtc": (170, 130, 62), "treadle": (110, 250, 78)}
+           "ib808n": (60, 111, 36), "ib808w": (74, 125, 56), "ibneo": (96, 128, 50), "ibtk": (115, 153, 56),
+           "ibtc": (115, 144, 56), "treadle": (110, 250, 78)}
     small70 = {"ib7pt999": (76, 112, 52), "ib7st800": (80, 118, 54)}
     if m["id"] in small70 and not w:
         return small70[m["id"]]
@@ -472,8 +472,24 @@ TWEAKS = {
         ("DRIVE 2", 64, 20, "knob"), ("TONE 2", 78, 20, "knob"), ("LEVEL 2", 91, 20, "knob")], feet_alias={1: ["CHANNEL"]}),
     "ib10ls10": dict(place=[("LOOP", 50, 10, "lever")]),
     "ibmptgate": dict(place_all=[("THRESHOLD", 50, 25, "knob"), ("MODE", 20, 14, "lever")]),
-    "ibtstk999": dict(place=[("NOISE SUP", 85, 44, "small")], extra=[("tubes", 50, 55, 1)], leds=[(82, 64, "red")]),
-    "ibtstk999us": dict(extra=[("tubes", 50, 55, 1)], leds=[(82, 64, "red")]),
+    # Tube King (foto Commons "IbanezTubeKing.jpg"): GAIN e MASTER nella fila alta ai lati dello stemma, BASS/MID/TREBLE
+    # sotto; LED rosso in cima allo stemma. Il NOISE SUP della versione giapponese e' un pomellino sul pannello
+    # posteriore (accanto alle prese): qui sul bordo posteriore del piano, alla stessa ascissa. Sul pedale vero la
+    # scritta del pomello centrale e' "MID" (la funzione nello schema e' MID BOOST): solo sulla replica.
+    "ibtstk999": dict(place_all=[("GAIN", 18, 16, "knob"), ("MASTER", 79, 16, "knob"), ("BASS", 20, 36, "knob"),
+                                 ("MID BOOST", 50, 35, "knob", ["MID"]), ("TREBLE", 79, 35, "knob", ["TREB"]),
+                                 ("NOISE SUP", 36, 7.5, "small", ["NOISE"])],
+                      leds=[(50, 8.5, "red")], extra=[], print_labels={"MID BOOST": "MID"},
+                      feet=[("ON/OFF", 50, 83, ["ON OFF", "ON"])]),
+    "ibtstk999us": dict(place_all=[("GAIN", 18, 16, "knob"), ("MASTER", 79, 16, "knob"), ("BASS", 20, 36, "knob"),
+                                   ("MID", 50, 35, "knob"), ("TREBLE", 79, 35, "knob", ["TREB"])],
+                        leds=[(50, 8.5, "red")], extra=[], feet=[("ON/OFF", 50, 83, ["ON OFF", "ON"])]),
+    # TC999 (foto Commons "Tube compressor.JPG"): SENSITIVITY e MASTER in alto, ATTACK e SUSTAIN sotto, LED del BOOST
+    # al centro (scritta BOOST), LED dell'effetto in cima allo stemma, BOOST a sinistra ed EFFECT a destra davanti
+    "ibtstc999": dict(place_all=[("SENS", 16.5, 14, "knob", ["SENSITIVITY"]), ("MASTER", 83.5, 14, "knob"),
+                                 ("ATTACK", 16.5, 38, "knob", ["ATK"]), ("SUSTAIN", 83.5, 38, "knob", ["SUS"])],
+                      leds=[(50, 7.5, "red"), (50, 38, "red")], print_labels={"SENS": "SENSITIVITY"},
+                      feet=[("EFFECT", 77, 87, []), ("BOOST", 23, 87, [])], foot_leds={1: 1}),
     "ibtstsv808": dict(place_all=[("OVERDRIVE", 24, 23, "knob"), ("LEVEL", 76, 23, "knob"), ("TONE", 50, 32, "knob"),
                                   ("SAT", 12, 7, "small"), ("BASS", 88, 7, "small"), ("DIODE", 34, 6, "lever")],
                        leds=[(64, 7, "red")], label_side=True),
@@ -772,14 +788,42 @@ def build_look(m, key):
         g["name_deco"] = dict(style="box", col=(240, 238, 228), pad=1.0)
         g["code"] = dict(size=2.4, col=(24, 24, 26))
         g["brand"] = dict(x=50, y=99.0, col=tx)
-    elif key == "ibtk":
-        # Tube King: contenitore grande e inclinato con la valvola 12AX7 visibile in una gabbia
+    elif key in ("ibtk", "ibtc"):
+        # Tube King TK999/TK999US e TC999 (foto Commons): lamiera piegata alta e stretta (larghezza/lunghezza ~0.75
+        # e ~0.80), dorso arrotondato, piano dei comandi leggermente inclinato fino a circa 57-60% della lunghezza,
+        # gradino e fronte piu' inclinato con le feritoie della valvola (12AX7 interna, si intravede accesa), il
+        # nome grande e il footswitch (due sul TC999: BOOST a sinistra, EFFECT a destra). Stemma e marchio del
+        # pedale vero non si riproducono: al loro posto la sigla in un riquadro scuro.
+        tc = key == "ibtc"
+        st = 60.0 if tc else 57.0
         opts["shape"] = "tube"
-        opts["profile"] = [(0, H), (100, H - 18)]
-        opts["extra"] = [("tubes", 50, 46, 1)]
-        g["name"] = dict(zone=(58, 76), font="serif", col=tx, upper=True, size=6.4)
-        g["code"] = dict(size=2.6, col=tx)
-        g["brand"] = dict(x=50, y=95.5, col=tx)
+        opts["profile"] = [(0, H - 7), (3, H - 1.5), (6, H), (st, H - 5), (st + 1.0, H - 8.5), (100, H - 26)]
+        opts["extra"] = []
+        silver = lum(body) > 140
+        ac = (122, 26, 30) if tc else ((78, 30, 44) if silver else tx)     # rosso (TC999) / bordeaux (TK999)
+        label["col"] = ac
+        label["font"] = "serif"
+        label["size"] = 2.2
+        g["ticks"] = True
+        vy0, vy1 = (st + 3.5, st + 12.0) if tc else (st + 2.5, st + 10.5)
+        g["panels"] = [("rect", round(38.0 + k * 3.2, 1), vy0, round(39.9 + k * 3.2, 1), vy1, (16, 14, 14), None, 0.3)
+                       for k in range(8)]
+        # bagliore della valvola dietro due feritoie
+        g["panels"] += [("rect", round(38.5 + k * 3.2, 1), round(vy0 + f * (vy1 - vy0), 1), round(39.4 + k * 3.2, 1),
+                         round(vy0 + f * (vy1 - vy0) + 0.5, 1), (200, 84, 38)) for k, f in ((5, 0.3), (6, 0.25), (6, 0.8))]
+        g["panels"] += [("rect", 40.5, 17.6, 59.5, 22.4, ac, None, 0.4)]
+        if tc:
+            g["panels"] += [("text", "BOOST", 50, 42.6, 2.2, ac, "serif")]
+        g["keep"] = [(36.5, vy0 - 1.0, 63.5, vy1 + 1.0)]
+        g["name"] = dict(zone=(vy1 + 1.0, 96.0) if tc else (vy1 + 0.5, 80.0), y=75.5 if tc else 71.5, font="serif",
+                         col=ac, upper=True, size=8.0 if tc else 9.0)
+        if tc:
+            g["sub"] = dict(size=4.0, font="serif", col=ac, spacing=0.2)
+            opts["print_name"] = "Tube King"         # "TUBE KING" grande e "COMPRESSOR" sotto (sottotitolo)
+        g["code"] = dict(y=20, x=50, size=3.0, font="serif", col=(236, 230, 220) if silver or tc else body,
+                         with_name=False)
+        g["brand"] = dict(x=50, y=26 if tc else 24.5, col=ac)
+        opts["finish"] = "sparkle" if (tc or silver) else fin
     elif key == "ibtkd":
         # Tube King OD/HT: contenitore a rombo (quadrato ruotato di 45 gradi)
         opts["shape"] = "ibbox"
@@ -791,15 +835,6 @@ def build_look(m, key):
         g["code"] = dict(size=2.8, col=ac)
         g["brand"] = dict(x=50, y=15, col=ac)
         opts["margin"] = (0, 0, 0, 0)
-    elif key == "ibtc":
-        opts["shape"] = "ibbox"
-        opts["outline"] = [(12, 2), (88, 2), (98, 98), (2, 98)]
-        opts["profile"] = None
-        opts["finish"] = "sparkle"
-        g["panels"] = [("stripes", darker(body, 0.6), 1.4, 4.0, 0, (36, 42, 64, 58))]
-        g["name"] = dict(zone=(58, 70), font="serif", col=ink(body), upper=True, size=6.0)
-        g["code"] = dict(size=2.6, col=ink(body))
-        g["brand"] = dict(x=50, y=96, col=ink(body))
     elif key == "ibpenta":
         opts["shape"] = "ibbox"
         opts["profile"] = [(0, H - 8), (100, H - 12)]
@@ -869,6 +904,12 @@ def build_look(m, key):
         opts["place"] = [(e[0], e[1], e[2], e[3], list(e[4]) if len(e) > 4 else []) for e in tw["place_all"]]
     if "extra" in tw:
         opts["extra"] = tw["extra"]
+    if "feet" in tw:
+        opts["feet"] = [tuple(f) for f in tw["feet"]]
+    if "print_labels" in tw:
+        opts["print_labels"] = dict(tw["print_labels"])
+    if "foot_leds" in tw:
+        opts["foot_leds"] = dict(tw["foot_leds"])
     if "label_side" in tw:
         opts["label_side"] = True
         label["pos"] = "side"
@@ -1025,10 +1066,10 @@ def entry(m, real_only=False):
     lines.append("          (%r, %r), %r, %r," % (code, rest or name, cat, col[0]))
     args = []
     for k in ("leds", "extra", "finish", "gfx", "knob", "profile", "covers", "outline", "margin", "param_row", "print_labels",
-              "adapt", "label_side"):
+              "foot_leds", "adapt", "label_side"):
         if lk.get(k) not in (None, [], {}):
             args.append("%s=%r" % (k, lk[k]))
-    pr = re.sub(r"\s*\(.*?\)", "", rest if rest and rest != code else name).strip()
+    pr = lk.get("print_name") or re.sub(r"\s*\(.*?\)", "", rest if rest and rest != code else name).strip()
     args.append("print=%r" % pr)
     lines.append("          look(%r, %r,\n               %r,\n               feet=%r,\n               %s)," % (
         lk["shape"], tuple(lk["dims"]), lk["place"], lk["feet"], ",\n               ".join(args)))

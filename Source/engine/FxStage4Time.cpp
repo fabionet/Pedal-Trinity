@@ -311,8 +311,9 @@ namespace pt::engine
             void reset() override
             {
                 for (auto& v : voice) v.reset();
-                lfo.ph = 0.25; fbState[0] = fbState[1] = 0; holdLen = 0; settle = 0; curKey = -1; fadeG = 1.0f;
-                tS.init = fbS.init = lvS.init = wS.init = rS.init = colS.init = balS.init = altS.init = clipS.init = false;
+                lfo.ph = 0.25; fbState[0] = fbState[1] = 0; holdLen = 0; settle = 0; curKey = -1; oldPre = -1; fadeG = 1.0f;
+                fbS.init = lvS.init = rS.init = colS.init = balS.init = altS.init = clipS.init = false;
+                tS.unset(); wS.unset();
             }
 
             void process (float* const* ch, int numCh, int n) override
@@ -320,23 +321,28 @@ namespace pt::engine
                 juce::ScopedNoDenormals nd;
                 // comandi (o memoria del selettore SOUND)
                 const int pre = pPreset.present() ? pPreset.step (*this) : 0;
-                int wantRange;
-                float tK, fbK, lvK, wK, rK;
-                if (pre > 0 && pre <= (int) presets.size())
-                {
-                    const auto& P = presets[(size_t) pre - 1];
-                    wantRange = P.range; tK = P.t; fbK = P.fb; lvK = P.lv; wK = P.w; rK = P.r;
-                }
-                else
-                {
-                    wantRange = pMode.present() ? std::clamp (pMode.step (*this), 0, (int) ranges.size() - 1) : 0;
-                    tK = pTime.get (*this); fbK = pFb.get (*this); lvK = pLevel.get (*this); wK = pDepth.get (*this); rK = pRate.get (*this);
-                }
+                const int wantRange = pre > 0 && pre <= (int) presets.size() ? presets[(size_t) pre - 1].range
+                                    : pMode.present() ? std::clamp (pMode.step (*this), 0, (int) ranges.size() - 1) : 0;
                 const int key = wantRange * 64 + pre;
+                // valori della memoria (o dei comandi) ATTIVA: durante la dissolvenza d'uscita di un cambio di memoria restano
+                // quelli vecchi, i nuovi entrano al cambio (a wet spento, con tempo, retroazione, livello, larghezza e velocita'
+                // allineati di colpo), cosi' il ritardo non scivola mentre l'eco vecchia si sente ancora
+                auto targets = [&] (int k, float& tK, float& fbK, float& lvK, float& wK, float& rK)
+                {
+                    const int pk = k % 64;
+                    if (pk > 0 && pk <= (int) presets.size())
+                    {
+                        const auto& P = presets[(size_t) pk - 1];
+                        tK = P.t; fbK = P.fb; lvK = P.lv; wK = P.w; rK = P.r;
+                    }
+                    else { tK = pTime.get (*this); fbK = pFb.get (*this); lvK = pLevel.get (*this); wK = pDepth.get (*this); rK = pRate.get (*this); }
+                };
+                float tK, fbK, lvK, wK, rK;
+                targets (curKey < 0 ? key : curKey, tK, fbK, lvK, wK, rK);
                 const bool altOn = pAlt.present() && pAlt.step (*this) == altPos;
                 const float fbLimit = altOn && altFb >= 0 ? altFb : fbMax;
-                const float fbT = std::clamp (fbK, 0.0f, 1.0f) * fbLimit;
-                const float lvT = std::clamp (lvK, 0.0f, 1.0f);
+                float fbT = std::clamp (fbK, 0.0f, 1.0f) * fbLimit;
+                float lvT = std::clamp (lvK, 0.0f, 1.0f);
                 const float colT = pTone.present() ? logMap (pTone.get (*this), colLo, colHi) : 0.0f;
                 const float balT = pBal.get (*this);
                 const float altT = altOn && altBw > 0 ? 1.0f : 0.0f, clipT = altOn && altClip > 0 ? 1.0f : 0.0f;
@@ -357,6 +363,14 @@ namespace pt::engine
                     const float g = fadeG;
                     if (changed)
                     {
+                        if (curKey % 64 != oldPre)       // memoria nuova (o ritorno ai comandi): valori nuovi di colpo, a wet spento
+                        {
+                            targets (curKey, tK, fbK, lvK, wK, rK);
+                            fbT = std::clamp (fbK, 0.0f, 1.0f) * fbLimit;
+                            lvT = std::clamp (lvK, 0.0f, 1.0f);
+                            if (oldPre >= 0) { fbS.snap (fbT); lvS.snap (lvT); wS.snap (wK); rS.snap (rK); }
+                        }
+                        oldPre = curKey % 64;
                         curRange = std::clamp (curKey / 64, 0, (int) ranges.size() - 1);
                         tS.snap (tK);
                         const Range& H = ranges[(size_t) curRange];
@@ -465,14 +479,15 @@ namespace pt::engine
             bool useComp = false, freeMod = false;
             float sr = 48000, lfoLo = 0.1f, lfoHi = 8.0f, sweep = 2.0f, fbMax = 0.95f, fbClip = 0, dryMix = 1, wetMix = 1,
                   colLo = 1000, colHi = 12000, altClip = 0, altFb = -1, altLfoLo = -1, altLfoHi = -1, fsV = 1.5f;
-            int altPos = 1, curRange = 0, settle = 0, curKey = -1;
+            int altPos = 1, curRange = 0, settle = 0, curKey = -1, oldPre = -1;
             float fadeG = 1.0f, fadeStep = 0.002f;
             Out out = Mono;
             float fbState[2] {}, holdLen = 0;
             RoleParam pTime, pLevel, pFb, pMode, pRate, pDepth, pTone, pBal, pAlt, pPreset;
             AdmVoice voice[2];
             Lfo lfo;
-            Smooth tS, fbS, lvS, wS, rS, colS, balS, altS, clipS;
+            Smooth fbS, lvS, rS, colS, balS, altS, clipS;
+            Smooth2 tS, wS;          // tempo e larghezza spostano il ritardo: secondo ordine
         };
 
         //==============================================================================
@@ -521,7 +536,8 @@ namespace pt::engine
             {
                 line.clear(); ladder.reset(); lp.reset(); hp.reset();
                 wow.ph = flut.ph = 0; panL.ph = 0;
-                tS.init = mS.init = fbS.init = toS.init = cS.init = rsS.init = g16S.init = g3S.init = panS.init = fS.init = false;
+                mS.init = fbS.init = toS.init = cS.init = rsS.init = g16S.init = g3S.init = panS.init = fS.init = false;
+                tS.unset();
             }
             void process (float* const* ch, int numCh, int n) override
             {
@@ -596,7 +612,8 @@ namespace pt::engine
             Ladder ladder;
             OnePole lp, hp;
             Lfo wow, flut, panL;
-            Smooth tS, mS, fbS, toS, cS, rsS, g16S, g3S, panS, fS;
+            Smooth mS, fbS, toS, cS, rsS, g16S, g3S, panS, fS;
+            Smooth2 tS;              // TIME: secondo ordine (il glissato parte con velocita' zero)
         };
     }
 

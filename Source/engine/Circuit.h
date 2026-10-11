@@ -48,6 +48,8 @@ namespace pt::engine
         static Expr parse (const std::string& text, std::string& error);
         double eval (const float* p, const ModelDef& def) const;
         bool isConst() const;
+        /** Aggiunge a 'mask' i comandi (bit = indice) da cui dipende l'espressione. */
+        void addControls (uint32_t& mask) const;
         static double parseNumber (const std::string& s, bool& ok);
         static double applyTaper (double x, char t);
 
@@ -65,8 +67,32 @@ namespace pt::engine
         double bz[4] {}, az[4] {};
         double state[2][4] {};
 
+        // coefficienti da cui parte la rampa per canale (comandi in movimento): dopo un nuovo progetto i coefficienti
+        // scorrono campione per campione dai vecchi ai nuovi durante la chiamata successiva di ogni canale
+        double fromB[2][4] {}, fromA[2][4] {};
+        int fromOrder = 1;
+        bool ramp[2] {};
+
         void design (double fs, double prewarpHz = 0.0);
-        void reset() { for (auto& c : state) for (auto& v : c) v = 0; }
+        void reset() { for (auto& c : state) for (auto& v : c) v = 0; settle(); }
+        /** Coefficienti attuali come punto di partenza: nessuna rampa (avvio, reset, selettori, comportamento a blocchi). */
+        void settle() noexcept
+        {
+            for (int c = 0; c < 2; ++c) { std::copy (bz, bz + 4, fromB[c]); std::copy (az, az + 4, fromA[c]); ramp[c] = false; }
+            fromOrder = order;
+        }
+        /** Dopo design(): rampa dai coefficienti precedenti se sono cambiati (e l'ordine e' lo stesso). */
+        void armRamp() noexcept
+        {
+            if (order != fromOrder) { settle(); return; }
+            for (int c = 0; c < 2; ++c)
+            {
+                bool diff = false;
+                for (int i = 0; i <= order; ++i)
+                    diff = diff || std::fpclassify (fromB[c][i] - bz[i]) != FP_ZERO || std::fpclassify (fromA[c][i] - az[i]) != FP_ZERO;
+                ramp[c] = diff;
+            }
+        }
         inline double tick (int ch, double x) noexcept
         {
             auto* s = state[ch];
@@ -75,6 +101,35 @@ namespace pt::engine
                 s[i] = bz[i + 1] * x - az[i + 1] * y + s[i + 1];
             s[order - 1] = bz[order] * x - az[order] * y;
             return y;
+        }
+        /** Come tick() con coefficienti dati (rampa). */
+        inline double tickWith (int ch, double x, const double* b, const double* a) noexcept
+        {
+            auto* s = state[ch];
+            const double y = b[0] * x + s[0];
+            for (int i = 0; i < order - 1; ++i)
+                s[i] = b[i + 1] * x - a[i + 1] * y + s[i + 1];
+            s[order - 1] = b[order] * x - a[order] * y;
+            return y;
+        }
+        /** Elabora n campioni del canale 'ch' con la rampa dei coefficienti; 'post' trasforma ogni uscita. */
+        template <class Post>
+        inline void rampBlock (int ch, double* x, int n, Post post) noexcept
+        {
+            double b[4], a[4], db[4], da[4];
+            const double inv = 1.0 / std::max (1, n);
+            for (int i = 0; i <= order; ++i)
+            {
+                b[i] = fromB[ch][i]; a[i] = fromA[ch][i];
+                db[i] = (bz[i] - b[i]) * inv; da[i] = (az[i] - a[i]) * inv;
+            }
+            for (int k = 0; k < n; ++k)
+            {
+                for (int i = 0; i <= order; ++i) { b[i] += db[i]; a[i] += da[i]; }
+                x[k] = post (tickWith (ch, x[k], b, a));
+            }
+            std::copy (bz, bz + 4, fromB[ch]); std::copy (az, az + 4, fromA[ch]);
+            ramp[ch] = false;
         }
     };
 
@@ -95,11 +150,23 @@ namespace pt::engine
         virtual void update (double fs, const float* p, const ModelDef& def) = 0;
         virtual void reset() = 0;
         virtual void process (int ch, double* x, int n) = 0;
+        /** Copia stato e coefficienti da uno stadio dello stesso tipo e della stessa netlist (catena di riserva
+            delle dissolvenze dei selettori); nessuna allocazione se le memorie hanno gia' la stessa dimensione. */
+        virtual void copyFrom (const Stage& other) = 0;
+        /** Nessuna rampa verso i coefficienti appena calcolati (avvio, selettori, comportamento a blocchi). */
+        virtual void settle() {}
 
         std::vector<std::pair<std::string, Expr>> args;
         double arg (const char* name, const float* p, const ModelDef& def, double fallback) const;
         bool has (const char* name) const;
         double fs = 0;
+        uint32_t controls = 0;      // comandi da cui dipendono gli argomenti (bit = indice): update() solo se cambiano
+
+    protected:
+        Stage() = default;
+        Stage (const Stage&) = default;
+        // gli argomenti (e quindi 'controls') sono uguali per costruzione: si copia solo lo stato
+        Stage& operator= (const Stage& o) { fs = o.fs; return *this; }
     };
 
     //==============================================================================
@@ -112,21 +179,42 @@ namespace pt::engine
         void reset() override;
         void process (float* const* ch, int numCh, int n) override;
 
+        /** Comportamento dei comandi fino alla 1.2.6 (lisciatura 0.35 per blocco, coefficienti ricalcolati una volta
+            per blocco): per i circuiti usati dentro altri effetti (SubCircuit), che lisciano gia' i comandi da se'. */
+        void setBlockSmoothing (bool on) noexcept { blockSmoothing = on; }
+
         /** Errori di parsing della netlist (vuoto se tutto ok). */
         std::string error;
 
+        // Comandi che si muovono (dalla 1.2.7): i pomelli sono lisciati da due poli in cascata (kTauMs ciascuno) e solo gli stadi
+        // che ne dipendono si ricalcolano, a sotto-blocchi di kSub campioni (alla frequenza di base); fra un ricalcolo e l'altro
+        // filtri lineari, Rf degli op-amp e soglia/rapporto dei compressori scorrono campione per campione. I selettori e le
+        // levette passano subito al nuovo valore con una dissolvenza di kFadeMs fra la catena di riserva (copia della principale,
+        // con la vecchia topologia) e quella principale. A comandi fermi il percorso e' quello di prima: uscita identica bit per
+        // bit alle versioni precedenti.
+        static constexpr int kSub = 16;
+        static constexpr double kTauMs = 6.0, kFadeMs = 15.0;
+
     private:
         void updateStages();
+        void updateMasked (uint32_t mask, bool ramp);
+        void processLegacy (float* const* ch, int numCh, int n);
+        void runStages (std::vector<std::unique_ptr<Stage>>& chain, int c, double* x, int n);
 
         std::vector<std::unique_ptr<Stage>> stages;
+        std::vector<std::unique_ptr<Stage>> spare;         // catena di riserva (stessa netlist) per le dissolvenze dei selettori
         std::unique_ptr<juce::dsp::Oversampling<float>> os;
-        std::vector<double> work;
+        std::vector<double> work, workSpare;
         std::unique_ptr<std::vector<double>[]> tapStore;   // punti "tap" (maxTaps x 2 canali) per miscelazioni e rami paralleli
-        float smoothed[maxControls] {};
-        float lastUpdated[maxControls] {};
+        float smoothed[maxControls] {};                    // valori passati agli stadi
+        double glide1[maxControls] {}, glide2[maxControls] {};   // stati della lisciatura a due poli dei pomelli
+        uint32_t steppedMask = 0;                          // comandi a scatti (selettori, levette)
         double sr = 48000.0, osr = 192000.0;
         int maxN = 512;
+        int fadeLen = 1, fadePos = 0;                      // durata e posizione della dissolvenza (campioni sovracampionati)
+        bool fading = false;
         bool first = true;
+        bool blockSmoothing = false;
         bool needInputs = false;   // uno stadio legge gli ingressi di entrambi i canali (pan / blend)
     };
 }

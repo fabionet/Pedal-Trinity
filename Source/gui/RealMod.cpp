@@ -7,6 +7,8 @@
 #include "../engine/NamSecurity.h"
 #include <cstring>
 #include <tuple>
+#include <algorithm>
+#include <vector>
 
 namespace pt::ui
 {
@@ -286,6 +288,55 @@ namespace pt::ui
         return {};
     }
 
+    namespace
+    {
+        /** Colore del fronte (spessore del pedale) ricavato dal bordo inferiore della foto: per ogni gruppo di colonne il colore
+            mediano delle ultime righe (1/30 dell'altezza), poi una mediana orizzontale larga che toglie lettere e segni sottili. Resta il
+            colore del corpo, senza i pezzi di scritta (marchio, modello) che l'estrusione delle ultime righe ripeteva sul fronte. */
+        juce::Image frontStrip (juce::Image photo)          // per valore: BitmapData vuole un'immagine non const (copia condivisa)
+        {
+            const int w = photo.getWidth(), h = photo.getHeight();
+            const int rows = juce::jlimit (1, juce::jmax (1, h), juce::jmax (3, h / 30));     // la stessa fascia estrusa fino alla 1.2.6
+            const int bins = juce::jlimit (1, 256, juce::jmax (1, w));
+            std::vector<uint8_t> R ((size_t) bins), G ((size_t) bins), B ((size_t) bins), cr, cg, cb;
+            auto median = [] (std::vector<uint8_t>& v) -> uint8_t
+            {
+                if (v.empty()) return 0;
+                const auto m = v.begin() + (long) (v.size() / 2);
+                std::nth_element (v.begin(), m, v.end());
+                return *m;
+            };
+            {
+                const juce::Image::BitmapData bd (photo, 0, h - rows, w, rows, juce::Image::BitmapData::readOnly);
+                for (int b = 0; b < bins; ++b)
+                {
+                    const int x0 = b * w / bins, x1 = juce::jmax (x0 + 1, (b + 1) * w / bins);
+                    cr.clear(); cg.clear(); cb.clear();
+                    for (int y = 0; y < rows; ++y)
+                        for (int x = x0; x < x1 && x < w; ++x)
+                        {
+                            const auto c = bd.getPixelColour (x, y);
+                            cr.push_back (c.getRed()); cg.push_back (c.getGreen()); cb.push_back (c.getBlue());
+                        }
+                    R[(size_t) b] = median (cr); G[(size_t) b] = median (cg); B[(size_t) b] = median (cb);
+                }
+            }
+            const int r = juce::jmax (1, bins / 24);           // finestra di ~1/12 della larghezza
+            juce::Image strip (juce::Image::ARGB, bins, 4, false);
+            for (int b = 0; b < bins; ++b)
+            {
+                cr.clear(); cg.clear(); cb.clear();
+                for (int k = juce::jmax (0, b - r); k <= juce::jmin (bins - 1, b + r); ++k)
+                {
+                    cr.push_back (R[(size_t) k]); cg.push_back (G[(size_t) k]); cb.push_back (B[(size_t) k]);
+                }
+                const auto c = juce::Colour (median (cr), median (cg), median (cb));
+                for (int y = 0; y < strip.getHeight(); ++y) strip.setPixelAt (b, y, c);
+            }
+            return strip;
+        }
+    }
+
     juce::Image RealPhotos::compose (const juce::Image& photoIn, const ModelDef& real, juce::Rectangle<int> crop, int rotate)
     {
         constexpr float S = 2.0f;                               // composizione a 2x delle coordinate logiche
@@ -315,15 +366,14 @@ namespace pt::ui
         whole.addRoundedRectangle (top.getUnion (front), corner);
         juce::DropShadow (juce::Colours::black.withAlpha (0.6f), (int) (18 * S), { (int) (5 * S), (int) (9 * S) }).drawForPath (g, whole);
 
-        // fronte: le ultime righe della foto, estruse e in ombra (spessore del pedale)
+        // fronte: il colore del bordo inferiore della foto (mediane, senza scritte), esteso e in ombra (spessore del pedale)
         {
             juce::Graphics::ScopedSaveState ss (g);
             juce::Path fp; fp.addRoundedRectangle (front, corner);
             g.reduceClipRegion (fp);
-            const int strip = juce::jmax (2, photo.getHeight() / 30);
+            const auto band = frontStrip (photo);
             g.setOpacity (1.0f);                    // drawImage usa l'opacita' corrente (l'ombra l'aveva lasciata al 60%)
-            g.drawImage (photo, front.getX(), front.getY(), front.getWidth(), front.getHeight(),
-                         0, photo.getHeight() - strip, photo.getWidth(), strip);
+            g.drawImage (band, front, juce::RectanglePlacement::stretchToFit);
             g.setGradientFill (juce::ColourGradient (juce::Colours::black.withAlpha (0.35f), front.getX(), front.getY(),
                                                      juce::Colours::black.withAlpha (0.7f), front.getX(), front.getBottom(), false));
             g.fillRect (front);
