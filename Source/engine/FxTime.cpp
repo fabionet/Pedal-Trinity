@@ -248,7 +248,8 @@ namespace pt::engine
                 for (auto& a : diff) a.clear();
                 for (auto& z : damp) z = 0;
                 spring.clear(); shimmer.clear();
-                gateEnv = 0; hold = 0;
+                gateEnv = 0; hold = 0; revGain = 0; revG1 = 0;
+                revK = (float) (1.0 - std::exp (-1.0 / (0.003 * sr)));
             }
             void process (float* const* ch, int numCh, int n) override
             {
@@ -327,7 +328,11 @@ namespace pt::engine
                         if (e > 0.02f && hold <= 0) hold = (int) (0.45 * sr);
                         const float ramp = hold > 0 ? 1.0f - (float) hold / (float) (0.45 * sr) : 0.0f;
                         --hold;
-                        wetL *= ramp * ramp; wetR *= ramp * ramp;
+                        // fine dello swell: il guadagno scende con due poli in cascata da 3 ms invece di un gradino da 1 a 0 (click a
+                        // ogni ripartenza), senza spigoli nella pendenza; la salita lenta (0.45 s) resta praticamente identica
+                        revG1 += (ramp * ramp - revG1) * revK;
+                        revGain += (revG1 - revGain) * revK;
+                        wetL *= revGain; wetR *= revGain;
                     }
                     else if (type == "dynamic")
                     {
@@ -346,7 +351,7 @@ namespace pt::engine
             double decLo = 0.3, decHi = 8, preMs = 10, bw = 9000, sr = 48000;
             RoleParam pLevel, pTime, pTone, pMode, pPre;
             DelayLine lines[8], pre[2], diff[4];
-            float len[8] {}, damp[8] {}, gateEnv = 0;
+            float len[8] {}, damp[8] {}, gateEnv = 0, revGain = 0, revG1 = 0, revK = 0.007f;
             int hold = 0;
             Spring spring;
             PitchShifter shimmer;

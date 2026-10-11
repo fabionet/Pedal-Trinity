@@ -774,14 +774,22 @@ def look_cvbar(m, col):
     body, acc, _ = col
     tx = acc or ink(body)
     place = place_of(m, default="small", skip=("POWER",))
+    # 1.3.1: fila dei pomelli al 25% della profondita' (disegno del pannello frontale nei manuali: centri dei 10
+    # pomelli a 1/4 dal bordo lontano), cosi' anche i concentrici del modello (conc_fit) restano sulla fila
+    place = [(e[0], e[1], 25.0) + tuple(e[3:]) for e in place]
     feet = [("A", 12.0, 74.0, []), ("B", 50.0, 74.0, []), ("C", 88.0, 74.0, [])]
-    leds = [(66, 9, "blue"), (12, 52, "green"), (50, 52, "green"), (88, 52, "green")]
+    # LED di stato fissi sopra la fila, nello spazio tra i pomelli: LED BT del manuale (67%) tra MOD/COMP e il concentrico
+    # TONE/GAIN o BASS/MID; sul Bass il LED BT vero cade sopra il concentrico BASS/MID: LED di carica del manuale (52%)
+    bt = 52.0 if m["id"] == "cvcubebabybass" else 67.0
+    leds = [(bt, 7.5, "blue"), (12, 52, "green"), (50, 52, "green"), (88, 52, "green")]
     g = {"label": dict(col=tx, size=1.5, font="bold"),
-         "panels": [("hline", 44.0, tx, 0.3, 4, 96)],
+         # filetto un po' piu' in basso (era al 44%): sopra restano le scritte dei concentrici, piu' larghi
+         "panels": [("hline", 46.5, tx, 0.3, 4, 96)],
          "name": dict(x=31, y=60, font="black", col=tx, upper=True, size=3.0),
          "code": dict(y=60, x=69, size=2.2, col=tx, font="bold"), "brand": dict(x=50, y=94, col=tx)}
     lk = dict(shape="cvbar", dims=(W, D, H), place=place, feet=feet, leds=leds, finish="paint", gfx=g, knob="small",
-              profile=[(0, H), (100, H - 0.5)], foot_kind="flat", knob_pad=0.2, nolab=True, adapt=True)
+              profile=[(0, H), (100, H - 0.5)], foot_kind="flat", knob_pad=0.2, nolab=True, adapt=True,
+              conc_fit=1.6, fixed_leds=True)
     return lk
 
 
@@ -1012,7 +1020,7 @@ def entry(m):
     lines.append("          (%r, %r), %r, %r," % (code, name, cat, col[0]))
     args = []
     for k in ("leds", "extra", "finish", "gfx", "knob", "profile", "covers", "outline", "margin", "plan", "jack_at", "knob_pad", "nolab", "sections", "inner_skip", "outline_profile",
-              "foot_kind", "print_labels", "foot_leds", "adapt", "label_side"):
+              "foot_kind", "print_labels", "foot_leds", "adapt", "label_side", "conc_fit", "fixed_leds"):
         if lk.get(k) not in (None, [], {}):
             args.append("%s=%r" % (k, lk[k]))
     args.append("print=%r" % pr)

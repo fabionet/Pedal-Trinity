@@ -474,7 +474,7 @@ namespace pt::engine
                     }
                 }
                 subDef.config = cfg.c_str();
-                fx = createEffect (subDef);
+                fx = createEffectRaw (subDef);
             }
             void prepare (double s, int maxBlock) override
             {

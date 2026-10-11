@@ -29,6 +29,11 @@ Chiavi facoltative (tappa 4, Ibanez; i pedali che non le usano restano identici)
   margin   (sinistra, destra, lontano, vicino) mm di margine in piu' per i comandi
   foot_leds {j: k}: il LED k di leds e' quello del footswitch di sezione j (altrimenti il LED piu' vicino sopra il
            footswitch o uno nuovo), es. LED BOOST al centro del piano del TC999
+Chiave facoltativa (1.3.1; i pedali che non la usano restano identici):
+  conc_fit mm: i pomelli concentrici del modello (outer + inner) che sul pedale vero sono due pomelli separati della
+           stessa fila stanno al centro tra le due posizioni vere, con l'ingombro della sommita' proiettata calcolato
+           sui due pezzi (anello esterno basso + pomello interno) e questo margine dal bordo lontano: restano sulla fila
+           invece di scendere verso il centro del piano (es. Cube Baby, 10 pomelli in fila)
 I comandi del modello si assegnano alle posizioni per etichetta (poi per tipo, nell'ordine); le posizioni
 del pedale vero senza un comando del modello diventano comandi decorativi (fissi) e i comandi del modello
 senza posizione vanno nello spazio libero. Le sovrapposizioni si risolvono spostando i comandi il meno possibile.
@@ -211,7 +216,8 @@ def footprint(item, other=None):
     if t == "rot":
         r, h = item["r"], item["h"]
         lab = 0.0058 if item.get("label") and not item.get("nolab") and other is not None and other["t"] != "led" else 0.0
-        return (x, y - lab, y + h * TAN22, r + item.get("pad", 0.0010))
+        top = item["top_ext"] if item.get("top_ext") is not None else h * TAN22
+        return (x, y - lab, y + top, r + item.get("pad", 0.0010))
     if t == "toggle":
         return (x, y - 0.0045, y + TOGGLE_H * TAN22 * 0.6, 0.0050)
     if t == "button":
@@ -254,8 +260,12 @@ def _bounds(item, W, D, lim=None):
         r = item["r"] + 0.0004
         y0 = item["y"]
     m = (lim or {}).get("margin") or (0.0, 0.0, 0.0, 0.0)
-    return (-W / 2 + MARGIN + m[0] + r, W / 2 - MARGIN - m[1] - r, -D / 2 + MARGIN + m[3] + r + (item["y"] - y0),
-            D / 2 - MARGIN - m[2] - r - (y1 - item["y"]))
+    if item.get("conc_margin") is not None:
+        # concentrico con conc_fit: margine proprio dal bordo lontano
+        y_far = D / 2 - item["conc_margin"] - r - (y1 - item["y"])
+    else:
+        y_far = D / 2 - MARGIN - m[2] - r - (y1 - item["y"])
+    return (-W / 2 + MARGIN + m[0] + r, W / 2 - MARGIN - m[1] - r, -D / 2 + MARGIN + m[3] + r + (item["y"] - y0), y_far)
 
 
 def _rect_push(item, rect, gap=0.0008):
@@ -491,6 +501,16 @@ def stomp_layout(r):
         i = it.get("i")
         if i is not None and ctrls[i]["kind"] == "outer" and i + 1 < len(ctrls) and ctrls[i + 1]["kind"] == "inner":
             it["inner"] = i + 1
+            if lk.get("conc_fit") is not None and it.get("spec") is not None:
+                # 1.3.1: concentrico al centro tra la posizione vera dell'esterno e quella dell'interno (pomelli separati
+                # sul pedale vero), sulla stessa fila; ingombro e margine lontano propri (vedi _size)
+                inn = ctrls[i + 1]["label"]
+                cand = sorted(((_score(inn, e), -j) for j, e in enumerate(entries) if j != assign[i] and _score(inn, e) >= 3),
+                              reverse=True)
+                if cand:
+                    e0, e1 = entries[assign[i]], entries[-cand[0][1]]
+                    it["x"], it["y"] = (G.x(e0[1]) + G.x(e1[1])) / 2, (G.y(e0[2]) + G.y(e1[2])) / 2
+                it["conc_margin"] = lk["conc_fit"] / 1000.0
     # posizioni del pedale vero senza comando: decorative
     if lk.get("inner_skip"):
         # tappa 5: la posizione del pomello che nel modello e' l'interno di un concentrico non diventa decorativa
@@ -813,6 +833,10 @@ def _size(it, default_knob):
         strip, r, h = KNOBS[sk]
         if it.get("inner") is not None:
             r, h = PL.KNOB_R["boss_outer"], PL.KNOB_H["boss_outer"] + PL.KNOB_H["boss_inner"]
+            if it.get("conc_margin") is not None:
+                # sommita' proiettata: la piu' lontana tra l'anello esterno (basso) e il pomello interno (sopra l'anello)
+                it["top_ext"] = max(PL.KNOB_H["boss_outer"] * TAN22,
+                                    PL.KNOB_R["boss_inner"] - r + h * TAN22)
         it.update(strip=strip, r=r, h=h)
     elif it["t"] == "slider":
         it["y0"], it["y1"] = it["y"] - SLIDER_LEN / 2, it["y"] + SLIDER_LEN / 2

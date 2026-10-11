@@ -987,7 +987,7 @@ namespace pt::engine
                 for (size_t k; (k = innerCfg.find ("itype=")) != std::string::npos;) innerCfg.replace (k, 6, "type=");
                 while (! innerCfg.empty() && innerCfg.front() == ' ') innerCfg.erase (0, 1);
                 inner.config = innerCfg.c_str();
-                fx = createEffect (inner);
+                fx = createEffectRaw (inner);
                 for (int k = 0; k < d.numControls; ++k)
                 {
                     const auto kd = d.controls[k].kind;

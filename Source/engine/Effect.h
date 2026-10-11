@@ -59,6 +59,9 @@ namespace pt::engine
         std::atomic<float> params[maxControls];
     };
 
-    /** Crea l'effetto adatto alla famiglia del modello. */
+    /** Crea l'effetto adatto alla famiglia del modello (con l'involucro senza click per le famiglie vecchie). */
     std::unique_ptr<Effect> createEffect (const ModelDef&);
+    /** Come createEffect() ma senza l'involucro senza click: per gli effetti composti (i4chain, i5wrap, i5smooth) che
+        hanno gia' la loro lisciatura dei comandi e devono restare identici a prima anche con i comandi in movimento. */
+    std::unique_ptr<Effect> createEffectRaw (const ModelDef&);
 }

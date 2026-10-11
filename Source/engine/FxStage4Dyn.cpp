@@ -1680,7 +1680,7 @@ namespace pt::engine
                     }
                     secs.push_back (std::move (sec));
                 }
-                for (auto& s : secs) s->fx = createEffect (s->def);
+                for (auto& s : secs) s->fx = createEffectRaw (s->def);
             }
             void prepare (double s, int maxBlock) override
             {
