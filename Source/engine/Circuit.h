@@ -14,6 +14,9 @@
     clipper a diodi sono risolti campione per campione (equazione di Shockley,
     integrazione trapezoidale, Newton-Raphson). Tutto in sovracampionamento 4x.
 
+    Stadi aggiunti nella tappa 5: octdiv o1 o2 hys thr dec gate (divisore d'ottava a flip-flop tipo OC-2: il segnale filtrato
+    moltiplicato per le onde quadre a f/2 e f/4, commutate ai passaggi per lo zero, con porta sotto la soglia thr).
+
     Espressioni ammesse nei valori (somma di prodotti):
         numero con suffisso SI (p n u m k M)       es. 4.7k, 47n
         pot(i,R,T)   resistenza del ramo del potenziometro i (curva T=A|B|C)

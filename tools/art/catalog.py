@@ -104,13 +104,15 @@ def model(id, code, name, inspired, category, family, colour, controls, config, 
 # ------------------------------------------------------------------ raccolta e validazione
 GROUP_FILES = ["catalog_core", "catalog_drive", "catalog_dist", "catalog_mod", "catalog_time", "catalog_misc", "catalog_misc2",
                "catalog_wah", "catalog_volume", "catalog_mxr", "catalog_ehx", "catalog_mxr_b", "catalog_ehx_b",
-               "catalog_ibanez", "catalog_ibanez_b"]
+               "catalog_ibanez", "catalog_ibanez_b",
+               # tappa 5 (Behringer, Cuvave / M-VAVE)
+               "catalog_behringer", "catalog_behringer_b", "catalog_cuvave"]
 
 BANNED = re.compile(r"\bBOSS\b|\bRoland\b|\bIbanez\b|Tube\s*Screamer|Metal\s*Zone|Blues\s*Driver|Waza|"
                     r"Dunlop|Cry\s*Baby|Ernie\s*Ball|Morley|De\s*Armond|\bMXR\b|\bVox\b|Electro\s*-?\s*Harmonix|\bEHX\b|"
                     r"Sovtek|\bMuff\b|Memory\s*(Man|Boy|Toy)|Holy\s*(Grail|Stain)|\bPOG\b|Small\s*(Stone|Clone)|Mistress|"
                     r"Q-?Tron|Superego|Cathedral|Canyon|Oceans\s*1|Hazarai|Zakk|Wylde|\bEVH\b|Van\s*Halen|Dimebag|\bSlash\b|"
-                    r"Dookie", re.I)
+                    r"Dookie|Behringer|Cuvave|M-?VAVE|Music\s*Tribe|V-?Tone|Hell\s*Babe|Cube\s*Baby|Moogerfooger|Lovetone|SansAmp|Klon|Centaur", re.I)
 STYLES = ("boss", "ts", "nam", "treadle", "box")
 
 

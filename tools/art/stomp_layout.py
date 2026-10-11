@@ -73,6 +73,16 @@ SHAPES = {
     "ibtl":     dict(corner=0.0060, edge=0.0045, knob="med", kind="die", label="below"),     # Tone-Lok
     "ibmini":   dict(corner=0.0050, edge=0.0040, knob="small", kind="die", label="below"),   # serie MINI
     "ibbox":    dict(corner=0.0060, edge=0.0040, knob="knob", kind="die", label="below"),    # scatole moderne grandi
+    # tappa 5 (Behringer, Cuvave / M-VAVE)
+    "bhpl":     dict(corner=0.0070, edge=0.0035, knob="knob", kind="die", label="below"),    # plastica a coperchio-pedale
+    "bhsheet":  dict(corner=0.0030, edge=0.0016, knob="knob", kind="sheet", label="below"),  # serie Vintage in lamiera
+    "bh9":      dict(corner=0.0050, edge=0.0035, knob="knob", kind="die", label="below"),    # serie 9 pressofusa
+    "bhvtone":  dict(corner=0.0080, edge=0.0040, knob="knob", kind="die", label="below"),    # V-Tone Driver/DI
+    "bhbox":    dict(corner=0.0045, edge=0.0030, knob="knob", kind="die", label="below"),    # serie moderne in metallo
+    "bhbm":     dict(corner=0.0025, edge=0.0015, knob="knob", kind="sheet", label="below"),  # serie BM (Moogerfooger)
+    "cvmini":   dict(corner=0.0050, edge=0.0035, knob="small", kind="die", label="below"),   # mini 90 x 40 mm
+    "cvbox":    dict(corner=0.0050, edge=0.0035, knob="small", kind="die", label="below"),   # M-VAVE 112 x 68, IR BOX
+    "cvbar":    dict(corner=0.0040, edge=0.0025, knob="small", kind="die", label="below"),   # barretta Cube Baby
 }
 ROTARY = ("knob", "big", "med", "small", "encoder")
 SWITCHES = ("lever", "button")
@@ -201,7 +211,7 @@ def footprint(item, other=None):
     if t == "rot":
         r, h = item["r"], item["h"]
         lab = 0.0058 if item.get("label") and not item.get("nolab") and other is not None and other["t"] != "led" else 0.0
-        return (x, y - lab, y + h * TAN22, r + 0.0010)
+        return (x, y - lab, y + h * TAN22, r + item.get("pad", 0.0010))
     if t == "toggle":
         return (x, y - 0.0045, y + TOGGLE_H * TAN22 * 0.6, 0.0050)
     if t == "button":
@@ -482,6 +492,11 @@ def stomp_layout(r):
         if i is not None and ctrls[i]["kind"] == "outer" and i + 1 < len(ctrls) and ctrls[i + 1]["kind"] == "inner":
             it["inner"] = i + 1
     # posizioni del pedale vero senza comando: decorative
+    if lk.get("inner_skip"):
+        # tappa 5: la posizione del pomello che nel modello e' l'interno di un concentrico non diventa decorativa
+        for j, e in enumerate(entries):
+            if j not in used and any(c["kind"] == "inner" and _score(c["label"], e) >= 3 for c in ctrls):
+                used.add(j)
     for j, e in enumerate(entries):
         if j in used:
             continue
@@ -491,6 +506,10 @@ def stomp_layout(r):
         _size(it, default_knob)
         if lk.get("label_side") and it["t"] == "rot":
             it["nolab"] = True          # scritte dei pomelli a lato (serie 9/10 Ibanez): nessuno spazio riservato sotto
+        if it["t"] == "rot" and lk.get("nolab"):
+            it["nolab"] = True          # tappa 5: scritte sopra i pomelli fitti (serie Behringer in plastica)
+        if it["t"] == "rot" and lk.get("knob_pad") is not None:
+            it["pad"] = lk["knob_pad"] / 1000.0     # tappa 5: pomelli quasi a contatto come sul pedale vero
     # footswitch (o coperchio-pedale incernierato: rettangolo fisso, i comandi restano dietro)
     for j, f in enumerate(feet):
         if j in covers:
@@ -693,9 +712,32 @@ def stomp_layout(r):
         # contorno poligonale: le prese escono dai vertici piu' esterni sui fianchi
         vx = max(lim["poly"], key=lambda q: q[0])
         jy = vx[1]
+    if lk.get("jack_at"):
+        # posizione delle prese indicata dalla scheda (tappa 5): (y%, quota mm), es. base della serie in plastica
+        jy, jz = G.y(lk["jack_at"][0]), lk["jack_at"][1] / 1000.0
     out["jacks"] = (W, [(jy, jz), (jy - 0.020, jz) if r.get("stereo") else None])
     out["warnings"] = warnings
     out["items"] = items
+    return out
+
+
+def arch_pts(x0, y0, x1, y1, corner, arch, seg=10):
+    """Contorno (m) di un rettangolo raccordato con il bordo lontano (y1) bombato di 'arch' m al centro (gomma della
+    serie Behringer in plastica): i punti della meta' lontana salgono in proporzione alla distanza dal centro."""
+    w, d = x1 - x0, y1 - y0
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    r = min(corner, w / 2 - 1e-5, d / 2 - 1e-5)
+    pts = []
+    for qx, qy, a0 in [(w / 2 - r, d / 2 - r, 0), (-w / 2 + r, d / 2 - r, 90), (-w / 2 + r, -d / 2 + r, 180), (w / 2 - r, -d / 2 + r, 270)]:
+        for i in range(seg + 1):
+            a = math.radians(a0 + 90.0 * i / seg)
+            pts.append((qx + r * math.cos(a), qy + r * math.sin(a)))
+    out = []
+    for x, y in pts:
+        if y > 0:
+            xn = min(1.0, abs(x) / (w / 2))
+            y = y + arch * (1.0 - xn * xn) * (y / (d / 2))
+        out.append((cx + x, cy + y))
     return out
 
 

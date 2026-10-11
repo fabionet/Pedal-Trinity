@@ -1,0 +1,1700 @@
+{
+ "bhuc200": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "outlvl",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.27,
+    "hi": 4.7
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5bbd model=chorus stages=1024 dly=3.41,6.02 vco=exp ctr=0.5 swing=0.5 rate=0.27,4.7 lfo=tri aa=20000:0.5412,20000:1.3066 rc=20000:0.5412,20000:1.3066 sat=1.0 noise=0.00015 tone=1500,12000 mix=1,0.7 outl=0.5,2 out=dryr",
+  "stereo": true,
+  "notes": "Copia Behringer della serie in plastica a coperchio-pedale (2005-): commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito del CH-1 (ch1): MN3007 + MN3101 a 1024 stadi con clock 85-150 kHz (3,4-6,0 ms), LFO a triangolo 0,27-4,7 Hz, filtri d'ingresso e d'uscita a ~20 kHz, TONE passa-basso sull'effetto (1,5-12 kHz come il modello ch1). Differenza documentata: LEVEL e' il livello d'uscita (manuale UC200), non l'E.LEVEL del CH-1 (effetto fisso al livello di fabbrica 0,7). Uscita A = diretto + effetto, B = diretto (come il CH-1). Analogico o digitale non confermato (la scheda lo segna analogico; alcuni rivenditori lo dicono digitale, nessuna foto della scheda): emulato come la linea BBD dell'originale.",
+  "control_notes": "Etichette del manuale UC200 (LEVEL, TONE, RATE, DEPTH = E.LEVEL, EQ, RATE, DEPTH del CH-1)."
+ },
+ "bhuf300": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "MODE",
+    "role": "fbpol",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "I",
+     "II"
+    ]
+   },
+   {
+    "label": "MANUAL",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.0625,
+    "hi": 10.0
+   },
+   {
+    "label": "RES",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5bbd model=flanger stages=1024 dly=1.0,12.8 vco=lin swing=0.5 rate=0.0625,10 lfo=tri fbmax=0.9 clamp=0.6 aa=12800:0.707 rc=12800:0.618,12800:1.618,12800:0 sat=0.8 noise=0.00015 mix=1,1",
+  "stereo": false,
+  "notes": "Copia Behringer della serie in plastica a coperchio-pedale (2005-): commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito del BF-2 (bf2): MN3207 + MN3102 a clock controllato in corrente 40-500 kHz (1-12,8 ms, VCO lineare: spazzata iperbolica del ritardo), LFO a triangolo 0,0625-10 Hz, diodi 1N914 prima del BBD, ricostruzione del 5° ordine a 12,8 kHz, RES sotto l'autooscillazione. Differenza documentata: MODE I = retroazione negativa (ritardato invertito nel mix e nell'anello: pettine con il notch a 0 Hz), MODE II = positiva (come il BF-2). Analogico o digitale non confermato (la scheda lo segna analogico; alcuni rivenditori lo dicono digitale, nessuna foto della scheda): emulato come la linea BBD dell'originale."
+ },
+ "bhup300": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "MODE",
+    "role": "stages",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "I",
+     "II"
+    ]
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.071,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RES",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LEVEL",
+    "role": "outlvl",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5phase cell=exp stages=8,8 fixn=4,4 fixf=900 f=100,6000 u=0,1 rate=0.071,10 lfo=tri fb=0.7 fbm=1.25,0.8 span=1.0,0.7 fbhp=60 mix=0.5,0.5 gain=1.25 outl=0.5,2 gate=3",
+  "stereo": false,
+  "notes": "Copia Behringer della serie in plastica a coperchio-pedale (2005-): commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito del PH-2 (ph2): 12 stadi (2160 gradi) = 8 passa-tutto a OTA IR3109 a controllo esponenziale (100 Hz-6 kHz) + 4 celle fisse (stima ~900 Hz), LFO a triangolo 0,071-10 Hz (periodo 14 s-100 ms), RES limitata sotto l'oscillazione. MODE I = sweep ampio e risonanza piu' spinta ('deformato'), MODE II = classico, sweep piu' stretto (proporzioni stimate). Differenza documentata: pomello LEVEL d'uscita in piu' (unita' a meta' corsa, stima). Il compander del PH-2 (solo rumore) non e' riprodotto. Analogico o digitale non confermato (la scheda lo segna analogico; alcuni rivenditori lo dicono digitale, nessuna foto della scheda): emulato come la linea BBD dell'originale."
+ },
+ "bhut300": {
+  "family": "Tremolo",
+  "category": "Tremolo / Pan / Slicer",
+  "controls": [
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 1.1,
+    "hi": 11.1
+   },
+   {
+    "label": "WAVE",
+    "role": "wave",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5trem model=vca rate=1.1,11.1 cv=16",
+  "stereo": false,
+  "notes": "Copia Behringer della serie in plastica a coperchio-pedale (2005-): commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito del TR-2 (tr2): VCA a uscita in corrente (M5207 nel TR-2, elemento Behringer non noto) pilotato da un LFO a triangolo che WAVE squadra progressivamente, periodo 90-900 ms (1,1-11,1 Hz), CV livellato a ~16 Hz che arrotonda i fronti; uscita 100% effetto. Analogico o digitale non confermato (la scheda lo segna analogico; alcuni rivenditori lo dicono digitale, nessuna foto della scheda): emulato come la linea BBD dell'originale.",
+  "control_notes": "Ordine dichiarato da Behringer: RATE, WAVE, DEPTH."
+ },
+ "bhtp300": {
+  "family": "Tremolo",
+  "category": "Tremolo / Pan / Slicer",
+  "controls": [
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "hz",
+    "lo": 0.07,
+    "hi": 7.7
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "TREM TRI",
+     "TREM SQR",
+     "PAN TRI",
+     "PAN SQR"
+    ],
+    "short": [
+     "T-TR",
+     "T-SQ",
+     "P-TR",
+     "P-SQ"
+    ]
+   }
+  ],
+  "config": "type=i5trem model=pan rate=0.07,7.7 modes=tt,ts,pt,ps cv=30",
+  "stereo": true,
+  "notes": "Copia Behringer della serie in plastica a coperchio-pedale (2005-): commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito del PN-2 (pn2): due VCA pilotati dallo stesso LFO, in fase (tremolo) o in controfase (pan), onda triangolare o quadra (fronti livellati), periodo 130 ms-14 s; il pan richiede le due uscite (in mono resta il tremolo del VCA A). Il LED RATE lampeggia a tempo. Analogico o digitale non confermato (la scheda lo segna analogico; alcuni rivenditori lo dicono digitale, nessuna foto della scheda): emulato come la linea BBD dell'originale.",
+  "control_notes": "MODE nell'ordine del manuale TP300 (tremolo triangolo, tremolo quadra, pan triangolo, pan quadra)."
+ },
+ "bhuv300": {
+  "family": "BBDChorus",
+  "category": "Vibrato / Rotary",
+  "controls": [
+   {
+    "label": "MODE",
+    "role": "latch",
+    "kind": "selector",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "UNLATCH",
+     "BYPASS",
+     "LATCH"
+    ],
+    "short": [
+     "UNL",
+     "BYP",
+     "LAT"
+    ]
+   },
+   {
+    "label": "RISE",
+    "role": "rise",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "ms",
+    "lo": 150.0,
+    "hi": 5000.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 2.0,
+    "hi": 15.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5bbd model=vibrato stages=1024 dly=2.5,6.4 vco=exp ctr=0.5 swing=0.5 rate=2,15 lfo=sine aa=8000:0.5412,8000:1.3066 rc=8000:0.5412,8000:1.3066 sat=1.0 noise=0.00015 rise=150,5000 mix=0,1",
+  "stereo": false,
+  "notes": "Copia Behringer della serie in plastica a coperchio-pedale (2005-): commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito del VB-2 (vb2): MN3207 + MN3102 attorno a 4 ms (clock 80-205 kHz, 2,5-6,4 ms), uscita 100% effetto, LFO sinusoidale a T ponte 2-15 Hz, RISE 150 ms-5 s che porta la profondita' al valore impostato (qui all'accensione e uscendo da BYPASS). MODE BYPASS = diretto; UNLATCH e LATCH riguardano il footswitch (nel plugin entrambi attivi). Differenza documentata: selettore a slitta invece del pomello. Analogico o digitale non confermato (la scheda lo segna analogico; alcuni rivenditori lo dicono digitale, nessuna foto della scheda): emulato come la linea BBD dell'originale.",
+  "control_notes": "Il selettore a slitta MODE a 3 posizioni e' reso come selettore rotativo; RISE = RISE TIME."
+ },
+ "bhcc300": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "BTN 1/2",
+    "role": "btn12",
+    "kind": "selector",
+    "default": 0.3333333333333333,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "OFF",
+     "1",
+     "2",
+     "1+2"
+    ]
+   },
+   {
+    "label": "BTN 3/4",
+    "role": "btn34",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "OFF",
+     "3",
+     "4",
+     "3+4"
+    ]
+   }
+  ],
+  "config": "type=i5bbd model=dimension stages=1024 dly=4.53,5.57 vco=exp swing=0.5 lfo=tri comp=1 ctau=10 aa=22000:0.5412,22000:1.3066 rc=22000:0.5412,22000:1.3066 sat=1.0 noise=0.00015 mix=1,0.75 modes=0.3,0.6,0.3,1.0,0.62,0.61,0.84,0.63",
+  "stereo": true,
+  "notes": "Copia Behringer della serie in plastica a coperchio-pedale (2005-): commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito del DC-2 (dc2): due MN3207 in controfase pilotati dallo stesso LFO a triangolo, compander NE570, filtri ~22 kHz, ritardo 4,5-5,6 ms (clock 92-113 kHz), uscite incrociate (ciascun lato meno 0,6 dell'altro). Differenza documentata: i 4 tasti si combinano (16 combinazioni, 'piu' profondo da sinistra a destra'); stima del circuito: le reti RC dei tasti premuti si sommano (velocita' = somma, profondita' = somma quadratica limitata), nessun tasto = solo diretto.",
+  "control_notes": "I quattro tasti a scatto sono resi con due selettori (BTN 1/2: OFF/1/2/1+2, BTN 3/4: OFF/3/4/3+4) che coprono tutte le 16 combinazioni."
+ },
+ "bhco600": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.27,
+    "hi": 7.1
+   },
+   {
+    "label": "HIGH",
+    "role": "high",
+    "kind": "knob",
+    "default": 1.0,
+    "units": "hz",
+    "lo": 1500.0,
+    "hi": 12000.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LOW",
+    "role": "low",
+    "kind": "knob",
+    "default": 1.0,
+    "units": "hz",
+    "lo": 88.0,
+    "hi": 1026.0
+   }
+  ],
+  "config": "type=i5bbd model=chorus stages=1024 dly=3.41,6.02 vco=exp ctr=0.5 swing=0.5 rate=0.27,7.1 lfo=tri aa=20000:0.5412,20000:1.3066 rc=20000:0.5412,20000:1.3066 sat=1.0 noise=0.00015 high=1500,12000 low=88,1026 lowrev=1 mix=1,0.5 out=wetr",
+  "stereo": true,
+  "notes": "Copia Behringer della serie in plastica a coperchio-pedale (2005-): commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito del CE-5 (ce5): MN3007 + MN3101 (3,4-6,0 ms), LFO 0,27-7,1 Hz, filtri ~20 kHz; sul ramo d'effetto HIGH passa-basso del 1° ordine 1,5-12 kHz e LOW passa-alto SVF 88-1026 Hz. Differenza documentata: HIGH e LOW sono due pomelli separati CUT-FLAT (a fine corsa = piatto) invece del concentrico del CE-5. Uscita A = diretto + effetto, B = solo effetto (CE-5). Analogico o digitale non confermato (la scheda lo segna analogico; alcuni rivenditori lo dicono digitale, nessuna foto della scheda): emulato come la linea BBD dell'originale.",
+  "control_notes": "HIGH e LOW: scala CUT (a sinistra) - FLAT (a destra); LOW a destra = 88 Hz, a sinistra = 1 kHz."
+ },
+ "bhhf300": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "MANUAL",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.0625,
+    "hi": 10.0
+   },
+   {
+    "label": "RES",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5bbd model=flanger stages=512 dly=0.512,6.4 vco=lin swing=0.5 rate=0.0625,10 lfo=tri fbmax=0.9 clamp=0.6 aa=12800:0.707 rc=12800:0.618,12800:1.618,12800:0 sat=0.8 noise=0.00012 mix=1,1",
+  "stereo": false,
+  "notes": "Copia Behringer della serie in plastica a coperchio-pedale (2005-): commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito dell'HF-2 (hf2): scheda tipo BF-2 con MN3204 a 512 stadi, ritardo 0,5-6,4 ms (40-500 kHz): la 'banda alta' nasce dal BBD piu' corto, LFO 0,0625-10 Hz (periodo 100 ms-16 s). Nessuna differenza funzionale dichiarata. Analogico o digitale non confermato (la scheda lo segna analogico; alcuni rivenditori lo dicono digitale, nessuna foto della scheda): emulato come la linea BBD dell'originale."
+ },
+ "bhvp1": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 8.0
+   },
+   {
+    "label": "TONE",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "NORMAL",
+     "COLOR"
+    ]
+   }
+  ],
+  "config": "type=otaphase stages=4 fc=150,2600 rate=0.1,8 relax=0.22 fb=0.55 fbhp=480 colgain=1.35",
+  "stereo": false,
+  "notes": "Copia del Small Stone (ehxss75), stessa config: quattro passa-tutto a OTA (CA3094) con la fc lineare nella corrente dell'LFO a rilassamento RC, TONE su = rete di retroazione 'COLOR' con passa-alto e salto di volume. Differenze documentate: true bypass, Zin 100 k, alimentazione 9 V (non cambiano il suono a effetto acceso). Uso degli OTA non verificato (nessuna foto della scheda).",
+  "control_notes": "TONE: giu' = normale (retroazione negativa nel manuale), su = colore."
+ },
+ "bhph9": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.37,
+    "hi": 7.7
+   },
+   {
+    "label": "SWIRL",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "MODERN",
+     "VINTAGE"
+    ]
+   }
+  ],
+  "config": "type=jfetphase stages=4 r=24000 c=47e-9 ron=2500 umin=0.04 umax=1 rate=0.365,1.925,7.675 fb=0.32 gain=1.25",
+  "stereo": false,
+  "notes": "Copia del Phase 90 / EVH90 (evh90), stessa config: quattro passa-tutto a operazionale con JFET in parallelo a 24k e 47n, LFO a triangolo 0,37-1,9-7,7 Hz; SWIRL su = moderno (R di retroazione, come BLOCK), giu' = vintage (senza, come SCRIPT). Differenze documentate: true bypass, Zin 1 M, 10 mA. Associazione SWIRL/retroazione stimata.",
+  "control_notes": "SWIRL: MODERN = su (con retroazione), VINTAGE = giu'."
+ },
+ "bhvd400": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "REP. RATE",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 20.0,
+    "hi": 300.0
+   },
+   {
+    "label": "ECHO",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "INTENSITY",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5delay stages=4096 emph=410,2340 comp=1 ctau=10 aa=3800:0.7,3800:0 rc=2300:1.3,4200:0 sat=1.0 noise=0.0003 loss=4e-5 dly=20,300 fbmax=1.0 law=level out=dirout timems=150",
+  "stereo": true,
+  "notes": "Copia Behringer della serie Vintage: commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito del DM-3 (dm3) senza il TONE (pannello a 3 pomelli del DM-2): BBD a 4096 stadi ('vintage BBDs') con clock 6,8-102 kHz (20-300 ms), compander tipo 570/571 ('advanced noise reduction'), pre/de-enfasi 410 Hz/2,3 kHz, filtri del 3° ordine con la gobba a ~2 kHz (qui +1 dB a 1,5-2 kHz e -3 dB a ~2,6 kHz: con il compander il guadagno dei filtri nell'anello conta al quadrato, una gobba piu' alta accorcerebbe le ripetizioni sotto il limite d'anello), INTENSITY con guadagno d'anello <= 1 (il DM-3 autooscilla da meta' corsa: qui ripetizioni lunghissime ma limitate). Differenza documentata: DIR OUT; con entrambe le uscite collegate OUT porta solo l'eco e DIR OUT il diretto (stereo del plugin: L = eco, R = diretto); in mono OUT = diretto + eco. BBD e compander non identificati.",
+  "control_notes": "REPEAT RATE abbreviato REP. RATE (come il DM-2)."
+ },
+ "bhvm1": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "prelvl",
+    "kind": "knob",
+    "default": 0.39,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 35.0,
+    "hi": 550.0
+   },
+   {
+    "label": "CHRS/VIBR",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "CHORUS",
+     "VIBRATO"
+    ]
+   }
+  ],
+  "config": "type=i5delay stages=8192 dly=35,550 taper=lin comp=1 ctau=47,30 aa=3650:1.0,4800:0 rc=3680:1.58,7200:0,3750:0.62 emph=1330,2650 fblp=3390 fbhp=72 fbmax=0.97 noise=0.00035 sat=1.3 loss=2e-5 dmmpre=1 law=dmm lforound=9.6 modrate=1.0 vibrate=4.4 moddepth=0.05 vibdepth=0.1 out=dryr timems=200",
+  "stereo": true,
+  "notes": "Copia del Deluxe Memory Man (ehdmm, EH7850): preampli LEVEL (reostato 1MA + 22k: x0,22-x10,2, satura ai binari, LED OVERLOAD), pre-enfasi 1,33/2,65 kHz, compander (Coolaudio V571M al posto del NE570), due BBD da 4096 stadi con clock a reostato lineare (35-550 ms; il manuale VM1 dice 450 ms), anti-alias e ricostruzione del DMM, retroazione filtrata 72 Hz-3,4 kHz con guadagno d'anello <= 1 (l'originale autooscilla: qui il rivelatore dell'espansore ha 30 ms invece dei 10 ms del DMM, perche' con le costanti diverse il pompaggio del compander porta l'anello oltre l'unita'), MIX diretto/effetto. Differenze documentate: nessun pomello DEPTH (come l'EH7850); modulazione del clock con LFO a triangolo arrotondato a ~1 Hz fisso (Sound On Sound) e il pomello CHORUS/VIBRATO come intensita'; il deviatore VIBRATO rende l'LFO veloce (4,4 Hz) e piu' profondo (stima, il manuale dice 'lento = chorus, veloce = vibrato'). Uscite EFFECT (L) e DIRECT (R, sempre diretto).",
+  "control_notes": "Il pomello CHORUS/VIBRATO e' CHRS/VIBR (intensita'), il deviatore a slitta CHORUS/VIBRATO e' la levetta MODE; l'interruttore POWER non e' un comando audio."
+ },
+ "bhbuf300": {
+  "family": "BBDFlanger",
+  "category": "Basso",
+  "controls": [
+   {
+    "label": "RESONANCE",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.0625,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MANUAL",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5bbd model=flanger stages=512 dly=0.512,6.4 vco=lin swing=0.5 rate=0.0625,10 lfo=tri fbmax=0.75 clamp=0.6 aa=12800:0.707 rc=12800:0.618,12800:1.618,12800:0 sat=0.8 noise=0.00012 wethp=194 reshp=220 mix=1,1",
+  "stereo": false,
+  "notes": "Copia Behringer della serie in plastica a coperchio-pedale (2005-): commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito del BF-2B (bf2b): scheda HF-2 (MN3204, 0,5-6,4 ms) con il ramo ritardato passa-alto a ~194 Hz (le fondamentali del basso restano dirette) e il ritorno della risonanza filtrato a ~220 Hz (174-272 Hz), trimmer di risonanza tarato basso. Linea del BUF300 non verificata (stima).",
+  "control_notes": "Ordine della pagina prodotto: RESONANCE, RATE, DEPTH, MANUAL (stima della disposizione)."
+ },
+ "bhbuc400": {
+  "family": "BBDChorus",
+  "category": "Basso",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LOW FILTER",
+    "role": "low",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 80.0,
+    "hi": 800.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.27,
+    "hi": 7.1
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5bbd model=chorus stages=1024 dly=3.41,6.02 vco=exp ctr=0.5 swing=0.5 rate=0.27,7.1 lfo=tri comp=1 aa=10000:0.5412,10000:1.3066 rc=10000:0.5412,10000:1.3066 sat=1.0 noise=0.0002 low=80,800 mix=1,0.5 out=inv",
+  "stereo": true,
+  "notes": "Copia Behringer della serie in plastica a coperchio-pedale (2005-): commutazione elettronica bufferizzata, Zin 500 k, Zout 1 k. Circuito del CEB-3 (ceb3): linea con compander e filtri a ~10 kHz (nel CEB-3 l'IC d'eco ES56028S), LFO a triangolo 0,27-7,1 Hz, LOW FILTER passa-alto 80-800 Hz solo sul ramo d'effetto (le fondamentali del basso restano dirette, come un crossover). OUT A = diretto + effetto, OUT B = diretto - effetto per lo stereo. Linea del BUC400 non verificata (RockBoard lo dice analogico): stima."
+ },
+ "bhchorussymphony": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "INPUT",
+    "role": "input",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "HIGH",
+     "LOW"
+    ]
+   },
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.7,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "INTENSITY",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "V.DEPTH",
+    "role": "vdepth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "V.RATE",
+    "role": "vrate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 1.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "CHORUS",
+     "VIBRATO"
+    ],
+    "short": [
+     "CHO",
+     "VIB"
+    ]
+   }
+  ],
+  "config": "type=i5bbd model=ce1 stages=512 dly=3.66,6.4 vco=exp ctr=0.5 swing=0.5 rate=0.5,0.6 rate2=1,10 lfo=tri aa=6800:0.5412,6800:1.3066 rc=6800:0.5412,6800:1.3066 sat=1.2 noise=0.0003 mix=1,0.7 pre=1,3.2 presat=1.5 out=dryl",
+  "stereo": true,
+  "notes": "Ricreazione del CE-1 (ce1): preampli d'ingresso a transistor con INPUT HIGH/LOW (+10 dB, stima) e LEVEL (LED di picco) che satura dolcemente, linea BBD a 512 stadi (MN3002 nel CE-1, chip Behringer non dichiarato) con clock 40-70 kHz (3,7-6,4 ms) e filtri a 6,8 kHz; CHORUS: velocita' quasi fissa (0,5-0,6 Hz) con INTENSITY sulla profondita'; VIBRATO: solo effetto con V.DEPTH e V.RATE 1-10 Hz. Uscita mono = diretto + effetto; stereo = diretto a sinistra, effetto a destra (effetto 3D). Differenze documentate: alimentazione 9 V, footswitch invertiti, true bypass (il preampli e' escluso a effetto spento; nel plugin conta solo a effetto acceso).",
+  "control_notes": "INPUT LEVEL HIGH/LOW -> levetta INPUT; CHORUS INTENSITY -> INTENSITY, VIBRATO DEPTH/RATE -> V.DEPTH/V.RATE; il footswitch VIBRATO/CHORUS e' reso come selettore MODE; l'interruttore interno TRUE/BUFFERED non e' un comando audio."
+ },
+ "bhdualphase": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "RATE 1",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 18.0
+   },
+   {
+    "label": "SHAPE",
+    "role": "wave",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "SIN-SIN",
+     "SIN-SQR",
+     "SQR-SIN",
+     "SQR-SQR"
+    ],
+    "short": [
+     "S-S",
+     "S-Q",
+     "Q-S",
+     "Q-Q"
+    ]
+   },
+   {
+    "label": "RATE 2",
+    "role": "rate2",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "hz",
+    "lo": 0.1,
+    "hi": 18.0
+   },
+   {
+    "label": "DEPTH A",
+    "role": "depth",
+    "kind": "outer",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK A",
+    "role": "res",
+    "kind": "inner",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SYNC",
+    "role": "sync",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "NORM",
+     "REV"
+    ]
+   },
+   {
+    "label": "B INPUT",
+    "role": "routing",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "IN A",
+     "OUT A",
+     "IN B"
+    ],
+    "short": [
+     "INA",
+     "OUTA",
+     "INB"
+    ]
+   },
+   {
+    "label": "B SWEEP",
+    "role": "sweepb",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "GEN 1",
+     "GEN 2",
+     "CV"
+    ],
+    "short": [
+     "G1",
+     "G2",
+     "CV"
+    ]
+   },
+   {
+    "label": "DEPTH B",
+    "role": "depth2",
+    "kind": "outer",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "FEEDBACK B",
+    "role": "res2",
+    "kind": "inner",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "CV",
+    "role": "cv",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5biphase c=15e-9 rmin=1500 rmax=200000 la=6 lr=60 rate=0.1,18 fb=0.85 gain=1.25",
+  "stereo": true,
+  "notes": "Ricreazione del Mu-Tron Bi-Phase: due phaser indipendenti (A e B) di 6 celle passa-tutto ciascuno con fotoaccoppiatori LED/LDR (12 dichiarati: discesa veloce e risalita lenta della fotoresistenza, tolleranze fra le celle), DEPTH e FEEDBACK per canale (anello < 1); due generatori di sweep sinusoide/quadra 0,1-18 Hz; B prende l'ingresso da IN A (parallelo), OUT A (serie, 12 celle) o IN B; SYNC REV inverte lo sweep di B quando segue GEN 1; con B SWEEP = CV la posizione di B e' il comando CV (pedale d'espressione 0-5 V). Uscite: A a sinistra, B a destra; in mono somma (o OUT B in serie). Celle (15 nF, LDR 1,5-200 k) stimate per notch ~50 Hz-7 kHz.",
+  "control_notes": "Comandi raggruppati per i limiti grafici: SHAPE unisce le due levette di forma (GEN 1-GEN 2), DEPTH/FEEDBACK di ogni phasor sono un pomello concentrico, il comando CV sostituisce il pedale d'espressione; MAN/CV di GEN 1 e SWEEP GEN 1/CV di A non sono riprodotti (A segue sempre GEN 1)."
+ },
+ "bhbflanger": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "PEDAL",
+    "role": "pedal",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "STOP",
+    "role": "stop",
+    "kind": "knob",
+    "default": 0.8,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "START",
+    "role": "start",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 20.0
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MODE",
+    "role": "pedsw",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OSC",
+     "PEDAL"
+    ]
+   }
+  ],
+  "config": "type=i5bbd model=bflanger stages=1024 dly=0.6,24 vco=exp rate=0.05,20 lfo=sine ldr=4,40 fbmax=0.9 aa=14000:0.707 rc=12000:0.6,14000:1.3 sat=1.5 noise=0.00025 mix=1,1",
+  "stereo": false,
+  "notes": "Ricreazione del Mu-Tron (Musitronics) Pedal Flanger: linea BBD 0,6-24 ms (stima 1024 stadi, clock ~21-850 kHz) con FEEDBACK; il ritardo e' comandato da una fotoresistenza illuminata dal pedale ottico (tipo Opti-Pot) o dall'oscillatore interno 'parametrico ottico' 0,05-20 Hz che va da START a STOP (la LDR scende veloce e risale lenta: alle velocita' alte lo sweep si accorcia e diventa asimmetrico). Chip, filtri e costanti della LDR stimati.",
+  "control_notes": "Il primo comando e' il bilanciere (pedale ottico, attivo con MODE = PEDAL); il footswitch PEDAL (oscillatore/pedale) e' la levetta MODE; il footswitch EFFECT e' il bypass."
+ },
+ "bhpedalflanger": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "PEDAL",
+    "role": "pedal",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPREAD",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "AUTO/MAN.",
+    "role": "pedsw",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "AUTO",
+     "MANUAL"
+    ]
+   },
+   {
+    "label": "INTENSITY",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5bbd model=tyco stages=1024 dly=0.5,10 vco=lin ctr=0.5 swing=0.5 rate=0.1,9 lfo=tri fbmax=0.92 aa=10000:0.707 rc=9000:0.6,11000:1.2 sat=0.7 noise=0.0004 mix=1,1",
+  "stereo": false,
+  "notes": "Riproduzione del Tycobrahe Pedalflanger (1976): linea BBD corta (stima SAD1024 a 1024 stadi, 0,5-10 ms, VCO lineare) con rigenerazione INTENSITY (al massimo la linea satura: leggera distorsione dichiarata); in AUTO il pedale regola la velocita' dell'LFO a triangolo (0,1-9 Hz, fino all'effetto rotativo a fondo corsa) e SPREAD l'ampiezza dello sweep; in MANUAL il pedale e' la posizione dello sweep (escursione scalata da SPREAD). Linea, gamme e filtri stimati; senza compander (fruscio del BBD).",
+  "control_notes": "Il primo comando e' il bilanciere; AUTO/MANUAL abbreviato AUTO/MAN.; l'interruttore in punta e' il bypass."
+ },
+ "bh69vibe": {
+  "family": "Phaser",
+  "category": "Vibrato / Rotary",
+  "controls": [
+   {
+    "label": "VOLUME",
+    "role": "outlvl",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 1.0,
+    "hi": 11.0
+   },
+   {
+    "label": "INTENSITY",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 1.0,
+    "hi": 11.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "hz",
+    "lo": 0.7,
+    "hi": 11.0
+   },
+   {
+    "label": "MODE",
+    "role": "mode",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "CHORUS",
+     "VIBRATO"
+    ]
+   }
+  ],
+  "config": "type=i5vibe caps=15e-9,220e-9,470e-12,4.7e-9 rmin=4000 rmax=600000 rate=0.7,11 lamp=30 ldra=5 ldrr=60 gc=0.92 ge=1.0 bias=0.25 pre=1.4 outl=0.6,2",
+  "stereo": false,
+  "notes": "Ricreazione dell'Uni-Vibe: quattro stadi a sfasatore a transistor (emettitore in fase sulla fotoresistenza, collettore invertito sul condensatore) con i condensatori sfalsati dell'originale 15n, 220n, 470p, 4n7 e guadagni di collettore/emettitore non uguali (0,92/1: modulazione d'ampiezza, il 'throb'); le quattro LDR (4-600 k, tolleranze) sono illuminate da una lampada a incandescenza con inerzia termica (~30 ms) pilotata dall'oscillatore a sfasamento (sinusoide con seconda armonica) attorno alla sua polarizzazione: INTENSITY = ampiezza del pilota. CHORUS = diretto + sfasato, VIBRATO = solo sfasato. Sorgente luminosa e valori delle LDR del 69 VIBE non verificati (stima).",
+  "control_notes": "Pomelli a scala 1-11; il footswitch CHORUS/VIBRATO e' reso come levetta MODE; la presa FOOT CONTROL (velocita' da pedale) non e' riprodotta."
+ },
+ "bhbm13": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "DRIVE",
+    "role": "drive",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "OUT LEVEL",
+    "role": "outlvl",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SWEEP",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "STAGES",
+    "role": "stages",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "6",
+     "12"
+    ]
+   },
+   {
+    "label": "RESONANCE",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "AMOUNT",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "hz",
+    "lo": 0.01,
+    "hi": 250.0
+   }
+  ],
+  "config": "type=i5phase cell=exp stages=6,12 f=30,8000 mantaper=lin rate=0.01,250 lfo=tri fb=0.9 fbhp=40 mix=0.5,0.5 gain=1.25 drive=0.3,12 drsat=1.2 outl=0.5,2 stereo=1 gate=1",
+  "stereo": true,
+  "notes": "Ricreazione del Moogerfooger MF-103: DRIVE (stadio d'ingresso che satura dolcemente, LED), catena di 6 o 12 celle passa-tutto a OTA con controllo esponenziale (SWEEP = centro, 30 Hz-8 kHz, AMOUNT = escursione dell'LFO in ottave), RESONANCE = retroazione filtrata e limitata (anello < 1), LFO 0,01-250 Hz (gamma dichiarata da Behringer: oltre ~20 Hz modulazione udibile), OUTPUT LEVEL. Uscita stereo: diretto + sfasato e diretto - sfasato (pettini complementari, stima). Gamme e celle stimate (nessuno schema pubblicato).",
+  "control_notes": "OUTPUT LEVEL abbreviato OUT LEVEL; l'interruttore 6/12 STAGES e' la levetta STAGES; gli ingressi CV/espressione non sono riprodotti."
+ },
+ "bhbm14m": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "DRIVE",
+    "role": "drive",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "OUT LEVEL",
+    "role": "outlvl",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LFO",
+    "role": "wave",
+    "kind": "selector",
+    "default": 0.2,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "SINE",
+     "TRIANGLE",
+     "SQUARE",
+     "RAMP",
+     "SAW",
+     "S&H"
+    ],
+    "short": [
+     "SIN",
+     "TRI",
+     "SQR",
+     "RMP",
+     "SAW",
+     "S&H"
+    ]
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 50.0
+   },
+   {
+    "label": "AMOUNT",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.2,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "ms",
+    "lo": 25.0,
+    "hi": 500.0
+   },
+   {
+    "label": "SHORT/LONG",
+    "role": "range",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "SHORT",
+     "LONG"
+    ]
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5delay stages=16384 dly=25,500 long=2 track=0.38 comp=1 ctau=10 aa=6000:0.7,8000:0 rc=6000:0.6,7000:1.2 sat=1.2 noise=0.0003 loss=2e-5 fbmax=0.98 fbknee=0.8 fbhp=40 law=cross out=wetr waves=sine,tri,square,ramp,saw,sh lforound=200 modrate=0.05,50 moddepth=0.05 drive=0.3,10 drsat=2.0 outl=0.5,2 timems=200",
+  "stereo": true,
+  "notes": "Ricreazione del Moogerfooger MF-104M: DRIVE d'ingresso con saturazione morbida (LED), linea BBD lunga (stima 4 x 4096 stadi con compander) con clock gestito digitalmente: SHORT 25-500 ms, LONG raddoppia il tempo dimezzando il clock e i filtri anti-alias/ricostruzione la seguono (taglio <= 0,38 f_clk: LONG piu' scuro), LFO a 6 forme (sinusoide, triangolo, quadra, rampa, dente di sega, sample & hold) 0,05-50 Hz con AMOUNT sul clock, FEEDBACK con guadagno d'anello che arriva a 1 a 8/10 della corsa (l'originale oltre 8 autooscilla: qui limitazione morbida), MIX e OUTPUT LEVEL. Uscite MIX OUT (L) e DELAY OUT (R, solo ritardato). Linea e tempo minimo stimati.",
+  "control_notes": "OUTPUT LEVEL abbreviato OUT LEVEL; tap tempo, spillover, insert del feedback, CV e MIDI non sono riprodotti."
+ },
+ "bhbm18m": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "DRIVE",
+    "role": "drive",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "OUT LEVEL",
+    "role": "outlvl",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX",
+    "role": "mix",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LFO",
+    "role": "wave",
+    "kind": "selector",
+    "default": 0.2,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "SINE",
+     "TRIANGLE",
+     "SQUARE",
+     "RAMP",
+     "SAW",
+     "S&H"
+    ],
+    "short": [
+     "SIN",
+     "TRI",
+     "SQR",
+     "RMP",
+     "SAW",
+     "S&H"
+    ]
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 0.05,
+    "hi": 50.0
+   },
+   {
+    "label": "AMOUNT",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DELAY",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RANGE",
+    "role": "range",
+    "kind": "toggle",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "CHORUS",
+     "FLANGER"
+    ]
+   },
+   {
+    "label": "FEEDBACK",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5bbd model=cluster stages=512 dly=2,20 dly2=0.4,4 vco=exp swing=0.5 rate=0.05,50 lfo=tri waves=sine,tri,square,ramp,saw,sh edge=120 fbmax=0.9 fbbip=1 comp=1 track=0.4 aa=10000:0.707,14000:0 rc=10000:0.6,12000:1.3 sat=1.2 noise=0.0002 drive=0.3,10 presat=1.5 outl=0.5,2 out=inv",
+  "stereo": true,
+  "notes": "Ricreazione del Moogerfooger MF-108M Cluster Flux: DRIVE d'ingresso che satura dolcemente, linea BBD corta (stima 512 stadi con compander; gamme CHORUS 2-20 ms e FLANGER 0,4-4 ms con VCO esponenziale e filtri che seguono il clock), LFO a 6 forme (sinusoide, triangolo, quadra, rampa, dente di sega, sample & hold) con RATE 0,05-50 Hz e AMOUNT, DELAY = ritardo di base, FEEDBACK a zero centrale (negativo/positivo, anello < 1), MIX diretto/effetto, OUTPUT LEVEL; uscite stereo (diretto + effetto / diretto - effetto, stima). Gamme e linea stimate.",
+  "control_notes": "OUTPUT LEVEL abbreviato OUT LEVEL; RANGE CHORUS/FLANGER e' la levetta; tap tempo, insert del feedback, CV/MIDI/USB e DIP switch non sono riprodotti."
+ },
+ "bhflangenoname": {
+  "family": "BBDFlanger",
+  "category": "Flanger",
+  "controls": [
+   {
+    "label": "MANUAL",
+    "role": "manual",
+    "kind": "knob",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.02,
+    "hi": 30.0
+   },
+   {
+    "label": "I/P GAIN",
+    "role": "gain",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "REACTION",
+    "role": "res",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "ACTION",
+    "role": "action",
+    "kind": "knob",
+    "default": 0.75,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LFO",
+    "role": "wave",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "TRI-TRI",
+     "TRI-SQR",
+     "SQR-TRI",
+     "SQR-SQR"
+    ],
+    "short": [
+     "T-T",
+     "T-Q",
+     "Q-T",
+     "Q-Q"
+    ]
+   },
+   {
+    "label": "MODE",
+    "role": "space",
+    "kind": "selector",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "TIME",
+     "SPACE",
+     "T+S"
+    ],
+    "short": [
+     "TIME",
+     "SPC",
+     "T+S"
+    ]
+   },
+   {
+    "label": "MONO/ST",
+    "role": "stereo",
+    "kind": "toggle",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "MONO",
+     "STEREO"
+    ]
+   }
+  ],
+  "config": "type=i5bbd model=lovetone stages=512 dly=0.25,16 vco=exp swing=0.5 rate=0.02,30 fbmax=0.92 fbbip=1 mix=1,1 drive=0.25,4 presat=1.8 aa=12000:0.707 rc=10000:0.6,12000:1.3 sat=1.2 noise=0.0002",
+  "stereo": true,
+  "notes": "Ricreazione del Lovetone The Flange With No Name: I/P GAIN (meta' corsa per chitarra) e linea di ritardo analogica (stima: BBD a 512 stadi, 0,25-16 ms con VCO esponenziale: MANUAL basso = phasing, medio = flanger, alto = chorus/vibrato), DEPTH dell'LFO sul ritardo, RATE da sub-audio a bassa frequenza udibile (0,02-30 Hz, stima), REACTION = rigenerazione a zero centrale (Yin/Yang: positiva o negativa, anello < 1), ACTION = mix del ritardato a zero centrale (in fase o in controfase); LFO a 4 combinazioni di forma per TIME e SPACE; SPACE = tremolo/pan fra le due uscite con la seconda forma d'onda. Dispositivo di ritardo non dichiarato: gamme stimate.",
+  "control_notes": "I footswitch TIME e SPACE sono resi come selettore MODE (TIME, SPACE, TIME+SPACE); LOOPAGE (loop effetti) non e' riprodotto; MONO/STEREO: in MONO le due uscite sono uguali (lo SPACE diventa tremolo), in STEREO L = SPACE(D) OUT, R = TIME OUT."
+ },
+ "cvchorus": {
+  "family": "BBDChorus",
+  "category": "Chorus / Dimension",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "RATE",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.3,
+    "hi": 6.0
+   }
+  ],
+  "config": "type=i5bbd model=chorus aa=9000:0.6,12000:0 rc=8000:0.6,9500:1.2 sat=1.0 noise=0.00015 emph=613,2680 stages=1024 dly=3.41,6.02 vco=exp ctr=0.5 swing=0.5 rate=0.3,6 lfo=tri wethp=70 mix=1,0.6",
+  "stereo": false,
+  "notes": "Chorus analogico mini dichiarato 'pure analog': chip non documentato, stima sul modello dei chorus a BBD economici (V3207/MN3207 + clock, linea del CE-2: 3,4-6 ms), LFO a triangolo 0,3-6 Hz, pre/de-enfasi, LEVEL = quantita' d'effetto (meta' corsa = miscela 1:0,6)."
+ },
+ "cvphaser": {
+  "family": "Phaser",
+  "category": "Phaser",
+  "controls": [
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "hz",
+    "lo": 0.37,
+    "hi": 7.7
+   }
+  ],
+  "config": "type=jfetphase stages=4 r=24000 c=47e-9 ron=2500 umin=0.04 umax=1 rate=0.365,1.925,7.675 fb=0.32 gain=1.25",
+  "stereo": false,
+  "notes": "Phaser analogico mini a un solo comando: circuito non pubblicato; per interfaccia e' il Phase 90 (stima): quattro celle a JFET in parallelo a 24k/47n, LFO a triangolo 0,37-7,7 Hz, retroazione di colore moderna (R28) fissa."
+ },
+ "cvtremolo": {
+  "family": "Tremolo",
+  "category": "Tremolo / Pan / Slicer",
+  "controls": [
+   {
+    "label": "DEPTH",
+    "role": "depth",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TONE",
+    "role": "tone",
+    "kind": "knob",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "SPEED",
+    "role": "rate",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "hz",
+    "lo": 1.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5trem model=tone rate=1,10 lfo=round tone=1200,12000 cv=30",
+  "stereo": false,
+  "notes": "Tremolo analogico mini (manuale: 'CLASSIC TREMOLO'): circuito non pubblicato, stima: VCA con LFO a triangolo arrotondato 1-10 Hz e TONE passa-basso del 1° ordine sull'uscita (1,2-12 kHz, 'brillantezza')."
+ },
+ "cvdelaypd18": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "F.BACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "ECHO",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "ms",
+    "lo": 20.0,
+    "hi": 530.0
+   }
+  ],
+  "config": "type=i5delay stages=8192 emph=410,2340 comp=1 ctau=10 aa=4500:0.7,6000:0 rc=4500:0.6,5000:1.2 track=0.38 sat=1.0 noise=0.0003 loss=3e-5 dly=20,530 fbmax=0.95 law=level timems=180",
+  "stereo": false,
+  "notes": "Delay mini dichiarato 'pure-circuit analog' (suono 'tape'), fino a 530 ms: chip non documentato. Emulato come BBD (stima: due chip da 4096 stadi, clock 7,7-205 kHz) con compander, enfasi e filtri che scendono col clock (piu' scuro alle ripetizioni lunghe), F.BACK 0-100% con anello < 1, ECHO = livello delle ripetizioni. Nota: un tempo di 530 ms in questa fascia fa pensare a un PT2399 (ritardo digitale ADM), non verificato."
+ },
+ "cvclassicdelay": {
+  "family": "AnalogDelay",
+  "category": "Delay",
+  "controls": [
+   {
+    "label": "LEVEL",
+    "role": "outlvl",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "HIGH",
+    "role": "high",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "LOW",
+    "role": "low",
+    "kind": "knob",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "TIME",
+    "role": "time",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "ms",
+    "lo": 20.0,
+    "hi": 600.0
+   },
+   {
+    "label": "F.BACK",
+    "role": "feedback",
+    "kind": "knob",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   },
+   {
+    "label": "MIX",
+    "role": "level",
+    "kind": "knob",
+    "default": 0.45,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0
+   }
+  ],
+  "config": "type=i5delay stages=8192 emph=410,2340 comp=1 ctau=10 aa=4500:0.7,6000:0 rc=4500:0.6,5000:1.2 track=0.38 sat=1.0 noise=0.0003 loss=3e-5 dly=20,600 fbmax=0.95 law=blend eqhi=2500 eqlo=250 eqdb=12 outl=0.5,2 timems=180",
+  "stereo": false,
+  "notes": "Delay dichiarato 'pure circuit analog' fino a ~600 ms con EQ a 2 bande e LEVEL: chip non documentato. Emulato come BBD (stima: due chip da 4096 stadi) con compander e filtri che seguono il clock; HIGH e LOW = mensole +-12 dB sulle ripetizioni (2,5 kHz / 250 Hz, centro = piatto, stima), MIX diretto/eco, LEVEL d'uscita. Possibile PT2399 (non verificato)."
+ }
+}

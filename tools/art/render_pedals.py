@@ -624,11 +624,13 @@ def _prof_z(prof, y):
     return prof[-1][1]
 
 
-def profile_box(name, w, d, prof, corner, edge, mat, seg=10, bevel_seg=6):
+def profile_box(name, w, d, prof, corner, edge, mat, seg=10, bevel_seg=6, pts=None):
     """Scatola con il piano a spezzata lungo la profondita' (parte rialzata, fronte inclinato, ripiano del
-    coperchio-pedale): tagli alle quote del profilo, ogni tratto del piano resta piano."""
+    coperchio-pedale): tagli alle quote del profilo, ogni tratto del piano resta piano. pts = contorno in pianta
+    (tappa 5: contorno poligonale raccordato con il profilo, es. fronte a U della serie V-Tone)."""
     bm = bmesh.new()
-    pts = rounded_rect_pts(w, d, corner, seg)
+    if pts is None:
+        pts = rounded_rect_pts(w, d, corner, seg)
     bot = [bm.verts.new((x, y, 0.0)) for x, y in pts]
     top = [bm.verts.new((x, y, 1.0)) for x, y in pts]
     bm.faces.new(list(reversed(bot))); bm.faces.new(top)
@@ -706,12 +708,13 @@ def cover_mat(name, kind, fin, img, W, D, ribs=None):
     return m
 
 
-def sloped_plate(name, x0, x1, y0, y1, zf, zb, zbot, corner, edge, mat, seg=8):
+def sloped_plate(name, x0, x1, y0, y1, zf, zb, zbot, corner, edge, mat, seg=8, pts=None):
     """Piastra in coordinate assolute (la texture del piano resta allineata) con la faccia superiore inclinata da zf
-    (bordo vicino, y0) a zb (bordo lontano, y1) e il fondo a zbot."""
+    (bordo vicino, y0) a zb (bordo lontano, y1) e il fondo a zbot. pts = contorno gia' pronto (es. bordo bombato)."""
     w, d = x1 - x0, y1 - y0
     cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
-    pts = [(cx + x, cy + y) for x, y in rounded_rect_pts(w, d, min(corner, w / 2 - 1e-4, d / 2 - 1e-4), seg)]
+    if pts is None:
+        pts = [(cx + x, cy + y) for x, y in rounded_rect_pts(w, d, min(corner, w / 2 - 1e-4, d / 2 - 1e-4), seg)]
     bm = bmesh.new()
     bot = [bm.verts.new((x, y, zbot)) for x, y in pts]
     top = [bm.verts.new((x, y, zf + (zb - zf) * (y - y0) / (d or 1e-9))) for x, y in pts]
@@ -739,8 +742,14 @@ def build_cover(r, part, img, W, D, fin):
     for k, q in enumerate(part.get("insets") or []):
         h = q.get("h", 0.6) / 1000.0
         qm = cover_mat("inset_%s_%d_%d" % (r["id"], part["foot"], k), q.get("kind", "chrome"), fin, img, W, D, q.get("ribs"))
+        qp = None
+        if q.get("arch"):
+            # gomma col bordo lontano bombato (serie Behringer in plastica)
+            import stomp_layout as _SL
+            qp = _SL.arch_pts(q["x0"], q["y0"], q["x1"], q["y1"], q.get("corner", 1.5) / 1000.0, q["arch"] / 1000.0)
         sloped_plate("cover_inset", q["x0"], q["x1"], q["y0"], q["y1"], ztop(q["y0"]) + h, ztop(q["y1"]) + h,
-                     min(ztop(q["y0"]), ztop(q["y1"])) - 0.0006, q.get("corner", 1.5) / 1000.0, min(0.0006, h * 0.8), qm)
+                     min(ztop(q["y0"]), ztop(q["y1"])) - 0.0006, q.get("corner", 1.5) / 1000.0, min(0.0006, h * 0.8), qm,
+                     pts=qp)
     for (bx, by, br) in part.get("bumps") or []:
         bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=12, radius=br)
         for v in bm.verts: v.co.z = max(v.co.z, 0.0) * 0.45
@@ -749,8 +758,19 @@ def build_cover(r, part, img, W, D, fin):
 
 def round_footswitch(x, y, z, kind="round"):
     """Footswitch a pressione tondo (MXR, Electro-Harmonix): dado esagonale, ghiera filettata, pulsante cromato."""
-    cylinder("fs_nut", 0.0074, 0.0026, PEDAL, MAT_NICKEL, (x, y, z), seg=6, edge=0.0004)
-    cylinder("fs_collar", 0.0060, 0.0058, PEDAL, MAT_CHROME, (x, y, z + 0.0024), seg=48, edge=0.0004)
+    if kind not in ("big", "flat"):
+        cylinder("fs_nut", 0.0074, 0.0026, PEDAL, MAT_NICKEL, (x, y, z), seg=6, edge=0.0004)
+        cylinder("fs_collar", 0.0060, 0.0058, PEDAL, MAT_CHROME, (x, y, z + 0.0024), seg=48, edge=0.0004)
+    if kind == "big":
+        # grande pulsante a pedale nero (serie V-Tone): ghiera cromata bassa e cappuccio largo
+        cylinder("fs_ring", 0.0105, 0.0020, PEDAL, MAT_CHROME, (x, y, z), seg=64, edge=0.0006)
+        cylinder("fs_cap", 0.0088, 0.0075, PEDAL, MAT_FOOT, (x, y, z + 0.0018), seg=64, edge=0.0022)
+        return
+    if kind == "flat":
+        # pulsante a pedale basso e piatto (mini pedali, barretta Cube Baby)
+        cylinder("fs_collar", 0.0062, 0.0030, PEDAL, MAT_CHROME, (x, y, z), seg=48, edge=0.0004)
+        cylinder("fs_cap", 0.0054, 0.0036, PEDAL, MAT_FOOT, (x, y, z + 0.0028), seg=48, edge=0.0014)
+        return
     if kind == "soft":
         cylinder("fs_cap", 0.0058, 0.0040, PEDAL, MAT_FOOT, (x, y, z + 0.0080), seg=48, edge=0.0016)
     else:
@@ -776,10 +796,23 @@ def build_stomp(r, lay):
         for sgn in (-1, 1):
             rounded_box("tank_rib", 0.004, D * 0.82, hb * 0.7, 0.0015, 0.0012, PEDAL, base, (sgn * (W / 2 + 0.0012), 0, hb * 0.15))
         wedge_box("chassis", W - 0.004, D - 0.004, zf, zb, b["corner"], b["edge"], mat, z0=hb - 0.006)
+    elif lay.get("outline") and lay.get("profile") and lk.get("outline_profile"):
+        # tappa 5: contorno poligonale con il piano a spezzata (V-Tone, Fuzz Bender)
+        profile_box("chassis", W, D, lay["profile"], b["corner"], b["edge"], mat, bevel_seg=6,
+                    pts=rounded_poly(lay["outline"], b["corner"] * 1.6))
     elif lay.get("outline"):
         # contorno poligonale (contenitore a rombo, trapezio): prisma raccordato a piano unico
         pts = rounded_poly(lay["outline"], b["corner"] * 1.6)
         prism("chassis", pts, max(zf, zb), b["edge"], PEDAL, mat, (0, 0, 0))
+    elif lay.get("profile") and lk.get("plan"):
+        # serie Behringer in plastica (tappa 5): parte posteriore coi comandi piu' stretta, base a tutta larghezza sotto
+        # il coperchio-pedale (che copre la meta' vicina), con lo stacco tra base e coperchio
+        pl = lk["plan"]
+        profile_box("chassis", pl["rear_w"] / 1000.0, D, lay["profile"], b["corner"], b["edge"], mat, bevel_seg=6)
+        ys = (0.5 - pl["step"] / 100.0) * D
+        df = ys + D / 2
+        rounded_box("base", W, df, pl["base_h"] / 1000.0, pl.get("corner", 7.0) / 1000.0, 0.0018, PEDAL, mat,
+                    (0.0, (ys - D / 2) / 2, 0.0))
     elif lay.get("profile"):
         profile_box("chassis", W, D, lay["profile"], b["corner"], b["edge"], mat, bevel_seg=6 if b["kind"] == "die" else 3)
         if lk.get("body"):

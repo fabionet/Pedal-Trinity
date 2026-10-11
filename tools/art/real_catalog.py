@@ -40,7 +40,8 @@ NO_BRAND = re.compile(r"\bBOSS\b|\bRoland\b|\bFender\b|\bIbanez\b|\bJHS\b|\bJim\
                       r"\bErnie\s*Ball\b|\bMorley\b|\bDe\s*Armond\b|\bRowe\s+Industries\b|\bMXR\b|"
                       r"\bCustom\s+Audio\s+Electronics\b|\bCAE\b|\bDaredevil(\s+Pedals)?\b|\bWylde\s+Audio\b|"
                       r"\bPedaltrain\b|\bElectro\s*-?\s*Harmonix\b|\bEHX\b|\bSovtek\b|\bGuild\b|\bMaxon\b|"
-                      r"\bNisshin\s+Onpa\b|\bHoshino(\s+Gakki)?\b|\bVemuram\b|\bKorg\b", re.I)
+                      r"\bNisshin\s+Onpa\b|\bHoshino(\s+Gakki)?\b|\bVemuram\b|\bKorg\b|"
+                      r"\bBehringer\b|\bCuvave\b|\bM-?VAVE\b|\bMusic\s*Tribe\b", re.I)
 
 
 def hex_rgb(h, fallback):

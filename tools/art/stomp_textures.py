@@ -400,7 +400,12 @@ def draw_covers(c, covers, layer):
                 c.line(p["x0"] + 0.002, y, p["x1"] - 0.002, y, tuple(p["ribs_col"]), step * 0.28)
                 y += step
         for q in p.get("insets") or []:
-            if q.get("col"):
+            if q.get("col") and q.get("arch"):
+                # gomma col bordo lontano bombato (serie Behringer in plastica, tappa 5)
+                import stomp_layout as SL
+                pts = SL.arch_pts(q["x0"], q["y0"], q["x1"], q["y1"], q.get("corner", 1.5) / 1000.0, q["arch"] / 1000.0)
+                c.d.polygon([c.px(*pt) for pt in pts], fill=tuple(q["col"]))
+            elif q.get("col"):
                 c.rect(q["x0"], q["y0"], q["x1"], q["y1"], fill=tuple(q["col"]), radius_m=q.get("corner", 1.5) / 1000.0)
             if q.get("ribs") and q.get("ribs_col"):
                 step = q["ribs"] / 1000.0
@@ -557,6 +562,11 @@ def top_texture(r, lay, out):
         name = name.upper()
     lines = [(name, nm.get("size", 7.0) / 1000.0, font(nm.get("font"), "black"), tuple(nm["col"]) if nm.get("col") else None,
               nm.get("spacing", 0.0) / 1000.0)]
+    if nm.get("lines") == 2 and " " in name.strip():
+        # nome su due righe (serie Behringer in plastica, tappa 5): taglio allo spazio piu' vicino a meta'
+        ws = name.split()
+        best = min(range(1, len(ws)), key=lambda k: abs(len(" ".join(ws[:k])) - len(" ".join(ws[k:]))))
+        lines = [(" ".join(ws[:best]),) + lines[0][1:], (" ".join(ws[best:]),) + lines[0][1:]]
     sub_line = None
     if sb:
         st = sb.get("text") or r.get("subtitle") or ""
@@ -564,6 +574,8 @@ def top_texture(r, lay, out):
             sub_line = (st, sb.get("size", 2.4) / 1000.0, font(sb.get("font"), "bold"), tuple(sb["col"]) if sb.get("col") else None,
                         sb.get("spacing", 0.25) / 1000.0)
     code_line = None
+    if not normal and g.get("real_code") is False:
+        cd = False                  # replica: la sigla e' gia' nel nome stampato (tappa 5, V-Tone)
     if cd is not False:
         cd = cd or {}
         code_line = (code, cd.get("size", 3.2) / 1000.0, font(cd.get("font"), "black"), tuple(cd["col"]) if cd.get("col") else None,
@@ -595,6 +607,15 @@ def top_texture(r, lay, out):
         block_place(c, pl, cx, [sub_line], cx.Y(sb["y"]), sb.get("x", 50), (-D / 2 + 0.004, D / 2 - 0.004))
     if code_line and cd.get("angle") is not None:
         rot_block(c, pl, cx, [code_line], cd.get("x", 50), cd.get("y", 50), cd["angle"], cd.get("len", 40) / 100.0 * D)
+    elif code_line and cd.get("y") and cd.get("box"):
+        # sigla in un riquadro arrotondato pieno (serie Behringer, tappa 5): il riquadro segue la scritta
+        bx = cd["box"]
+        bxs = block_place(c, pl, cx, [code_line], cx.Y(cd["y"]), cd.get("x", 50), (-D / 2 + 0.004, D / 2 - 0.004), dry=True)
+        if bxs:
+            b = bxs[0]
+            px_, py_ = bx.get("padx", 1.4) / 1000.0, bx.get("pady", 0.8) / 1000.0
+            c.rect(b[0] - px_, b[1] - py_, b[2] + px_, b[3] + py_, fill=tuple(bx["col"]), radius_m=bx.get("radius", 1.0) / 1000.0)
+        block_place(c, pl, cx, [code_line], cx.Y(cd["y"]), cd.get("x", 50), (-D / 2 + 0.004, D / 2 - 0.004))
     elif code_line and (cd.get("y") or not cd.get("with_name", True)):
         block_place(c, pl, cx, [code_line], cx.Y(cd["y"]) if cd.get("y") else None, cd.get("x", 50),
                     (-D / 2 + 0.004, D / 2 - 0.004) if cd.get("y") else zone)
@@ -604,11 +625,12 @@ def top_texture(r, lay, out):
         for p in feet:
             s = p["label"][:12]
             for yy in (p["y"] - 0.0118, p["y"] + 0.0135):
+                fc = g.get("foot_col") or lg.get("col")     # foot_col: colore dei nomi dei footswitch (tappa 5)
                 if text_at(c, pl, p["x"], yy, s, MC.fit_size(s, 0.0020, 0.024, MT.F_BOLD), MT.F_BOLD,
-                           tuple(lg["col"]) if lg.get("col") else None):
+                           tuple(fc) if fc else None):
                     break
-    # scritte decorative generiche (nessun marchio)
-    for p in g.get("panels") or []:
+    # scritte decorative generiche (nessun marchio); "real_texts" solo sulle repliche (nome della serie del pedale vero)
+    for p in (g.get("panels") or []) + ([] if normal else list(g.get("real_texts") or [])):
         if p[0] == "text":
             fnt = font(p[6] if len(p) > 6 else "bold")
             text_at(c, pl, cx.X(p[2]), cx.Y(p[3]), p[1], p[4] / 1000.0, fnt, tuple(p[5]) if p[5] else None)

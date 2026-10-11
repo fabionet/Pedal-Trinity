@@ -2425,6 +2425,58 @@ namespace pt::engine
             double dms = 10, mms = 0, inc = 0, fb = 0, sat = 2, gl = 0.1, ph = 0;
         };
 
+        //==============================================================================
+        // Stadi aggiunti nella tappa 5 (Behringer / Cuvave)
+        //==============================================================================
+
+        /** Divisore d'ottava a flip-flop alla maniera dell'OC-2 (e dei divisori analogici Mu-Tron / Maestro): un comparatore
+            con isteresi relativa al picco (hys * picco, sotto la soglia thr V non scatta) arma il primo flip-flop, che commuta
+            al successivo passaggio per lo zero in discesa (f/2); il secondo commuta a ogni fronte di salita del primo (f/4).
+            Il segnale d'ingresso (gia' filtrato dagli stadi precedenti) e' moltiplicato per le due onde quadre +-1:
+            y = x * (o1 * q1 + o2 * q2) (moltiplicatore a commutazione dell'OC-2). Lo scatto avviene quando x attraversa lo
+            zero: il prodotto resta continuo (niente gradini ne' aliasing da fronti). dec = costante del rivelatore di picco (s).
+            Sotto la soglia i flip-flop sono fermi e il segnale filtrato passerebbe tale e quale: una porta (5 ms) chiude
+            l'uscita quando il picco scende sotto thr (gate=0 la esclude). */
+        class OctDivStage : public StageT<OctDivStage>
+        {
+        public:
+            void update (double f, const float* p, const ModelDef& def) override
+            {
+                fs = f;
+                o1 = arg ("o1", p, def, 1.0);
+                o2 = arg ("o2", p, def, 0.0);
+                hys = std::clamp (arg ("hys", p, def, 0.2), 0.0, 0.95);
+                thr = std::max (0.0, arg ("thr", p, def, 0.002));
+                pkDecay = std::exp (-1.0 / (std::max (1e-3, arg ("dec", p, def, 0.05)) * fs));
+                useGate = arg ("gate", p, def, 1.0) > 0.5;
+                gateK = 1.0 - std::exp (-1.0 / (0.005 * fs));
+            }
+            void reset() override { for (auto& s : st) s = {}; }
+            void process (int ch, double* x, int n) override
+            {
+                auto& s = st[ch];
+                for (int i = 0; i < n; ++i)
+                {
+                    const double v = x[i];
+                    s.pk = std::max (std::abs (v), s.pk * pkDecay);
+                    if (! s.armed && s.pk > thr && v > hys * s.pk) s.armed = true;
+                    if (s.armed && s.prev >= 0.0 && v < 0.0)
+                    {
+                        s.armed = false;
+                        s.q1 = -s.q1;
+                        if (s.q1 > 0) s.q2 = -s.q2;
+                    }
+                    s.prev = v;
+                    s.g += gateK * ((useGate && s.pk <= thr ? 0.0 : 1.0) - s.g);
+                    x[i] = v * (o1 * s.q1 + o2 * s.q2) * s.g;
+                }
+            }
+        private:
+            struct State { double pk = 0, prev = 0, q1 = 1, q2 = 1, g = 0; bool armed = false; } st[2];
+            double o1 = 1, o2 = 0, hys = 0.2, thr = 0.002, pkDecay = 0.999, gateK = 0.001;
+            bool useGate = true;
+        };
+
         std::unique_ptr<Stage> makeStage (const std::string& type, std::vector<double>* tapBuf, std::string& err)
         {
             using LS = LinearStage;
@@ -2567,6 +2619,7 @@ namespace pt::engine
             if (type == "pan")    return std::make_unique<PanStage> (tapBuf + 2 * CircuitEffect::maxTaps);
             if (type == "mna")    return std::make_unique<MnaStage>();
             if (type == "bbd")    return std::make_unique<BbdStage>();
+            if (type == "octdiv") return std::make_unique<OctDivStage>();
             if (type == "rail")
                 return std::make_unique<LS> ([] (const LS&, const float*, const ModelDef&, AnalogTF& tf, double&)
                 { setTF (tf, { 1 }, { 1 }); });

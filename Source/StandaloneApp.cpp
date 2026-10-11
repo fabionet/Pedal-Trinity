@@ -2,7 +2,7 @@
     Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
 
     Applicazione Standalone personalizzata:
-      * finestra con titolo "Pedal Trinity 1.2.7 beta";
+      * finestra con titolo "Pedal Trinity 1.3.0 beta";
       * su Windows, al primo avvio, seleziona i driver ASIO se presenti;
       * ingresso audio attivo di default (e' un effetto per chitarra);
       * riga di comando:
@@ -313,7 +313,7 @@ namespace
             // il nome della replica identifica il modello, mai il marchio del produttore
             const juce::String rn (r->name);
             bool noBrand = true;
-            for (auto* brand : { "BOSS", "Roland", "Dunlop", "Ernie Ball", "Morley", "DeArmond", "MXR", "Ibanez", "Electro-Harmonix", "Behringer", "Cuvave" })
+            for (auto* brand : { "BOSS", "Roland", "Dunlop", "Ernie Ball", "Morley", "DeArmond", "MXR", "Ibanez", "Electro-Harmonix", "Behringer", "Cuvave", "M-VAVE", "MVAVE" })
                 noBrand = noBrand && ! rn.containsIgnoreCase (brand);
             same = same && r->image != nullptr && pt::ui::Assets::pedalImage (r->image).isValid() && noBrand && r->bodyW > 0;
             if (same) ++ok; else { ++bad; if (firstBad.isEmpty()) firstBad = d.id; }
@@ -1332,6 +1332,29 @@ namespace
         "ib10dml20", "ib10dcl", "ib10ddl", "ib10dfl", "ib10dml", "ib10pdm1", "ib10pdd1", "ibstdl5", "ibstem5", "ibtlcf7", "ibtltc7",
         "ibtlde7", "ibmld303" };
 
+    //==============================================================================
+    // Tappa 5 (Behringer e Cuvave/M-VAVE, 134 pedali): controlli numerici dei quattro lavori del suono (s1 drive: Circuit.cpp
+    // con lo stadio nuovo octdiv; s2 dinamica/EQ/filtri/wah/synth: FxStage5Dyn.cpp; s3 modulazioni e delay BBD: FxStage5Mod.cpp;
+    // s4 digitali, preampli e IR: FxStage5Time.cpp). Metodi e valori dei banchi della tappa (work/s1..s4/tests.md).
+    //==============================================================================
+    const char* const kStage5Drive[] = { "bhto800", "bhto100", "bhvt911", "bhvt999", "bhod300", "bhod400", "bhbo300", "bhpo300", "bhud300",
+        "bhum300", "bhhm300", "bhhd300", "bhsm400", "bhxd300", "bhwd300", "bhdm100", "bhsf300", "bhuz400", "bhfd300", "bhvd1", "bhpb100",
+        "bhuo300", "bhbdi21", "bhgdi21", "bhtm300", "bhadi21", "bhbod400", "bhzentara", "bhzentaramini", "bhfuzzbender", "bhoctavia",
+        "bhbassbrassmaster", "bhoctavedivider", "cvoverdrivets", "cvoverdriveblues", "cvoverdrivedb", "cvoverdriveamp", "cvdistbritish",
+        "cvdistsc1", "cvdistmt1", "cvfuzz", "cvbooster" };
+    const char* const kStage5Dyn[] = { "bhcs400", "bhble400", "bhcl9", "bhdc9", "cvcompressor", "bhnr300", "bhig9", "cvnoisegate", "bheq700",
+        "bhbeq700", "bhse200", "bham300", "bhsm200", "bhuw300", "bhvb1", "bhbtron3", "bhmeatball", "bhbm11m", "bhbm12", "bhringstinger",
+        "bhbm15m", "bhbm17", "bhwahwah", "bhhb01", "bhparapedal", "bhfc600", "bhfcv100", "bhab100", "bhab200" };
+    const char* const kStage5Mod[] = { "bhuc200", "bhuf300", "bhup300", "bhut300", "bhtp300", "bhuv300", "bhcc300", "bhco600", "bhhf300",
+        "bhvp1", "bhph9", "bhvd400", "bhvm1", "bhbuf300", "bhbuc400", "bhchorussymphony", "bhdualphase", "bhbflanger", "bhpedalflanger",
+        "bh69vibe", "bhbm13", "bhbm14m", "bhbm18m", "bhflangenoname", "cvchorus", "cvphaser", "cvtremolo", "cvdelaypd18", "cvclassicdelay" };
+    const char* const kStage5Digital[] = { "bhcd400", "bhsf400", "bhsp400", "bhso400", "bhus600", "bhfl600", "bhrm600", "bhdd400", "bhdd600",
+        "bhem600", "bhdr600", "bhdr400", "bhrv600", "bhfx600", "bhdw400", "bhfm600", "bham400", "bhbsy600", "cvcubebaby", "cvcubebabybass",
+        "cvcubebabyac", "cvminiamp", "cvminiefx", "cvdigdelay", "cvdigpitch", "cvdigreverb", "cvlooper", "cvlooperpro", "cvloop2",
+        "cvminiuniverse", "cvelemental", "cvelementalpro", "cvgalaxia", "cvirbox" };
+    /** Modelli s2/s3/s4 della tappa 5 che makeClassic non aggancia: WahWah (type=inductor, makeWah), SE200 e VB1 (netlist Circuit), looper. */
+    const char* const kStage5NotHooked[] = { "bhwahwah", "bhse200", "bhvb1", "cvlooper", "cvlooperpro", "cvloop2" };
+
 
     void runStage3AnalogTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
     {
@@ -2073,6 +2096,12 @@ namespace
                 for (const char* n : kStage4Dyn) if (std::strcmp (n, id) == 0) return true;
                 for (const char* n : kStage4Mod) if (std::strcmp (n, id) == 0) return true;
                 for (const char* n : kStage4Digital) if (std::strcmp (n, id) == 0) return true;
+                // tappa 5: tipi "i5..." (makeStage5) e i cloni sui tipi i4ross / otaphase / jfetphase; restano fuori il wah a induttore
+                // (WahWah, makeWah), le netlist Circuit (SE200, VB1 e i 42 drive) e i looper Cuvave (famiglia Looper senza type=)
+                for (const char* n : kStage5NotHooked) if (std::strcmp (n, id) == 0) return false;
+                for (const char* n : kStage5Dyn) if (std::strcmp (n, id) == 0) return true;
+                for (const char* n : kStage5Mod) if (std::strcmp (n, id) == 0) return true;
+                for (const char* n : kStage5Digital) if (std::strcmp (n, id) == 0) return true;
                 return false;
             };
             int hooked = 0, total = 0;
@@ -2092,8 +2121,11 @@ namespace
             }
             constexpr int expected = (int) (sizeof (kStage3Digital) / sizeof (kStage3Digital[0]) + sizeof (kStage3BDigital) / sizeof (kStage3BDigital[0])
                                             + sizeof (kStage4Dyn) / sizeof (kStage4Dyn[0]) + sizeof (kStage4Mod) / sizeof (kStage4Mod[0])
-                                            + sizeof (kStage4Digital) / sizeof (kStage4Digital[0])) - 2;
-            report ("Tappa 3A/3B/4: makeClassic aggancia i modelli nuovi (53 della 3A, 50 della 3B, 105 'i4' della tappa 4) e nessun pedale esistente "
+                                            + sizeof (kStage4Digital) / sizeof (kStage4Digital[0])) - 2
+                                     + (int) (sizeof (kStage5Dyn) / sizeof (kStage5Dyn[0]) + sizeof (kStage5Mod) / sizeof (kStage5Mod[0])
+                                             + sizeof (kStage5Digital) / sizeof (kStage5Digital[0]) - sizeof (kStage5NotHooked) / sizeof (kStage5NotHooked[0]));
+            report ("Tappa 3A/3B/4/5: makeClassic aggancia i modelli nuovi (53 della 3A, 50 della 3B, 105 'i4' della tappa 4, 86 della tappa 5: 80 'i5' e 6 "
+                    "cloni sui tipi i4ross / otaphase / jfetphase) e nessun pedale esistente "
                     "(catalogo e REAL MOD)",
                     bad.isEmpty() && hooked == expected, juce::String (hooked) + " agganciati su " + juce::String (total) + (bad.isEmpty() ? juce::String() : ", errati: " + bad.trim()));
         }
@@ -5955,6 +5987,1639 @@ namespace
         lab.run (report);
     }
 
+    //------------------------------------------------------------------------------
+    // Tappa 5: misure comuni ai quattro gruppi
+    //------------------------------------------------------------------------------
+    /** Riff del banco s1 a -12 dBFS (comandi impostati da 'setup' prima di prepare, blocchi da 512): { RMS dBFS, picco dBFS,
+        finito, x tempo reale (CPU del thread) }, RMS e picco dopo i primi 50 ms. */
+    std::vector<double> riffLevelsS5 (const pt::engine::ModelDef& d, const std::function<void (pt::engine::Effect&)>& setup)
+    {
+        static const Buf riff = guitarS1 (true, 48000.0, 3.0, -12.0);
+        auto fx = pt::engine::createEffect (d);
+        if (setup) setup (*fx);
+        fx->prepare (48000.0, 512);
+        Buf y = riff;
+        const double t0 = threadCpuSeconds();
+        processMono (*fx, y, 512);
+        const double cpu = threadCpuSeconds() - t0;
+        const size_t skip = (size_t) (0.05 * 48000.0);
+        double acc = 0, pk = 0;
+        bool fin = true;
+        for (size_t i = skip; i < y.size(); ++i)
+        {
+            fin = fin && std::isfinite (y[i]);
+            acc += (double) y[i] * y[i];
+            pk = std::max (pk, (double) std::abs (y[i]));
+        }
+        return { 10.0 * std::log10 (acc / (double) (y.size() - skip) + 1e-30), dbOf (pk), fin ? 1.0 : 0.0, 3.0 / std::max (1.0e-6, cpu) };
+    }
+
+    /** Comandi tutti al massimo e tutti al minimo (selettori e levette all'ultima / prima posizione), riff a -12 dBFS: finiti, picco
+        < +18 dBFS. Restituisce le misure ai comandi di default (stesso ordine di 'ids') per i controlli dei livelli del gruppo. */
+    std::vector<int> addLevelsS5 (Lab& lab, const char* const* ids, int n, const juce::String& group)
+    {
+        std::vector<int> hDef, hMax, hMin;
+        for (int m = 0; m < n; ++m)
+        {
+            hDef.push_back (lab.add (ids[m], [] (const pt::engine::ModelDef& d) { return riffLevelsS5 (d, {}); }));
+            for (float v : { 1.0f, 0.0f })
+                (v > 0.5f ? hMax : hMin).push_back (lab.add (ids[m], [v] (const pt::engine::ModelDef& d)
+                {
+                    return riffLevelsS5 (d, [&d, v] (pt::engine::Effect& fx) { for (int k = 0; k < d.numControls; ++k) fx.params[k].store (v); });
+                }));
+        }
+        std::vector<int> hExt = hMax;
+        hExt.insert (hExt.end(), hMin.begin(), hMin.end());
+        lab.check (hExt, group + ": comandi tutti al massimo e tutti al minimo (" + juce::String (n) + " modelli, riff a -12 dBFS): finiti, picco < +18 dBFS",
+                   [&lab, hMax, hMin, ids, n] {
+            double worst = -200;
+            juce::String bad, worstId;
+            for (int m = 0; m < n; ++m)
+                for (int s = 0; s < 2; ++s)
+                {
+                    const int h = (s == 0 ? hMax : hMin)[(size_t) m];
+                    const bool fin = lab.v (h, 2) > 0.5;
+                    const double p = fin ? lab.v (h, 1) : 999.0;
+                    if (p > worst) { worst = p; worstId = juce::String (ids[m]) + (s == 0 ? " max" : " min"); }
+                    if (! fin || p >= 18.0) bad << ids[m] << (s == 0 ? "/max" : "/min") << (fin ? "" : " NaN") << " ";
+                }
+            return Verdict { bad.isEmpty(), "picco max " + num (worst, 1) + " dBFS (" + worstId + ") " + bad.trim() };
+        });
+        return hDef;
+    }
+
+    /** Controllo dei livelli ai comandi di default: finiti, picco < pkMax dBFS, RMS fra rmsLo e rmsHi dBFS. */
+    void checkLevelsS5 (Lab& lab, const std::vector<int>& hDef, const char* const* ids, int n, const juce::String& name, double rmsLo, double rmsHi,
+                        double pkMax)
+    {
+        lab.check (hDef, name, [&lab, hDef, ids, n, rmsLo, rmsHi, pkMax] {
+            int good = 0;
+            double lo = 0, hi = -200, pk = -200;
+            juce::String bad;
+            for (int m = 0; m < n; ++m)
+            {
+                const double rms = lab.v (hDef[(size_t) m], 0), p = lab.v (hDef[(size_t) m], 1);
+                const bool g = lab.v (hDef[(size_t) m], 2) > 0.5 && p < pkMax && rms > rmsLo && rms < rmsHi;
+                if (g) ++good; else bad << ids[m] << " (RMS " << num (rms, 1) << ", picco " << num (p, 1) << ") ";
+                lo = std::min (lo, rms); hi = std::max (hi, rms); pk = std::max (pk, p);
+            }
+            return Verdict { good == n, juce::String (good) + "/" + juce::String (n) + ", RMS " + num (lo, 1) + ".." + num (hi, 1) + " dBFS, picco max " + num (pk, 1)
+                                            + " dBFS " + bad.trim() };
+        });
+    }
+
+    /** Impronta di un pedale esistente col metodo del banco s1 ('raw', comandi mossi a meta'): { hash alto, basso, fermi alto, basso }. */
+    int addRawHashS5 (Lab& lab, const char* id)
+    {
+        return lab.add (id, [] (const pt::engine::ModelDef& d)
+        {
+            static const Buf raw = rawSignalS1 (48000.0);
+            uint64_t f = 0;
+            const uint64_t v = rawHashS1 (d, raw, &f);
+            return std::vector<double> { (double) (uint32_t) (v >> 32), (double) (uint32_t) v, (double) (uint32_t) (f >> 32), (double) (uint32_t) f };
+        });
+    }
+    uint64_t hashOfS5 (const Lab& lab, int h, size_t k = 0) { return ((uint64_t) lab.v (h, k) << 32) | (uint64_t) lab.v (h, k + 1); }
+
+    /** Tappa 5, lavoro s1: overdrive, distorsioni, fuzz, boost, ottave e preampli analogici Behringer e Cuvave (Circuit.cpp, stadio
+        nuovo octdiv). Metodi del banco s1 (comandi per etichetta o per indice prima di prepare, blocchi da 512). */
+    void runStage5DriveTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        constexpr int numDrive = countOf (kStage5Drive);
+        Lab lab;
+        auto fr = [&lab] (const char* id, Sets sets, std::vector<double> freqs, double amp = 1.0e-4)
+        {
+            return lab.add (id, [sets, freqs, amp] (const ModelDef& d) { return smallSignalDb (d, sets, freqs, amp); });
+        };
+        auto frI = [&lab] (const char* id, ISets sets, std::vector<double> freqs, double amp = 1.0e-4)
+        {
+            return lab.add (id, [sets, freqs, amp] (const ModelDef& d) { auto fx = makeIdx (d, sets); return smallSignalOf (*fx, freqs, amp, 48000.0); });
+        };
+        auto frDef = [&lab] (const ModelDef& def, std::vector<double> freqs, double amp = 1.0e-4)
+        {
+            return lab.add (def, [freqs, amp] (const ModelDef& d) { return smallSignalDb (d, {}, freqs, amp); });
+        };
+        auto riffSets = [&lab] (const char* id, Sets sets)
+        {
+            return lab.add (id, [sets] (const ModelDef& d) { return riffLevelsS5 (d, [&] (Effect& fx) { setsS1 (fx, d, sets); }); });
+        };
+        auto harm = [&lab] (const char* id, Sets sets, std::vector<double> hs)
+        {
+            return lab.add (id, [sets, hs] (const ModelDef& d) { auto fx = makeS1 (d, sets); return harmonicsOf (*fx, 220.0, -20.0, hs); });
+        };
+        auto rel = [&lab] (int h, size_t k, size_t ref) { return lab.v (h, k) - lab.v (h, ref); };
+
+        // 1. pedali esistenti invariati bit per bit dopo le modifiche della tappa 5 a Circuit.cpp (stadio octdiv): banco s1 'raw',
+        //    impronte misurate con GCC su Linux x86-64 (il banco ha confrontato tutte le 249 netlist Circuit/AmpSim del catalogo con il
+        //    motore di d691877). 'fixed' = prima meta' a comandi fermi, 'hash' = segnale intero con i comandi mossi (come la 1.2.7)
+        {
+            struct Ref { const char* id; uint64_t fixed, hash; };
+            static const Ref refs[] = {
+                { "ed9", 0x5a9b673524c55b7eull, 0xa0db19c13960768dull }, { "ds1", 0x7edafc3b1e613077ull, 0xae0a3f3ff8388e33ull },
+                { "sd1", 0x4c903f272789401dull, 0x83cedf5bfcc97beeull }, { "bd2", 0x2346b27b6ea0948full, 0xdd87015347914ccfull },
+                { "mt2", 0xc92c8b58fe1dc55full, 0xa4cfa044ec26ddb8ull }, { "hm2", 0xb9650518c5ae4865ull, 0x7ca0e7af09f6df15ull },
+                { "ib9ts9", 0xa7f3db737d223227ull, 0x478323d26b3318d6ull }, { "ibtsnts", 0x0620374a8f5b2549ull, 0x437fa69890739c33ull },
+                { "bmramshead", 0x819df799488b6b5full, 0xa3b0c7312a14f40dull }, { "ibtstk999", 0xde322f2c9cb483dfull, 0x1cdc2b4b58b35b51ull },
+                { "os2", 0xd44b6e3849605cf3ull, 0x58ca2ec8202c17d9ull }, { "ehsoulfood", 0x0f246c0abef56290ull, 0x3d9a40bee796638full } };
+            std::vector<int> h;
+            for (const auto& r : refs) { h.push_back (addRawHashS5 (lab, r.id)); lab.first (h.back()); }
+            lab.check (h, "Tappa 5: ED-9, DS-1, SD-1, BD-2, MT-2, HM-2, TS9, NTS, Ram's Head, TK999, OS-2, Soul Food invariati bit per bit (Circuit.cpp)", [&lab, h] {
+                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const uint64_t v = hashOfS5 (lab, h[k], 0), f = hashOfS5 (lab, h[k], 2);
+                    if (f != refs[k].fixed) bad << refs[k].id << " DIVERSO a comandi fermi (" << juce::String::toHexString ((juce::int64) f) << ") ";
+                    if (v != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) v) << ") ";
+                }
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici (comandi fermi e mossi)" : bad.trim() };
+            });
+        }
+
+        // 2. stadio nuovo octdiv (divisore d'ottava a flip-flop dell'OC-2): netlist di prova
+        {
+            auto sine = [&lab] (const char* cfg)
+            {
+                return lab.add (circuitDef (cfg), [] (const ModelDef& d) { auto fx = makeS1 (d, {}); return harmonicsOf (*fx, 220.0, -20.0, { 1.0, 0.5 }); });
+            };
+            const int a = sine ("octdiv o1=1 o2=0 hys=0.2 thr=0.01"), e = sine ("octdiv o1=0 o2=1 hys=0.2 thr=0.01");
+            const int r = lab.add (circuitDef ("octdiv o1=1 o2=0 hys=0.2 thr=0.01"), [] (const ModelDef& d) { return riffLevelsS5 (d, {}); });
+            const int c = frDef (circuitDef ("octdiv o1=1 o2=0 hys=0.2 thr=0.01"), { 1000.0 });
+            const int g = frDef (circuitDef ("octdiv o1=1 o2=0 hys=0.2 thr=0.01 gate=0"), { 1000.0 });
+            lab.check ({ a, e, r, c, g }, "Circuito: octdiv, seno 220 Hz -20 dBFS: fondamentale < -80 dBFS (prima e seconda ottava, resta f/2), RMS del riff -28.70 dBFS "
+                                          "(+-0.3, energia conservata), porta chiusa a 1e-4 V (< -100 dB), senza porta 0.00 dB (+-0.05)", [&lab, a, e, r, c, g] {
+                const double h1 = dbOf (lab.v (a, 0)), h2 = dbOf (lab.v (e, 0)), sub = dbOf (lab.v (a, 1));
+                const bool ok = h1 < -80.0 && h2 < -80.0 && within (lab.v (r, 0), -28.70, 0.3) && lab.v (c) < -100.0 && within (lab.v (g), 0.0, 0.05);
+                return Verdict { ok, "H1 " + num (h1, 1) + " / " + num (h2, 1) + " dBFS (f/2 " + num (sub, 1) + " dBFS), riff " + num (lab.v (r, 0)) + " dBFS, porta "
+                                         + num (lab.v (c), 1) + " dB, senza porta " + num (lab.v (g), 3) + " dB" };
+            });
+        }
+
+        // 3. livelli dei 42 modelli: riff a -12 dBFS con i comandi di default (finiti, picco < 0 dBFS, RMS -36..-11 dBFS), comandi
+        //    al massimo e al minimo (picco < +18 dBFS); costo: i tre modelli piu' lenti, rimisurati da soli, sopra 3 x tempo reale
+        {
+            const auto hDef = addLevelsS5 (lab, kStage5Drive, numDrive, "Tappa 5 drive");
+            checkLevelsS5 (lab, hDef, kStage5Drive, numDrive, "Tappa 5 drive: livelli con riff a -12 dBFS (42 modelli: finiti, picco < 0 dBFS, RMS -36..-11 dBFS)",
+                           -36.0, -11.0, 0.0);
+            lab.check (hDef, "Tappa 5 drive: costo, i 3 modelli piu' lenti (riff mono 3 s, rimisurati da soli) sopra 3 x tempo reale", [&lab, hDef] {
+                std::vector<std::pair<double, int>> speed;
+                for (int m = 0; m < numDrive; ++m) speed.push_back ({ lab.v (hDef[(size_t) m], 3), m });
+                std::sort (speed.begin(), speed.end());
+                static const Buf riff = guitarS1 (true, 48000.0, 3.0, -12.0);
+                bool ok = true;
+                juce::String detail;
+                for (int k = 0; k < 3; ++k)
+                {
+                    const auto* d = findModel (kStage5Drive[speed[(size_t) k].second]);
+                    auto fx = makeS1 (*d, {});
+                    Buf y = riff;
+                    const auto t0 = std::chrono::steady_clock::now();
+                    processMono (*fx, y, 512);
+                    const double x = 3.0 / std::max (1.0e-6, std::chrono::duration<double> (std::chrono::steady_clock::now() - t0).count());
+                    ok = ok && x > 3.0;
+                    detail << d->id << " " << num (x, 1) << "x ";
+                }
+                return Verdict { ok, detail.trim() };
+            });
+        }
+
+        // 4. cloni uguali al modello di partenza (comandi rimappati nell'ordine del pedale reale): 3 regolazioni casuali (mt19937, seme 5)
+        //    del modello di partenza e le stesse posizioni sui comandi del clone; risposta a 100 Hz - 8 kHz, RMS e picco del riff entro
+        //    0.05 dB. L'impedenza d'ingresso dichiarata dal clone (primo stadio "hpf R=500k C=47n" invece di 1M) e' messa anche sul modello
+        //    di partenza: e' una differenza voluta (passa-alto a 6.8 Hz invece di 3.4 Hz) e da sola sposta di 2-5 gradi la fase delle note
+        //    gravi del riff, abbastanza perche' un raddrizzatore d'ottava (OVERTONE dell'FD300 / DF-2) cambi il picco del riff di 0.07 dB
+        {
+            /** Modello di partenza col primo stadio "hpf" del clone (stringhe valide fino alla fine del programma). */
+            static std::deque<std::string> zinPool;
+            auto withZin = [] (const ModelDef& base, const ModelDef& clone)
+            {
+                const std::string b (base.config), c (clone.config);
+                const auto eb = b.find (';'), ec = c.find (';');
+                ModelDef out = base;
+                if (eb != std::string::npos && ec != std::string::npos && b.rfind ("hpf R=", 0) == 0 && c.rfind ("hpf R=", 0) == 0 && b.substr (0, eb) != c.substr (0, ec))
+                {
+                    zinPool.push_back (c.substr (0, ec) + b.substr (eb));
+                    out.config = zinPool.back().c_str();
+                }
+                return out;
+            };
+            struct Clone { const char* id; const char* base; std::vector<int> map; int permIdx; std::vector<int> perm; };
+            static const Clone clones[] = {
+                { "bhvt999", "ibtstk999", { 0, 4, 2, 1, 3, 5 }, -1, {} }, { "bhod300", "os2", { 0, 1, 3, 2 }, -1, {} },
+                { "bhod400", "od3", { 0, 2, 1 }, -1, {} }, { "bhbo300", "bd2", { 0, 1, 2 }, -1, {} }, { "bhpo300", "pw2", { 0, 1, 2, 3 }, -1, {} },
+                { "bhud300", "ds2", { 1, 2, 3, 0 }, -1, {} }, { "bhum300", "mt2", { 3, 4, 1, 2, 5, 0 }, -1, {} },
+                { "bhhm300", "hm2", { 0, 1, 2, 3 }, -1, {} }, { "bhhd300", "md2", { 0, 2, 1, 4, 3 }, -1, {} }, { "bhsm400", "hm3", { 0, 1, 2, 3 }, -1, {} },
+                { "bhxd300", "xt2", { 0, 1, 2, 3 }, -1, {} }, { "bhsf300", "fz2", { 0, 2, 1, 3, 4 }, 4, { 2, 0, 1 } },
+                { "bhuz400", "fz3", { 0, 2, 1 }, -1, {} }, { "bhfd300", "df2", { 0, 1, 2, 3 }, -1, {} }, { "bhvd1", "bmnycreiss", { 0, 1, 2 }, -1, {} },
+                { "bhbod400", "odb3", { 0, 1, 2, 4, 3 }, -1, {} }, { "cvoverdrivets", "ed9", { 2, 1, 0 }, -1, {} },
+                { "cvdistsc1", "ds1", { 1, 0, 2 }, -1, {} }, { "cvfuzz", "fz3", { 0, 1, 2 }, -1, {} }, { "bhzentaramini", "bhzentara", { 0, 1, 2 }, -1, {} } };
+            std::mt19937 rng (5);
+            std::uniform_real_distribution<double> U (0.0, 1.0);
+            std::vector<int> h;
+            std::vector<juce::String> what;
+            static const std::vector<double> f6 { 100.0, 500.0, 1000.0, 2000.0, 4000.0, 8000.0 };
+            auto measure = [] (const ModelDef& d, const ISets& s)
+            {
+                auto fx = makeIdx (d, s);
+                auto v = smallSignalOf (*fx, f6, 1.0e-4, 48000.0);
+                const auto r = riffLevelsS5 (d, [&s] (Effect& e) { for (const auto& [k, val] : s) e.params[k].store (val); });
+                v.push_back (r[0]);
+                v.push_back (r[1]);
+                return v;
+            };
+            for (const auto& c : clones)
+            {
+                const auto* base = findModel (c.base);
+                const auto* clone = findModel (c.id);
+                for (int trial = 0; trial < 3; ++trial)
+                {
+                    ISets sb, sc;
+                    for (int i = 0; i < (int) c.map.size(); ++i)
+                    {
+                        const int st = base != nullptr && i < base->numControls ? std::max (1, (int) base->controls[i].steps) : 1;
+                        const double u = U (rng);
+                        float v = st > 1 ? (float) std::min (st - 1, (int) (u * st)) / (float) (st - 1) : (float) (std::round (u * 1000.0) / 1000.0);
+                        sb.push_back ({ i, v });
+                        const int j = c.map[(size_t) i];
+                        if (j == c.permIdx && clone != nullptr)
+                        {
+                            const int sn = std::max (2, (int) clone->controls[j].steps);
+                            v = (float) c.perm[(size_t) std::lround (v * (sn - 1))] / (float) (sn - 1);
+                        }
+                        sc.push_back ({ j, v });
+                    }
+                    if (base != nullptr && clone != nullptr) h.push_back (lab.add (withZin (*base, *clone), [measure, sb] (const ModelDef& d) { return measure (d, sb); }));
+                    else h.push_back (lab.add (c.base, [measure, sb] (const ModelDef& d) { return measure (d, sb); }));
+                    h.push_back (lab.add (c.id, [measure, sc] (const ModelDef& d) { return measure (d, sc); }));
+                    what.push_back (juce::String (c.id) + "<-" + c.base + "#" + juce::String (trial));
+                }
+            }
+            lab.check (h, "Tappa 5: 20 cloni (VT999, OD300, OD400, BO300, PO300, UD300, UM300, HM300, HD300, SM400, XD300, SF300, UZ400, FD300, VD1, BOD400, "
+                          "Overdrive-TS, Distortion-SC1, Fuzz, Zentara Mini) uguali al modello di partenza con le stesse regolazioni e la stessa impedenza d'ingresso (100 Hz - 8 kHz, riff; entro 0.05 dB)",
+                       [&lab, h, what] {
+                static const char* const qn[8] = { "100 Hz", "500 Hz", "1 kHz", "2 kHz", "4 kHz", "8 kHz", "RMS del riff", "picco del riff" };
+                double worst = 0;
+                juce::String bad, worstWhat;
+                for (size_t k = 0; k + 1 < h.size(); k += 2)
+                {
+                    double w = 0;
+                    size_t wq = 0;
+                    for (size_t q = 0; q < 8; ++q)
+                        if (std::abs (lab.v (h[k], q) - lab.v (h[k + 1], q)) > w) { w = std::abs (lab.v (h[k], q) - lab.v (h[k + 1], q)); wq = q; }
+                    if (w > worst) { worst = w; worstWhat = what[k / 2] + ", " + qn[wq]; }
+                    if (w >= 0.05) bad << what[k / 2] << " " << qn[wq] << " " << num (w, 3) << " dB ";
+                }
+                return Verdict { bad.isEmpty(), "scarto max " + num (worst, 3) + " dB (" + worstWhat + ") " + bad.trim() };
+            });
+        }
+
+        // 5. GDI21 contro lo schema di fabbrica rev. D: valori dell'analisi nodale (tools/art/mna.py, op-amp con GBW 3 MHz, gdicheck.py
+        //    del banco) a 50 Hz - 8 kHz per 12 regolazioni (DRIVE, TREBLE, BASS, LEVEL, AMP, MODE, MIC), risposta a 1e-5 V entro 0.5 dB
+        {
+            struct G { float k[4]; int amp, mode, mic; double db[6]; };
+            static const G gs[] = {
+                { { 0.4f, 0.5f, 0.5f, 0.5f }, 0, 0, 0, { 1.92, 0.53, -7.83, -15.64, -6.57, -27.39 } },
+                { { 0.4f, 0.5f, 0.5f, 0.5f }, 0, 1, 0, { 10.38, 10.32, 2.41, -5.82, 1.03, -22.52 } },
+                { { 0.4f, 0.5f, 0.5f, 0.5f }, 0, 2, 0, { 10.38, 10.33, 2.47, -5.30, 4.04, -15.22 } },
+                { { 0.4f, 0.5f, 0.5f, 0.5f }, 1, 0, 1, { -0.24, 8.09, 13.42, 11.96, 15.39, -5.60 } },
+                { { 0.4f, 0.5f, 0.5f, 0.5f }, 1, 1, 1, { 9.05, 18.55, 23.50, 20.85, 21.96, -0.95 } },
+                { { 0.4f, 0.5f, 0.5f, 0.5f }, 1, 2, 1, { 9.05, 18.53, 23.46, 21.39, 25.54, 6.78 } },
+                { { 0.4f, 0.5f, 0.5f, 0.5f }, 2, 0, 2, { 20.87, 33.46, 41.51, 36.10, 31.06, 5.35 } },
+                { { 0.4f, 0.5f, 0.5f, 0.5f }, 2, 1, 2, { 30.18, 43.95, 51.77, 45.53, 39.07, 11.05 } },
+                { { 0.4f, 0.5f, 0.5f, 0.5f }, 2, 2, 2, { 30.18, 43.94, 51.75, 46.15, 42.15, 17.76 } },
+                { { 1.0f, 0.0f, 1.0f, 1.0f }, 2, 2, 1, { 53.60, 67.27, 69.67, 55.49, 46.40, 15.38 } },
+                { { 0.0f, 1.0f, 0.0f, 0.2f }, 1, 0, 2, { -46.28, -34.14, -21.09, -14.98, -7.43, -20.34 } },
+                { { 0.7f, 0.8f, 0.3f, 0.5f }, 0, 1, 1, { 16.57, 17.50, 9.28, -3.05, 11.54, -7.54 } } };
+            static const std::vector<double> f6 { 50.0, 100.0, 300.0, 1000.0, 3000.0, 8000.0 };
+            std::vector<int> h, ht;
+            for (const auto& g : gs)
+            {
+                const ISets s { { 0, g.k[0] }, { 1, g.k[1] }, { 2, g.k[2] }, { 3, g.k[3] }, { 4, 0.5f * (float) g.amp }, { 5, 0.5f * (float) g.mode }, { 6, 0.5f * (float) g.mic } };
+                h.push_back (frI ("bhgdi21", s, f6, 1.0e-5));
+                lab.first (h.back());
+            }
+            // TM300: stesso circuito con i comandi in altro ordine (indici 3, 2, 1, 0, 6, 5, 4) e ingresso 500k: confronto sopra 100 Hz
+            static const std::vector<double> t6 { 100.0, 500.0, 1000.0, 2000.0, 4000.0, 8000.0 };
+            for (int c : { 0, 11 })
+            {
+                const auto& g = gs[c];
+                const float v[7] = { g.k[0], g.k[1], g.k[2], g.k[3], 0.5f * (float) g.amp, 0.5f * (float) g.mode, 0.5f * (float) g.mic };
+                static const int order[7] = { 3, 2, 1, 0, 6, 5, 4 };
+                ISets sg, st;
+                for (int k = 0; k < 7; ++k) { sg.push_back ({ k, v[k] }); st.push_back ({ order[k], v[k] }); }
+                ht.push_back (frI ("bhgdi21", sg, t6, 1.0e-5));
+                ht.push_back (frI ("bhtm300", st, t6, 1.0e-5));
+            }
+            lab.check (h, "GDI21: risposta a piccolo segnale uguale allo schema rev. D (analisi nodale, 12 regolazioni, 50 Hz - 8 kHz, entro 0.5 dB); "
+                          "guadagni a 1 kHz AMP x MODE TWEED -15.6 / -5.7 / -5.2, BRITISH +12.0 / +20.9 / +21.5, CALIF +36.2 / +45.6 / +46.2 dB (+-0.5); "
+                          "TWEED CLEAN 100 Hz - 1 kHz +16.2 dB (+-1)", [&lab, h] {
+                double worst = 0;
+                juce::String bad, gains;
+                for (size_t c = 0; c < h.size(); ++c)
+                    for (size_t k = 0; k < 6; ++k)
+                    {
+                        const double d = std::abs (lab.v (h[c], k) - gs[c].db[k]);
+                        worst = std::max (worst, d);
+                        if (d > 0.5) bad << "#" << (int) c << "@" << juce::roundToInt (f6[k]) << " " << num (lab.v (h[c], k)) << " (" << num (gs[c].db[k]) << ") ";
+                    }
+                static const double table[9] = { -15.6, -5.7, -5.2, 12.0, 20.9, 21.5, 36.2, 45.6, 46.2 };
+                bool tab = true;
+                for (size_t c = 0; c < 9; ++c)
+                {
+                    tab = tab && within (lab.v (h[c], 3), table[c], 0.5);
+                    gains << num (lab.v (h[c], 3), 1) << (c % 3 == 2 ? "; " : " / ");
+                }
+                const double cr = lab.v (h[0], 1) - lab.v (h[0], 3);
+                return Verdict { bad.isEmpty() && tab && within (cr, 16.2, 1.0), "scarto max " + num (worst, 2) + " dB; 1 kHz " + gains + "TWEED 100 Hz - 1 kHz "
+                                                                                    + num (cr, 1) + " dB " + bad.trim() };
+            });
+            lab.check (ht, "TM300 = GDI21 (comandi corrispondenti, 100 Hz - 8 kHz, entro 0.1 dB; differisce solo l'ingresso 500k)", [&lab, ht] {
+                double worst = 0;
+                for (size_t k = 0; k + 1 < ht.size(); k += 2)
+                    for (size_t q = 0; q < 6; ++q) worst = std::max (worst, std::abs (lab.v (ht[k], q) - lab.v (ht[k + 1], q)));
+                return Verdict { worst < 0.1, "scarto max " + num (worst, 3) + " dB" };
+            });
+        }
+
+        // 6. voce dei circuiti nuovi (risposta a 1e-4 V, riff a -12 dBFS, armoniche del seno 220 Hz a -20 dBFS)
+        {
+            const int sat = harm ("bhgdi21", {}, { 1.0, 2.0, 3.0 }), zen = harm ("bhzentara", {}, { 1.0, 3.0 });
+            lab.check ({ sat, zen }, "GDI21 satura senza diodi (BRITISH HI GAIN): H2/H1 < -100 dB (TL074 simmetrico), H3/H1 -14 dB (+-4); Zentara (diodi al germanio) "
+                                     "H3/H1 -14 dB (+-4)", [&lab, sat, zen] {
+                const double h2 = dbOf (lab.v (sat, 1) / lab.v (sat, 0)), h3 = dbOf (lab.v (sat, 2) / lab.v (sat, 0)), z3 = dbOf (lab.v (zen, 1) / lab.v (zen, 0));
+                return Verdict { h2 < -100.0 && within (h3, -14.0, 4.0) && within (z3, -14.0, 4.0),
+                                 "GDI21 H2/H1 " + num (h2, 1) + " dB, H3/H1 " + num (h3, 1) + " dB; Zentara H3/H1 " + num (z3, 1) + " dB" };
+            });
+        }
+        {
+            const Sets flat { { "BLEND", 0.0f }, { "LEVEL", 1.0f }, { "TREBLE", 0.375f }, { "BASS", 0.375f } };
+            const int a = fr ("bhbdi21", flat, { 62.0, 125.0, 250.0, 500.0, 1000.0, 1600.0 });
+            const int b = fr ("bhbdi21", { { "BLEND", 1.0f }, { "PRESENCE", 0.0f }, { "DRIVE", 0.0f }, { "LEVEL", 1.0f }, { "TREBLE", 0.375f }, { "BASS", 0.375f } },
+                              { 157.0, 793.0 });
+            lab.check ({ a, b }, "BDI21: a ore 10:30 piatto da 62 Hz a 1.6 kHz (+6.4..+6.8 dB +-1, variazione < 0.6 dB); BLEND 1 scavo dei medi 157 Hz - 793 Hz +18.1 dB (+-2)",
+                       [&lab, a, b] {
+                double lo = 1e9, hi = -1e9;
+                for (double v : lab.all (a)) { lo = std::min (lo, v); hi = std::max (hi, v); }
+                const double sc = lab.v (b, 0) - lab.v (b, 1);
+                return Verdict { lo >= 5.4 && hi <= 7.8 && hi - lo < 0.6 && within (sc, 18.1, 2.0),
+                                 num (lo) + " .. " + num (hi) + " dB, scavo " + num (sc, 1) + " dB" };
+            });
+        }
+        {
+            const int z = fr ("bhzentara", { { "GAIN", 1.0f }, { "OUTPUT", 1.0f }, { "TREBLE", 0.5f } }, { 1000.0 });
+            lab.check ({ z }, "Zentara: guadagno massimo a 1 kHz +40.9 dB (+-1)", [&lab, z] { return Verdict { within (lab.v (z), 40.9, 1.0), num (lab.v (z)) + " dB" }; });
+        }
+        {
+            std::vector<int> h;
+            for (float r : { 0.0f, 0.5f, 1.0f }) h.push_back (riffSets ("bhuo300", { { "DIRECT", 0.0f }, { "OCT 1", 1.0f }, { "OCT 2", 0.0f }, { "RANGE", r } }));
+            const int ss = fr ("bhuo300", {}, { 1000.0 });
+            lab.check ({ h[0], h[1], h[2], ss }, "UO300: RANGE HI / MID / LO, RMS del riff (solo OCT 1) -26.5 / -28.1 / -29.5 dBFS (+-1, decrescente); piccolo segnale (porta chiusa, "
+                                                 "resta il DIRECT) -3.1 dB a 1 kHz (+-0.1)", [&lab, h, ss] {
+                const double r[3] = { lab.v (h[0]), lab.v (h[1]), lab.v (h[2]) };
+                const bool ok = within (r[0], -26.5, 1.0) && within (r[1], -28.1, 1.0) && within (r[2], -29.5, 1.0) && r[0] > r[1] && r[1] > r[2]
+                             && within (lab.v (ss), -3.1, 0.1);
+                return Verdict { ok, num (r[0], 1) + " / " + num (r[1], 1) + " / " + num (r[2], 1) + " dBFS, 1 kHz " + num (lab.v (ss)) + " dB" };
+            });
+        }
+        {
+            std::vector<int> h;
+            for (float m : { 0.0f, 0.5f, 1.0f }) h.push_back (riffSets ("bhdm100", { { "MODE", m } }));
+            lab.check (h, "DM100: modi DS1 / D+ / RAT pareggiati, RMS del riff -28.8 / -26.8 / -26.8 dBFS (+-1.5)", [&lab, h] {
+                const double ref[] = { -28.8, -26.8, -26.8 };
+                bool ok = true;
+                for (size_t k = 0; k < 3; ++k) ok = ok && within (lab.v (h[k]), ref[k], 1.5);
+                return Verdict { ok, num (lab.v (h[0]), 1) + " / " + num (lab.v (h[1]), 1) + " / " + num (lab.v (h[2]), 1) + " dBFS" };
+            });
+        }
+        {
+            const int rm = riffSets ("bhfuzzbender", { { "ORIG/MOD", 1.0f } }), ro = riffSets ("bhfuzzbender", { { "ORIG/MOD", 0.0f } });
+            const int fm = fr ("bhfuzzbender", { { "ORIG/MOD", 1.0f } }, { 100.0, 1000.0 }), fo = fr ("bhfuzzbender", { { "ORIG/MOD", 0.0f } }, { 100.0, 1000.0 });
+            lab.check ({ rm, ro, fm, fo }, "Fuzz Bender: MOD - ORIG sul riff +4.7 dB, 100 Hz - 1 kHz MOD -8.1 / ORIG +0.3 dB (+-1)", [&lab, rel, rm, ro, fm, fo] {
+                const double d = lab.v (rm) - lab.v (ro), m = rel (fm, 0, 1), o = rel (fo, 0, 1);
+                return Verdict { within (d, 4.7, 1.0) && within (m, -8.1, 1.0) && within (o, 0.3, 1.0), num (d) + " dB, MOD " + num (m, 1) + " / ORIG " + num (o, 1) + " dB" };
+            });
+        }
+        {
+            const std::vector<double> f3 { 500.0, 1000.0, 2000.0 };
+            const int w0 = fr ("bhwd300", { { "GAIN", 0.0f }, { "WARP", 0.0f } }, f3), w1 = fr ("bhwd300", { { "GAIN", 0.0f }, { "WARP", 1.0f } }, f3);
+            const int s0 = fr ("bhwd300", { { "SUB", 0.0f } }, { 100.0, 1000.0 }), s1 = fr ("bhwd300", { { "SUB", 1.0f } }, { 100.0, 1000.0 });
+            lab.check ({ w0, w1, s0, s1 }, "WD300: WARP 0 / 1 (GAIN 0) 500 Hz - 1 kHz +2.3 / -9.3 dB, 2 kHz - 1 kHz -2.9 / +7.9 dB; SUB ON - OFF a 100 Hz - 1 kHz +8.3 dB (+-1)",
+                       [&lab, rel, w0, w1, s0, s1] {
+                const double a0 = rel (w0, 0, 1), b0 = rel (w0, 2, 1), a1 = rel (w1, 0, 1), b1 = rel (w1, 2, 1), sub = rel (s0, 0, 1) - rel (s1, 0, 1);
+                return Verdict { within (a0, 2.3, 1.0) && within (b0, -2.9, 1.0) && within (a1, -9.3, 1.0) && within (b1, 7.9, 1.0) && within (sub, 8.3, 1.0),
+                                 "WARP 0 " + num (a0, 1) + " / " + num (b0, 1) + ", WARP 1 " + num (a1, 1) + " / " + num (b1, 1) + " dB, SUB " + num (sub, 1) + " dB" };
+            });
+        }
+        {
+            const int o = harm ("bhoctavia", {}, { 1.0, 2.0 });
+            std::vector<int> h;
+            for (float m : { 0.0f, 0.5f, 1.0f }) h.push_back (riffSets ("bhoctavedivider", { { "MIX", m } }));
+            auto all = h;
+            all.push_back (o);
+            lab.check (all, "Octavia: l'ottava domina (H2/H1 > +15 dB, seno 220 Hz -20 dBFS); Octave Divider MIX 0 / 0.5 / 1 RMS del riff -28.65 / -31.1 / -27.6 dBFS (+-1.5)",
+                       [&lab, h, o] {
+                const double h2 = dbOf (lab.v (o, 1) / lab.v (o, 0));
+                const double ref[] = { -28.65, -31.1, -27.6 };
+                bool ok = h2 > 15.0;
+                for (size_t k = 0; k < 3; ++k) ok = ok && within (lab.v (h[k]), ref[k], 1.5);
+                return Verdict { ok, "H2/H1 " + num (h2, 1) + " dB, MIX " + num (lab.v (h[0]), 2) + " / " + num (lab.v (h[1]), 1) + " / " + num (lab.v (h[2]), 1) + " dBFS" };
+            });
+        }
+        {
+            const std::vector<double> f5 { 100.0, 500.0, 1000.0, 2000.0, 4000.0 };
+            const int t = fr ("bhto800", {}, f5), e = fr ("ed9", {}, f5), rt = riffSets ("bhto800", {}), re = riffSets ("ed9", {});
+            lab.check ({ t, e, rt, re }, "TO800 (TS808 con 4558 reale, uscita TS9) contro ED-9: 100 Hz - 4 kHz e RMS del riff entro 0.2 dB", [&lab, t, e, rt, re] {
+                double w = 0;
+                for (size_t k = 0; k < 5; ++k) w = std::max (w, std::abs (lab.v (t, k) - lab.v (e, k)));
+                const double dr = std::abs (lab.v (rt) - lab.v (re));
+                return Verdict { w < 0.2 && dr < 0.2, "scarto max " + num (w, 3) + " dB, riff " + num (dr, 3) + " dB" };
+            });
+        }
+
+        // click (metodo dei gruppi precedenti, soglia 10x senza eccezioni: misurati al massimo 3.4x, MIX dell'Octave Divider) e
+        // determinismo fra due istanze nuove
+        addClickAndDeterminism (lab, kStage5Drive, numDrive, "Tappa 5 drive", 10.0, false);
+        lab.run (report);
+    }
+
+    /** Tappa 5, lavoro s2: compressori, gate, EQ, filtri, wah, synth, volume e utility (FxStage5Dyn.cpp e famiglie esistenti).
+        Metodi del banco s2 (comandi per ruolo/etichetta prima di prepare). */
+    void runStage5DynTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        constexpr int numDyn = countOf (kStage5Dyn);
+        Lab lab;
+        auto makeS2 = [] (const ModelDef& d, const Sets& sets, int block = 512)
+        {
+            auto fx = createEffect (d);
+            for (const auto& [k, v] : setsS2 (d, sets)) fx->params[k].store (v);
+            fx->prepare (48000.0, block);
+            return fx;
+        };
+        /** Risposta del banco s2 ('response'): effetto nuovo per ogni frequenza, 0.5 s di assestamento, blocchi da 256. */
+        auto resp = [&lab, makeS2] (const char* id, Sets sets, std::vector<double> freqs, double amp = 0.01)
+        {
+            return lab.add (id, [makeS2, sets, freqs, amp] (const ModelDef& d)
+            {
+                std::vector<double> out;
+                for (double f : freqs)
+                {
+                    auto fx = makeS2 (d, sets, 256);
+                    const double sr = 48000.0;
+                    const int settle = (int) (0.5 * sr), per = (int) std::ceil (0.25 * f) + 2, meas = (int) std::lround (per * sr / f);
+                    Buf x ((size_t) (settle + meas));
+                    for (size_t i = 0; i < x.size(); ++i) x[i] = (float) (amp * std::sin (2 * kPi * f * (double) i / sr));
+                    processMono (*fx, x, 256);
+                    double re = 0, im = 0;
+                    for (int i = 0; i < meas; ++i)
+                    {
+                        const double ph = 2 * kPi * f * (double) (settle + i) / sr;
+                        re += x[(size_t) (settle + i)] * std::sin (ph);
+                        im += x[(size_t) (settle + i)] * std::cos (ph);
+                    }
+                    out.push_back (dbOf (2.0 * std::sqrt (re * re + im * im) / meas / amp));
+                }
+                return out;
+            });
+        };
+        /** Picco principale a piccolo segnale (impulso di 1 mV, FFT): { Hz, dB }. */
+        auto peak = [&lab] (const char* id, Sets sets)
+        {
+            return lab.add (id, [sets] (const ModelDef& d)
+            {
+                auto fx = createEffect (d);
+                for (const auto& [k, v] : setsS2 (d, sets)) fx->params[k].store (v);
+                const auto p = measureWahPeak (*fx, 48000.0);
+                return std::vector<double> { p.f, p.db };
+            });
+        };
+        /** Seno 1 kHz a livello fisso per 2.5 s: picco degli ultimi 200 ms (dBFS). */
+        auto level = [&lab, makeS2] (const char* id, Sets sets, double inDb)
+        {
+            return lab.add (id, [makeS2, sets, inDb] (const ModelDef& d)
+            {
+                auto fx = makeS2 (d, sets);
+                Buf x = sineBuf (48000.0, 1000.0, std::pow (10.0, inDb / 20.0), 2.5);
+                processMono (*fx, x, 512);
+                double pk = 0;
+                for (size_t i = x.size() - 9600; i < x.size(); ++i) pk = std::max (pk, (double) std::abs (x[i]));
+                return std::vector<double> { dbOf (pk) };
+            });
+        };
+        /** Gradino -40 -> -10 dBFS (1 kHz): costante d'attacco = 1/e della sovraelongazione in dB, rilascio entro 1 dB (ms). */
+        auto attack = [&lab, makeS2] (const char* id, Sets sets)
+        {
+            return lab.add (id, [makeS2, sets] (const ModelDef& d)
+            {
+                const double sr = 48000.0;
+                auto fx = makeS2 (d, sets);
+                const int n = (int) (3 * sr);
+                Buf x ((size_t) n);
+                for (int i = 0; i < n; ++i)
+                    x[(size_t) i] = (float) (std::pow (10.0, (i >= sr && i < 2 * sr ? -10.0 : -40.0) / 20) * std::sin (2 * kPi * 1000 * i / sr));
+                processMono (*fx, x, 512);
+                auto env = [&x] (int i) { double m = 0; for (int k = 0; k < 48; ++k) m = std::max (m, (double) std::abs (x[(size_t) (i + k)])); return dbOf (m); };
+                const double fin = env ((int) (2 * sr) - 960), finR = env (n - 960), ov = env ((int) sr) - fin;
+                int t63 = (int) sr;
+                while (t63 < 2 * sr - 48 && env (t63) - fin > ov / 2.718) t63 += 24;
+                int tr = (int) (2 * sr);
+                while (tr < n - 48 && std::abs (env (tr) - finR) > 1.0) tr += 48;
+                return std::vector<double> { (t63 - sr) / sr * 1000.0, (tr - 2 * sr) / sr * 1000.0 };
+            });
+        };
+        auto fq = [] (double f, double ref) { return std::abs (f / ref - 1.0) <= 0.06; };
+        auto hz = [] (double f) { return juce::String (juce::roundToInt (f)); };
+
+        // 1. pedali esistenti invariati bit per bit (famiglie riusate dai cloni: Compressor, NoiseGate, GraphicEQ, Wah, Volume, SlowGear,
+        //    Acoustic, i4ross...): banco s1 'raw' con i comandi mossi a meta' (impronte del banco s2, motore di d691877)
+        {
+            struct Ref { const char* id; uint64_t hash; };
+            static const Ref refs[] = {
+                { "cs3", 0x6fdc24c6a389d2c4ull }, { "ns2", 0x6d2a220e1f2606cdull }, { "gq7", 0xfd3a4f1817a037e0ull }, { "aw3", 0xd416340cf1fb2140ull },
+                { "db01", 0x7ab01fa0bd5b03ceull }, { "cm95", 0xddf79b2d624209b4ull }, { "ib9cp9", 0x3b98bc5f58d192dbull }, { "ibtlwd7", 0xe349826cf3b27e89ull },
+                { "ib10wh10", 0xc6330f5d6759a483ull }, { "fv500h", 0x37efb2ce81bff398ull }, { "aw2", 0xbf774e16dbf4273full }, { "geb7", 0x1c7a3c91d9dff571ull },
+                { "lmb3", 0x143006ce4ed4b57dull }, { "sg1", 0x444d626e621cc584ull }, { "sp1", 0x05bcc99392f77b43ull }, { "ac2", 0xfd32ab2b3e35807eull },
+                { "ehbassball", 0x9e71d3ad24f12914ull }, { "ib7cp835", 0x20624c04cbadc54eull }, { "ibtstc999", 0x9fa88979c0c410afull },
+                { "ib10ls10", 0xc663814a38597cabull } };
+            std::vector<int> h;
+            for (const auto& r : refs) h.push_back (addRawHashS5 (lab, r.id));
+            lab.check (h, "Tappa 5: 20 pedali delle famiglie riusate (CS-3, NS-2, GE-7, AW-3, DB01, CM95, CP9, WD7, WH10, FV-500H, AW-2, GEB-7, LMB-3, SG-1, SP-1, AC-2, "
+                          "Bass Ball, CP-835, TC999, LS10) invariati bit per bit", [&lab, h] {
+                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                    if (hashOfS5 (lab, h[k]) != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k])) << ") ";
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici" : bad.trim() };
+            });
+        }
+
+        // 2. livelli dei 29 modelli col riff a -12 dBFS (entro 1.5 dB dal banco, compressori 2 dB; picco -16.2..-7.75 dBFS, BLE400 -22.4),
+        //    comandi al massimo / al minimo; robustezza: riff + accordo a -6 / -3 dBFS con comandi casuali (seme 7, ogni 1024 campioni),
+        //    poi stereo a blocchi irregolari
+        {
+            struct Ref { const char* id; double pk, rms; };
+            static const Ref refs[] = {
+                { "bhcs400", -15.30, -30.56 }, { "bhble400", -22.40, -37.05 }, { "bhcl9", -9.82, -25.83 }, { "bhdc9", -9.84, -23.05 },
+                { "cvcompressor", -9.82, -25.83 }, { "bhnr300", -12.00, -28.72 }, { "bhig9", -12.00, -28.72 }, { "cvnoisegate", -12.00, -28.72 },
+                { "bheq700", -12.00, -28.72 }, { "bhbeq700", -12.00, -28.72 }, { "bhse200", -10.24, -26.41 }, { "bham300", -16.18, -33.34 },
+                { "bhsm200", -12.00, -29.29 }, { "bhuw300", -7.75, -23.64 }, { "bhvb1", -10.80, -25.78 }, { "bhbtron3", -16.18, -27.49 },
+                { "bhmeatball", -14.71, -30.88 }, { "bhbm11m", -13.66, -27.26 }, { "bhbm12", -10.33, -28.94 }, { "bhringstinger", -8.64, -28.29 },
+                { "bhbm15m", -13.69, -29.30 }, { "bhbm17", -13.89, -30.20 }, { "bhwahwah", -12.60, -27.02 }, { "bhhb01", -14.27, -27.81 },
+                { "bhparapedal", -8.09, -23.21 }, { "bhfc600", -12.00, -28.72 }, { "bhfcv100", -12.00, -28.72 }, { "bhab100", -11.93, -28.65 },
+                { "bhab200", -12.00, -28.72 } };
+            static_assert (sizeof (refs) / sizeof (refs[0]) == (size_t) numDyn, "un valore per ogni modello s2");
+            const auto hl = addLevelsS5 (lab, kStage5Dyn, numDyn, "Tappa 5 dinamica/EQ/filtri/synth");
+            lab.check (hl, "Tappa 5 dinamica/EQ/filtri/synth: livelli con riff a -12 dBFS (29 modelli: finiti, entro 1.5 dB dal banco, compressori 2 dB; picco "
+                           "-16.2..-7.75 dBFS, BLE400 -22.4)", [&lab, hl] {
+                int good = 0;
+                double worst = 0;
+                juce::String bad;
+                for (int m = 0; m < numDyn; ++m)
+                {
+                    const double rms = lab.v (hl[(size_t) m], 0), pk = lab.v (hl[(size_t) m], 1);
+                    const auto* d = findModel (refs[m].id);
+                    const double tol = d != nullptr && d->family == Family::Compressor ? 2.0 : 1.5;
+                    const double dev = std::max (std::abs (pk - refs[m].pk), std::abs (rms - refs[m].rms));
+                    worst = std::max (worst, dev);
+                    if (lab.v (hl[(size_t) m], 2) > 0.5 && dev <= tol) ++good; else bad << refs[m].id << " (picco " << num (pk, 2) << ", RMS " << num (rms, 2) << ") ";
+                }
+                return Verdict { good == numDyn, juce::String (good) + "/29, scarto max dal banco " + num (worst) + " dB " + bad.trim() };
+            });
+            static const Buf riff = guitarS1 (true, 48000.0, 3.0, -12.0);
+            static const Buf stress = []
+            {
+                Buf x = guitarS1 (true, 48000.0, 3.0, -6.0);
+                const Buf ch = guitarS1 (false, 48000.0, 2.0, -3.0);
+                x.insert (x.end(), ch.begin(), ch.end());
+                x.resize ((size_t) (3.0 * 48000.0));
+                return x;
+            }();
+            std::vector<int> hs;
+            for (int m = 0; m < numDyn; ++m)
+                hs.push_back (lab.add (kStage5Dyn[m], [makeS2] (const ModelDef& d)
+                {
+                    std::mt19937 rng (7);
+                    std::uniform_real_distribution<float> u (0, 1);
+                    auto fx = makeS2 (d, {}, 1024);
+                    Buf y = stress;
+                    double pk = 0;
+                    bool fin = true;
+                    for (size_t i = 0; i + 1024 <= y.size(); i += 1024)
+                    {
+                        for (int c = 0; c < d.numControls; ++c) if (u (rng) < 0.3f) fx->params[c].store (u (rng));
+                        float* p[1] = { y.data() + i };
+                        fx->process (p, 1, 1024);
+                        for (int k = 0; k < 1024; ++k) { fin = fin && std::isfinite (y[i + (size_t) k]); pk = std::max (pk, (double) std::abs (y[i + (size_t) k])); }
+                    }
+                    auto fx2 = makeS2 (d, {}, 512);
+                    Buf l = riff, rr = riff;
+                    for (size_t i = 0; i < l.size();)
+                    {
+                        const int m = (int) std::min<size_t> ((size_t) (1 + (int) (u (rng) * 511)), l.size() - i);
+                        float* p[2] = { l.data() + i, rr.data() + i };
+                        fx2->process (p, 2, m);
+                        for (int k = 0; k < m; ++k) fin = fin && std::isfinite (l[i + (size_t) k]) && std::isfinite (rr[i + (size_t) k]);
+                        i += (size_t) m;
+                    }
+                    return std::vector<double> { dbOf (pk), fin ? 1.0 : 0.0 };
+                }));
+            lab.check (hs, "Tappa 5 dinamica/EQ/filtri/synth: robustezza (riff + accordo a -6/-3 dBFS, comandi casuali ogni 1024 campioni; stereo a blocchi "
+                           "irregolari): finiti, picco < +12 dBFS", [&lab, hs] {
+                double worst = -200;
+                juce::String bad, worstId;
+                for (int m = 0; m < numDyn; ++m)
+                {
+                    const bool fin = lab.v (hs[(size_t) m], 1) > 0.5;
+                    const double pk = fin ? lab.v (hs[(size_t) m], 0) : 999.0;
+                    if (pk > worst) { worst = pk; worstId = kStage5Dyn[m]; }
+                    if (! fin || pk >= 12.0) bad << kStage5Dyn[m] << (fin ? "" : " NaN") << " ";
+                }
+                return Verdict { bad.isEmpty(), "picco max " + num (worst, 1) + " dBFS (" + worstId + ") " + bad.trim() };
+            });
+            const int fcv = resp ("bhfcv100", { { "PEDAL", 0.5f } }, { 1000.0 });
+            lab.check ({ fcv }, "FCV100: VCA in dB lineari, a meta' corsa -35 dB (+-0.5)", [&lab, fcv] { return Verdict { within (lab.v (fcv), -35.0, 0.5), num (lab.v (fcv)) + " dB" }; });
+        }
+
+        // 3. compressori (seno 1 kHz, 2.5 s per livello, picco degli ultimi 200 ms; attacco e rilascio col gradino -40 -> -10 dBFS)
+        {
+            const int d30 = level ("bhdc9", {}, -30), d0 = level ("bhdc9", {}, 0), dat = attack ("bhdc9", {});
+            lab.check ({ d30, d0, dat }, "DC9 (Dyna Comp): -30 / 0 dBFS -> -16.5 / -15.7 dBFS (+-1.5), attacco 5 ms (+-1), rilascio 0.8 s (+-20%)", [&lab, d30, d0, dat] {
+                const bool ok = within (lab.v (d30), -16.5, 1.5) && within (lab.v (d0), -15.7, 1.5) && within (lab.v (dat, 0), 5.0, 1.0) && within (lab.v (dat, 1), 804.0, 160.0);
+                return Verdict { ok, num (lab.v (d30), 2) + " / " + num (lab.v (d0), 2) + " dBFS, attacco " + num (lab.v (dat, 0), 1) + " ms, rilascio " + num (lab.v (dat, 1), 0) + " ms" };
+            });
+            std::vector<int> h;
+            for (const char* id : { "bhcl9", "cvcompressor" })
+            {
+                h.push_back (level (id, {}, -30));
+                h.push_back (level (id, {}, 0));
+                h.push_back (attack (id, {}));
+            }
+            lab.check (h, "CL9 e Compressor Cuvave (Ross): -30 / 0 dBFS -> -21.75 / -18.12 dBFS (+-1.5), attacco 14 ms (+-15% + 0.5 ms), rilascio 0.74 s (+-20%)", [&lab, h] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < h.size(); k += 3)
+                {
+                    const double a = lab.v (h[k + 2], 0), r = lab.v (h[k + 2], 1);
+                    ok = ok && within (lab.v (h[k]), -21.75, 1.5) && within (lab.v (h[k + 1]), -18.12, 1.5) && std::abs (a - 14.0) <= 0.15 * 14.0 + 0.5
+                         && within (r, 744.0, 0.2 * 744.0);
+                    detail << num (lab.v (h[k]), 2) << " / " << num (lab.v (h[k + 1]), 2) << " dBFS, " << num (a, 1) << " / " << num (r, 0) << " ms; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") };
+            });
+        }
+
+        // 4. gate NR300 (soglia di default -56 dBFS con isteresi 6 dB, attenuazione -90 dB): chiuso a -70 dBFS, aperto a -50 dBFS, MUTE
+        {
+            const int c = level ("bhnr300", {}, -70), o = level ("bhnr300", {}, -50), mu = level ("bhnr300", { { "MODE", 0.0f } }, -20);
+            lab.check ({ c, o, mu }, "NR300: gate chiuso a -70 dBFS (uscita < -120 dBFS), aperto a -50 dBFS (-50 +-0.5), MUTE muto a -20 dBFS (< -120 dBFS)", [&lab, c, o, mu] {
+                return Verdict { lab.v (c) < -120.0 && within (lab.v (o), -50.0, 0.5) && lab.v (mu) < -120.0,
+                                 num (lab.v (c), 1) + " / " + num (lab.v (o), 2) + " / MUTE " + num (lab.v (mu), 1) + " dBFS" };
+            });
+        }
+
+        // 5. filtri d'inviluppo e synth
+        {
+            const int bt = peak ("bhbtron3", {}), mb = peak ("bhmeatball", { { "BANDWIDTH", 0.0f }, { "RANGE", 1.0f }, { "INTENS.", 0.0f }, { "MODE", 0.5f } });
+            lab.check ({ bt, mb }, "B-Tron III a riposo: picco passa-banda a 210 Hz (+-6%); Meatball statico (BANDWIDTH OFF, RANGE 6): 1280 Hz (+-6%)", [&lab, fq, hz, bt, mb] {
+                return Verdict { fq (lab.v (bt), 210.0) && fq (lab.v (mb), 1280.0), "B-Tron " + hz (lab.v (bt)) + " Hz (" + num (lab.v (bt, 1), 1) + " dB), Meatball "
+                                                                                        + hz (lab.v (mb)) + " Hz" };
+            });
+        }
+        {
+            // BM-12: col silenzio all'ingresso esce la sola portante (feed): frequenza dagli attraversamenti dello zero; LO al minimo
+            // (0.6 Hz) dalla modulazione dell'inviluppo di un seno a 1 kHz (|cos|: due volte la portante)
+            auto carrier = [&lab] (float lo, float freq)
+            {
+                return lab.add ("bhbm12", [lo, freq] (const ModelDef& d)
+                {
+                    const double sr = 48000.0;
+                    auto fx = makeAfter (d, {});
+                    setsS1 (*fx, d, { { "MODULATOR", lo }, { "FREQUENCY", freq }, { "AMOUNT", 0.0f } });
+                    Buf l ((size_t) (2.5 * sr), 0.0f), r = l;
+                    runStereo256 (*fx, l, r, {}, 1);
+                    int first = -1, last = -1, count = 0;
+                    double tf = 0, tl = 0;
+                    for (size_t i = (size_t) (0.5 * sr); i + 1 < l.size(); ++i)
+                        if (l[i] <= 0.0f && l[i + 1] > 0.0f)
+                        {
+                            const double t = (double) i + l[i] / (double) (l[i] - l[i + 1]);
+                            if (first < 0) { first = (int) i; tf = t; }
+                            last = (int) i; tl = t; ++count;
+                        }
+                    return std::vector<double> { count > 1 ? (count - 1) * sr / (tl - tf) : 0.0 };
+                });
+            };
+            const int h0 = carrier (1.0f, 0.0f), h1 = carrier (1.0f, 1.0f), l1 = carrier (0.0f, 1.0f);
+            const int l0 = lab.add ("bhbm12", [] (const ModelDef& d)
+            {
+                const double sr = 48000.0;
+                auto fx = makeAfter (d, {});
+                setsS1 (*fx, d, { { "MODULATOR", 0.0f }, { "FREQUENCY", 0.0f }, { "AMOUNT", 0.0f } });
+                Buf l = sineBuf (sr, 1000.0, 0.1, 8.0), r = l;
+                runStereo256 (*fx, l, r, {}, 1);
+                return std::vector<double> { 0.5 * modRate (l, sr, (size_t) (1.0 * sr), 2.5) };
+            });
+            lab.check ({ h0, h1, l0, l1 }, "BM-12 (ring modulator): portante HI 30 Hz - 4 kHz, LO 0.6 - 80 Hz agli estremi di FREQUENCY (+-6%)", [&lab, h0, h1, l0, l1] {
+                auto ok = [] (double f, double ref) { return std::abs (f / ref - 1.0) <= 0.06; };
+                return Verdict { ok (lab.v (h0), 30.0) && ok (lab.v (h1), 4000.0) && ok (lab.v (l0), 0.6) && ok (lab.v (l1), 80.0),
+                                 "HI " + num (lab.v (h0), 1) + " - " + num (lab.v (h1), 0) + " Hz, LO " + num (lab.v (l0), 3) + " - " + num (lab.v (l1), 1) + " Hz" };
+            });
+        }
+
+        // 6. wah (picco a piccolo segnale: frequenze +-6%, guadagni +-1 dB)
+        {
+            const int w0 = peak ("bhwahwah", { { "PEDAL", 0.0f } }), w1 = peak ("bhwahwah", { { "PEDAL", 1.0f } });
+            lab.check ({ w0, w1 }, "WahWah (induttore 500 mH): tallone 489 Hz +10.0 dB, punta 1979 Hz +10.5 dB", [&lab, fq, hz, w0, w1] {
+                const bool ok = fq (lab.v (w0), 489.0) && fq (lab.v (w1), 1979.0) && within (lab.v (w0, 1), 10.0, 1.0) && within (lab.v (w1, 1), 10.5, 1.0);
+                return Verdict { ok, hz (lab.v (w0)) + " Hz (" + num (lab.v (w0, 1), 1) + " dB) -> " + hz (lab.v (w1)) + " Hz (" + num (lab.v (w1, 1), 1) + " dB)" };
+            });
+        }
+        {
+            const int a = peak ("bhhb01", { { "PEDAL", 0.03f } }), b = peak ("bhhb01", { { "PEDAL", 1.0f } }), f = peak ("bhhb01", { { "PEDAL", 1.0f }, { "FINE", 1.0f } });
+            // accensione automatica: pedale a 0.6 per 1 s poi al tallone; l'effetto (readout 1) si spegne dopo TIMER ADJ (0.4: 0.5 x 12^0.4 = 1.35 s)
+            const int off = lab.add ("bhhb01", [] (const ModelDef& d)
+            {
+                auto fx = createEffect (d);
+                fx->prepare (48000.0, 480);
+                fx->params[0].store (0.6f);
+                const double sr = 48000.0;
+                Buf x ((size_t) (4 * sr));
+                for (size_t i = 0; i < x.size(); ++i) x[i] = (float) (0.1 * std::sin (2 * kPi * 440 * (double) i / sr));
+                double t = -1, onBefore = 0;
+                for (size_t i = 0; i < x.size(); i += 48)
+                {
+                    if (i == (size_t) sr) { onBefore = fx->readout (1); fx->params[0].store (0.0f); }
+                    float* p[1] = { x.data() + i };
+                    fx->process (p, 1, 48);
+                    if (i >= (size_t) sr && t < 0 && fx->readout (1) < 0.5f) t = (double) (i + 48 - (size_t) sr) / sr;
+                }
+                return std::vector<double> { onBefore, t };
+            });
+            lab.check ({ a, b, f, off }, "HB01 (Hellbabe): 435 -> 1762 Hz, FINE al massimo in punta 2.2 kHz; al tallone si spegne dopo 1.35 s (+-0.1)", [&lab, fq, hz, a, b, f, off] {
+                const bool ok = fq (lab.v (a), 435.0) && fq (lab.v (b), 1762.0) && fq (lab.v (f), 2200.0) && lab.v (off, 0) > 0.5 && within (lab.v (off, 1), 1.35, 0.1);
+                return Verdict { ok, hz (lab.v (a)) + " -> " + hz (lab.v (b)) + " Hz, FINE " + hz (lab.v (f)) + " Hz, spento dopo " + num (lab.v (off, 1), 3) + " s" };
+            });
+        }
+        {
+            const int a = peak ("bhparapedal", { { "PEDAL", 0.08f } }), b = peak ("bhparapedal", { { "PEDAL", 1.0f } }), c = peak ("bhparapedal", { { "PEDAL", 0.0f } });
+            // +18 dB e' il guadagno della risonanza (g=18 della config); all'uscita c'e' anche il livello out=-2 dB: picco misurato +16 dB
+            lab.check ({ a, b, c }, "Parapedal: 760 Hz -> 2.2 kHz, picco +16 dB (risonanza +18 dB, uscita -2 dB; +-1), dive bomb a fine corsa fino a 180 Hz",
+                       [&lab, fq, hz, a, b, c] {
+                const bool ok = fq (lab.v (a), 760.0) && fq (lab.v (b), 2200.0) && fq (lab.v (c), 180.0) && within (lab.v (a, 1), 16.0, 1.0) && within (lab.v (b, 1), 16.0, 1.0);
+                return Verdict { ok, hz (lab.v (a)) + " Hz (" + num (lab.v (a, 1), 1) + " dB) -> " + hz (lab.v (b)) + " Hz (" + num (lab.v (b, 1), 1) + " dB), dive "
+                                         + hz (lab.v (c)) + " Hz" };
+            });
+        }
+
+        // click: soglia 10x senza eccezioni (misurati al massimo 6.0x, ENHANCE dell'AM300); i5smooth riusa le famiglie vecchie (che
+        // fanno click) con i comandi lisciati. Determinismo fra due istanze nuove; dopo reset() non richiesto (FC600, BLE400 e SM200
+        // come i modelli di partenza)
+        addClickAndDeterminism (lab, kStage5Dyn, numDyn, "Tappa 5 dinamica/EQ/filtri/synth", 10.0, false);
+        lab.run (report);
+    }
+
+    /** 'track' del banco s3 della tappa 5 con durata e passo propri: treno d'impulsi da 0.5 V ogni 'stepMs' per 'seconds' dopo 1 s di
+        silenzio; { ritardo min, max (ms), LFO (Hz) }. */
+    std::vector<double> bbdTrackS5 (const pt::engine::ModelDef& d, const std::map<int, float>& p, double seconds, double stepMs)
+    {
+        const double SR = 48000.0;
+        auto fx = makeAfter (d, p);
+        Buf l ((size_t) SR, 0.0f), r = l;
+        runStereo256 (*fx, l, r);
+        const int n = (int) (seconds * SR), step = (int) (stepMs * 0.001 * SR);
+        l.assign ((size_t) n, 0.0f); r = l;
+        for (int i = 0; i < n; i += step) l[(size_t) i] = r[(size_t) i] = 0.5f;
+        runStereo256 (*fx, l, r);
+        std::vector<double> dl;
+        for (int i = 0; i + step <= n; i += step)
+        {
+            int best = -1;
+            float bv = 0;
+            for (int j = 12; j < step - 2; ++j) if (std::abs (l[(size_t) (i + j)]) > bv) { bv = std::abs (l[(size_t) (i + j)]); best = j; }
+            dl.push_back (best * 1000.0 / SR);
+        }
+        double lo = 1e9, hi = 0, mean = 0;
+        for (double v : dl) { lo = std::min (lo, v); hi = std::max (hi, v); mean += v; }
+        mean /= (double) dl.size();
+        const int cross = hystCross (dl, mean, 0.3 * (hi - lo));
+        return { lo, hi, cross / 2.0 / ((double) dl.size() * stepMs * 0.001) };
+    }
+
+    /** Tappa 5, lavoro s3: chorus, flanger, phaser, tremolo, vibrato e delay BBD (FxStage5Mod.cpp). Metodi del banco s3 (stereo,
+        blocchi da 256, comandi per indice dopo prepare; "noise=0" / "comp=0" aggiunti alla config dei tipi i5 come il banco). */
+    void runStage5ModTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        constexpr int numMod = countOf (kStage5Mod);
+        Lab lab;
+        using PMap = std::map<int, float>;
+        using MFn = std::function<std::vector<double> (const ModelDef&, const PMap&)>;
+        /** Misura con i comandi per indice, eventualmente con la config modificata. */
+        auto at = [&lab] (const char* id, const char* extra, PMap p, MFn m)
+        {
+            auto f = [p, m] (const ModelDef& d) { return m (d, p); };
+            return extra != nullptr ? addPatched (lab, id, extra, f) : lab.add (id, f);
+        };
+        auto track = [] (double s, double step) { return MFn ([s, step] (const ModelDef& d, const PMap& p) { return bbdTrackS5 (d, p, s, step); }); };
+        auto notch = [] (double s) { return MFn ([s] (const ModelDef& d, const PMap& p) { return phaserNotches (d, p, s); }); };
+        auto tol = [] (double x, double ref, double rel, double abs) { return std::abs (x - ref) <= rel * std::abs (ref) + abs; };
+
+        // 0. pedali esistenti invariati bit per bit (banco s3 'hash': frase di 6 s, fabbrica / tutti 0.8 / tutti 0.2, R = 0.7 L; impronte del
+        //    banco col motore di d691877)
+        {
+            struct Ref { const char* id; uint64_t hash; };
+            static const Ref refs[] = {
+                { "ce1", 0xba7cb4ec4a4198f0ull }, { "ce2", 0x1c265696304c2dfcull }, { "ch1", 0x48cd140fe5c5e7dfull }, { "bf2", 0xc0f5da7731dbaa2full },
+                { "ph2", 0x0eefe14251cd788dull }, { "tr2", 0x77647c9d8ed04ee8ull }, { "vb2", 0xfe0da55a1de37ca8ull }, { "dm2", 0xbc24ad3e410c67b0ull },
+                { "dm3", 0x8de2b453a67e578bull }, { "ehxss75", 0x2437960de13072a7ull }, { "ehdmm", 0xbfb931a230a17f83ull }, { "evh90", 0xc38117b07b98878full },
+                { "ib9fl9", 0xfd8da8a9ecce7b7full }, { "ib9ad9", 0xa77208d6d577bd45ull }, { "dc2", 0xb404f5fd59139158ull }, { "ce5", 0xbad717b9b7a9c186ull },
+                { "ceb3", 0xa4a259ae26dd61d2ull }, { "hf2", 0xf4ee1b51feab1946ull }, { "bf2b", 0x0d463284736f4f05ull }, { "pn2", 0x332b06897c649079ull },
+                { "ehxgoodvib", 0xe0bc728720e3a293ull }, { "ib7pt707", 0x344aaaa433e2b47full }, { "ib10cd10", 0x611c04a2a9f14fd5ull } };
+            static const Buf g = guitarS3 (6.0);
+            std::vector<int> h;
+            for (const auto& r : refs)
+            {
+                h.push_back (lab.add (r.id, [] (const ModelDef& d)
+                {
+                    uint64_t hv = 1469598103934665603ull;
+                    for (int set = 0; set < 3; ++set)
+                    {
+                        PMap p;
+                        if (set > 0) for (int k = 0; k < d.numControls; ++k) p[k] = set == 1 ? 0.8f : 0.2f;
+                        auto fx = makeAfter (d, p);
+                        Buf bl = g, br = g;
+                        for (auto& x : br) x *= 0.7f;
+                        runStereo256 (*fx, bl, br);
+                        hv = fnvBytes (br, fnvBytes (bl, hv));
+                    }
+                    return std::vector<double> { (double) (uint32_t) (hv >> 32), (double) (uint32_t) hv };
+                }));
+                lab.first (h.back());
+            }
+            lab.check (h, "Tappa 5: 23 modulazioni e delay esistenti (CE-1/2/5, CH-1, BF-2/2B, PH-2, TR-2, VB-2, DM-2/3, DC-2, CEB-3, HF-2, PN-2, EHX, EVH 90, Ibanez) "
+                          "invariati bit per bit", [&lab, h] {
+                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                    if (hashOfS5 (lab, h[k]) != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k])) << ") ";
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici" : bad.trim() };
+            });
+        }
+
+        // 1. robustezza dei 29 modelli (banco s3 'check', frase di 3 s invece di 8): comandi tutti a 1, tutti a 0, casuali ogni 40 blocchi,
+        //    casuali con l'ingresso x6 (~2 V di picco), stessa istanza; livelli col riff a -12 dBFS
+        {
+            static const Buf g = guitarS3 (3.0, 3);
+            std::vector<int> h;
+            for (int m = 0; m < numMod; ++m)
+                h.push_back (lab.add (kStage5Mod[m], [] (const ModelDef& d)
+                {
+                    auto fx = makeAfter (d, {});
+                    double peak = 0;
+                    bool finite = true;
+                    uint32_t s = 77;
+                    auto rnd = [&s] { s ^= s << 13; s ^= s >> 17; s ^= s << 5; return (float) (s & 0xffff) / 65535.0f; };
+                    for (int pass = 0; pass < 4; ++pass)
+                    {
+                        Buf l = g, r = g;
+                        const float gain = pass == 3 ? 6.0f : 1.0f;
+                        for (auto& x : l) x *= gain;
+                        for (auto& x : r) x *= gain;
+                        runStereo256 (*fx, l, r, [&] (size_t i)
+                        {
+                            if (i % (256 * 40) == 0)
+                                for (int k = 0; k < d.numControls; ++k) fx->params[k].store (pass == 0 ? 1.0f : pass == 1 ? 0.0f : rnd());
+                        });
+                        for (size_t i = 0; i < l.size(); ++i)
+                        {
+                            finite = finite && std::isfinite (l[i]) && std::isfinite (r[i]);
+                            peak = std::max (peak, (double) std::max (std::abs (l[i]), std::abs (r[i])));
+                        }
+                    }
+                    return std::vector<double> { finite ? 1.0 : 0.0, peak };
+                }));
+            lab.check (h, "Tappa 5 modulazioni: robustezza (29 modelli, comandi a 1 / 0 / casuali, ingresso fino a ~2 V): finiti, picco < 8 V", [&lab, h] {
+                double worst = 0;
+                juce::String bad, worstId;
+                for (int m = 0; m < numMod; ++m)
+                {
+                    const bool fin = lab.v (h[(size_t) m], 0) > 0.5;
+                    const double pk = fin ? lab.v (h[(size_t) m], 1) : 999.0;
+                    if (pk > worst) { worst = pk; worstId = kStage5Mod[m]; }
+                    if (! fin || pk >= 8.0) bad << kStage5Mod[m] << (fin ? "" : " NaN") << " ";
+                }
+                return Verdict { bad.isEmpty(), "picco max " + num (worst) + " V (" + worstId + ") " + bad.trim() };
+            });
+            const auto hl = addLevelsS5 (lab, kStage5Mod, numMod, "Tappa 5 modulazioni");
+            checkLevelsS5 (lab, hl, kStage5Mod, numMod, "Tappa 5 modulazioni: livelli con riff a -12 dBFS e comandi di default (29 modelli: finiti, picco < 0 dBFS, "
+                                                        "RMS -40..-20 dBFS)", -40.0, -20.0, 0.0);
+        }
+
+        // 2. ritardi dei BBD: impulso dopo 1.5 s di assestamento (ritardo del picco) o traiettoria con il treno d'impulsi (min / max);
+        //    +-4% + 0.25 ms. Bande -3 dB del ramo ritardato (+-10%)
+        {
+            struct D { const char* id; const char* extra; PMap p; int kind; double s, step, ms; };       // kind 0 impulso, 1 minimo, 2 massimo
+            const D ds[] = {
+                { "bhuc200", nullptr, { { 2, 0.5f }, { 3, 1.0f } }, 1, 10, 25, 3.52 }, { "bhuc200", nullptr, { { 2, 0.5f }, { 3, 1.0f } }, 2, 10, 25, 6.08 },
+                { "bhuf300", "noise=0", { { 1, 0.0f }, { 2, 0.0f }, { 4, 0.0f } }, 0, 0, 0, 1.06 },
+                { "bhuf300", "noise=0", { { 1, 1.0f }, { 2, 0.0f }, { 4, 0.0f } }, 0, 0, 0, 12.88 },
+                { "bhhf300", "noise=0", { { 0, 0.0f }, { 1, 0.0f }, { 3, 0.0f } }, 0, 0, 0, 0.58 },
+                { "bhhf300", "noise=0", { { 0, 1.0f }, { 1, 0.0f }, { 3, 0.0f } }, 0, 0, 0, 6.48 },
+                { "bhuv300", nullptr, { { 0, 1.0f }, { 2, 0.5f }, { 3, 1.0f } }, 1, 10, 25, 2.63 }, { "bhuv300", nullptr, { { 0, 1.0f }, { 2, 0.5f }, { 3, 1.0f } }, 2, 10, 25, 6.52 },
+                { "bhco600", nullptr, { { 1, 0.5f }, { 3, 1.0f } }, 1, 10, 25, 3.46 }, { "bhco600", nullptr, { { 1, 0.5f }, { 3, 1.0f } }, 2, 10, 25, 6.04 },
+                { "bhvd400", "noise=0 comp=0", { { 0, 0.0f }, { 2, 0.0f }, { 1, 1.0f } }, 0, 0, 0, 20.25 },
+                { "bhvd400", "noise=0 comp=0", { { 0, 1.0f }, { 2, 0.0f }, { 1, 1.0f } }, 0, 0, 0, 300.35 },
+                { "bhvm1", "noise=0 comp=0", { { 3, 0.0f }, { 2, 0.0f }, { 1, 1.0f } }, 0, 0, 0, 35.75 },
+                { "bhvm1", "noise=0 comp=0", { { 3, 1.0f }, { 2, 0.0f }, { 1, 1.0f } }, 0, 0, 0, 550.02 },
+                { "bhbm14m", "noise=0 comp=0", { { 6, 0.0f }, { 8, 0.0f }, { 2, 1.0f }, { 7, 0.0f } }, 0, 0, 0, 25.29 },
+                { "bhbm14m", "noise=0 comp=0", { { 6, 1.0f }, { 8, 0.0f }, { 2, 1.0f }, { 7, 0.0f } }, 0, 0, 0, 501.27 },
+                { "bhbm14m", "noise=0 comp=0", { { 6, 1.0f }, { 8, 0.0f }, { 2, 1.0f }, { 7, 1.0f } }, 0, 0, 0, 998.58 },
+                { "bhbm18m", "noise=0", { { 6, 0.0f }, { 5, 0.0f }, { 8, 0.5f }, { 7, 0.0f } }, 0, 0, 0, 2.08 },
+                { "bhbm18m", "noise=0", { { 6, 1.0f }, { 5, 0.0f }, { 8, 0.5f }, { 7, 0.0f } }, 0, 0, 0, 20.19 },
+                { "bhbm18m", "noise=0", { { 6, 0.0f }, { 5, 0.0f }, { 8, 0.5f }, { 7, 1.0f } }, 0, 0, 0, 0.48 },
+                { "bhbm18m", "noise=0", { { 6, 1.0f }, { 5, 0.0f }, { 8, 0.5f }, { 7, 1.0f } }, 0, 0, 0, 4.08 },
+                { "bhbflanger", "noise=0", { { 0, 0.0f }, { 1, 0.0f }, { 2, 0.0f }, { 5, 1.0f } }, 0, 0, 0, 0.67 },
+                { "bhbflanger", "noise=0", { { 0, 1.0f }, { 1, 1.0f }, { 2, 1.0f }, { 5, 1.0f } }, 0, 0, 0, 24.08 },
+                { "bhpedalflanger", "noise=0", { { 0, 0.0f }, { 2, 1.0f }, { 1, 1.0f } }, 0, 0, 0, 0.58 },
+                { "bhpedalflanger", "noise=0", { { 0, 1.0f }, { 2, 1.0f }, { 1, 1.0f } }, 0, 0, 0, 10.08 },
+                { "bhflangenoname", nullptr, { { 2, 0.5f }, { 1, 1.0f }, { 4, 0.5f }, { 5, 1.0f } }, 1, 10, 25, 0.31 },
+                { "bhflangenoname", nullptr, { { 2, 0.5f }, { 1, 1.0f }, { 4, 0.5f }, { 5, 1.0f } }, 2, 10, 25, 10.44 },
+                { "cvdelaypd18", "noise=0 comp=0", { { 2, 0.0f }, { 0, 0.0f }, { 1, 1.0f } }, 0, 0, 0, 20.19 },
+                { "cvdelaypd18", "noise=0 comp=0", { { 2, 1.0f }, { 0, 0.0f }, { 1, 1.0f } }, 0, 0, 0, 530.33 },
+                { "cvclassicdelay", "noise=0 comp=0", { { 3, 0.0f }, { 4, 0.0f }, { 5, 1.0f } }, 0, 0, 0, 20.19 },
+                { "cvclassicdelay", "noise=0 comp=0", { { 3, 1.0f }, { 4, 0.0f }, { 5, 1.0f } }, 0, 0, 0, 600.42 } };
+            std::vector<int> h;
+            for (const auto& x : ds)
+                h.push_back (at (x.id, x.extra, x.p, x.kind == 0 ? MFn (bbdImpulse) : track (x.s, x.step)));
+            std::vector<D> copy (std::begin (ds), std::end (ds));
+            lab.check (h, "BBD: ritardi (UC200 3.5-6.1, UF300 1.06-12.9, HF300 0.58-6.5, UV300 2.6-6.5, CO600 3.5-6.0, VD400 20.3 / 300.4, VM1 35.8 / 550, BM-14M 25 / "
+                          "501 / 999, BM-18M 2.1-20.2 / 0.48-4.1, B-Flanger 0.67 / 24.1, Pedalflanger 0.58 / 10.1, Flange No Name 0.31-10.4, PD18 20.2 / 530.3, "
+                          "Classic Delay 20.2 / 600.4 ms; +-4% + 0.25 ms)", [&lab, h, copy, tol] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const double v = lab.v (h[k], copy[k].kind == 2 ? 1 : 0);
+                    const bool g = tol (v, copy[k].ms, 0.04, 0.25);
+                    ok = ok && g;
+                    if (! g || k % 2 == 0) detail << copy[k].id << " " << num (v) << (g ? "" : " (FUORI)") << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") + " ms" };
+            });
+            // bande -3 dB del ramo ritardato (impulsi: UF300 MANUAL 0, VD400 0 / 1, BM-14M SHORT 0 / LONG 1; CO600 a DEPTH 0)
+            const int co = at ("bhco600", "noise=0", { { 3, 0.0f } }, bbdImpulse);
+            const std::vector<std::pair<int, double>> bands { { h[2], 10020.0 }, { co, 8355.0 }, { h[10], 2443.0 }, { h[11], 2379.0 }, { h[14], 4482.0 }, { h[16], 1248.0 } };
+            std::vector<int> hb;
+            for (const auto& b : bands) hb.push_back (b.first);
+            lab.check (hb, "BBD: banda -3 dB del ramo ritardato (UF300 10 kHz, CO600 8.4 kHz, VD400 2.4 kHz, BM-14M 4.5 kHz SHORT -> 1.25 kHz LONG; +-10%)", [&lab, bands] {
+                bool ok = true;
+                juce::String detail;
+                for (const auto& [hh, ref] : bands)
+                {
+                    const double v = lab.v (hh, 1);
+                    ok = ok && std::abs (v / ref - 1.0) <= 0.10;
+                    detail << juce::roundToInt (v) << " ";
+                }
+                return Verdict { ok, detail.trim() + " Hz" };
+            });
+        }
+
+        // 3. LFO a meta' corsa contro il valore atteso della legge del comando (+-8%): treno d'impulsi (chorus, flanger), notch (phaser),
+        //    inviluppo (tremolo)
+        {
+            struct L { const char* id; PMap p; int kind; double s, step, hz; };       // kind 0 track, 1 notch, 2 am
+            const L ls[] = {
+                { "bhuc200", { { 2, 0.5f }, { 3, 1.0f } }, 0, 10, 25, 1.126 }, { "bhuf300", { { 3, 0.5f }, { 2, 1.0f }, { 4, 0.0f } }, 0, 10, 25, 0.791 },
+                { "bhup300", { { 1, 0.5f }, { 2, 1.0f }, { 3, 0.0f } }, 1, 12, 0, 0.843 }, { "bhut300", { { 0, 0.5f }, { 2, 1.0f } }, 2, 0, 0, 3.494 },
+                { "bhtp300", { { 1, 0.5f }, { 0, 1.0f } }, 2, 0, 0, 0.734 }, { "bhuv300", { { 0, 1.0f }, { 2, 0.5f }, { 3, 1.0f } }, 0, 10, 25, 5.477 },
+                { "bhcc300", { { 0, 1.0f }, { 1, 1.0f } }, 0, 10, 30, 2.06 }, { "bhco600", { { 1, 0.5f }, { 3, 1.0f } }, 0, 10, 25, 1.385 },
+                { "bhvp1", { { 0, 0.5f } }, 1, 12, 0, 0.894 }, { "bhdualphase", { { 0, 0.5f }, { 3, 1.0f }, { 4, 0.0f }, { 8, 1.0f }, { 9, 0.0f } }, 1, 12, 0, 1.342 },
+                { "bhbflanger", { { 1, 1.0f }, { 2, 0.0f }, { 3, 0.3f } }, 0, 12, 30, 0.302 }, { "bhbm18m", { { 4, 0.5f }, { 5, 1.0f }, { 8, 0.5f } }, 0, 10, 25, 1.581 },
+                { "bhflangenoname", { { 2, 0.5f }, { 1, 1.0f }, { 4, 0.5f }, { 5, 1.0f } }, 0, 10, 25, 0.775 }, { "cvchorus", { { 2, 0.5f }, { 1, 1.0f } }, 0, 10, 25, 1.342 },
+                { "cvtremolo", { { 2, 0.5f }, { 0, 1.0f } }, 2, 0, 0, 3.162 } };
+            std::vector<int> h;
+            for (const auto& x : ls)
+                h.push_back (at (x.id, nullptr, x.p, x.kind == 0 ? track (x.s, x.step) : x.kind == 1 ? notch (x.s) : MFn (tremoloAm)));
+            std::vector<L> copy (std::begin (ls), std::end (ls));
+            lab.check (h, "LFO a meta' corsa (UC200 1.13, UF300 0.79, UP300 0.84, UT300 3.49, TP300 0.73, UV300 5.48, CC300 tutti i tasti 2.06, CO600 1.39, VP1 0.89, "
+                          "Dual-Phase 1.34, B-Flanger 0.30, BM-18M 1.58, Flange No Name 0.78, Chorus 1.34, Classic Tremolo 3.16 Hz; +-8%)", [&lab, h, copy] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const double f = lab.v (h[k], copy[k].kind == 0 ? 2 : copy[k].kind == 1 ? 3 : 0);
+                    const bool g = std::abs (f / copy[k].hz - 1.0) <= 0.08;
+                    ok = ok && g;
+                    detail << copy[k].id << " " << num (f, 3) << (g ? "" : " (FUORI)") << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") + " Hz" };
+            });
+        }
+
+        // 4. phaser: traiettoria del primo notch con l'LFO al minimo (impulso ogni 60 ms; estremi +-12%; 23 Hz e' il primo bin della FFT)
+        {
+            struct P { const char* id; PMap p; double s, lo, hi; };
+            const P ps[] = { { "bhup300", { { 1, 0.0f }, { 2, 1.0f }, { 3, 0.0f }, { 0, 0.0f } }, 40, 23, 281 },
+                             { "bhup300", { { 1, 0.0f }, { 2, 1.0f }, { 3, 0.0f }, { 0, 1.0f } }, 40, 35, 234 },
+                             { "bhvp1", { { 0, 0.0f } }, 40, 59, 1090 }, { "bhph9", { { 0, 0.0f } }, 40, 82, 633 },
+                             { "bhdualphase", { { 0, 0.0f }, { 3, 1.0f }, { 4, 0.0f }, { 8, 1.0f }, { 9, 0.0f } }, 40, 23, 1980 },
+                             { "bh69vibe", { { 2, 0.0f }, { 1, 1.0f } }, 30, 23, 844 },
+                             { "bhbm13", { { 6, 0.0f }, { 5, 1.0f }, { 4, 0.0f } }, 60, 23, 1160 } };
+            std::vector<int> h;
+            for (const auto& x : ps) { h.push_back (at (x.id, nullptr, x.p, notch (x.s))); lab.first (h.back()); }
+            std::vector<P> copy (std::begin (ps), std::end (ps));
+            lab.check (h, "Phaser: primo notch (UP300 MODE I 23-281 / II 35-234, VP1 59-1090, PH9 82-633, Dual-Phase 23-1980, 69 Vibe 23-844, BM-13 23-1160 Hz; +-12%)",
+                       [&lab, h, copy] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const double lo = lab.v (h[k], 0), hi = lab.v (h[k], 1);
+                    const bool g = std::abs (lo / copy[k].lo - 1.0) <= 0.12 && std::abs (hi / copy[k].hi - 1.0) <= 0.12;
+                    ok = ok && g;
+                    detail << copy[k].id << " " << juce::roundToInt (lo) << "-" << juce::roundToInt (hi) << (g ? "" : " (FUORI)") << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") + " Hz" };
+            });
+        }
+
+        // 5. retroazione al massimo (frase 6 s + silenzio fino a 14 s): delay a 6 tempi (VD400 coda <= -111 dBV, VM1 <= -84, PD18 e
+        //    Classic Delay <= -60, BM-14M limitato: finito e non crescente), flanger a 3 posizioni del MANUAL / pedale (coda <= -74 dBV)
+        {
+            struct F { const char* id; int fb, time; double maxTail; };
+            const F fs[] = { { "bhvd400", 2, 0, -111.0 }, { "bhvm1", 2, 3, -84.0 }, { "cvdelaypd18", 0, 2, -60.0 }, { "cvclassicdelay", 4, 3, -60.0 }, { "bhbm14m", 8, 6, 0.0 } };
+            std::vector<int> h;
+            std::vector<juce::String> what;
+            std::vector<double> lim;
+            for (const auto& f : fs)
+                for (float t : { 0.0f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f })
+                {
+                    h.push_back (at (f.id, nullptr, { { f.fb, 1.0f }, { f.time, t } }, bbdFeedback));
+                    what.push_back (juce::String (f.id) + "@" + num (t, 1));
+                    lim.push_back (f.maxTail);
+                }
+            lab.check (h, "Delay BBD con la retroazione al massimo (VD400, VM1, PD18, Classic Delay, BM-14M; tempo 0..1): finiti, picco < 1 V, coda <= -111 / -84 / -60 / -60 dBV, "
+                          "BM-14M limitato e non crescente", [&lab, h, what, lim] {
+                bool ok = true;
+                double pk = 0;
+                juce::String bad, tails;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const double p = lab.v (h[k], 0), tail = lab.v (h[k], 1), early = lab.v (h[k], 3);
+                    const bool g = lab.v (h[k], 2) > 0.5 && p < 1.0 && (lim[k] < 0.0 ? tail <= lim[k] : tail <= early);
+                    ok = ok && g;
+                    pk = std::max (pk, p);
+                    if (k % 6 == 5) tails << what[k].upToFirstOccurrenceOf ("@", false, false) << " " << num (tail, 1) << "; ";
+                    if (! g) bad << what[k] << " (" << num (p, 2) << " V, " << num (tail, 1) << " dBV) ";
+                }
+                return Verdict { ok, "picco max " + num (pk, 3) + " V; coda a tempo 1: " + tails.trimCharactersAtEnd ("; ") + " dBV " + bad.trim() };
+            });
+            // la coda dei flanger con la risonanza al massimo e' il rumore della linea BBD (noise=...) ripreso dal pettine, non una
+            // ripetizione che resta: B-Flanger e Pedalflanger non hanno MANUAL (il pedale e' la velocita' dell'LFO in AUTO / OSC, con
+            // l'LFO a 0.1 Hz il pettine resta sui ritardi lunghi e il rumore sale a -71 dBV) e si provano nella posizione di default,
+            // come il banco ("res max"); per tutti la coda deve anche non crescere (12-14 s sotto 6-8 s)
+            struct R { const char* id; int res, depth, manual; };
+            const R rs[] = { { "bhuf300", 4, 2, 1 }, { "bhhf300", 3, 1, 0 }, { "bhbuf300", 0, 2, 3 }, { "bhbflanger", 4, -1, -1 },
+                             { "bhpedalflanger", 3, 1, -1 }, { "bhflangenoname", 4, 1, 0 }, { "bhbm18m", 8, 5, 6 } };
+            std::vector<int> hr;
+            std::vector<juce::String> rw;
+            for (const auto& r : rs)
+                for (float m : { 0.0f, 0.5f, 1.0f })
+                {
+                    if (r.manual < 0 && m != 0.5f) continue;
+                    PMap p { { r.res, 1.0f } };
+                    if (r.manual >= 0) p[r.manual] = m;
+                    if (r.depth >= 0) p[r.depth] = 1.0f;
+                    hr.push_back (at (r.id, nullptr, p, bbdFeedback));
+                    rw.push_back (juce::String (r.id) + (r.manual >= 0 ? "@" + num (m, 1) : juce::String()));
+                }
+            lab.check (hr, "Flanger con la risonanza al massimo (UF300, HF300, BUF300, Flange No Name, BM-18M a 3 posizioni del MANUAL; B-Flanger e Pedalflanger "
+                           "nella posizione di default): finiti, coda <= -74 dBV e non crescente", [&lab, hr, rw] {
+                bool ok = true;
+                double worst = -300;
+                juce::String detail, bad;
+                for (size_t k = 0; k < hr.size(); ++k)
+                {
+                    const double tail = lab.v (hr[k], 1);
+                    const bool g = lab.v (hr[k], 2) > 0.5 && tail <= -74.0 && tail <= lab.v (hr[k], 3);
+                    ok = ok && g;
+                    worst = std::max (worst, tail);
+                    detail << num (tail, 1) << " ";
+                    if (! g) bad << rw[k] << " ";
+                }
+                return Verdict { ok, "coda max " + num (worst, 1) + " dBV (" + detail.trim() + ") " + bad.trim() };
+            });
+        }
+
+        // 6. tremolo (seno 440 Hz 0.3 V, inviluppo RMS su 5 ms, DEPTH 1, RATE 0.5): profondita'
+        {
+            const int ut = at ("bhut300", nullptr, { { 0, 0.5f }, { 2, 1.0f } }, tremoloAm), tp = at ("bhtp300", nullptr, { { 1, 0.5f }, { 0, 1.0f } }, tremoloAm);
+            lab.check ({ ut, tp }, "Tremolo: profondita' UT300 67 dB, TP300 45 dB (+-1.5)", [&lab, ut, tp] {
+                return Verdict { within (lab.v (ut, 1), 67.4, 1.5) && within (lab.v (tp, 1), 44.8, 1.5), num (lab.v (ut, 1), 1) + " / " + num (lab.v (tp, 1), 1) + " dB" };
+            });
+        }
+
+        // click: soglia 10x senza eccezioni (misurati al massimo 1.98x, LFO del BM-18M); determinismo fra due istanze nuove (reset() non
+        // riporta LFO e lisciature allo stato iniziale)
+        addClickAndDeterminism (lab, kStage5Mod, numMod, "Tappa 5 modulazioni", 10.0, false);
+        lab.run (report);
+    }
+
+    //------------------------------------------------------------------------------
+    // Misure del banco s4 della tappa 5 (stereo, blocchi da 256, comandi per ruolo dopo prepare)
+    //------------------------------------------------------------------------------
+    void setStepIdxS5 (pt::engine::Effect& fx, int i, int k)
+    {
+        if (i < 0) return;
+        const int s = std::max (1, (int) fx.def.controls[i].steps);
+        fx.params[i].store (s > 1 ? (float) k / (float) (s - 1) : 0.0f);
+    }
+
+    /** Ritardo (ms) del primo eco: burst di 2 ms a 1 kHz dopo 0.8 s, picco della correlazione con il ramo ritardato (uscita - ingresso). */
+    double s5Delay (const pt::engine::ModelDef& d, int mode, float t)
+    {
+        const double SR = 48000.0;
+        auto fx = makeAfter (d, {});
+        if (mode >= 0) setStepIdxS5 (*fx, roleIndex (d, "mode"), mode);
+        setRoleS4 (*fx, "time", t); setRoleS4 (*fx, "feedback", 0.0f); setRoleS4 (*fx, "mix", 1.0f); setRoleS4 (*fx, "level", 1.0f);
+        setRoleS4 (*fx, "mod", 0.0f); setRoleS4 (*fx, "param", 0.0f); setRoleS4 (*fx, "balance", 1.0f);
+        const int pre = (int) (0.8 * SR), len = (int) (3.6 * SR), bl = 96;
+        Buf l ((size_t) (pre + len), 0.0f);
+        for (int i = 0; i < bl; ++i) l[(size_t) (pre + i)] = 0.4f * std::sin (3.14159f * i / bl) * std::sin (2 * 3.14159f * 1000.0f * i / (float) SR + 0.3f);
+        const Buf in = l;
+        Buf r = l;
+        runStereo256 (*fx, l, r);
+        double best = -1;
+        int lag = 0;
+        for (int L = 48; L < len - bl; ++L)
+        {
+            double c = 0;
+            for (int i = 0; i < bl; ++i) c += in[(size_t) (pre + i)] * (l[(size_t) (pre + L + i)] - in[(size_t) (pre + L + i)]);
+            c = std::abs (c);
+            if (c > best) { best = c; lag = L; }
+        }
+        return lag * 1000.0 / SR;
+    }
+
+    /** Stabilita': retroazione / decadimento al massimo, frase di 2 s poi 16 s di silenzio; { picco (V), RMS ultimo secondo (dBV), finito }. */
+    std::vector<double> s5Stability (const pt::engine::ModelDef& d, int mode)
+    {
+        static const Buf g = guitarS4 (2.0, 4);
+        auto fx = makeAfter (d, {});
+        if (mode >= 0) setStepIdxS5 (*fx, roleIndex (d, "mode"), mode);
+        setRoleS4 (*fx, "time", 1.0f); setRoleS4 (*fx, "feedback", 1.0f); setRoleS4 (*fx, "mix", 1.0f); setRoleS4 (*fx, "decay", 1.0f);
+        setRoleS4 (*fx, "mod", 1.0f); setRoleS4 (*fx, "param", 1.0f); setRoleS4 (*fx, "tone", 1.0f);
+        setRoleS4 (*fx, "p1", 0.0f); setRoleS4 (*fx, "p2", 1.0f); setRoleS4 (*fx, "p3", 1.0f);
+        const int n = (int) (18.0 * 48000);
+        Buf l = g;
+        l.resize ((size_t) n, 0.0f);
+        Buf r = l;
+        runStereo256 (*fx, l, r);
+        double pk = 0;
+        bool fin = true;
+        for (int i = 0; i < n; ++i)
+        {
+            fin = fin && std::isfinite (l[(size_t) i]) && std::isfinite (r[(size_t) i]);
+            pk = std::max (pk, (double) std::max (std::abs (l[(size_t) i]), std::abs (r[(size_t) i])));
+        }
+        return { pk, dbOf (rmsOf (l, (size_t) (n - 48000), (size_t) n)), fin ? 1.0 : 0.0 };
+    }
+
+    /** Tempo di riverbero (s): rumore di 0.2 s, decadimento della somma degli RMS su 20 ms da -5 a -25 dB sotto il massimo del primo secondo,
+        esteso a 60 dB (risoluzione 0.06 s); 'seconds' di segnale (il banco: 30 s; basta che il decadimento di 25 dB stia dentro). */
+    double s5Rt (const pt::engine::ModelDef& d, int mode, float decayK, double seconds)
+    {
+        const double SR = 48000.0;
+        auto fx = makeAfter (d, {});
+        if (mode >= 0) setStepIdxS5 (*fx, roleIndex (d, "mode"), mode);
+        setRoleS4 (*fx, "decay", decayK); setRoleS4 (*fx, "time", roleIndex (d, "decay") >= 0 ? 0.0f : decayK); setRoleS4 (*fx, "mix", 1.0f);
+        setRoleS4 (*fx, "tone", 0.6f); setRoleS4 (*fx, "feedback", 0.0f);
+        const int n = (int) (seconds * SR), bl = (int) (0.2 * SR);
+        Buf l ((size_t) n, 0.0f);
+        uint32_t s = 7;
+        for (int i = 0; i < bl; ++i) { s ^= s << 13; s ^= s >> 17; s ^= s << 5; l[(size_t) i] = 0.2f * (float) (int32_t) s * 4.6566129e-10f; }
+        Buf r = l;
+        runStereo256 (*fx, l, r);
+        const int w = (int) (0.02 * SR);
+        std::vector<float> e;
+        for (int p = bl; p + w < n; p += w)
+        {
+            const float sum = (float) rmsOf (l, (size_t) p, (size_t) (p + w)) + (float) rmsOf (r, (size_t) p, (size_t) (p + w));
+            e.push_back (20.0f * std::log10 (std::max (sum, 1.0e-12f)));
+        }
+        if (e.empty()) return 0;
+        const float e0 = *std::max_element (e.begin(), e.begin() + (long) std::min<size_t> (e.size(), 50));
+        int a = -1, b = -1;
+        for (size_t k = 0; k < e.size(); ++k)
+        {
+            if (a < 0 && e[k] <= e0 - 5) a = (int) k;
+            if (a >= 0 && e[k] <= e0 - 25) { b = (int) k; break; }
+        }
+        if (a < 0 || b < 0) return 99;
+        return (double) ((float) (b - a) * 0.02f * 3.0f);
+    }
+
+    /** Frequenza dell'uscita per un seno a 220 Hz (YIN sull'ultimo mezzo secondo): solo effetto (BALANCE / WET 1, DRY / DIRECT 0). */
+    double s5OutFreq (const pt::engine::ModelDef& d, int shift, int mode)
+    {
+        const double SR = 48000.0, f0 = 220.0;
+        auto fx = makeAfter (d, {});
+        if (shift >= 0) setStepIdxS5 (*fx, roleIndex (d, "shift"), shift);
+        if (mode >= 0) setStepIdxS5 (*fx, roleIndex (d, "mode"), mode);
+        setRoleS4 (*fx, "balance", 1.0f); setRoleS4 (*fx, "dry", 0.0f); setRoleS4 (*fx, "wet", 1.0f); setRoleS4 (*fx, "direct", 0.0f);
+        const int n = (int) (2.0 * SR);
+        Buf l ((size_t) n);
+        for (int i = 0; i < n; ++i) l[(size_t) i] = 0.2f * (float) std::sin (2 * 3.14159265 * f0 * i / SR);
+        Buf r = l;
+        runStereo256 (*fx, l, r);
+        const int a = n - (int) (0.6 * SR), W = (int) (0.25 * SR), Lmax = (int) (SR / 30);
+        std::vector<double> dd ((size_t) Lmax + 2, 1.0);
+        double acc = 0;
+        for (int L = 1; L <= Lmax + 1; ++L)
+        {
+            double sdiff = 0;
+            for (int i = a; i < a + W; ++i) { const double e = l[(size_t) i] - l[(size_t) (i + L)]; sdiff += e * e; }
+            acc += sdiff;
+            dd[(size_t) L] = acc > 0 ? sdiff * L / acc : 1.0;
+        }
+        int best = -1;
+        for (int L = (int) (SR / 2000); L <= Lmax; ++L)
+            if (dd[(size_t) L] < 0.15 && dd[(size_t) L] <= dd[(size_t) L - 1] && dd[(size_t) L] <= dd[(size_t) L + 1]) { best = L; break; }
+        if (best < 0) return 0.0;
+        const double y0 = dd[(size_t) best - 1], y1 = dd[(size_t) best], y2 = dd[(size_t) best + 1], den = y0 - 2 * y1 + y2;
+        const double sh = std::abs (den) > 1e-12 ? 0.5 * (y0 - y2) / den : 0.0;
+        return (double) (float) (SR / (best + sh));
+    }
+
+    /** Tappa 5, lavoro s4: digitali Behringer, preampli/IR e digitali Cuvave/M-VAVE (FxStage5Time.cpp). Metodi del banco s4. */
+    void runStage5DigitalTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        constexpr int numDig = countOf (kStage5Digital);
+        Lab lab;
+
+        // 0. pedali esistenti invariati bit per bit: le 8 config di partenza dei cloni avvolti (i5wrap), banco s4 'hash' (frase stereo di 2 s,
+        //    comandi spostati di +0.37 e frase di 1.5 s, poi 1 s in mono; impronte del banco col motore di d691877)
+        {
+            struct Ref { const char* id; uint64_t a, b, c; };
+            static const Ref refs[] = {
+                { "dc3", 0xfc0f89e3a622bf5full, 0xa57acaa155f38a18ull, 0x1a0c338157845e1cull }, { "bf3", 0xd864318671fb3e9eull, 0xe9df62d6c6ee99fdull, 0xe44873aaf193c1bcull },
+                { "ph3", 0x6eaaf9c72048269bull, 0xf3e769a0ff826367ull, 0xe59a0063a734e3baull }, { "dd3", 0xe871a6ed7c3c5c59ull, 0x5d50ae9863141bf3ull, 0x2ec6d661487e45f8ull },
+                { "dd5", 0x5046891b5eba4039ull, 0x636c44cd9d7465abull, 0x571775cb31288451ull }, { "rv5", 0x1391d68f452bce73ull, 0x2ef721be0556014bull, 0xf974c06fd278db01ull },
+                { "ac3", 0xef177c380bc97032ull, 0xe8f1152f0a45b981ull, 0x29736cc31fa3517eull }, { "syb5", 0x9171cfef480ac8ebull, 0xdd0bbde1faac4bd3ull, 0x9e19171d22ff3606ull } };
+            static const Buf g1 = guitarS4 (2.0, 3), g2 = guitarS4 (1.5, 5), g3 = guitarS4 (1.0, 7);
+            std::vector<int> h;
+            for (const auto& r : refs)
+            {
+                h.push_back (lab.add (r.id, [] (const ModelDef& d)
+                {
+                    auto fx = makeAfter (d, {});
+                    Buf l = g1, rr = g1;
+                    for (auto& x : rr) x *= 0.8f;
+                    runStereo256 (*fx, l, rr);
+                    const uint64_t a = fnvBytes (rr, fnvBytes (l));
+                    for (int k = 0; k < d.numControls; ++k)
+                        if (d.controls[k].kind != ControlKind::Button) fx->params[k].store (std::fmod (d.controls[k].def + 0.37f, 1.0f));
+                    Buf l2 = g2, r2 = g2;
+                    runStereo256 (*fx, l2, r2);
+                    const uint64_t b = fnvBytes (r2, fnvBytes (l2));
+                    Buf l3 = g3, r3 = g3;
+                    runStereo256 (*fx, l3, r3, {}, 1);
+                    const uint64_t c = fnvBytes (r3, fnvBytes (l3));
+                    return std::vector<double> { (double) (uint32_t) (a >> 32), (double) (uint32_t) a, (double) (uint32_t) (b >> 32), (double) (uint32_t) b,
+                                                 (double) (uint32_t) (c >> 32), (double) (uint32_t) c };
+                }));
+                lab.first (h.back());
+            }
+            lab.check (h, "Tappa 5: DC-3, BF-3, PH-3, DD-3, DD-5, RV-5, AC-3, SYB-5 (config di partenza dei cloni digitali) invariati bit per bit", [&lab, h] {
+                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                    if (hashOfS5 (lab, h[k], 0) != refs[k].a || hashOfS5 (lab, h[k], 2) != refs[k].b || hashOfS5 (lab, h[k], 4) != refs[k].c)
+                        bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k], 0)) << " "
+                            << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k], 2)) << " " << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k], 4)) << ") ";
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " triple impronte identiche" : bad.trim() };
+            });
+        }
+
+        // 1. i cloni avvolti (i5wrap) a comandi fermi danno la stessa uscita della config di partenza (frase di 3 s, bit per bit)
+        {
+            static std::deque<std::string> pool;
+            std::vector<int> h;
+            std::vector<juce::String> ids;
+            for (int m = 0; m < numDig; ++m)
+            {
+                const auto* d = findModel (kStage5Digital[m]);
+                if (d == nullptr || d->config == nullptr) continue;
+                const std::string c (d->config);
+                const auto p = c.find ("||");
+                if (c.rfind ("type=i5wrap", 0) != 0 || p == std::string::npos) continue;
+                std::string ic = c.substr (p + 3);
+                for (size_t k; (k = ic.find ("itype=")) != std::string::npos;) ic.replace (k, 6, "type=");
+                pool.push_back (ic);
+                ModelDef inner = *d;
+                inner.config = pool.back().c_str();
+                auto run = [] (const ModelDef& dd)
+                {
+                    static const Buf g = guitarS4 (3.0, 13);
+                    auto fx = makeAfter (dd, {});
+                    Buf l = g, r = g;
+                    runStereo256 (*fx, l, r, {}, dd.stereo ? 2 : 1);
+                    const uint64_t v = fnvBytes (r, fnvBytes (l));
+                    return std::vector<double> { (double) (uint32_t) (v >> 32), (double) (uint32_t) v };
+                };
+                h.push_back (lab.add (d->id, run));
+                h.push_back (lab.add (inner, run));
+                ids.push_back (d->id);
+            }
+            lab.check (h, "Tappa 5: i cloni avvolti (i5wrap: CD400, SF400, SP400, DD400, DD600, DR600, AM400, BSY600) a comandi fermi identici alla config di partenza",
+                       [&lab, h, ids] {
+                juce::String bad;
+                int same = 0;
+                for (size_t k = 0; k + 1 < h.size(); k += 2)
+                    if (hashOfS5 (lab, h[k]) == hashOfS5 (lab, h[k + 1])) ++same; else bad << ids[k / 2] << " ";
+                return Verdict { bad.isEmpty() && same == 8, juce::String (same) + "/" + juce::String ((int) ids.size()) + " identici " + bad.trim() };
+            });
+        }
+
+        // 2. sanita' (banco s4 'sanity'): default, 3 regolazioni casuali, tutto a 1 e a 0, ogni posizione di ogni selettore; mono e stereo,
+        //    blocchi da 512 e 64, frase di 2.5 s + silenzio fino a 6 s: finiti, picco <= 6.0 V
+        {
+            std::vector<int> h;
+            std::vector<juce::String> what;
+            for (int m = 0; m < numDig; ++m)
+            {
+                const auto* d = findModel (kStage5Digital[m]);
+                if (d == nullptr) { h.push_back (lab.add (kStage5Digital[m], {})); what.push_back (kStage5Digital[m]); continue; }
+                const auto sets = sanitySets (d, 0);
+                for (size_t si = 0; si < sets.size(); ++si)
+                {
+                    const auto set = sets[si];
+                    h.push_back (lab.add (kStage5Digital[m], [set, si] (const ModelDef& dd)
+                    {
+                        double pk = 0;
+                        bool fin = true;
+                        for (int ch = 1; ch <= 2; ++ch)
+                        {
+                            auto fx = createEffect (dd);
+                            const int blk = si % 2 ? 64 : 512;
+                            fx->prepare (48000.0, blk);
+                            for (const auto& [c, v] : set) fx->params[c].store (v);
+                            Buf l = guitarS4 (2.5, 11 + (uint32_t) si);
+                            l.resize ((size_t) (6.0 * 48000.0), 0.0f);
+                            Buf r = l;
+                            for (size_t i = 0; i < l.size(); i += (size_t) blk)
+                            {
+                                const int nn = (int) std::min<size_t> ((size_t) blk, l.size() - i);
+                                float* c2[2] = { l.data() + i, r.data() + i };
+                                fx->process (c2, ch, nn);
+                            }
+                            for (size_t k = 0; k < l.size(); ++k)
+                            {
+                                fin = fin && std::isfinite (l[k]) && std::isfinite (r[k]);
+                                pk = std::max (pk, (double) std::max (std::abs (l[k]), ch > 1 ? std::abs (r[k]) : 0.0f));
+                            }
+                        }
+                        return std::vector<double> { fin ? pk : 999.0 };
+                    }));
+                    what.push_back (juce::String (kStage5Digital[m]) + "/" + juce::String ((int) si));
+                }
+            }
+            lab.check (h, "Tappa 5 digitali: sanita' (34 modelli, " + juce::String ((int) h.size()) + " regolazioni, mono e stereo, blocchi 512 e 64): finiti, picco <= 6.0 V",
+                       [&lab, h, what] {
+                double worst = 0;
+                juce::String bad, worstWhat;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const double p = lab.v (h[k]);
+                    if (p > worst) { worst = p; worstWhat = what[k]; }
+                    if (p > 6.0) bad << what[k] << " " << num (p, 2) << " V ";
+                }
+                return Verdict { bad.isEmpty(), "picco max " + num (worst, 3) + " V (" + worstWhat + ") " + bad.trim() };
+            });
+        }
+
+        // 3. stabilita' con retroazione / decadimento al massimo (ogni modo dei delay e dei riverberi, tempo 1; 2 s di frase e 16 s di
+        //    silenzio): finiti, picco <= 0.86 V
+        {
+            std::vector<int> h;
+            std::vector<juce::String> what;
+            for (int m = 0; m < numDig; ++m)
+            {
+                const auto* d = findModel (kStage5Digital[m]);
+                if (d == nullptr || (d->family != Family::DigitalDelay && d->family != Family::Reverb)) continue;
+                const int mc = roleIndex (*d, "mode");
+                const int nm = mc >= 0 ? std::max (1, (int) d->controls[mc].steps) : 1;
+                for (int k = 0; k < nm; ++k)
+                {
+                    if (mc >= 0 && d->controls[mc].choices != nullptr)
+                    {
+                        const auto names = juce::StringArray::fromTokens (d->controls[mc].choices, "|", "");
+                        if (k < names.size() && names[k] == "HOLD") continue;
+                    }
+                    h.push_back (lab.add (d->id, [k, mc] (const ModelDef& dd) { return s5Stability (dd, mc >= 0 ? k : -1); }));
+                    lab.first (h.back());
+                    what.push_back (juce::String (d->id) + "/" + juce::String (k));
+                }
+            }
+            lab.check (h, "Tappa 5 digitali: retroazione / decadimento al massimo in ogni modo dei delay e dei riverberi (" + juce::String ((int) h.size()) + " prove, "
+                          "18 s): finiti, picco <= 0.86 V", [&lab, h, what] {
+                double worst = 0;
+                juce::String bad, worstWhat;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const bool fin = lab.v (h[k], 2) > 0.5;
+                    const double p = fin ? lab.v (h[k], 0) : 999.0;
+                    if (p > worst) { worst = p; worstWhat = what[k]; }
+                    if (p > 0.86) bad << what[k] << " " << num (p, 2) << " V ";
+                }
+                return Verdict { bad.isEmpty(), "picco max " + num (worst, 3) + " V (" + worstWhat + ") " + bad.trim() };
+            });
+        }
+
+        // 4. tempi di ritardo agli estremi del comando (gamma del modo; +-0.25 ms + 1%)
+        {
+            struct T { const char* id; int mode; double lo, hi; };
+            const T ts[] = { { "bhdd400", 0, 325, 1300 }, { "bhdd400", 1, 125, 500 }, { "bhdd400", 2, 50, 200 },
+                             { "bhdd600", 0, 1, 50 }, { "bhdd600", 1, 50, 200 }, { "bhdd600", 2, 200, 800 }, { "bhdd600", 3, 800, 2000 },
+                             { "bhdr400", 0, 32, 128 }, { "bhdr400", 1, 128, 500 }, { "bhdr400", 2, 500, 2000 },
+                             { "cvelemental", 0, 100, 2000 }, { "cvelemental", 2, 100, 3000 }, { "cvelemental", 5, 100, 2500 }, { "cvelemental", 8, 100, 1000 },
+                             { "cvdigdelay", 0, 30, 1000 } };
+            std::vector<int> h;
+            for (const auto& x : ts)
+                for (float t : { 0.0f, 1.0f })
+                {
+                    const int mode = x.mode;
+                    h.push_back (lab.add (x.id, [mode, t] (const ModelDef& d) { return std::vector<double> { s5Delay (d, mode, t) }; }));
+                }
+            std::vector<T> copy (std::begin (ts), std::end (ts));
+            lab.check (h, "Tappa 5 digitali: tempi di ritardo (DD400 325-1300 / 125-500 / 50-200, DD600 1-50 / 50-200 / 200-800 / 800-2000, DR400 32-128 / 128-500 / "
+                          "500-2000, ELEMENTAL 100-2000 / 3000 / 2500 / 1000, DIG Delay 30-1000 ms; +-0.25 ms + 1%)", [&lab, h, copy] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < copy.size(); ++k)
+                {
+                    const double a = lab.v (h[2 * k]), b = lab.v (h[2 * k + 1]);
+                    const bool g = std::abs (a - copy[k].lo) <= 0.25 + 0.01 * copy[k].lo && std::abs (b - copy[k].hi) <= 0.25 + 0.01 * copy[k].hi;
+                    ok = ok && g;
+                    detail << copy[k].id << "/" << copy[k].mode << " " << num (a, 1) << "-" << num (b, 1) << (g ? "" : " (FUORI)") << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") + " ms" };
+            });
+        }
+
+        // 5. intonazione dei pitch (seno 220 Hz, YIN): SO400 ottave esatte (110 / 55 Hz), US600 i 12 intervalli entro 0.02 semitoni,
+        //    DIG Pitch i 9 intervalli entro 0.02 semitoni (-3 -> -3.01)
+        {
+            struct P { const char* id; int shift, mode; double semis; };
+            std::vector<P> ps { { "bhso400", -1, 0, -12.0 }, { "bhso400", -1, 1, -24.0 } };
+            const double us[] = { -24, -12, -7, -5, -2, -1, 3, 4, 5, 7, 12, 24 }, dg[] = { -12, -7, -3, -1, 1, 3, 5, 7, 12 };
+            for (int k = 0; k < 12; ++k) ps.push_back ({ "bhus600", k, 0, us[k] });
+            for (int k = 0; k < 9; ++k) ps.push_back ({ "cvdigpitch", k, -1, dg[k] });
+            std::vector<int> h;
+            for (const auto& p : ps)
+            {
+                const int sh = p.shift, md = p.mode;
+                h.push_back (lab.add (p.id, [sh, md] (const ModelDef& d) { return std::vector<double> { s5OutFreq (d, sh, md) }; }));
+            }
+            lab.check (h, "Pitch: SO400 220 Hz -> 110.00 / 55.00 Hz, US600 12 intervalli (-24..+24) e DIG Pitch 9 intervalli (-12..+12) entro 0.02 semitoni", [&lab, h, ps] {
+                bool ok = true;
+                double worst = 0;
+                juce::String bad, ex;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const double f = lab.v (h[k]), st = f > 0 ? 12.0 * std::log2 (f / 220.0) : -99.0, dev = std::abs (st - ps[k].semis);
+                    worst = std::max (worst, dev);
+                    if (dev > 0.02) { ok = false; bad << ps[k].id << " " << num (ps[k].semis, 0) << ": " << num (st, 3) << " "; }
+                }
+                ex << "SO400 " << num (lab.v (h[0]), 2) << " / " << num (lab.v (h[1]), 2) << " Hz, DIG Pitch -3: " << num (12.0 * std::log2 (lab.v (h[16]) / 220.0), 2);
+                return Verdict { ok, ex + ", scarto max " + num (worst, 3) + " semitoni " + bad.trim() };
+            });
+        }
+
+        // 6. tempo di riverbero agli estremi del comando (rumore di 0.2 s, decadimento da -5 a -25 dB; +-10% + 0.06 s)
+        {
+            struct R { const char* id; int mode; float k; double rt; };
+            const R rs[] = { { "bhdr600", 0, 0.0f, 0.24 }, { "bhdr600", 0, 1.0f, 6.06 }, { "bhdr400", 7, 0.0f, 0.30 }, { "bhdr400", 9, 1.0f, 5.76 },
+                             { "bhrv600", 1, 0.0f, 0.18 }, { "bhrv600", 4, 1.0f, 11.40 }, { "cvdigreverb", 4, 0.0f, 0.18 }, { "cvdigreverb", 3, 1.0f, 9.24 },
+                             { "cvminiuniverse", 1, 0.0f, 2.46 }, { "cvminiuniverse", 1, 1.0f, 13.32 }, { "cvminiuniverse", 5, 0.0f, 0.90 },
+                             { "cvminiuniverse", 5, 1.0f, 16.32 } };
+            std::vector<int> h;
+            for (const auto& r : rs)
+            {
+                const int md = r.mode;
+                const float kk = r.k;
+                const double secs = std::min (30.0, 4.0 + 0.6 * r.rt);
+                h.push_back (lab.add (r.id, [md, kk, secs] (const ModelDef& d) { return std::vector<double> { s5Rt (d, md, kk, secs) }; }));
+                if (r.rt > 5.0) lab.first (h.back());
+            }
+            std::vector<R> copy (std::begin (rs), std::end (rs));
+            lab.check (h, "Riverberi: RT60 DR600 HALL 0.24-6.1, DR400 0.3-5.8, RV600 0.18-11.4, DIG Reverb 0.18-9.2, MINI-UNIVERSE HALL 2.5-13.3 e CLOUD 0.9-16.3 s "
+                          "(+-10% + 0.06 s)", [&lab, h, copy] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const double v = lab.v (h[k]);
+                    const bool g = std::abs (v - copy[k].rt) <= 0.1 * copy[k].rt + 0.06;
+                    ok = ok && g;
+                    detail << copy[k].id << "/" << copy[k].mode << " " << num (v) << (g ? "" : " (FUORI)") << "; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") + " s" };
+            });
+        }
+
+        // 7. IR generate: IR BOX (32 preset) col livello d'uscita fra -2 e -0.3 dB (frase di 4 s), cabinet delle Cube Baby normalizzati
+        //    (media 150 Hz - 2.4 kHz della risposta all'impulso, dai 2 ai 9 cabinet) entro 2 dB
+        {
+            std::vector<int> hb;
+            if (const auto* d = findModel ("cvirbox"))
+            {
+                const int cc = roleIndex (*d, "cab");
+                const int ns = cc >= 0 ? (int) d->controls[cc].steps : 0;
+                for (int k = 0; k < ns; ++k)
+                    hb.push_back (lab.add ("cvirbox", [k, cc] (const ModelDef& dd)
+                    {
+                        static const Buf in = guitarS4 (4.0, 21);
+                        const double rin = rmsOf (in);
+                        auto fx = makeAfter (dd, {});
+                        setStepIdxS5 (*fx, cc, k);
+                        Buf l = in;
+                        l.resize ((size_t) (5.0 * 48000), 0.0f);
+                        Buf r = l;
+                        runStereo256 (*fx, l, r);
+                        return std::vector<double> { dbOf (rmsOf (l, 0, (size_t) (4.0 * 48000)) / rin) };
+                    }));
+            }
+            else hb.push_back (lab.add ("cvirbox", {}));
+            // "-2..-0.3 dB" di tests.md sono i valori del banco arrotondati a 0.1 dB (-1.98 / -0.27): +-0.05 dB
+            lab.check (hb, "IR BOX: livello d'uscita dei 32 preset fra -2 e -0.3 dB (valori arrotondati a 0.1 dB)", [&lab, hb] {
+                double lo = 1e9, hi = -1e9;
+                for (int k : hb) { lo = std::min (lo, lab.v (k)); hi = std::max (hi, lab.v (k)); }
+                return Verdict { hb.size() == 32 && lo >= -2.05 && hi <= -0.25, juce::String ((int) hb.size()) + " preset, " + num (lo) + " .. " + num (hi) + " dB" };
+            });
+            std::vector<int> hc;
+            std::vector<juce::String> ids;
+            for (const char* id : { "cvcubebaby", "cvcubebabybass", "cvcubebabyac" })
+            {
+                const auto* d = findModel (id);
+                const int cc = d != nullptr ? roleIndex (*d, "cab") : -1;
+                for (int k = 1; k < 9; ++k)
+                {
+                    hc.push_back (lab.add (id, [k, cc] (const ModelDef& dd)
+                    {
+                        auto fx = makeAfter (dd, {});
+                        setStepIdxS5 (*fx, cc, k);
+                        setRoleS4 (*fx, "gain", 0.0f); setRoleS4 (*fx, "locut", 0.0f); setRoleS4 (*fx, "hicut", 0.0f);
+                        setRoleS4 (*fx, "reverb", 0.0f); setRoleS4 (*fx, "mix", 0.0f); setRoleS4 (*fx, "mod", 0.5f); setRoleS4 (*fx, "space", 0.5f);
+                        const int n = 16384;
+                        Buf l ((size_t) n, 0.0f);
+                        l[4096] = 0.05f;
+                        Buf r = l;
+                        runStereo256 (*fx, l, r, {}, 1);
+                        auto mag = [&l, n] (double f)
+                        {
+                            double re = 0, im = 0;
+                            for (int i = 4096; i < n; ++i) { const double w = 2 * kPi * f * (i - 4096) / 48000.0; re += l[(size_t) i] * std::cos (w); im -= l[(size_t) i] * std::sin (w); }
+                            return std::sqrt (re * re + im * im);
+                        };
+                        double ref = 0;
+                        for (double f : { 150.0, 300.0, 600.0, 1200.0, 2400.0 }) ref += mag (f);
+                        return std::vector<double> { dbOf (ref / 5.0 / 0.05) };
+                    }));
+                    ids.push_back (juce::String (id) + "/" + juce::String (k + 1));
+                }
+            }
+            lab.check (hc, "Cube Baby / Bass / AC: livello dei cabinet generati (media 150 Hz - 2.4 kHz) entro 2 dB fra i cabinet di ciascun pedale", [&lab, hc, ids] {
+                bool ok = true;
+                juce::String detail;
+                for (size_t p = 0; p < 3; ++p)
+                {
+                    double lo = 1e9, hi = -1e9;
+                    for (size_t k = 0; k < 8; ++k) { lo = std::min (lo, lab.v (hc[p * 8 + k])); hi = std::max (hi, lab.v (hc[p * 8 + k])); }
+                    ok = ok && hi - lo <= 2.0;
+                    detail << ids[p * 8].upToFirstOccurrenceOf ("/", false, false) << " " << num (lo, 1) << " .. " << num (hi, 1) << " dB; ";
+                }
+                return Verdict { ok, detail.trimCharactersAtEnd ("; ") };
+            });
+        }
+
+        // 8. livelli col riff a -12 dBFS e i comandi di default; comandi al massimo e al minimo
+        {
+            const auto hl = addLevelsS5 (lab, kStage5Digital, numDig, "Tappa 5 digitali");
+            // banco s4 ('level'): uscita / ingresso da -12 dB (AM400, come l'AC-3) a +17.1 dB (BSY600, synth a livello fisso come il SYB-5); col riff
+            // a -28.65 dBFS di RMS: -40.65..-11.55 dBFS, +-1.5 dB
+            checkLevelsS5 (lab, hl, kStage5Digital, numDig, "Tappa 5 digitali: livelli con riff a -12 dBFS e comandi di default (34 modelli: finiti, picco < +6 dBFS, "
+                                                            "RMS -42..-10 dBFS come il banco: AM400 -12 dB, BSY600 +17 dB)", -42.0, -10.0, 6.0);
+        }
+
+        // click: soglia 10x senza eccezioni (misurati al massimo 4.97x, TYPE dell'ELEMENTAL); determinismo fra due istanze nuove, dopo reset()
+        // non richiesto (CD400, SF400, SP400, DR600 e BSY600 come le famiglie di partenza)
+        addClickAndDeterminism (lab, kStage5Digital, numDig, "Tappa 5 digitali", 10.0, false);
+        lab.run (report);
+    }
+
     void runCabIRTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
     {
         using namespace pt::engine;
@@ -6123,6 +7788,10 @@ namespace
         runStage4DynTests (report);
         runStage4ModTests (report);
         runStage4DigitalTests (report);
+        runStage5DriveTests (report);
+        runStage5DynTests (report);
+        runStage5ModTests (report);
+        runStage5DigitalTests (report);
 
         // 7. processore completo e bypass
         {
