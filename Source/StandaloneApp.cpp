@@ -19,6 +19,10 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <iostream>
+#include <cstdio>
+#if JUCE_LINUX
+ #include <gnu/libc-version.h>
+#endif
 #include <array>
 #include <atomic>
 #include <chrono>
@@ -1704,6 +1708,21 @@ namespace
    #else
     constexpr bool kBitExactRefs = false;
    #endif
+
+    /** Le impronte della tappa 6 (ampli a triodi, Cube Baby, MINI-AMP...) passano per exp/log/pow della libm: oltre al compilatore
+        dipendono dalla versione di glibc. Sono misurate con GCC 13 e glibc 2.39 (Ubuntu 24.04); con una toolchain piu' vecchia
+        (la CI su Ubuntu 22.04: GCC 11, glibc 2.35) gli ultimi bit cambiano anche per i modelli nuovi, quindi non si confrontano. */
+    static bool stage6BitExactRefs()
+    {
+       #if JUCE_LINUX && defined (__GNUC__) && ! defined (__clang__) && defined (__x86_64__)
+        if (__GNUC__ < 13) return false;
+        int major = 0, minor = 0;
+        if (std::sscanf (gnu_get_libc_version(), "%d.%d", &major, &minor) != 2) return false;
+        return major > 2 || (major == 2 && minor >= 39);
+       #else
+        return false;
+       #endif
+    }
 
     /** Pedali digitali della tappa 3B (motore FxClassicB, agganciati anch'essi da makeClassic). */
     const char* const kStage3BDigital[] = { "evh30", "ehbattalion", "ehbassmetaphors", "ehanalogizer", "ehxstmist", "ehxneomist", "ehxflhoax", "ehxechofl", "ehxbassclo", "ehxeddy", "ehxwiggler", "ehxnanopul", "ehxsuppul", "ehxlesterk", "ehxmodrex", "ehxstpolyp", "ehxbadst1", "ehxstpolyc", "ehxstcthe", "ehdmm550", "ehdmm1100", "ehdmboy", "ehmmstereo", "ehreplay", "ehcanecho", "ehrerun", "ehhgneo", "ehholier", "ehholiest", "ehabyss", "eh3verb", "ehshimmer", "ehsuperegop", "ehattackdecay", "ehpog3", "ehpicopog", "ehpitchforkp", "ehpicofork", "ehihm", "ehslammi", "ehslammip", "ehstring9", "ehbassmono", "ehringthing", "ehatomic", "ehv256", "ehironlung", "ehepitome", "ehsoulpog", "ehtonetattoo" };
@@ -8334,7 +8353,7 @@ namespace
             std::vector<int> h;
             for (const auto& r : refs) { h.push_back (addRawHashS5 (lab, r.id)); lab.first (h.back()); }
             lab.check (h, "Tappa 6: ED-9, DS-1, FDR-1 e FBM-1 (AmpSim) invariati bit per bit dopo gli stadi nuovi di Circuit.cpp", [&lab, h] {
-                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                if (! stage6BitExactRefs()) return Verdict { true, "impronte misurate con GCC 13 e glibc 2.39: confronto non applicabile a questa toolchain" };
                 juce::String bad;
                 for (size_t k = 0; k < h.size(); ++k)
                     if (hashOfS5 (lab, h[k], 0) != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k], 0)) << ") ";
@@ -8353,7 +8372,7 @@ namespace
             std::vector<int> h;
             for (const auto& r : refs) { h.push_back (addRawHashS5 (lab, r.id)); lab.first (h.back()); }
             lab.check (h, "Tappa 6: impronte dei 14 ampli del lavoro A (banco s1 'raw', regressione)", [&lab, h] {
-                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                if (! stage6BitExactRefs()) return Verdict { true, "impronte misurate con GCC 13 e glibc 2.39: confronto non applicabile a questa toolchain" };
                 juce::String bad;
                 for (size_t k = 0; k < h.size(); ++k)
                     if (hashOfS5 (lab, h[k], 0) != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k], 0)) << ") ";
@@ -9093,10 +9112,10 @@ namespace
                 for (size_t k = 0; k < h.size(); ++k)
                 {
                     runs += (int) lab.v (h[k], 2);
-                    if (kBitExactRefs && hashOfS5 (lab, h[k], 0) != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k], 0)) << ") ";
+                    if (stage6BitExactRefs() && hashOfS5 (lab, h[k], 0) != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k], 0)) << ") ";
                     if ((int) lab.v (h[k], 2) != refs[k].runs) bad << refs[k].id << " prove " << (int) lab.v (h[k], 2) << " invece di " << refs[k].runs << " ";
                 }
-                return Verdict { bad.isEmpty(), juce::String (runs) + " prove" + (kBitExactRefs ? juce::String (", impronte identiche") : juce::String (", impronte non confrontate (compilatore)")) + " " + bad.trim() };
+                return Verdict { bad.isEmpty(), juce::String (runs) + " prove" + (stage6BitExactRefs() ? juce::String (", impronte identiche") : juce::String (", impronte non confrontate (toolchain)")) + " " + bad.trim() };
             });
         }
 
