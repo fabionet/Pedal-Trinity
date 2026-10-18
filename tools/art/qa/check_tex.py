@@ -22,7 +22,26 @@ def rect_poly_hit(box, pts):
 def overlap(a, b, pad=0.0):
     return a[0] < b[2] - pad and b[0] < a[2] - pad and a[1] < b[3] - pad and b[1] < a[3] - pad
 
-def analyse(tag, m, lay, d, texname, z, kind):
+def amp_maps(lay):
+    """Ampli e casse (tappa 6): (texture, funzione coordinate della texture -> punto 3D) del pannello e della pedaliera."""
+    import math as _m
+    out = []
+    P = lay.get("panel")
+    if P is not None and not lay["amp"].get("console"):
+        cx, cy, cz = P.centre
+        if P.view == "front":
+            out.append(("_apanel.png", lambda x, y: (cx + x, P.yp, cz + y)))
+        else:
+            out.append(("_apanel.png", lambda x, y: (cx + x, cy + y, P.zp)))
+    cg = lay.get("console")
+    if cg:
+        ang = _m.atan2(cg["zb"] - cg["zf"], cg["y1"] - cg["y0"])
+        cyc, czc = (cg["y0"] + cg["y1"]) / 2, (cg["zf"] + cg["zb"]) / 2
+        out.append(("_aconsole.png", lambda x, y: (x, cyc + y * _m.cos(ang), czc + y * _m.sin(ang))))
+    return out
+
+
+def analyse(tag, m, lay, d, texname, z, kind, to3d=None):
     key = None
     for k in REC:
         if k.endswith("/" + texname) and (("cat_real" in k) == (tag == "REAL")):
@@ -46,9 +65,12 @@ def analyse(tag, m, lay, d, texname, z, kind):
                 issues.append(("testi sovrapposti", "%s '%s' / '%s'" % (texname, texts[i][1], texts[j][1])))
     if kind == "tread" or z is None:
         return issues
-    PG.use_frame(m.get("style", "boss"), lay.get("frame"))
+    PG.use_frame(m.get("style", "boss"), lay.get("frame"), lay.get("tilt"))
     def box_img(o):
         _, s, x0, y0, x1, y1 = o
+        if to3d is not None:
+            a = PG.proj(*to3d(x0, y1)); b = PG.proj(*to3d(x1, y0))
+            return (min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1]))
         zz = z((x0 + x1) / 2, (y0 + y1) / 2) if callable(z) else z
         a = PG.proj(x0, y1, zz); b = PG.proj(x1, y0, zz)
         return (a[0], a[1], b[0], b[1])
@@ -102,6 +124,8 @@ def run():
     models, _ = catalog.load_all(strict=False)
     inc = {d["id"]: d for d in incparse.normal()}
     for m in models:
+        if m["id"] not in inc:
+            continue                  # modello senza voce nel .inc (render mancante)
         lay = PL.pedal_layout(m)
         d = inc[m["id"]]
         iss = []
@@ -111,6 +135,9 @@ def run():
             iss += analyse("NORM", m, lay, d, m["id"] + "_top.png", PL.NAM_H, "top")
         elif lay.get("builder") == "stomp":
             iss += analyse("NORM", m, lay, d, m["id"] + "_top.png", stomp_z(lay), "top")
+        elif lay.get("builder") == "amp":
+            for suf, f3 in amp_maps(lay):
+                iss += analyse("NORM", m, lay, d, m["id"] + suf, 0.0, "top", f3)
         elif m["style"] in ("box", "treadle"):
             pass                      # bilancieri e scatole sagomate: check_tex_wah.py
         else:
@@ -120,6 +147,8 @@ def run():
             res["NORM:" + m["id"]] = iss
     inc = {d["id"]: d for d in incparse.real()}
     for r in real_catalog.real_models(strict=False):
+        if r["id"] not in inc:
+            continue
         lay = real_layout.real_layout(r)
         d = inc[r["id"]]
         iss = []
@@ -131,6 +160,9 @@ def run():
             iss += analyse("REAL", r, lay, d, r["id"] + "_plate.png", None, "tread")
         elif lay["builder"] == "stomp":
             iss += analyse("REAL", r, lay, d, r["id"] + "_top.png", stomp_z(lay), "top")
+        elif lay["builder"] == "amp":
+            for suf, f3 in amp_maps(lay):
+                iss += analyse("REAL", r, lay, d, r["id"] + suf, 0.0, "top", f3)
         elif lay["builder"] == "wah":
             pass                      # check_tex_wah.py
         else:

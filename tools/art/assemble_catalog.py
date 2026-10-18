@@ -169,6 +169,8 @@ def main_real():
     keep = {"r_" + r for r in [x["id"] for x in real_catalog.real_models(strict=False)] if r not in missing}
     for fn in os.listdir(REAL_RES):
         stem = fn[:-6] if fn.endswith("_a.png") else fn[:-4]
+        if stem.endswith("_back"):
+            stem = stem[:-5]              # retro degli ampli (tappa 6)
         if stem not in keep:
             os.remove(os.path.join(REAL_RES, fn))
     total = sum(os.path.getsize(os.path.join(REAL_RES, x)) for x in os.listdir(REAL_RES))
@@ -233,6 +235,8 @@ def main():
     keep = {m["id"] for m in models if m["id"] not in skipped and m["id"] not in missing}
     for fn in os.listdir(RES):
         stem = fn[:-6] if fn.endswith("_a.png") else fn[:-4]
+        if stem.endswith("_back"):
+            stem = stem[:-5]              # retro degli ampli (tappa 6)
         if (fn.endswith(".jpg") or fn.endswith("_a.png")) and stem not in keep:
             os.remove(os.path.join(RES, fn))
     total = sum(os.path.getsize(os.path.join(RES, x)) for x in os.listdir(RES))

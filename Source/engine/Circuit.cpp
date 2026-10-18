@@ -2184,7 +2184,9 @@ namespace pt::engine
             stessi elementi di 'nodal' (piu' le induttanze L). Analisi nodale modificata con i modelli compagni trapezoidali
             di condensatori e induttanze (= trasformata bilineare): a frequenza di controllo si fattorizza la matrice e si
             ricava la forma di stato discreta h' = M h + m x, y = c.h + d x sulle memorie dei soli elementi reattivi, quindi
-            per campione il costo e' (numero di condensatori)^2. Nessun polinomio ne' radice: esatta anche con molti poli. */
+            per campione il costo e' (numero di condensatori)^2. Nessun polinomio ne' radice: esatta anche con molti poli.
+            Tappa 6: con l'argomento ramp=1 (facoltativo) i coefficienti scorrono campione per campione quando un comando si muove
+            (senza, il comportamento e' quello di prima, bit per bit). */
         class MnaStage : public StageT<MnaStage>
         {
         public:
@@ -2295,11 +2297,22 @@ namespace pt::engine
                         M[(size_t) (k * K + j)] = 2.0 * g[(size_t) k] * vab (col, ek) + (k == j ? (ek.type == 'C' ? -1.0 : 1.0) : 0.0);
                     }
                 }
+                // tappa 6 (facoltativo, ramp=1): coefficienti che scorrono campione per campione dai precedenti di ogni canale
+                if (smooth)
+                    for (int c = 0; c < 2; ++c)
+                        rmp[c] = haveFrom[c] && (fromD[c] != d || fromM[c] != M || fromMv[c] != mvec || fromCv[c] != cvec);
             }
-            void reset() override { for (auto& h : hs) std::fill (h.begin(), h.end(), 0.0); }
+            void settle() override
+            {
+                if (! smooth) return;
+                for (int c = 0; c < 2; ++c) { fromD[c] = d; fromM[c] = M; fromMv[c] = mvec; fromCv[c] = cvec; haveFrom[c] = ok && ! singular; rmp[c] = false; }
+            }
+            void reset() override { for (auto& h : hs) std::fill (h.begin(), h.end(), 0.0); settle(); }
             void process (int ch, double* x, int n) override
             {
                 if (! ok || singular) return;
+                if (smooth && rmp[ch]) { processRamp (ch, x, n); return; }
+                if (smooth) haveFrom[ch] = true;
                 auto& h = hs[ch];
                 double* hn = hnew[ch].data();
                 for (int i = 0; i < n; ++i)
@@ -2320,10 +2333,39 @@ namespace pt::engine
                 }
             }
         private:
+            /** Come process() con coefficienti interpolati linearmente nella chiamata (dai precedenti del canale ai nuovi). */
+            void processRamp (int ch, double* x, int n)
+            {
+                auto& h = hs[ch];
+                double* hn = hnew[ch].data();
+                auto& rM = rampM[ch]; auto& rMv = rampMv[ch]; auto& rCv = rampCv[ch];
+                for (int i = 0; i < n; ++i)
+                {
+                    const double a = (double) (i + 1) / (double) n, b = 1.0 - a;
+                    for (size_t q = 0; q < M.size(); ++q) rM[q] = b * fromM[ch][q] + a * M[q];
+                    for (int k = 0; k < K; ++k) { rMv[(size_t) k] = b * fromMv[ch][(size_t) k] + a * mvec[(size_t) k]; rCv[(size_t) k] = b * fromCv[ch][(size_t) k] + a * cvec[(size_t) k]; }
+                    const double v = x[i];
+                    double y = (b * fromD[ch] + a * d) * v;
+                    for (int k = 0; k < K; ++k) y += rCv[(size_t) k] * h[(size_t) k];
+                    for (int k = 0; k < K; ++k)
+                    {
+                        const double* mr = rM.data() + (size_t) (k * K);
+                        double acc = rMv[(size_t) k] * v;
+                        for (int j = 0; j < K; ++j) acc += mr[j] * h[(size_t) j];
+                        hn[k] = acc;
+                    }
+                    for (int k = 0; k < K; ++k) h[(size_t) k] = hn[k];
+                    if (vpos > 0) y = railClip (y, vpos, vneg);
+                    x[i] = y;
+                }
+                fromD[ch] = d; fromM[ch] = M; fromMv[ch] = mvec; fromCv[ch] = cvec;
+                rmp[ch] = false;
+            }
             struct Elem { char type; int a = -1, b = -1, c = -1; int arg = 0; };
             void parse()
             {
                 parsed = true;
+                smooth = has ("ramp");
                 std::map<std::string, int> map;
                 auto node = [&] (const std::string& nm) -> int
                 {
@@ -2361,6 +2403,12 @@ namespace pt::engine
                 g.assign ((size_t) K, 0.0); mvec.assign ((size_t) K, 0.0); cvec.assign ((size_t) K, 0.0); M.assign ((size_t) (K * K), 0.0);
                 vals.assign (elems.size(), 0.0);
                 for (int c = 0; c < 2; ++c) { hs[c].assign ((size_t) K, 0.0); hnew[c].assign ((size_t) K, 0.0); }
+                if (smooth)
+                    for (int c = 0; c < 2; ++c)
+                    {
+                        fromM[c].assign ((size_t) (K * K), 0.0); fromMv[c].assign ((size_t) K, 0.0); fromCv[c].assign ((size_t) K, 0.0);
+                        rampM[c].assign ((size_t) (K * K), 0.0); rampMv[c].assign ((size_t) K, 0.0); rampCv[c].assign ((size_t) K, 0.0);
+                    }
             }
             std::vector<Elem> elems;
             std::vector<int> reac, perm;
@@ -2368,6 +2416,10 @@ namespace pt::engine
             double d = 0, vpos = 0, vneg = 0, lastK = 0, lastFs = 0;
             bool parsed = false, ok = false, singular = true;
             int nodes = 0, extra = 0, inNode = 0, outNode = -1, outArg = 0, K = 0;
+            // rampa facoltativa (ramp=1, tappa 6)
+            bool smooth = false, rmp[2] {}, haveFrom[2] {};
+            double fromD[2] {};
+            std::vector<double> fromM[2], fromMv[2], fromCv[2], rampM[2], rampMv[2], rampCv[2];
         };
 
         /** Linea di ritardo a BBD modulata (chorus / delay analogici degli Ibanez multi-effetto SS10/SS20): ritardo
@@ -2475,6 +2527,882 @@ namespace pt::engine
             struct State { double pk = 0, prev = 0, q1 = 1, q2 = 1, g = 0; bool armed = false; } st[2];
             double o1 = 1, o2 = 0, hys = 0.2, thr = 0.002, pkDecay = 0.999, gateK = 0.001;
             bool useGate = true;
+        };
+
+        //==============================================================================
+        // Stadi aggiunti nella tappa 6 (simulatori d'amplificatore): finale push-pull completo, cathode follower, pentodo
+        // EF86, riverbero a molle e tremolo ottico. Nessuno stadio esistente e' cambiato.
+        //==============================================================================
+
+        /** Rampa morbida r(x) = (x + sqrt(x^2 + e^2)) / 2 (diodo o interdizione a ginocchio dolce); d = derivata. */
+        inline double softRelu (double x, double e, double& d) noexcept
+        {
+            const double s = std::sqrt (x * x + e * e);
+            d = 0.5 * (1.0 + x / s);
+            return 0.5 * (x + s);
+        }
+
+        /** Potenza r^ex per r >= 0 con la derivata (ex = 1.5 senza pow()). */
+        inline double powEx (double r, double ex, double& d) noexcept
+        {
+            if (r <= 0) { d = 0; return 0; }
+            if (std::abs (ex - 1.5) < 1e-12) { const double s = std::sqrt (r); d = 1.5 * s; return r * s; }
+            const double v = std::pow (r, ex);
+            d = ex * v / r;
+            return v;
+        }
+
+        /** Corrente anodica del triodo (modello di Koren, come lo stadio 'triode'). */
+        inline double korenTriode (double vgk, double vpk, double mu, double ex, double kg1, double kp, double kvb) noexcept
+        {
+            if (vpk <= 0) return 0.0;
+            const double e1 = vpk / kp * std::log1p (std::exp (std::min (kp * (1.0 / mu + vgk / std::sqrt (kvb + vpk * vpk)), 80.0)));
+            return e1 > 0 ? std::pow (e1, ex) / kg1 : 0.0;
+        }
+
+        /** Rete lineare piccola (fino a 8 nodi e 8 elementi reattivi) pilotata da una corrente iniettata in un nodo; analisi
+            nodale con i modelli compagni trapezoidali (come lo stadio 'mna') e forma di stato discreta con piu' uscite:
+            v_o = d_o w + c_o . h,  h' = M h + m w. Memorie fisse: nessuna allocazione quando si ricostruisce. */
+        struct SmallNet
+        {
+            static constexpr int maxN = 8, maxK = 8, maxE = 16, maxO = 2;
+            struct El { char t = 'R'; int a = -1, b = -1; double v = 0; };
+            El el[maxE];
+            int ne = 0, nn = 0, K = 0, inNode = 0, no = 0, outNode[maxO] {};
+            double d[maxO] {}, c[maxO][maxK] {}, M[maxK][maxK] {}, m[maxK] {};
+            bool ok = false;
+
+            void clear() noexcept { ne = 0; nn = 0; K = 0; no = 0; ok = false; }
+            void add (char t, int a, int b, double v) noexcept
+            {
+                if (ne >= maxE) return;
+                el[ne++] = { t, a, b, v };
+                nn = std::max ({ nn, a + 1, b + 1 });
+            }
+            int output (int node) noexcept { if (no < maxO) outNode[no++] = node; return no - 1; }
+            bool build (double fs) noexcept
+            {
+                ok = false;
+                const int N = nn;
+                if (N <= 0 || N > maxN) return false;
+                const double T = 1.0 / fs;
+                double A[maxN][maxN] {}, g[maxK] {};
+                int reac[maxK] {};
+                K = 0;
+                auto stamp = [&] (int a, int b, double y)
+                {
+                    if (a >= 0) A[a][a] += y;
+                    if (b >= 0) A[b][b] += y;
+                    if (a >= 0 && b >= 0) { A[a][b] -= y; A[b][a] -= y; }
+                };
+                for (int k = 0; k < ne; ++k)
+                {
+                    const auto& e = el[k];
+                    if (e.t == 'R') stamp (e.a, e.b, 1.0 / std::max (1e-6, e.v));
+                    else
+                    {
+                        if (K >= maxK) return false;
+                        g[K] = e.t == 'C' ? 2.0 * std::max (1e-18, e.v) / T : T / (2.0 * std::max (1e-12, e.v));
+                        stamp (e.a, e.b, g[K]);
+                        reac[K++] = k;
+                    }
+                }
+                // LU con pivot parziale
+                int perm[maxN];
+                for (int i = 0; i < N; ++i) perm[i] = i;
+                for (int col = 0; col < N; ++col)
+                {
+                    int piv = col;
+                    for (int r = col + 1; r < N; ++r) if (std::abs (A[r][col]) > std::abs (A[piv][col])) piv = r;
+                    if (std::abs (A[piv][col]) < 1e-300) return false;
+                    if (piv != col) { for (int j = 0; j < N; ++j) std::swap (A[col][j], A[piv][j]); std::swap (perm[col], perm[piv]); }
+                    for (int r = col + 1; r < N; ++r)
+                    {
+                        const double f = A[r][col] / A[col][col];
+                        A[r][col] = f;
+                        for (int j = col + 1; j < N; ++j) A[r][j] -= f * A[col][j];
+                    }
+                }
+                auto solve = [&] (double* b)
+                {
+                    double t[maxN];
+                    for (int i = 0; i < N; ++i) t[i] = b[perm[i]];
+                    for (int i = 0; i < N; ++i) for (int j = 0; j < i; ++j) t[i] -= A[i][j] * t[j];
+                    for (int i = N - 1; i >= 0; --i) { for (int j = i + 1; j < N; ++j) t[i] -= A[i][j] * t[j]; t[i] /= A[i][i]; }
+                    for (int i = 0; i < N; ++i) b[i] = t[i];
+                };
+                auto vab = [] (const double* x, const El& e) { return (e.a >= 0 ? x[e.a] : 0.0) - (e.b >= 0 ? x[e.b] : 0.0); };
+                double col[maxN] {};
+                col[inNode] = 1.0;
+                solve (col);
+                for (int o = 0; o < no; ++o) d[o] = col[outNode[o]];
+                for (int k = 0; k < K; ++k) m[k] = 2.0 * g[k] * vab (col, el[reac[k]]);
+                for (int j = 0; j < K; ++j)
+                {
+                    const auto& ej = el[reac[j]];
+                    const double sgn = ej.t == 'C' ? 1.0 : -1.0;
+                    std::fill (col, col + maxN, 0.0);
+                    if (ej.a >= 0) col[ej.a] += sgn;
+                    if (ej.b >= 0) col[ej.b] -= sgn;
+                    solve (col);
+                    for (int o = 0; o < no; ++o) c[o][j] = col[outNode[o]];
+                    for (int k = 0; k < K; ++k)
+                    {
+                        const auto& ek = el[reac[k]];
+                        M[k][j] = 2.0 * g[k] * vab (col, ek) + (k == j ? (ek.t == 'C' ? -1.0 : 1.0) : 0.0);
+                    }
+                }
+                ok = true;
+                return true;
+            }
+            inline double out (int o, const double* h) const noexcept
+            {
+                double s = 0;
+                for (int j = 0; j < K; ++j) s += c[o][j] * h[j];
+                return s;
+            }
+            inline void step (double* h, double w) const noexcept
+            {
+                double hn[maxK];
+                for (int k = 0; k < K; ++k)
+                {
+                    double a = m[k] * w;
+                    for (int j = 0; j < K; ++j) a += M[k][j] * h[j];
+                    hn[k] = a;
+                }
+                for (int k = 0; k < K; ++k) h[k] = hn[k];
+            }
+        };
+
+        /** Coefficienti di un filtro AnalogTF che scorrono campione per campione dai vecchi ai nuovi (comandi in movimento). */
+        struct TfRamp
+        {
+            double b[4] {}, a[4] {}, db[4] {}, da[4] {};
+            bool on = false;
+            void begin (AnalogTF& tf, int ch, int n) noexcept
+            {
+                on = tf.ramp[ch];
+                if (! on) return;
+                const double inv = 1.0 / std::max (1, n);
+                for (int i = 0; i < 4; ++i)
+                {
+                    b[i] = tf.fromB[ch][i]; a[i] = tf.fromA[ch][i];
+                    db[i] = (tf.bz[i] - b[i]) * inv; da[i] = (tf.az[i] - a[i]) * inv;
+                }
+            }
+            /** Avanza di un campione; restituisce i coefficienti da usare. */
+            inline void next (const AnalogTF& tf, const double*& bb, const double*& aa) noexcept
+            {
+                if (! on) { bb = tf.bz; aa = tf.az; return; }
+                for (int i = 0; i < 4; ++i) { b[i] += db[i]; a[i] += da[i]; }
+                bb = b; aa = a;
+            }
+            void end (AnalogTF& tf, int ch) noexcept
+            {
+                if (! on) return;
+                std::copy (tf.bz, tf.bz + 4, tf.fromB[ch]); std::copy (tf.az, tf.az + 4, tf.fromA[ch]);
+                tf.ramp[ch] = false;
+                on = false;
+            }
+        };
+
+        /** Uscita del filtro con i coefficienti dati, senza aggiornare lo stato (parte diretta + memoria). */
+        inline double tfPeek (const AnalogTF& tf, int ch, double x, const double* b) noexcept { return b[0] * x + tf.state[ch][0]; }
+
+        /** Finale push-pull completo, risolto campione per campione dentro l'anello di controreazione globale:
+              invertitore di fase (pi=ltp coppia a coda lunga, cat split-load/cathodyne, para paraphase; guadagno pia per lato,
+              escursioni piup/pidn, ginocchio pik, squilibrio pib, resistenza d'uscita pirs) -> rete CUT facoltativa fra le due
+              fasi (cutR + cutC, Vox/Matchless) -> volume fra PI e finali (mv) -> condensatori d'accoppiamento cc su rg verso la
+              polarizzazione, con conduzione di griglia (rgs, ginocchio eg): carica del condensatore e spostamento del bias
+              ('blocking') -> valvole finali (tube=6L6|5881|KT66|EL34|6CA7|6V6|EL84|6550|KT88, np coppie, legge 3/2 con
+              interdizione morbida cs) in classe AB o A, bias fisso (vb, corrente di riposo iq) o catodico (rk, ck, vk) ->
+              trasformatore d'uscita (raa anodo-anodo, induttanza primaria lm con saturazione del nucleo fsat a piena potenza
+              pw, banda alta fhf/qhf, resistenza degli avvolgimenti rw e perdite del nucleo rcore in frazioni di raa) su un CARICO D'ALTOPARLANTE nominale (spk ohm: Re, risonanza sf/sq/sz, bobina sl mH a 8 ohm
+              con perdite sr2) -> controreazione dalla presa tap (fbR serie, fbG verso massa, presence prR/prC/pr in serie a fbG o, con prp=1, in parallelo a fbG, depth o
+              resonance dpR/dpC/dp, moltiplicatore fbk se la NFB entra in uno stadio prima del PI) iniettata all'ingresso del PI. Ginocchio anodico kc/kw (le placche non scendono sotto knee),
+              alimentazione con sag (rect=si|gz34|5u4|ez81|5v4, rs, cres) che abbassa schermi e escursione; tremolo sul bias
+              (bvib V, brate Hz). Uscita = tensione sull'altoparlante nominale x og. Ingresso = tensione di griglia del PI (V). */
+        class PushPullStage : public StageT<PushPullStage>
+        {
+        public:
+            std::string tube = "6L6", piType = "ltp", rect = "si";
+
+            void update (double f, const float* p, const ModelDef& def) override
+            {
+                fs = f; T = 1.0 / fs;
+                struct Tube { const char* n; double mug2, ipk, ex, rp, knee; };
+                static const Tube tubes[] = { { "6L6", 6.9, 0.40, 1.5, 22e3, 60 }, { "5881", 6.9, 0.36, 1.5, 22e3, 60 },
+                    { "KT66", 7.0, 0.45, 1.5, 22e3, 55 }, { "EL34", 9.5, 0.50, 1.5, 15e3, 45 }, { "6CA7", 9.5, 0.50, 1.5, 15e3, 45 },
+                    { "6V6", 8.6, 0.25, 1.5, 50e3, 50 }, { "EL84", 19.0, 0.23, 1.5, 38e3, 40 }, { "6550", 7.5, 0.55, 1.5, 15e3, 55 },
+                    { "KT88", 7.5, 0.60, 1.5, 12e3, 55 } };
+                std::string tu = tube;
+                for (auto& ch : tu) ch = (char) std::toupper ((unsigned char) ch);
+                Tube tb = tubes[0];
+                for (const auto& t : tubes) if (tu == t.n) tb = t;
+                np = std::max (1.0, std::round (arg ("np", p, def, 1.0)));
+                Bnom = std::max (50.0, arg ("B", p, def, 450.0));
+                G2nom = arg ("G2", p, def, Bnom);
+                ex = std::clamp (arg ("ex", p, def, tb.ex), 1.0, 3.0);
+                ipk = std::max (1e-3, arg ("ipk", p, def, tb.ipk));
+                const double rpT = std::max (100.0, arg ("rp", p, def, tb.rp));
+                knee = arg ("knee", p, def, tb.knee);
+                const double mug2 = std::max (1.0, arg ("mu", p, def, tb.mug2));
+                scr = std::max (0.0, arg ("scr", p, def, 0.12));
+                epsC = std::max (0.05, arg ("cs", p, def, 2.0));
+                mm = std::clamp (arg ("mm", p, def, 0.04), 0.0, 0.5);
+                cathode = has ("rk");
+                const double Ntub = 2.0 * np;
+                // punto di riposo: legge I = ipk * (r(vg + Vco) / Vco)^ex per valvola, r = rampa morbida
+                auto cur = [&] (double vco, double vb) { double dd; const double r = softRelu (vco - vb, epsC, dd); return ipk * std::pow (r / vco, ex); };
+                if (cathode)
+                {
+                    rk = std::max (1.0, arg ("rk", p, def, 100.0));
+                    ck = std::max (1e-7, arg ("ck", p, def, 250e-6));
+                    if (has ("vk"))
+                    {
+                        const double vk = std::max (0.1, arg ("vk", p, def, 10.0));
+                        const double iq = vk / (rk * Ntub * (1.0 + scr));
+                        Vco0 = vk / std::max (0.05, 1.0 - std::pow (std::min (0.95, iq / ipk), 1.0 / ex));
+                    }
+                    else Vco0 = G2nom / mug2;
+                    // Vk autoconsistente: Vk = rk * N * I(Vk) * (1 + scr) (decrescente: bisezione)
+                    double lo = 0, hi = Vco0 * 1.5;
+                    for (int it = 0; it < 80; ++it)
+                    {
+                        const double mid = 0.5 * (lo + hi);
+                        if (rk * Ntub * (1.0 + scr) * cur (Vco0, mid) > mid) lo = mid; else hi = mid;
+                    }
+                    Vb0 = 0.5 * (lo + hi);
+                }
+                else
+                {
+                    Vb0 = std::max (0.0, arg ("vb", p, def, 40.0));
+                    if (has ("iq"))
+                    {
+                        const double iq = std::max (1e-4, arg ("iq", p, def, 0.04));
+                        Vco0 = Vb0 / std::max (0.05, 1.0 - std::pow (std::min (0.95, iq / ipk), 1.0 / ex));
+                    }
+                    else Vco0 = G2nom / mug2;
+                }
+                Vco0 = std::max (1.0, Vco0);
+                K1 = np * ipk / std::pow (Vco0, ex);
+                K2 = K1 * (1.0 - mm);
+                {
+                    double dd;
+                    const double r0 = softRelu (Vco0 - Vb0, epsC, dd);
+                    double dp1;
+                    const double i0 = powEx (r0, ex, dp1);
+                    Itot0 = (K1 + K2) * i0 * (1.0 + scr);
+                    Inet0 = 0.5 * (K1 - K2) * i0;
+                }
+                // invertitore di fase
+                piMode = piType == "cat" ? 1 : piType == "para" ? 2 : 0;
+                pia = arg ("pia", p, def, piMode == 1 ? 0.9 : piMode == 2 ? 30.0 : 15.0);
+                piup = std::max (1.0, arg ("piup", p, def, 150.0));
+                pidn = std::max (1.0, arg ("pidn", p, def, piup));
+                pik = std::max (1.0, arg ("pik", p, def, piMode == 1 ? 4.0 : 2.0));
+                pikInt = kneeInt (pik);
+                pib = std::clamp (arg ("pib", p, def, piMode == 2 ? 0.1 : 0.03), 0.0, 0.9);
+                pirs = std::max (10.0, arg ("pirs", p, def, piMode == 1 ? 10e3 : 40e3));
+                cc = std::max (1e-10, arg ("cc", p, def, 0.1e-6));
+                rg = std::max (1e3, arg ("rg", p, def, 220e3));
+                rgs = std::max (10.0, arg ("rgs", p, def, 2.5e3));
+                eg = std::max (0.01, arg ("eg", p, def, 0.5));
+                mv = std::max (0.0, arg ("mv", p, def, 1.0));
+                // rete CUT fra le fasi (mezzo circuito: cutR/2 + 2 cutC verso massa), normalizzata a 1 in continua
+                {
+                    const double C = arg ("cutC", p, def, 0.0), R = std::max (0.0, arg ("cutR", p, def, 0.0));
+                    if (C > 0)
+                    {
+                        const double Rs = pirs, Rg = rg;
+                        setTF (cuttf, { (Rs + Rg), R * C * (Rs + Rg) }, { Rs + Rg, Rs * R * C + 2.0 * Rs * C * Rg + R * C * Rg });
+                    }
+                    else setTF (cuttf, { 1 }, { 1 });
+                    cuttf.design (fs);
+                    cuttf.armRamp();
+                    cut2.order = cuttf.order;
+                }
+                // controreazione: H = Zsh / (Zsh + Zser)
+                fbR = std::max (0.0, arg ("fbR", p, def, 0.0));
+                {
+                    const double fbG = std::max (0.0, arg ("fbG", p, def, 0.0));
+                    const double prR = std::max (0.0, arg ("prR", p, def, 0.0)), prC = std::max (0.0, arg ("prC", p, def, 0.0));
+                    const double pr = std::clamp (arg ("pr", p, def, 0.0), 0.0, 1.0);
+                    const double dpR = std::max (0.0, arg ("dpR", p, def, 0.0)), dpC = std::max (0.0, arg ("dpC", p, def, 0.0));
+                    const double dp = std::clamp (arg ("dp", p, def, 0.0), 0.0, 1.0);
+                    const double Rh = prR * (1.0 - pr), Rl = prR * pr, Cp = prC > 0 ? prC : 0.0;
+                    double A0 = fbG + Rh + Rl, A1 = Cp > 0 ? (fbG + Rh) * Rl * Cp : 0.0, tp = Cp > 0 ? Rl * Cp : 0.0;
+                    if (arg ("prp", p, def, 0.0) > 0.5 && Cp > 0)
+                    {
+                        // presence 'in parallelo' (Marshall 2203/2555): fbG verso massa e, in parallelo, pot prR(1-pr) + prC
+                        A0 = fbG; A1 = fbG * Rh * Cp; tp = Cp * (fbG + Rh);
+                    }
+                    const double Rd = dpR * dp, td = dpC > 0 ? Rd * dpC : 0.0;
+                    const double B0 = fbR + Rd, B1 = fbR * td;
+                    const double fbk = std::max (0.0, arg ("fbk", p, def, 1.0));     // guadagno dello stadio fra NFB e PI (iniezione a monte)
+                    if (fbR > 0 && A0 > 0)
+                        setTF (fbtf, { fbk * A0, fbk * (A1 + A0 * td), fbk * A1 * td }, { A0 + B0, A1 + A0 * td + B1 + B0 * tp, A1 * td + B1 * tp });
+                    else setTF (fbtf, { 0 }, { 1 });
+                    fbtf.design (fs);
+                    fbtf.armRamp();
+                }
+                // alimentazione
+                {
+                    std::string rc = rect;
+                    for (auto& ch : rc) ch = (char) std::tolower ((unsigned char) ch);
+                    // resistenza equivalente della sorgente (raddrizzatore + avvolgimento del trasformatore di rete), stima
+                    const double rdef = rc == "gz34" || rc == "5ar4" ? 300.0 : rc == "5u4" || rc == "5u4gb" ? 600.0 : rc == "ez81" ? 450.0
+                                      : rc == "5v4" || rc == "gz37" ? 350.0 : 60.0;
+                    rs = std::max (1.0, arg ("rs", p, def, rdef));
+                    cres = std::max (1e-6, arg ("cres", p, def, 40e-6));
+                    Vnl = Bnom + rs * Itot0;
+                }
+                // trasformatore d'uscita e altoparlante (rete lineare, ricostruita solo se cambiano i valori)
+                raa = std::max (100.0, arg ("raa", p, def, 4000.0));
+                const double spk = std::max (0.5, arg ("spk", p, def, 8.0)), tap = std::max (0.5, arg ("tap", p, def, spk));
+                const double pw = arg ("pw", p, def, 0.0);
+                const double lm = std::max (0.1, arg ("lm", p, def, raa / (2.0 * pi * 5.0)));
+                const double fsat = std::max (1.0, arg ("fsat", p, def, 30.0));
+                const double fhf = std::clamp (arg ("fhf", p, def, 30e3), 2e3, 0.3 * fs), qhf = std::max (0.3, arg ("qhf", p, def, 0.6));
+                const double sf = std::max (20.0, arg ("sf", p, def, 100.0)), sq = std::max (0.3, arg ("sq", p, def, 3.0));
+                const double sz = std::max (1.2, arg ("sz", p, def, 5.0)), sl = std::max (0.0, arg ("sl", p, def, 0.5));
+                const double sr2 = std::max (0.1, arg ("sr2", p, def, 3.5)), re = std::clamp (arg ("re", p, def, 0.8), 0.1, 1.0);
+                const double rw = std::clamp (arg ("rw", p, def, 0.04), 0.0, 0.5), rcore = std::max (1.0, arg ("rcore", p, def, 15.0));
+                kt = std::sqrt (tap / raa);
+                ks = std::sqrt (spk / raa);
+                lmag = lm;
+                const double vaaR = pw > 0 ? std::sqrt (2.0 * pw * raa) : 1.7 * std::max (10.0, Bnom - knee);
+                phis = vaaR / (2.0 * pi * fsat);
+                gc = std::max (0.0, arg ("kc", p, def, 100.0)) / raa;
+                kw = std::clamp (arg ("kw", p, def, 0.08), 0.005, 0.5);   // larghezza del ginocchio anodico (frazione)
+                const double key = raa * 1.3 + spk * 7.1 + lm * 3.3 + fhf * 0.011 + qhf * 5.7 + sf * 0.37 + sq * 11.3 + sz * 2.9 + sl * 17.1
+                                 + sr2 * 4.3 + re * 13.7 + rpT * 0.07 + np * 31.0 + fs * 1e-3 + rw * 101.0 + rcore * 0.77;
+                if (key != netKey)
+                {
+                    netKey = key;
+                    const double n2 = raa / spk, w0 = 2.0 * pi * fhf;
+                    const double Llk = qhf * raa / w0, Cw = 1.0 / (qhf * w0 * raa);
+                    const double Re = re * spk, Le = sl * 1e-3 * spk / 8.0, R2 = sr2 * spk, Res = std::max (0.1, (sz - re) * spk);
+                    const double Lces = Res / (2.0 * pi * sf * sq), Cmes = sq / (2.0 * pi * sf * Res);
+                    net.clear();
+                    net.inNode = 0;                                         // nodi: 0 = anodi (P), 1 = secondario (Q), 2, 3 interni
+                    net.add ('R', 0, -1, 2.0 * rpT / np);                   // resistenza interna delle valvole
+                    net.add ('L', 0, -1, lm);                               // induttanza primaria
+                    net.add ('C', 0, -1, Cw);                               // capacita' degli avvolgimenti
+                    net.add ('R', 0, -1, rcore * raa);                      // perdite del nucleo
+                    net.add ('R', 0, 4, std::max (1.0, rw * raa));          // resistenza degli avvolgimenti
+                    net.add ('L', 4, 1, Llk);                               // induttanza dispersa
+                    net.add ('R', 1, 2, n2 * Re);                           // altoparlante riportato al primario
+                    if (Le > 0) { net.add ('L', 2, 3, n2 * Le); net.add ('R', 2, 3, n2 * R2); }
+                    else net.add ('R', 2, 3, 1e-3);
+                    net.add ('R', 3, -1, n2 * Res);
+                    net.add ('L', 3, -1, n2 * Lces);
+                    net.add ('C', 3, -1, Cmes / n2);
+                    net.output (0); net.output (1);
+                    net.build (fs);
+                }
+                bvib = std::max (0.0, arg ("bvib", p, def, 0.0));
+                lfoInc = 2.0 * pi * std::clamp (arg ("brate", p, def, 5.0), 0.01, 50.0) / fs;
+                og = arg ("og", p, def, 1.0);
+            }
+            void reset() override
+            {
+                for (auto& s : st) s = {};
+                for (auto& s : st) { s.B = Bnom; s.vk = Vb0; }
+                fbtf.reset(); cuttf.reset(); cut2.reset();
+                settle();
+            }
+            void settle() override { fbtf.settle(); cuttf.settle(); }
+            void process (int ch, double* x, int n) override
+            {
+                auto& s = st[ch];
+                if (! net.ok) { for (int i = 0; i < n; ++i) x[i] = 0; return; }
+                TfRamp rfb, rcut;
+                rfb.begin (fbtf, ch, n);
+                rcut.begin (cuttf, ch, n);
+                const double ex1 = ex;
+                const double rOut = pirs + T / cc, gO = 1.0 / rOut, beta = gO + 1.0 / rg;
+                const double q = 2.0 * rgs * beta + 1.0, q2m1 = q * q - 1.0, eg2 = eg * eg * q2m1;
+                const double dpdv = 2.0 * rgs * gO;
+                const double dP = net.d[0], dQ = net.d[1];
+                const double leak = std::exp (-T / 0.25);
+                for (int i = 0; i < n; ++i)
+                {
+                    const double *fb_b, *fb_a, *cu_b, *cu_a;
+                    rfb.next (fbtf, fb_b, fb_a);
+                    rcut.next (cuttf, cu_b, cu_a);
+                    const double rho = s.B / Bnom;
+                    const double vco = rho * Vco0;
+                    const double vlim = 2.0 * std::max (5.0, s.B - knee);
+                    const double vb = cathode ? s.vk : Vb0 + (bvib > 0 ? bvib * std::sin (s.lfo) : 0.0);
+                    const double Sp = net.out (0, s.h), Sq = net.out (1, s.h);
+                    const double fbS = fbtf.state[ch][0], fbB0 = fb_b[0];
+                    const double u0 = x[i] - fbB0 * kt * Sq - fbS, du = -fbB0 * kt * dQ;
+                    const double cb0 = cu_b[0], cz1 = cuttf.state[ch][0], cz2 = cut2.state[ch][0];
+                    // G(u): corrente netta iniettata nel primario e derivata
+                    double I1 = 0, I2 = 0, s1 = 0, s2 = 0, v1 = 0, v2 = 0, z1 = 0, z2 = 0;
+                    auto evalG = [&] (double u, double& dG) -> double
+                    {
+                        const double a = pia * u;
+                        double d1, d2, ds1, ds2;
+                        s1 = softSat (a, piup, pidn, pik, pikInt, d1);
+                        ds1 = pia * d1;
+                        if (piMode == 2) { s2 = softSat (-s1 * (1.0 - pib), piup, pidn, pik, pikInt, d2); ds2 = -(1.0 - pib) * d2 * ds1; }
+                        else { s2 = softSat (-a * (1.0 - pib), piup, pidn, pik, pikInt, d2); ds2 = -pia * (1.0 - pib) * d2; }
+                        v1 = mv * (cb0 * s1 + cz1);
+                        v2 = mv * (cb0 * s2 + cz2);
+                        auto grid = [&] (double v, double vc, double& dz) -> double
+                        {
+                            const double pp = 2.0 * rgs * ((v - vc - vb) * gO - vb / rg);
+                            const double disc = std::sqrt (pp * pp + eg2);
+                            dz = (q - pp / disc) / q2m1 * dpdv;
+                            return (pp * q - disc) / q2m1;
+                        };
+                        double dz1, dz2, dr1, dr2, dp1, dp2;
+                        z1 = grid (v1, s.vc1, dz1);
+                        z2 = grid (v2, s.vc2, dz2);
+                        const double r1 = softRelu (z1 + vco, epsC, dr1), r2 = softRelu (z2 + vco, epsC, dr2);
+                        I1 = K1 * powEx (r1, ex1, dp1);
+                        I2 = K2 * powEx (r2, ex1, dp2);
+                        const double dI1 = K1 * dp1 * dr1 * dz1 * mv * cb0 * ds1, dI2 = K2 * dp2 * dr2 * dz2 * mv * cb0 * ds2;
+                        dG = 0.5 * (dI1 - dI2);
+                        return 0.5 * (I1 - I2) - Inet0;
+                    };
+                    // Newton su w (corrente netta nel primario): il residuo e' valutato prima del passo, cosi' all'uscita lo stato
+                    // di evalG corrisponde gia' alla soluzione accettata
+                    double w = s.w;
+                    for (int it = 0; it < 24; ++it)
+                    {
+                        double dG;
+                        const double G = evalG (u0 + du * w, dG);
+                        const double vp = dP * w + Sp;
+                        double dA, dB2;
+                        const double ic = gc * (softRelu (vp - vlim, kw * vlim, dA) - softRelu (-vp - vlim, kw * vlim, dB2));
+                        const double dic = gc * (dA + dB2);
+                        const double R = w - G + ic + s.isat;
+                        if (std::abs (R) <= 1e-11 + 1e-8 * (std::abs (w) + std::abs (G)) || it == 23) break;
+                        const double dR = 1.0 - dG * du + dic * dP;
+                        w -= R / dR;
+                    }
+                    const double vp = dP * w + Sp, vq = dQ * w + Sq;
+                    net.step (s.h, w);
+                    fbtf.tickWith (ch, kt * vq, fb_b, fb_a);
+                    cuttf.tickWith (ch, s1, cu_b, cu_a);
+                    cut2.tickWith (ch, s2, cu_b, cu_a);
+                    // condensatori d'accoppiamento (Eulero all'indietro, coerente con rOut)
+                    s.vc1 += T / cc * (v1 - s.vc1 - (z1 + vb)) * gO;
+                    s.vc2 += T / cc * (v2 - s.vc2 - (z2 + vb)) * gO;
+                    // flusso del nucleo e corrente di saturazione (al campione successivo)
+                    s.phi = leak * s.phi + 0.5 * T * (vp + s.vp1);
+                    s.vp1 = vp;
+                    {
+                        const double rr = std::min (6.0, std::abs (s.phi) / phis), r2 = rr * rr;
+                        s.isat = s.phi / lmag * r2 * r2;
+                    }
+                    // alimentazione (sag) e catodo
+                    const double itot = (I1 + I2) * (1.0 + scr);
+                    s.B += T / cres * ((s.B < Vnl ? (Vnl - s.B) / rs : 0.0) - itot);
+                    s.B = std::max (s.B, knee + 10.0);
+                    if (cathode) s.vk = std::max (0.0, s.vk + T / ck * (itot - s.vk / rk));
+                    if (bvib > 0) { s.lfo += lfoInc; if (s.lfo > 2.0 * pi) s.lfo -= 2.0 * pi; }
+                    s.w = w;
+                    x[i] = og * ks * vq;
+                }
+                rfb.end (fbtf, ch);
+                rcut.end (cuttf, ch);
+            }
+        private:
+            struct State { double h[SmallNet::maxK] {}; double w = 0, vc1 = 0, vc2 = 0, B = 450, vk = 0, phi = 0, vp1 = 0, isat = 0, lfo = 0; } st[2];
+            SmallNet net;
+            AnalogTF fbtf, cuttf, cut2;       // cut2: solo lo stato della seconda fase (coefficienti di cuttf)
+            double T = 1, np = 1, Bnom = 450, G2nom = 450, ex = 1.5, ipk = 0.4, knee = 60, scr = 0.12, epsC = 2, mm = 0.04;
+            double rk = 100, ck = 250e-6, Vb0 = 40, Vco0 = 60, K1 = 0, K2 = 0, Itot0 = 0, Inet0 = 0;
+            double pia = 15, piup = 150, pidn = 150, pik = 2.5, pib = 0.03, pirs = 40e3, cc = 1e-7, rg = 220e3, rgs = 2.5e3, eg = 0.5, mv = 1;
+            double fbR = 0, rs = 40, cres = 40e-6, Vnl = 450, raa = 4000, kt = 0.05, ks = 0.05, lmag = 10, phis = 1, gc = 0;
+            double bvib = 0, lfoInc = 0, og = 1, netKey = -1, kw = 0.08;
+            int piMode = 0, pikInt = 0;
+            bool cathode = false;
+        };
+
+        /** Inseguitore di catodo (cathode follower) accoppiato in continua all'anodo dello stadio precedente (Fender 5F6-A,
+            Marshall, Vox Top Boost): corrente del triodo (Koren) con Rk verso massa e la tensione anodo-catodo che cala quando il
+            catodo sale; oltre Vgk = 0 la griglia conduce (rgk) e la corrente di griglia, presa dall'anodo dello stadio precedente
+            (resistenza d'uscita Rs), schiaccia le creste positive: la compressione asimmetrica tipica. Ingresso = variazione della
+            tensione di griglia (uscita dello stadio 'triode' precedente) intorno al riposo vg (V, tensione anodica dello stadio
+            che lo pilota); uscita = variazione della tensione di catodo (non invertente). Argomenti: B Rk vg Rs rgk mu ex kg1 kp
+            kvb gc (default 12AX7, conduzione da gc = +0.5 V). Tabulato a frequenza di controllo. */
+        class CathodeFollowerStage : public StageT<CathodeFollowerStage>
+        {
+        public:
+            void update (double f, const float* p, const ModelDef& def) override
+            {
+                fs = f;
+                const double b = std::max (20.0, arg ("B", p, def, 300.0)), rk = std::max (100.0, arg ("Rk", p, def, 100e3));
+                const double vg = std::clamp (arg ("vg", p, def, 0.55 * b), 1.0, b - 1.0), rs = std::max (0.0, arg ("Rs", p, def, 40e3));
+                const double rgk = std::max (10.0, arg ("rgk", p, def, 3e3));
+                const double gco = arg ("gc", p, def, 0.5);     // inizio della conduzione di griglia (V sulla scala di Koren)
+                const double mu = arg ("mu", p, def, 100.0), ex = arg ("ex", p, def, 1.4), kg1 = arg ("kg1", p, def, 1060.0),
+                             kp = arg ("kp", p, def, 600.0), kvb = arg ("kvb", p, def, 300.0);
+                const double key = b * 1.1 + rk * 0.37 + vg * 3.3 + rs * 0.013 + rgk * 0.71 + mu + ex * 7.7 + kg1 * 0.031 + kp * 0.017 + kvb * 0.011 + gco * 5.3;
+                if (key == lastKey) return;
+                lastKey = key;
+                lo = -vg; hi = b - vg + 20.0;
+                auto ig = [&] (double vgk) { double d; return softRelu (vgk - gco, 0.02, d) / rgk; };
+                // per un Vd (tensione a vuoto dell'anodo che pilota) risolve Vk e Vg
+                auto solveVk = [&] (double vd)
+                {
+                    auto vgOf = [&] (double vk)        // Vg = Vd - Rs*Ig(Vg - Vk)  (monotona)
+                    {
+                        double v = vd;
+                        for (int it = 0; it < 30; ++it)
+                        {
+                            double dd;
+                            const double r = softRelu (v - vk - gco, 0.02, dd);
+                            const double F = v - vd + rs * r / rgk, dF = 1.0 + rs * dd / rgk;
+                            const double stp = F / dF;
+                            v -= stp;
+                            if (std::abs (stp) < 1e-9) break;
+                        }
+                        return v;
+                    };
+                    double l = 0, h = std::max (1.0, std::min (b, vd + 5.0));
+                    for (int it = 0; it < 60; ++it)
+                    {
+                        const double vk = 0.5 * (l + h);
+                        const double vgg = vgOf (vk);
+                        const double ik = korenTriode (vgg - vk, b - vk, mu, ex, kg1, kp, kvb) + ig (vgg - vk);
+                        if (rk * ik > vk) l = vk; else h = vk;
+                        if (h - l < 1e-7) break;
+                    }
+                    return 0.5 * (l + h);
+                };
+                const double vkq = solveVk (vg);
+                for (int k = 0; k < N; ++k)
+                {
+                    const double vd = vg + lo + (hi - lo) * k / (N - 1);
+                    table[k] = solveVk (std::max (0.0, vd)) - vkq;
+                }
+            }
+            void reset() override {}
+            void process (int, double* x, int n) override
+            {
+                const double sc = (N - 1) / (hi - lo);
+                for (int i = 0; i < n; ++i)
+                {
+                    const double pos = (std::clamp (x[i], lo, hi) - lo) * sc;
+                    const int k = std::min ((int) pos, N - 2);
+                    const double f = pos - k;
+                    x[i] = table[k] + f * (table[k + 1] - table[k]);
+                }
+            }
+        private:
+            static constexpr int N = 2048;
+            double table[N] {};
+            double lo = -150, hi = 150, lastKey = -1;
+        };
+
+        /** Pentodo d'ingresso (EF86 dei Vox AC15 e Matchless DC-30), modello di Koren a pentodo normalizzato:
+              Ik = E1^ex/kg1 (1 + rr), E1 = (Vg2/kp) ln(1 + exp(kp (1/mu + Vgk/Vg2))), alla placca la frazione (2/pi) atan(Vpk/kvb),
+              il resto allo schermo (sotto il ginocchio la corrente passa allo schermo). Griglia schermo alimentata da Rg2 (da Bg2)
+              e disaccoppiata da Cg2: la tensione di schermo segue lentamente la corrente e guadagno e punto di lavoro 'respirano'
+              (compressione). Carico anodico Ra da B, catodo Rk (byp=1 bypassato). Tabelle (ingresso x tensione di schermo)
+              calcolate a frequenza di controllo. Uscita = variazione della tensione anodica (invertente, V). Argomenti: B Ra Rk
+              byp Bg2 Rg2 Cg2 mu ex kg1 kp kvb rr gc gw. */
+        class PentodeStage : public StageT<PentodeStage>
+        {
+        public:
+            void update (double f, const float* p, const ModelDef& def) override
+            {
+                fs = f;
+                b = std::max (20.0, arg ("B", p, def, 250.0)); ra = std::max (1e3, arg ("Ra", p, def, 220e3));
+                const double rk = std::max (1.0, arg ("Rk", p, def, 2.2e3));
+                const bool byp = arg ("byp", p, def, 1.0) > 0.5;
+                const double bg2 = std::max (10.0, arg ("Bg2", p, def, b)), rg2 = std::max (1e3, arg ("Rg2", p, def, 1e6));
+                cg2 = std::max (0.0, arg ("Cg2", p, def, 0.1e-6));
+                const double mu = arg ("mu", p, def, 38.0), ex = arg ("ex", p, def, 1.4), kg1 = arg ("kg1", p, def, 1790.0),
+                             kp = arg ("kp", p, def, 200.0), kvb = arg ("kvb", p, def, 15.0), rr = arg ("rr", p, def, 0.22);
+                const double gcv = arg ("gc", p, def, 0.0), gw = arg ("gw", p, def, 0.5);
+                Bg2 = bg2; Rg2 = rg2;
+                kScr = cg2 > 0 ? 1.0 / (fs * cg2) : 0.0;
+                const double key = b * 1.1 + ra * 0.013 + rk * 0.37 + (byp ? 1 : 0) + bg2 * 3.1 + rg2 * 1e-4 + mu * 0.7 + ex * 7.7 + kg1 * 0.031
+                                 + kp * 0.017 + kvb * 0.11 + rr * 13.0 + gcv * 3.7 + gw * 1.9;
+                if (key == lastKey) return;
+                lastKey = key;
+                auto e1 = [&] (double vgk, double vg2) { return vg2 / kp * std::log1p (std::exp (std::min (kp * (1.0 / mu + vgk / vg2), 80.0))); };
+                auto ik = [&] (double vgk, double vg2) { const double e = e1 (vgk, vg2); return e > 0 ? std::pow (e, ex) / kg1 * (1.0 + rr) : 0.0; };
+                auto frac = [&] (double vpk) { return vpk > 0 ? (2.0 / pi) * std::atan (vpk / kvb) / (1.0 + rr) : 0.0; };
+                // tensione anodica sulla retta di carico per una corrente catodica data e Vk
+                auto plate = [&] (double ikk, double vk)
+                {
+                    double l = vk, h = b;
+                    for (int it = 0; it < 60; ++it)
+                    {
+                        const double vp = 0.5 * (l + h);
+                        if (b - ra * ikk * frac (vp - vk) > vp) l = vp; else h = vp;
+                    }
+                    return 0.5 * (l + h);
+                };
+                // catodo: Vk = Rk * Ik(vin - Vk) (decrescente in Vk: bisezione)
+                auto cathodeV = [&] (double vin, double vg2)
+                {
+                    double l = 0, h = 50;
+                    for (int it = 0; it < 60; ++it)
+                    {
+                        const double vk = 0.5 * (l + h);
+                        if (rk * ik (vin - vk, vg2) > vk) l = vk; else h = vk;
+                    }
+                    return 0.5 * (l + h);
+                };
+                // punto di riposo: Vg2 = Bg2 - Rg2 Ig2, Vk = Rk Ik, Vp sulla retta di carico
+                double vg2 = 0.5 * bg2, vk = 1.5, vp = 0.5 * b;
+                for (int it = 0; it < 300; ++it)
+                {
+                    vk = cathodeV (0.0, vg2);
+                    const double ikk = ik (-vk, vg2);
+                    vp = plate (ikk, vk);
+                    const double ig2 = ikk - (b - vp) / ra;
+                    vg2 = 0.7 * vg2 + 0.3 * std::clamp (bg2 - rg2 * ig2, 5.0, bg2);
+                }
+                vg2q = vg2; vpq = vp;
+                const double vkq = vk;
+                for (int r = 0; r < NR; ++r)
+                {
+                    const double g2 = vg2q * (rlo + (rhi - rlo) * r / (NR - 1));
+                    for (int k = 0; k < N; ++k)
+                    {
+                        double vin = lo + (hi - lo) * k / (N - 1);
+                        const double vgc = vkq + gcv;
+                        if (vin > vgc) vin = vgc + gw * std::tanh ((vin - vgc) / gw);
+                        const double vkk = byp ? vkq : cathodeV (vin, g2);
+                        const double ikk = ik (vin - vkk, g2);
+                        const double vpp = plate (ikk, vkk);
+                        const double ip = (b - vpp) / ra;
+                        tab[r * N + k] = vpp - vpq;
+                        scr[r * N + k] = std::max (0.0, ikk - ip);
+                    }
+                }
+            }
+            void reset() override { for (auto& v : vg2s) v = vg2q; }
+            void process (int ch, double* x, int n) override
+            {
+                double vg2 = vg2s[ch];
+                const double sc = (N - 1) / (hi - lo), rsc = (NR - 1) / (rhi - rlo);
+                for (int i = 0; i < n; ++i)
+                {
+                    const double rho = vg2 / vg2q;
+                    const double rp = std::clamp ((rho - rlo) * rsc, 0.0, (double) (NR - 1) - 1e-9);
+                    const int r = (int) rp;
+                    const double fr = rp - r;
+                    const double pos = (std::clamp (x[i], lo, hi) - lo) * sc;
+                    const int k = std::min ((int) pos, N - 2);
+                    const double fk = pos - k;
+                    const double* t0 = tab.data() + r * N;
+                    const double* t1 = tab.data() + std::min (r + 1, NR - 1) * N;
+                    const double a0 = t0[k] + fk * (t0[k + 1] - t0[k]), a1 = t1[k] + fk * (t1[k + 1] - t1[k]);
+                    x[i] = a0 + fr * (a1 - a0);
+                    if (kScr > 0)
+                    {
+                        const double* s0 = scr.data() + r * N;
+                        const double* s1 = scr.data() + std::min (r + 1, NR - 1) * N;
+                        const double i0 = s0[k] + fk * (s0[k + 1] - s0[k]), i1 = s1[k] + fk * (s1[k + 1] - s1[k]);
+                        const double ig2 = i0 + fr * (i1 - i0);
+                        vg2 += kScr * ((Bg2 - vg2) / Rg2 - ig2);
+                    }
+                }
+                vg2s[ch] = vg2;
+            }
+        private:
+            static constexpr int N = 768, NR = 13;
+            static constexpr double lo = -10.0, hi = 10.0, rlo = 0.4, rhi = 1.3;
+            std::vector<double> tab = std::vector<double> ((size_t) (N * NR), 0.0), scr = std::vector<double> ((size_t) (N * NR), 0.0);
+            double b = 250, ra = 220e3, cg2 = 0, Bg2 = 250, Rg2 = 1e6, kScr = 0, vg2q = 100, vpq = 100, lastKey = -1, vg2s[2] { 100, 100 };
+        };
+
+        /** Biquadratico passa-basso RBJ (Butterworth a sezioni) in forma trasposta, double. */
+        struct Lp2
+        {
+            double b0 = 1, b1 = 0, b2 = 0, a1 = 0, a2 = 0, z1 = 0, z2 = 0;
+            void set (double fs, double f, double q) noexcept
+            {
+                const double w = 2.0 * pi * std::min (f, 0.45 * fs) / fs, al = std::sin (w) / (2.0 * q), cw = std::cos (w), a0 = 1.0 + al;
+                b0 = (1.0 - cw) * 0.5 / a0; b1 = (1.0 - cw) / a0; b2 = b0; a1 = -2.0 * cw / a0; a2 = (1.0 - al) / a0;
+            }
+            inline double tick (double x) noexcept
+            {
+                const double y = b0 * x + z1;
+                z1 = b1 * x - a1 * y + z2;
+                z2 = b2 * x - a2 * y;
+                return y;
+            }
+            void reset() noexcept { z1 = z2 = 0; }
+        };
+
+        /** Riverbero a molle (serbatoio tipo Accutronics/Hammond 4AB3C1B dei Fender, o altri): 1-3 molle, ciascuna un anello
+            con una cascata di all-pass 'stirati' (a + z^-K)/(1 + a z^-K) che ritarda le basse piu' delle alte (dispersione, il
+            'drip'), un ritardo t (ms), passa-basso lp e passa-alto hp a un polo e il guadagno d'anello del tempo di decadimento
+            dec (s, T60). Gira a un quarto della frequenza degli stadi (sovracampionati 4x) con filtri di Butterworth del 4°
+            ordine a bw Hz prima della decimazione e dopo il ritorno. Uscita = solo segnale riverberato x g (il secco si miscela
+            con tap/mix). Argomenti: t1 t2 t3 (ms; 0 = molla assente) dec disp fd (Hz della dispersione) lp hp bw g. */
+        class SpringStage : public StageT<SpringStage>
+        {
+        public:
+            static constexpr int maxSpr = 3, nAp = 36, D = 4;
+            void update (double f, const float* p, const ModelDef& def) override
+            {
+                const double fi = f / D;
+                const double fd = std::clamp (arg ("fd", p, def, 4300.0), 500.0, 0.45 * fi);
+                const int Kn = std::max (1, (int) std::lround (fi / (2.0 * fd)));
+                const double ts[maxSpr] = { arg ("t1", p, def, 33.0), arg ("t2", p, def, 41.0), arg ("t3", p, def, 0.0) };
+                int lens[maxSpr];
+                for (int k = 0; k < maxSpr; ++k) lens[k] = ts[k] > 0 ? std::max (8, (int) std::lround (ts[k] * 1e-3 * fi)) : 0;
+                bool realloc = std::abs (f - fs) > 1e-9 || Kn != K;
+                for (int k = 0; k < maxSpr; ++k) realloc = realloc || lens[k] != len[k];
+                fs = f;
+                if (realloc)
+                {
+                    K = Kn;
+                    for (int k = 0; k < maxSpr; ++k) len[k] = lens[k];
+                    for (auto& s : st)
+                        for (int k = 0; k < maxSpr; ++k)
+                        {
+                            s.xh[k].assign ((size_t) (len[k] > 0 ? nAp * K : 0), 0.0);
+                            s.yh[k].assign ((size_t) (len[k] > 0 ? nAp * K : 0), 0.0);
+                            s.dl[k].assign ((size_t) std::max (1, len[k]), 0.0);
+                            s.w[k] = 0; s.last[k] = 0; s.lp[k] = 0; s.hp[k] = 0; s.hpx[k] = 0;
+                        }
+                    for (auto& s : st) s.idx = 0;
+                }
+                a = std::clamp (arg ("disp", p, def, -0.6), -0.9, 0.9);
+                const double dec = std::max (0.05, arg ("dec", p, def, 3.0));
+                const double apDelay = nAp * K * (1.0 - a) / (1.0 + a) / fi;      // ritardo di gruppo della cascata alle basse
+                for (int k = 0; k < maxSpr; ++k)
+                    fb[k] = len[k] > 0 ? std::min (0.98, std::pow (10.0, -3.0 * (len[k] / fi + 0.5 * apDelay) / dec)) : 0.0;
+                kl = 1.0 - std::exp (-2.0 * pi * std::clamp (arg ("lp", p, def, 4500.0), 200.0, 0.45 * fi) / fi);
+                kh = std::exp (-2.0 * pi * std::clamp (arg ("hp", p, def, 120.0), 5.0, 2000.0) / fi);
+                const double bw = std::clamp (arg ("bw", p, def, 6000.0), 1000.0, 0.2 * fs);
+                g = arg ("g", p, def, 1.0);
+                for (auto& s : st)
+                {
+                    s.aa[0].set (fs, bw, 0.5412); s.aa[1].set (fs, bw, 1.3066);
+                    s.rc[0].set (fs, bw, 0.5412); s.rc[1].set (fs, bw, 1.3066);
+                }
+            }
+            void reset() override
+            {
+                for (auto& s : st)
+                {
+                    for (int k = 0; k < maxSpr; ++k)
+                    {
+                        std::fill (s.xh[k].begin(), s.xh[k].end(), 0.0); std::fill (s.yh[k].begin(), s.yh[k].end(), 0.0);
+                        std::fill (s.dl[k].begin(), s.dl[k].end(), 0.0);
+                        s.w[k] = 0; s.last[k] = 0; s.lp[k] = 0; s.hp[k] = 0; s.hpx[k] = 0;
+                    }
+                    for (auto& f : s.aa) f.reset();
+                    for (auto& f : s.rc) f.reset();
+                    s.idx = 0; s.ph = 0; s.hold = 0;
+                }
+            }
+            void process (int ch, double* x, int n) override
+            {
+                auto& s = st[ch];
+                for (int i = 0; i < n; ++i)
+                {
+                    const double v = s.aa[1].tick (s.aa[0].tick (x[i]));
+                    if (s.ph == 0) s.hold = tank (s, v);
+                    if (++s.ph >= D) s.ph = 0;
+                    x[i] = g * s.rc[1].tick (s.rc[0].tick (s.hold));
+                }
+            }
+        private:
+            struct State
+            {
+                std::vector<double> xh[maxSpr], yh[maxSpr], dl[maxSpr];
+                int w[maxSpr] {}, idx = 0, ph = 0;
+                double last[maxSpr] {}, lp[maxSpr] {}, hp[maxSpr] {}, hpx[maxSpr] {}, hold = 0;
+                Lp2 aa[2], rc[2];
+            } st[2];
+            inline double tank (State& s, double in) noexcept
+            {
+                double out = 0;
+                const int kk = s.idx;
+                for (int k = 0; k < maxSpr; ++k)
+                {
+                    if (len[k] <= 0) continue;
+                    double v = in + fb[k] * s.last[k];
+                    double* xs = s.xh[k].data();
+                    double* ys = s.yh[k].data();
+                    for (int j = 0; j < nAp; ++j)
+                    {
+                        const int pidx = j * K + kk;
+                        const double y = a * v + xs[pidx] - a * ys[pidx];
+                        xs[pidx] = v; ys[pidx] = y;
+                        v = y;
+                    }
+                    s.lp[k] += kl * (v - s.lp[k]);                       // passa-basso a un polo
+                    const double h = kh * (s.hp[k] + s.lp[k] - s.hpx[k]);  // passa-alto a un polo
+                    s.hpx[k] = s.lp[k]; s.hp[k] = h;
+                    auto& dl = s.dl[k];
+                    dl[(size_t) s.w[k]] = h;
+                    if (++s.w[k] >= len[k]) s.w[k] = 0;
+                    s.last[k] = dl[(size_t) s.w[k]];                       // uscita del ritardo (len campioni fa)
+                    out += (k & 1) ? -h : h;
+                }
+                s.idx = (s.idx + 1) % K;
+                return out;
+            }
+            int K = 0, len[maxSpr] {};
+            double a = -0.6, fb[maxSpr] {}, kl = 0.5, kh = 0.99, g = 1;
+        };
+
+        /** Tremolo ottico dei Fender blackface ('vibrato' AB763): oscillatore a sfasamento (quasi sinusoidale) a 'rate' Hz che
+            accende una lampadina al neon sopra la soglia th (frazione del picco); la fotoresistenza (LDR) segue la luce con attacco
+            atk e rilascio rel (ms) fra roff (buio) e ron (piena luce), legge gam. Il pot INTENSITY (pr ohm) sta fra il nodo del
+            segnale (sorgente rs, carico rl) e massa; l'LDR va dal cursore (posizione pos dal lato di massa) a massa. Uscita =
+            ingresso x guadagno del partitore, normalizzato a lampada spenta (il carico fisso del pot sta nel guadagno dello stadio
+            che precede). Argomenti: rate pos pr rs rl ron roff atk rel th gam. */
+        class OptoStage : public StageT<OptoStage>
+        {
+        public:
+            void update (double f, const float* p, const ModelDef& def) override
+            {
+                fs = f;
+                inc = 2.0 * pi * std::clamp (arg ("rate", p, def, 4.0), 0.05, 30.0) / fs;
+                pos = std::clamp (arg ("pos", p, def, 0.5), 0.0, 1.0);
+                pr = std::max (10.0, arg ("pr", p, def, 50e3));
+                rs = std::max (1.0, arg ("rs", p, def, 38e3));
+                rl = std::max (1e3, arg ("rl", p, def, 1.2e6));
+                gon = 1.0 / std::max (10.0, arg ("ron", p, def, 3.5e3));
+                goff = 1.0 / std::max (1e4, arg ("roff", p, def, 10e6));
+                ka = 1.0 - std::exp (-1.0 / (std::max (0.05, arg ("atk", p, def, 3.0)) * 1e-3 * fs));
+                kr = 1.0 - std::exp (-1.0 / (std::max (0.05, arg ("rel", p, def, 40.0)) * 1e-3 * fs));
+                th = std::clamp (arg ("th", p, def, 0.6), -0.99, 0.99);
+                gam = std::max (0.1, arg ("gam", p, def, 1.0));
+                h0 = gainAt (goff);
+            }
+            void reset() override { for (auto& s : st) { s.ph = 0; s.g = goff; } }
+            void process (int ch, double* x, int n) override
+            {
+                auto& s = st[ch];
+                for (int i = 0; i < n; ++i)
+                {
+                    const double o = std::sin (s.ph);
+                    s.ph += inc; if (s.ph > 2.0 * pi) s.ph -= 2.0 * pi;
+                    const double light = std::clamp ((o - th) / (1.0 - th), 0.0, 1.0);
+                    const double gt = goff + (gam == 1.0 ? light : std::pow (light, gam)) * (gon - goff);
+                    s.g += (gt > s.g ? ka : kr) * (gt - s.g);
+                    x[i] *= gainAt (s.g) / h0;
+                }
+            }
+        private:
+            inline double gainAt (double g) const noexcept
+            {
+                const double rb = pr * pos, rt = pr * (1.0 - pos), rldr = 1.0 / g;
+                const double z = rt + rb * rldr / (rb + rldr + 1e-9);
+                const double zl = z * rl / (z + rl);
+                return zl / (rs + zl);
+            }
+            struct State { double ph = 0, g = 1e-7; } st[2];
+            double inc = 0, pos = 0.5, pr = 50e3, rs = 38e3, rl = 1.2e6, gon = 1.0 / 3.5e3, goff = 1e-7, ka = 0.1, kr = 0.01, th = 0.6, gam = 1, h0 = 1;
         };
 
         std::unique_ptr<Stage> makeStage (const std::string& type, std::vector<double>* tapBuf, std::string& err)
@@ -2620,6 +3548,11 @@ namespace pt::engine
             if (type == "mna")    return std::make_unique<MnaStage>();
             if (type == "bbd")    return std::make_unique<BbdStage>();
             if (type == "octdiv") return std::make_unique<OctDivStage>();
+            if (type == "pp")     return std::make_unique<PushPullStage>();
+            if (type == "cf")     return std::make_unique<CathodeFollowerStage>();
+            if (type == "pent")   return std::make_unique<PentodeStage>();
+            if (type == "spring") return std::make_unique<SpringStage>();
+            if (type == "opto")   return std::make_unique<OptoStage>();
             if (type == "rail")
                 return std::make_unique<LS> ([] (const LS&, const float*, const ModelDef&, AnalogTF& tf, double&)
                 { setTF (tf, { 1 }, { 1 }); });
@@ -2660,6 +3593,11 @@ namespace pt::engine
                     const auto eq = tok.find ('=');
                     if (eq == std::string::npos) { err += "argomento senza '=': " + tok + "; "; continue; }
                     const auto key = tok.substr (0, eq), value = tok.substr (eq + 1);
+                    if (auto* pps = dynamic_cast<PushPullStage*> (st.get()); pps != nullptr && (key == "tube" || key == "pi" || key == "rect"))
+                    {
+                        (key == "tube" ? pps->tube : key == "pi" ? pps->piType : pps->rect) = value;     // nomi (tappa 6)
+                        continue;
+                    }
                     if (key == "d")
                     {
                         if (auto* fb = dynamic_cast<FeedbackClipper*> (st.get())) fb->diodeName = value;

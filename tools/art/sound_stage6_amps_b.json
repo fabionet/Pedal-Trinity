@@ -1,0 +1,1654 @@
+{
+ "ammark2cplus": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.65,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "mid",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "MASTER",
+    "role": "level",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "LEAD DRV",
+    "role": "drive",
+    "default": 0.65,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "80",
+    "role": "b0",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "240",
+    "role": "b1",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "750",
+    "role": "b2",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "2200",
+    "role": "b3",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "6600",
+    "role": "b4",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "type",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 4.0,
+    "choices": [
+     "RHYTHM",
+     "RHY BRT",
+     "LEAD",
+     "LEAD BRT",
+     "LD SHIFT"
+    ],
+    "short": [
+     "RHY",
+     "RBRT",
+     "LEAD",
+     "LBRT",
+     "SHFT"
+    ]
+   }
+  ],
+  "config": "hpf R=1M C=100n; mna R.i.o=144.3k R.o.0=228.5k C.i.o=4.885n OUT.o=1 ramp=1; triode Rp=150k Rk=1.5k B=382 byp=1; mna R.i.in=51.54k R.in.s=100k R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(2,250k,A) C.s.a=100n C.s.mtop=47n R.mtop.0=pot(3,10k,B) C.in.top=250p R.in.sw1=sw(11,10,10,10,10,1000M) C.sw1.top=750p R.out.v=potr(0,1M,A) R.v.0=pot(0,1M,A) R.out.sw2=sw(11,1000M,10,1000M,1000M,1000M) C.sw2.v=120p C.v.0=79.9p OUT.v=1 ramp=1; triode Rp=100k Rk=1.5k B=382 byp=1; tap n=0; mna R.i.p=43.02k C.p.a=47n R.a.0=1M R.a.ld=680k R.ld.w=potr(5,1M,A) R.w.0=pot(5,1M,A) R.ld.sw3=sw(11,1000M,1000M,1000M,10,1000M) C.sw3.w=120p C.w.0=74.3p OUT.w=1 ramp=1; triode Rp=82k Rk=1.5k B=397 byp=1; mna R.i.p=38.76k C.p.c=20n R.c.d=470k R.d.0=68k C.d.0=47n C.c.0=56.06p OUT.c=1 ramp=1; gain a=sw(11,1,1,1,1.75,1); triode Rp=270k Rk=3.3k B=397 byp=0; mna R.i.p=161.6k C.p.c=47n R.c.L=220k C.c.L=250p R.L.0=100k C.L.0=500p C.L.0=46.82p OUT.L=1 ramp=1; tap n=1; recall n=0; mna R.i.p=43.02k C.p.a=47n R.a.0=1M R.a.g=3.3M C.a.g=20p R.g.0=1.5M C.g.0=47p C.g.0=46.82p OUT.g=1 ramp=1; mix n=1 wet=sw(11,1,1,0.03,0.03,0.03) dry=sw(11,0,0,1,1,1); triode Rp=100k Rk=1.5k B=397 byp=0; mna R.i.p=68.61k C.p.a=47n R.a.w=sw(11,10,10,193.6k,193.6k,193.6k) R.w.0=sw(11,1M,1M,56.38k,56.38k,56.38k) R.w.g=4.7k C.g.0=88.78p OUT.g=1 ramp=1; mna R.i.o=97.63k R.o.0=191.2k C.i.o=4.814n OUT.o=1 ramp=1; triode Rp=120k Rk=1k B=397 byp=1; mna R.i.p=44.68k C.p.a=47n R.a.w=potr(4,100k,A) R.w.0=pot(4,100k,A) R.w.0=300k OUT.w=1 ramp=1; peak f=80 Q=1 g=lin(6,-12,12); peak f=240 Q=1.1 g=lin(7,-12,12); peak f=750 Q=1.1 g=lin(8,-12,12); peak f=2200 Q=1.2 g=lin(9,-12,12); peak f=6600 Q=1.2 g=lin(10,-12,12); hpf R=1M C=100n; pp tube=6L6 np=1 B=460 G2=450 vb=42 iq=0.075 ipk=0.62 rp=2k pi=ltp pia=14 piup=170 pidn=110 raa=2k spk=8 prp=1 fbR=15k fbG=330 prR=25k prC=22n pr=0.5 rect=si cres=110u pw=75 og=8.136m",
+  "stereo": false,
+  "notes": "Mark IIC+ Simul-Class (schema Mesa 'Guitar Preamplifier' 1983/85): V1A 150k/1k5 con 0.47u (bypass parziale) che pilota lo stack FMV 250k/250k/10k, 100k, 250p+750p (LDR1; Treble Shift in Lead)/0.1u/0.047u, VOLUME 1M con bright 120p, V1B; in Lead 680k e LEAD DRIVE 1M, V3B 82k e V4A 270k/3k3 non bypassato col partitore 220k||250p / 100k||500p; V2A, Lead Master 250k, V2B 120k (1k||0.47u), MASTER 100k, EQ grafico a 5 bande e finale Simul-Class 75 W (coppia 6L6 a pentodo in AB + coppia a triodo in classe A sullo stesso primario, resa come una coppia equivalente: correnti sommate, rp 22k||2.2k, per la CPU) con NFB e presence. Stime: valori della NFB, Ra di V2B e Rk di V2A (letture incerte), escursione +-12 dB e Q delle bande, guadagno del pull Bright di V4A, rete della presence.",
+  "control_notes": "Pannello: VOLUME 1, TREBLE, BASS, MIDDLE, MASTER, LEAD DRIVE, LEAD MASTER, cursori 80/240/750/2200/6600, EQ OUT/IN/AUTO, pull Bright/Shift/Deep; PRESENCE, REVERB e CLASS A/SIMUL sul retro. TREBLE/BASS, MASTER/LEAD DRV, 80/240 e 2200/6600 sono concentrici; MODE riunisce canale e pull: RHYTHM, RHY BRT (pull Bright del Volume 1), LEAD, LEAD BRT (pull Bright del Lead Drive, 2.2u sul catodo di V4A), LD SHIFT (Treble Shift: 250p senza il 750p). Fissi: LEAD MASTER a 6, PRESENCE a 5, Simul-Class, EQ sempre inserito (piatto con i cursori al centro), Bass Shift e Deep esclusi; il riverbero e' affidato ai riverberi del plugin."
+ },
+ "amdualrecto": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "mid",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PRESENCE",
+    "role": "presence",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MASTER",
+    "role": "level",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "type",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 4.0,
+    "choices": [
+     "ORN CLEAN",
+     "ORN VINT",
+     "ORN MODERN",
+     "RED VINT",
+     "RED MODERN"
+    ],
+    "short": [
+     "OCL",
+     "OVN",
+     "OMD",
+     "RVN",
+     "RMD"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "POWER",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "BOLD",
+     "SPONGY"
+    ],
+    "short": [
+     "BOLD",
+     "SPGY"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "RECTIFIER",
+    "role": "rect",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "DIODE",
+     "TUBE"
+    ],
+    "short": null
+   }
+  ],
+  "config": "hpf R=1M C=100n; mna R.i.o=171.9k R.o.0=303.5k R.i.x=sw(6,4.489M,10,10,10,10) C.x.o=10.47n OUT.o=1 ramp=1; triode Rp=220k Rk=1.8k B=402 byp=1; mna R.i.p=60.54k C.p.a=20n R.a.0=2.2M R.a.x1=sw(6,10,1000M,1000M,1000M,1000M) R.x1.x=2.2M C.x1.x=82p R.a.x2=sw(6,1000M,10,10,10,10) R.x2.x=680k C.x2.x=2n R.x.w=potr(0,1M,A) R.w.0=pot(0,1M,A) C.x.w=1n R.w.g=470k C.g.0=98.47p OUT.g=1 ramp=1; mna R.i.o=171k R.o.0=177.1k R.i.x=sw(6,4.464M,10,10,10,10) C.x.o=10.53n OUT.o=1 ramp=1; triode Rp=100k Rk=1.8k B=406 byp=1; mna R.i.p=43.54k C.p.a=20n R.a.g=470k R.g.0=1M C.g.0=9.28p OUT.g=1 ramp=1; triode Rp=100k Rk=39k B=406 byp=0; mna R.i.p=97.05k C.p.0=1n C.p.a=20n R.a.0=330k R.a.g=220k C.g.0=99.73p OUT.g=1 ramp=1; mna R.i.o=171.8k R.o.0=302.4k R.i.x=sw(6,4.485M,10,10,10,10) C.x.o=10.48n OUT.o=1 ramp=1; triode Rp=220k Rk=1.8k B=422 byp=1; cf B=422 Rk=100k vg=239 Rs=59941; mna R.i.in=1k R.in.s=47k R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(3,1M,A) C.s.a=20n C.s.mtop=20n R.mtop.0=pot(2,25k,B) C.in.top=500p R.in.sw12=sw(6,1000M,1000M,1000M,10,10) C.sw12.top=180p R.out.mt=sw(6,82k,82k,82k,10,10) R.out.sw13=sw(6,10,10,10,1000M,1000M) C.sw13.mt=82p R.mt.y=sw(6,1000M,1000M,1000M,22k,22k) C.y.z=3n R.z.0=pot(4,25k,B) R.mt.u=sw(6,22k,22k,1000M,22k,1000M) C.u.v=3n R.v.0=10k R.mt.w=potr(5,1M,A) R.w.0=pot(5,1M,A) OUT.w=1 ramp=1; hpf R=1M C=47n; pp tube=6L6 np=2 B=sw(7,460,400) vb=51 iq=0.035 pi=ltp pia=15 piup=170 pidn=110 raa=1.9k spk=8 tap=4 prp=1 fbR=sw(6,23.5k,47k,0,47k,0) fbG=4.7k prR=25k prC=0.1u pr=sw(6,1,1,1,0,0)*taper(4,B) rect=si rs=sw(8,60,600) cres=110u pw=100 og=8.87m",
+  "stereo": false,
+  "notes": "Dual Rectifier 2 canali Rev F (schema Mesa giugno 1993): V1A 220k/1k8 (1u attraverso 47k nel Clean), partitore 680k||2n o 2M2||82p (Clean), GAIN 1M con bright 1n, 470k||20p, V2A 100k/1k8, V2B 'cold clipper' 100k||1n con catodo 39k, V3A 220k accoppiato in continua all'inseguitore V3B (100k) che pilota lo stack 250k/1M/25k, 47k, 680p (rosso) o 500p (arancio)/20n/20n; rete presence rossa 22k+3n+25k, rolloff 22k+3n+10k (LDR7), 82k||82p arancio, MASTER 1M; finale 4 x 6L6 classe AB a 460 V con raddrizzatore 2 x 5U4 o al silicio (R interna 350/40 ohm), Spongy/Bold (B+ 400/460 V) e NFB 47k/4k7 (23.5k nel Clean) esclusa nei modi Modern. Stime: presa 4 ohm della NFB, modo Clean che attraversa tutta la catena, rolloff applicato anche al Red Vintage, tensione Spongy -15%.",
+  "control_notes": "Pannello: due serie GAIN/TREBLE/MID/BASS/PRESENCE/MASTER (Orange e Red), mini-levette Clean/Vintage e Channel Style, OUTPUT, POWER Spongy/Bold e RECT SELECT sul retro. Qui una sola serie di comandi per il canale scelto con MODE (ORN CLEAN, ORN VINT, ORN MODERN = Channel Style, RED VINT, RED MODERN); PRESENCE agisce nel preampli sul Red e sulla NFB sull'Orange come nell'ampli; POWER (BOLD/SPONGY) e' un selettore, RECTIFIER la levetta; OUTPUT (master del loop) omesso."
+ },
+ "am5150": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "outer",
+    "label": "RHY PRE",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "RHY POST",
+    "role": "level",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "LEAD PRE",
+    "role": "drive",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "LEAD POST",
+    "role": "volume",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "LOW",
+    "role": "bass",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MID",
+    "role": "mid",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "HIGH",
+    "role": "treble",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "RESONANCE",
+    "role": "resonance",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PRESENCE",
+    "role": "presence",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "CHANNEL",
+    "role": "type",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 4.0,
+    "choices": [
+     "RHYTHM",
+     "RHY BRT",
+     "CRUNCH",
+     "CRNCH BRT",
+     "LEAD"
+    ],
+    "short": [
+     "RHY",
+     "RBRT",
+     "CRN",
+     "CBRT",
+     "LEAD"
+    ]
+   }
+  ],
+  "config": "mna R.i.g=68k C.g.0=97.67p OUT.g=1; mna R.i.o=174.7k R.o.0=311.1k C.i.o=10.42n OUT.o=1 ramp=1; triode Rp=220k Rk=1.82k B=300 byp=1; tap n=0; mna R.i.p=64.4k C.p.a=22n R.a.b=470k C.a.b=2.2n R.b.0=1M R.b.w=potr(2,1M,A) R.w.0=pot(2,1M,A) R.w.c=1M C.w.c=1n R.c.g=470k C.g.0=76.04p OUT.g=1 ramp=1; tap n=1; recall n=0; mna R.i.p=64.4k C.p.a=22n R.a.b=470k C.a.b=270p R.b.w=potr(0,1M,A) R.w.0=pot(0,1M,A) R.b.sw14=sw(9,1000M,10,1000M,10,1000M) C.sw14.w=180p R.w.c=sw(9,2.2M,2.2M,10,10,10) C.w.c=470p R.c.g=470k R.g.0=1M C.g.0=76.04p OUT.g=1 ramp=1; mix n=1 wet=sw(9,1,1,1,1,0) dry=sw(9,0,0,0,0,1); mna R.i.o=173.8k C.i.o=10.47n R.i.sw15=sw(9,1M,1M,1M,1M,10) C.sw15.o=230.3n R.o.0=184.3k OUT.o=1 ramp=1; triode Rp=100k Rk=1.82k B=300 byp=1; mna R.i.p=45.74k C.p.a=22n R.a.g=470k R.g.0=1M R.g.0=sw(9,220k,220k,220k,220k,1000M) C.g.0=9.273p OUT.g=1 ramp=1; triode Rp=100k Rk=39k B=300 byp=0; mna R.i.p=97.09k C.p.a=22n C.a.0=1n R.a.0=330k R.a.g=220k C.g.0=97.67p OUT.g=1 ramp=1; mna R.i.o=174.7k R.o.0=311.1k C.i.o=10.42n OUT.o=1 ramp=1; triode Rp=220k Rk=1.82k B=300 byp=1; mna R.i.p=64.4k C.p.a=22n R.a.g=1M R.g.0=100k C.g.0=60.06p OUT.g=1 ramp=1; triode Rp=220k Rk=2.2k B=300 byp=0; hpf R=1M C=22n; bjt g=0.9 vp=110 vn=110 soft=4 inv=1; mna R.i.in=478k R.in.0=33k R.in.x=47k C.x.0=1n C.in.top=570p R.top.out=potr(6,250k,B) R.out.bt=pot(6,250k,B) R.in.s=47k C.s.bt=22n R.bt.mt=pot(4,1M,A) C.s.mw=22n R.mt.mw=potr(5,50k,B) R.mw.0=pot(5,50k,B) R.mt.0=47k R.out.w1=potr(1,1M,A) R.w1.0=pot(1,1M,A) R.out.w2=potr(3,1M,A) R.w2.0=pot(3,1M,A) R.w1.o=sw(9,10,10,10,10,1000M) R.w2.o=sw(9,1000M,1000M,1000M,1000M,10) R.o.0=1M OUT.o=1 ramp=1; cf B=300 Rk=100k vg=165 Rs=10000; mna R.i.o=303.7k R.o.0=165.2k C.i.o=51.07p OUT.o=1 ramp=1; triode Rp=68k Rk=3.3k B=300 byp=1; hpf R=100k C=47n; pp tube=6L6 np=2 B=480 vb=55 iq=0.025 pi=ltp pia=15 piup=170 pidn=110 raa=1.9k spk=16 prp=1 fbR=39k fbG=4.7k prR=10k prC=0.1u pr=taper(8,B) dpR=1M dpC=6.8n dp=taper(7,A) rect=si cres=165u pw=120 og=9.074m",
+  "stereo": false,
+  "notes": "5150 prima serie (schema Peavey 1992): V1A 220k/1k82//1u, pre-gain Lead 470k||2n2 -> 1M A -> 1M||1n -> 470k o Rhythm 470k||270p -> 1M A (bright 180p) -> 2M2||470p (escluso dal Crunch), V1B (22u in piu' sul catodo nel Lead), partitore 470k/1M (220k in piu' nel Rhythm), V2A a catodo freddo 39k, 1n/330k, V2B 220k, V5B 220k/2k2, V5A in controreazione parallela, stack della scheda (R89 470k + 8k, 33k e 47k+1n all'ingresso, 570p, High 250k B, Low 1M A, Mid 50k B), post-gain, inseguitore, recupero del loop V3A 68k/3k3//4n7 e finale 4 x 6L6 a bias fisso con NFB 39k/4k7, Presence 10k e Resonance 1M. Stime: instradamento dei rele' del Rhythm/Crunch, B+ 300 V del preampli, uscita di V5A.",
+  "control_notes": "Pannello: PRE GAIN, BRIGHT, CRUNCH, POST GAIN (Rhythm), PRE GAIN, POST GAIN (Lead), LOW, MID, HIGH, RESONANCE, PRESENCE e pulsante Rhythm/Lead. Pre e post gain di ciascun canale sono concentrici (RHY PRE/RHY POST, LEAD PRE/LEAD POST); CHANNEL riunisce canale, BRIGHT e CRUNCH (RHYTHM, RHY BRT, CRUNCH, CRNCH BRT, LEAD)."
+ },
+ "amslo100": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "NORMAL",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "OVERDRIVE",
+    "role": "drive",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "mid",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "NRM MASTER",
+    "role": "level",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "OD MASTER",
+    "role": "volume",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PRESENCE",
+    "role": "presence",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "CHANNEL",
+    "role": "type",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 4.0,
+    "choices": [
+     "CLEAN",
+     "CLEAN BRT",
+     "CRUNCH",
+     "CRNCH BRT",
+     "OVERDRIVE"
+    ],
+    "short": [
+     "CLN",
+     "CBRT",
+     "CRN",
+     "RBRT",
+     "OD"
+    ]
+   }
+  ],
+  "config": "mna R.i.g=68k C.g.0=98.84p R.g.0=1M OUT.g=1; mna R.i.o=172.3k R.o.0=306.3k C.i.o=10.45n OUT.o=1 ramp=1; triode Rp=220k Rk=1.8k B=359 byp=1; tap n=0; mna R.i.p=61.97k C.p.a=20n R.a.b=470k C.a.b=2.2n R.b.w=potr(1,500k,A) R.w.0=pot(1,500k,A) C.b.w=1n R.w.g=470k C.g.0=77.36p OUT.g=1 ramp=1; mna R.i.o=171.5k R.o.0=180.4k C.i.o=10.5n OUT.o=1 ramp=1; triode Rp=100k Rk=1.8k B=350 byp=1; mna R.i.p=44.58k C.p.a=20n R.a.g=470k R.g.0=1M C.g.0=9.276p OUT.g=1 ramp=1; triode Rp=100k Rk=39k B=350 byp=0; mna R.i.p=97.07k C.p.0=1n C.p.a=20n R.a.0=2.2M R.a.x=5k R.x.0=330k R.x.g=220k C.g.0=99.13p OUT.g=1 ramp=1; tap n=1; recall n=0; mna R.i.p=61.97k C.p.a=20n R.a.b=470k R.b.0=sw(8,39k,39k,1000M,1000M,39k) R.b.w=potr(0,500k,A) R.w.0=pot(0,500k,A) R.b.sw16=sw(8,1000M,10,1000M,10,1000M) C.sw16.w=470p C.w.0=38.71p OUT.w=1 ramp=1; triode Rp=100k Rk=2.2k B=359 byp=0; mna R.i.p=74.42k C.p.a=20n R.a.x=2.2M C.a.x=120p R.x.0=330k R.x.g=220k C.g.0=99.13p OUT.g=1 ramp=1; mix n=1 wet=sw(8,1,1,1,1,0) dry=sw(8,0,0,0,0,1); mna R.i.o=172.1k R.o.0=305k C.i.o=10.46n OUT.o=1 ramp=1; triode Rp=220k Rk=1.8k B=378 byp=1; cf B=378 Rk=102k vg=215 Rs=61316; hpf R=1M C=1u; gain a=0.0215; triode Rp=220k Rk=2.2k B=378 byp=0; cf B=378 Rk=100k vg=227 Rs=126288; mna R.i.in=1k R.in.s=47k C.in.top=470p R.top.out=potr(4,250k,B) R.out.a=pot(4,250k,B) R.a.mtop=pot(2,1M,A) C.s.a=20n C.s.mtop=20n R.mtop.0=pot(3,25k,B) R.out.w1=potr(5,1M,A) R.w1.0=pot(5,1M,A) R.out.w2=potr(6,1M,A) R.w2.0=pot(6,1M,A) R.w1.o=sw(8,10,10,10,10,1000M) R.w2.o=sw(8,1000M,1000M,1000M,1000M,10) R.o.0=1M OUT.o=1 ramp=1; hpf R=1M C=20n; pp tube=6L6 np=2 B=497 G2=495 vb=50 iq=0.035 pi=ltp pia=15 piup=170 pidn=110 raa=2.2k spk=4 prp=1 fbR=39k fbG=4.7k prR=25k prC=0.1u pr=taper(7,B) rect=si cres=100u pw=100 og=15.79m",
+  "stereo": false,
+  "notes": "SLO-100 (schema tracciato con le correzioni di AMPAGE, analisi di R. Robinette): V1b 220k/1k8//1u; Overdrive 470k||2n2 -> OD 500k (1n) -> 470k -> V2a 100k/1k8//1u -> 470k/1M -> V2b 100k||1n con catodo 39k -> 2M2; Normal Clean 470k/39k o Crunch 470k -> NORMAL 500k (bright 470p) -> V1a 100k/2k2 -> 2M2||120p; nodo 330k -> V3b 220k -> inseguitore e mandata del loop (2k2 su 102k), V4b 220k/2k2, inseguitore V4a, stack Marshall 250k/1M/25k, 47k, 470p/20n/20n, master Normal/OD 1M, finale 4 x 6L6 a 497 V con NFB 39k/4k7 dalla presa 4 ohm e Presence 25k. Stime: tapers dei pot (treble e mid lineari, bass log), rete del bright.",
+  "control_notes": "Pannello: NORMAL (preamp), BRIGHT, CRUNCH, OVERDRIVE (preamp), NORMAL/OVERDRIVE, BASS, MIDDLE, TREBLE, NORMAL e OVERDRIVE master, PRESENCE. I due master sono concentrici (NRM MASTER/OD MASTER); CHANNEL riunisce canale, BRIGHT e CRUNCH (CLEAN, CLEAN BRT, CRUNCH, CRNCH BRT, OVERDRIVE)."
+ },
+ "ambe100": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "PRESENCE",
+    "role": "presence",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "mid",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "MASTER",
+    "role": "level",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "CLEAN VOL",
+    "role": "volume",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "CHANNEL",
+    "role": "type",
+    "default": 0.4,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "CLEAN",
+     "CLEAN BRT",
+     "BE",
+     "BE SAT",
+     "HBE",
+     "HBE SAT"
+    ],
+    "short": [
+     "CLN",
+     "CBRT",
+     "BE",
+     "BES",
+     "HBE",
+     "HBES"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "VOICE",
+    "role": "voice",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "L",
+     "M",
+     "R"
+    ],
+    "short": [
+     "L",
+     "M",
+     "R"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "FAT",
+    "role": "fat",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "mna R.i.g=68k C.g.0=82.32p R.g.0=1M OUT.g=1; tap n=0; triode Rp=100k Rk=1.5k B=300 byp=1; mna R.i.p=44.78k C.p.a=22n R.a.g=470k R.g.0=470k C.g.0=82.32p OUT.g=1 ramp=1; tap n=1; recall n=0; mix n=1 wet=sw(7,1,1,1,1,0,0) dry=sw(7,0,0,0,0,1,1); mna R.i.o=80.7k R.o.0=174.3k C.i.o=6.91n OUT.o=1 ramp=1; triode Rp=100k Rk=820 B=300 byp=1; tap n=2; mna R.i.p=42.62k C.p.a=22n R.a.b=68k R.b.0=68k C.b.c=22n R.c.w=potr(6,1M,A) R.w.0=pot(6,1M,A) C.c.w=1n R.c.sw17=sw(8,1000M,10,10) C.sw17.w=1.2n R.c.sw18=sw(8,1000M,1000M,10) C.sw18.w=2.5n R.w.g=470k C.g.0=71.42p OUT.g=1 ramp=1; mna R.i.o=252.2k C.i.o=7.281n R.i.sw19=sw(9,1M,10) C.sw19.o=99.79n R.o.0=193k OUT.o=1 ramp=1; triode Rp=100k Rk=2.7k B=300 byp=1; mna R.i.p=48.18k C.p.0=500p C.p.a=22n R.a.g=470k C.a.g=470p R.g.0=470k C.g.0=16.61p OUT.g=1 ramp=1; triode Rp=100k Rk=10k B=310 byp=0; mna R.i.p=90.95k C.p.a=22n R.a.0=470k C.a.0=1p OUT.a=1 ramp=1; tap n=3; dclip R=47k C=1n d=si; gain db=12; tap n=4; recall n=3; mix n=4 wet=sw(7,1,1,1,0,1,0) dry=sw(7,0,0,0,1,0,1); mna R.i.a=1k R.a.g=470k C.a.g=470p R.g.0=470k C.g.0=58.41p OUT.g=1 ramp=1; triode Rp=100k Rk=820 B=310 byp=0; tap n=5; recall n=2; mna R.i.p=42.62k C.p.a=22n R.a.w=potr(5,1M,A) R.w.0=pot(5,1M,A) R.a.sw20=sw(7,1000M,10,1000M,1000M,1000M,1000M) C.sw20.w=150p C.w.0=77.93p OUT.w=1 ramp=1; triode Rp=100k Rk=1.5k B=300 byp=1; mna R.i.p=44.78k C.p.a=22n R.a.0=1M OUT.a=1 ramp=1; gain a=4; mix n=5 wet=sw(7,1,1,0,0,0,0) dry=sw(7,0,0,1,1,1,1); cf B=310 Rk=100k vg=200 Rs=60659; peak f=650 Q=0.8 g=sw(8,3,0,-3); mna R.i.in=1k R.in.s=33k C.in.top=470p R.top.out=potr(3,220k,B) R.out.a=pot(3,220k,B) R.a.mtop=pot(1,1M,A) C.s.a=22n C.s.mtop=22n R.mtop.0=pot(2,22k,B) R.out.w=potr(4,1M,A) R.w.0=pot(4,1M,A) OUT.w=1 ramp=1; hpf R=1M C=22n; pp tube=EL34 np=2 B=470 vb=38 iq=0.035 pi=ltp pia=15 piup=170 pidn=110 raa=1.7k spk=16 prp=1 fbR=47k fbG=4.7k prR=5k prC=0.1u pr=taper(0,B) dpR=100k dpC=4.7n dp=1 rect=si cres=50u pw=100 og=6.272m",
+  "stereo": false,
+  "notes": "BE-100 prima serie a 2 canali: CIRCUITO STIMATO (nessuno schema pubblico). Struttura Marshall 2203 modificata dai forum: triodo HBE in piu' davanti, V1a 100k/820//0.68u, 68k/68k, GAIN 1M A con bright, V1b 100k/2k7 (0.68u, 10u con FAT), cold clipper 10k, diodi al silicio dopo il cold clipper (SAT), V2b 820, inseguitore, stack ipotetico 220k/1M/22k, 33k, 470p/22n/22n, MASTER, finale 4 x EL34 con NFB e presence; canale Clean con volume e bright (150p) propri e lo stesso stack. Stime: tutti i valori, finale EL34 470 V con NFB 47k/4k7 e depth fisso 4n7, VOICE (bright 1n/2n2/4n7 e campana a 650 Hz +3/0/-3 dB).",
+  "control_notes": "Pannello: Clean VOLUME/TREBLE/BASS e BRIGHT L/M/R; BE PRESENCE, BASS, MIDDLE, TREBLE, MASTER, GAIN, VOICE L/M/R, levetta CLN/BE/HBE; FAT, C45 e SAT sul retro. MASTER/CLEAN VOL concentrici; il Clean usa i BASS/TREBLE comuni (lo stack del Clean ha i suoi pot); CHANNEL riunisce canale, BRIGHT del Clean e SAT (CLEAN, CLEAN BRT, BE, BE SAT, HBE, HBE SAT); FAT e' la levetta; C45 omesso."
+ },
+ "amdumbleods": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "gain",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "mid",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "OD LEVEL",
+    "role": "volume",
+    "default": 0.15,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "RATIO",
+    "role": "drive",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MASTER",
+    "role": "level",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PRESENCE",
+    "role": "presence",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MODE",
+    "role": "type",
+    "default": 0.6,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "CLEAN",
+     "CLEAN BRT",
+     "CLEAN JAZZ",
+     "OD ROCK",
+     "OD BRT",
+     "OD JAZZ"
+    ],
+    "short": [
+     "CLN",
+     "CBRT",
+     "CJZ",
+     "OD",
+     "ODB",
+     "ODJ"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "DEEP",
+    "role": "deep",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "mna R.i.g=22k C.g.0=78.02p R.g.0=1M OUT.g=1; triode Rp=100k Rk=1.5k B=303 byp=1; mna R.i.in=44.71k C.in.top=330p R.top.out=potr(1,250k,A) R.out.T=pot(1,250k,A) R.in.N=100k C.N.B=100n R.B.T=potr(3,250k,A) R.T.M=pot(3,250k,A) C.N.P=50n R.P.M=pot(2,100k,B) R.M.0=1.8k R.B.T=sw(8,1,1,1000M,1,1,1000M) R.T.sw21=sw(8,1000M,1000M,10,1000M,1000M,10) C.sw21.0=5n R.T.out=sw(8,1000M,1000M,100k,1000M,1000M,100k) R.out.w=potr(0,1M,A) R.w.0=pot(0,1M,A) R.out.sw22=sw(8,1000M,10,1000M,1000M,10,1000M) C.sw22.w=500p R.w.g=220k C.g.0=78.02p OUT.g=1 ramp=1; lshelf f=120 Q=0.6 g=sw(9,0,5); gain a=0.56; triode Rp=100k Rk=1.5k B=303 byp=1; tap n=0; mna R.i.p=44.71k C.p.a=10n R.a.w=30k R.w.0=70k R.w.g=68k C.g.0=78.1p OUT.g=1 ramp=1; triode Rp=100k Rk=1.5k B=306 byp=1; mna R.i.p=44.64k C.p.0=500p C.p.a=20n R.a.b=100k R.b.w=potr(5,100k,B) R.w.0=pot(5,100k,B) R.w.g=180k C.g.0=78.1p OUT.g=1 ramp=1; triode Rp=100k Rk=1.5k B=306 byp=1; mna R.i.p=44.64k C.p.0=500p C.p.a=10n R.a.w=potr(4,100k,B) R.w.0=pot(4,100k,B) R.w.0=1M OUT.w=1 ramp=1; tap n=1; recall n=0; mna R.i.p=44.71k C.p.a=10n R.a.0=1M OUT.a=1 ramp=1; mix n=1 wet=sw(8,1,1,1,0,0,0) dry=sw(8,0,0,0,1,1,1); vol a=taper(6,A); hpf R=1M C=10n; pp tube=6L6 np=1 B=457 vb=45 iq=0.035 pi=ltp pia=18 piup=170 pidn=120 raa=3.4k spk=8 prp=1 fbR=3.9k fbG=390 prR=1k prC=2.2u pr=taper(7,B) rect=si cres=100u pw=50 og=12.54m",
+  "stereo": false,
+  "notes": "Overdrive Special 'classico' (schema tracciato 70's ODS): V1A 100k/1k5//5u che pilota lo stack Dumble (330p, treble 250k A, 100k, 0.1u, bass 250k A, 0.05u + middle 100k lin, 1k8) con Rock/Jazz (Jazz: 5n a massa e 100k verso l'uscita), VOLUME 1M A (bright 500p), 220k, V1B con controreazione 22M+0.05u; in Overdrive trim 100k, 68k, V2A (500p anodo-catodo), 100k, RATIO 100k, 180k, V2B, LEVEL 100k; finale 2 x 6L6 a 457 V con NFB 3k9/390 e presence (Accent). Stime: rete Deep (mensola +5 dB a 120 Hz), effetto della controreazione di V1B (-5 dB), trim d'ingresso fisso a 7, tipo delle finali, MASTER e PRESENCE dei modelli anni '80.",
+  "control_notes": "Pannello: VOLUME, BRIGHT, DEEP, ROCK/JAZZ, TREBLE, MIDDLE, BASS, OD LEVEL, RATIO, MASTER, PRESENCE, MANUAL/PEDAL. OD LEVEL/RATIO concentrici; MODE riunisce Overdrive (MANUAL), BRIGHT e ROCK/JAZZ (CLEAN, CLEAN BRT, CLEAN JAZZ, OD ROCK, OD BRT, OD JAZZ); DEEP e' la levetta."
+ },
+ "amecstasy": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "mid",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.35,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "PRESENCE",
+    "role": "presence",
+    "default": 0.45,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "PRE EQ",
+    "role": "type",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "N",
+     "B1",
+     "B2",
+     "N BOOST",
+     "B1 BOOST",
+     "B2 BOOST"
+    ],
+    "short": [
+     "N",
+     "B1",
+     "B2",
+     "NB",
+     "B1B",
+     "B2B"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "EXCURSION",
+    "role": "mode",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "T",
+     "M",
+     "L"
+    ],
+    "short": [
+     "T",
+     "M",
+     "L"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "STRUCTURE",
+    "role": "structure",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "L",
+     "H"
+    ],
+    "short": null
+   }
+  ],
+  "config": "mna R.i.g=68k C.g.0=80.12p R.g.0=1M OUT.g=1; mna R.i.o=80.83k R.o.0=179.8k C.i.o=6.899n OUT.o=1 ramp=1; triode Rp=100k Rk=820 B=240 byp=1; mna R.i.p=44.37k C.p.a=4.7n R.a.w=potr(0,500k,A) R.w.0=pot(0,500k,A) C.a.w=1n R.w.g=470k C.w.g=470p R.g.0=sw(6,100k,100k,100k,1000M,1000M,1000M) R.g.0=500k C.g.0=87.9p OUT.g=1 ramp=1; hshelf f=2500 Q=0.7 g=sw(6,0,3,6,0,3,6); mna R.i.o=428.8k R.o.0=216.8k R.i.x=sw(8,90282.796364M,428.8k) C.x.o=24.37n OUT.o=1 ramp=1; triode Rp=100k Rk=4.75k B=256 byp=1; mna R.i.p=53.87k C.p.0=1n C.p.a=2.2n R.a.b=500k R.b.0=500k R.b.g=500k C.b.g=470p C.g.0=16.57p OUT.g=1 ramp=1; triode Rp=100k Rk=10k B=256 byp=0; mna R.i.p=91.04k C.p.0=470p C.p.a=22n R.a.g=500k C.a.g=470p R.g.0=500k C.g.0=53.9p OUT.g=1 ramp=1; triode Rp=100k Rk=1k B=265 byp=0; cf B=265 Rk=100k vg=179 Rs=63913; mna R.i.in=1k R.in.s=33k C.in.top=470p R.top.out=potr(3,250k,B) R.out.a=pot(3,250k,B) R.a.mtop=pot(1,1M,A) C.s.a=22n C.s.mtop=22n R.mtop.0=pot(2,25k,B) R.out.w=potr(4,1M,A) R.w.0=pot(4,1M,A) OUT.w=1 ramp=1; hpf R=1M C=22n; pp tube=EL34 np=2 B=450 vb=38 iq=0.035 pi=ltp pia=15 piup=170 pidn=110 raa=1.7k spk=16 prp=1 fbR=47k fbG=4.7k prR=5k prC=0.1u pr=taper(5,B) dpR=220k dpC=22n dp=sw(7,300m,600m,1) rect=si cres=100u pw=120 og=5.726m",
+  "stereo": false,
+  "notes": "Ecstasy 101B, canali OD 2/3 (tracciato schematicheaven): V1 100k/820//0.68u, 4n7, GAIN 500k con bright 1n, 470k||470p con 100k a massa via rele' (BOOST lo apre: +10.7 dB), V2 100k/4k75 con 1n sull'anodo (STRUCTURE H: 4k75+2.2u in parallelo al catodo), 2n2, 500k/500k, 500k||470p, V3 a catodo freddo 10k con 470p, 22n, 500k||470p / 500k, V4 1k accoppiato all'inseguitore V5 che pilota lo stack 250k/1M/25k, 33k, 470p/22n/22n; VOLUME, finale 4 x EL34 con NFB, presence ed Excursion. Stime: PRE EQ B1/B2 (mensola +3/+6 dB a 2.5 kHz, non tracciato), tutto il finale (NFB 47k/4k7, presence 5k/0.1u, Excursion T/M/L come depth 220k/22n al 30/60/100%), pot del volume 1M A.",
+  "control_notes": "Pannello Ch2/Ch3: GAIN 2/3, BASS, MIDDLE, TREBLE, VOL. 2/3, PRE EQ 2/3 (B2/N/B1), GAIN BOOST, STRUCTURE, PLEXI, PRESENCE A/B, EXCURSION A/B. I canali 2 e 3 hanno lo stesso circuito: una sola serie GAIN/VOLUME; PRE EQ comprende anche il BOOST (N, B1, B2 e le stesse con BOOST); EXCURSION T/M/L e' un selettore, STRUCTURE la levetta; Ch1 pulito e Plexi non emulati (circuiti non tracciati)."
+ },
+ "ampowerball": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "outer",
+    "label": "CH I GAIN",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "CH II GAIN",
+    "role": "drive",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "mid",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "volume",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "PRESENCE",
+    "role": "presence",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "DEPTH",
+    "role": "resonance",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MASTER",
+    "role": "level",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "CHANNEL",
+    "role": "type",
+    "default": 0.6,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 5.0,
+    "choices": [
+     "CLEAN",
+     "CRUNCH",
+     "LO LEAD",
+     "HI LEAD",
+     "LO FOCUS",
+     "HI FOCUS"
+    ],
+    "short": [
+     "CLN",
+     "CRN",
+     "LOL",
+     "HIL",
+     "LOF",
+     "HIF"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "BOTTOM",
+    "role": "bottom",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "mna R.i.g=1k C.g.0=81.99p R.g.0=1M OUT.g=1; triode Rp=100k Rk=1k B=330 byp=1; mna R.i.p=42.49k C.p.a=47n R.a.0=2.2M C.a.b=15n R.a.b=sw(10,1000M,10) R.b.c=100k R.c.w1=potr(0,1M,A) R.w1.0=pot(0,1M,A) R.a.d=100k R.d.w2=potr(1,1M,A) R.w2.0=pot(1,1M,A) R.w1.g=sw(9,10,10,1000M,1000M,1000M,1000M) R.w2.g=sw(9,1000M,1000M,10,10,10,10) R.g.0=1M C.g.0=78.72p OUT.g=1 ramp=1; triode Rp=100k Rk=1.5k B=330 byp=1; mna R.i.p=44.08k C.p.a=47n R.a.0=2.2M R.a.b=sw(9,1M,680k,220k,100k,220k,100k) R.b.0=sw(9,220k,330k,470k,470k,470k,470k) OUT.b=1 ramp=1; tap n=0; mna R.i.o=306.3k R.o.0=435.6k C.i.o=10.77n OUT.o=1 ramp=1; triode Rp=330k Rk=3.3k B=330 byp=1; mna R.i.p=79.97k C.p.a=47n R.a.0=1M OUT.a=1 ramp=1; tap n=1; recall n=0; mix n=1 wet=sw(9,1,1,0,0,0,0) dry=sw(9,0,0,1,1,1,1); mna R.i.a=1k R.a.g=220k R.g.0=1M C.g.0=78.72p OUT.g=1 ramp=1; triode Rp=100k Rk=1.5k B=330 byp=1; mna R.i.in=44.08k R.in.s=100k R.top.out=potr(4,250k,B) R.out.a=pot(4,250k,B) R.a.mtop=pot(2,1M,A) C.s.a=220n R.mtop.0=pot(3,20k,B) C.in.top=470p R.in.sw23=sw(9,1000M,1000M,1000M,1000M,10,10) C.sw23.top=470p R.s.sw24=sw(9,10,10,1000M,1000M,1000M,1000M) C.sw24.mtop=100n R.s.sw25=sw(9,1000M,1000M,10,10,1000M,1000M) C.sw25.mtop=22n R.s.sw26=sw(9,1000M,1000M,1000M,1000M,10,10) C.sw26.mtop=47n R.out.x=sw(9,220k,330k,470k,470k,470k,470k) R.x.w=potr(5,250k,B) R.w.0=pot(5,250k,B) OUT.w=1 ramp=1; cf B=330 Rk=1k vg=182 Rs=1000; mna R.i.a=1k R.a.g=100k R.g.0=1M C.g.0=78.72p OUT.g=1 ramp=1; triode Rp=100k Rk=1.5k B=330 byp=1; mna R.i.p=44.08k C.p.a=100n R.a.b=100k R.b.w=potr(8,1M,B) R.w.0=pot(8,1M,B) OUT.w=1 ramp=1; hpf R=1M C=100n; pp tube=6L6 np=2 B=460 G2=430 vb=55 iq=0.031 pi=ltp pia=15 piup=170 pidn=110 raa=1.9k spk=16 prp=1 fbR=22k fbG=1.5k prR=50k prC=0.1u pr=taper(6,C) dpR=1M dpC=10n dp=taper(7,A) rect=si cres=220u pw=100 og=4.703m",
+  "stereo": false,
+  "notes": "Powerball E645 (schema ENGL 645-1): V5A 100k/1k//22u, Ch I 15n in serie (BOTTOM lo cortocircuita) + 100k + GAIN 1M A, Ch II 100k + GAIN 1M A, V5B 100k/1k5//22u, partitori di modo (Clean 1M/220k, Crunch 680k/330k, Lo Lead 220k/470k, Hi Lead 100k/470k), nei lead V6A 330k/3k3//1u, 220k, V6B 100k/1k5//22u che pilota dall'anodo gli stack (100k, 470p o 940p focused, 220n, 20k; mid 100n Ch I, 22n open, 47n focused), volume 250k con 220k-470k in serie, V7A di catodo, V7B, MASTER 1M B, finale 4 x 6L6 a 460 V e bias -55 V con NFB, Presence 50k e Depth Punch 1M. Stime: B+ del preampli 330 V, Style del Ch I non usato.",
+  "control_notes": "Pannello: Ch I Gain, Bright, Bottom, Bass, Middle, Treble-Clean, Treble-Crunch, Clean Vol., Crunch Vol., Presence, Depth Punch, Ch II Gain, Lo/Hi Lead Bottom, Bass, Mid-open, Mid-focused, Treble, Lo/Hi Lead Vol., open/focused, Ch I/II, Gain Lo/Hi, Master A/B. Qui CH I GAIN/CH II GAIN e PRESENCE/DEPTH sono concentrici; BASS, MIDDLE, TREBLE e VOLUME valgono per il canale scelto (agiscono sullo stack di quel canale); CHANNEL = CLEAN, CRUNCH, LO LEAD, HI LEAD, LO FOCUS, HI FOCUS; BOTTOM (15n del Ch I) la levetta; un solo MASTER; Bright del Ch I omesso."
+ },
+ "amvh4": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "GAIN",
+    "role": "gain",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "mid",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "volume",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MASTER",
+    "role": "level",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "PRESENCE",
+    "role": "presence",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "DEEP",
+    "role": "resonance",
+    "default": 0.4,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "CHANNEL",
+    "role": "type",
+    "default": 0.6666666666666666,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 3.0,
+    "choices": [
+     "CH2",
+     "CH2 BRT",
+     "CH3",
+     "CH4"
+    ],
+    "short": [
+     "CH2",
+     "C2B",
+     "CH3",
+     "CH4"
+    ]
+   }
+  ],
+  "config": "mna R.i.g=68k C.g.0=89.01p R.g.0=1M OUT.g=1; triode Rp=120k Rk=680 B=320 byp=1; mna R.i.p=45.4k C.p.a=1n R.p.sw27=sw(8,10,10,1000M,1000M) C.sw27.a=3.7n R.a.b=sw(8,220k,220k,680k,680k) R.a.sw28=sw(8,10,10,1000M,1000M) C.sw28.b=39p R.b.0=sw(8,220k,220k,1000M,1000M) R.b.c=sw(8,220k,220k,10,10) R.b.sw29=sw(8,10,10,1000M,1000M) C.sw29.c=39p R.c.w=potr(0,1M,A) R.w.0=pot(0,1M,A) R.c.br=470k R.br.sw30=sw(8,1000M,10,1000M,1000M) C.sw30.w=470p OUT.w=1 ramp=1; tap n=0; mna R.i.a=1k C.a.0=41.48p OUT.a=1 ramp=1; triode Rp=220k Rk=4.7k B=320 byp=0; mna R.i.p=156.2k C.p.0=1n C.p.a=1n R.a.b=470k R.b.0=470k OUT.b=1 ramp=1; tap n=1; recall n=0; mix n=1 wet=sw(8,1,1,1,0) dry=sw(8,0,0,0,1); mna R.i.a=1k R.a.g=470k R.g.0=470k C.g.0=88.46p OUT.g=1 ramp=1; mna R.i.o=75.32k R.o.0=193.8k C.i.o=22.32n OUT.o=1 ramp=1; triode Rp=120k Rk=764 B=320 byp=1; mna R.i.p=45.71k C.p.0=470p C.p.a=22n R.a.0=500k R.a.g=470k C.g.0=65.47p OUT.g=1 ramp=1; triode Rp=120k Rk=764 B=320 byp=0; mna R.i.p=66.5k C.p.0=470p OUT.p=1 ramp=1; cf B=320 Rk=120k vg=191 Rs=66496; mna C.i.c=22n R.c.0=1M R.c.in=11k R.in.s=39k C.in.top=470p R.top.out=potr(3,250k,B) R.out.a=pot(3,250k,B) R.a.mtop=pot(1,1M,A) C.s.a=22n C.s.mtop=20n R.mtop.0=pot(2,25k,B) R.out.x=100k R.x.w=potr(4,1M,A) R.w.0=pot(4,1M,A) OUT.w=1 ramp=1; hpf R=1M C=100n; triode Rp=100k Rk=1.5k B=320 byp=1; mna R.i.p=44.31k C.p.a=47n R.a.w=potr(5,1M,A) R.w.0=pot(5,1M,A) OUT.w=1 ramp=1; hpf R=1M C=22n; pp tube=EL34 np=2 B=463 vb=38 iq=0.035 pi=ltp pia=15 piup=170 pidn=110 raa=1.7k spk=16 prp=1 fbR=47k fbG=4.7k prR=25k prC=4.7n pr=taper(6,B) dpR=100k dpC=0.1u dp=0.1+lin(7,0,0.9) rect=si cres=100u pw=100 og=6.272m",
+  "stereo": false,
+  "notes": "VH4 2000-2001, canali 2-4 (valori dai file LiveSPICE, NON verificati su uno schema del costruttore): V1 120k/680//22u, Ch3 1n -> 680k -> GAIN 1M log, 470k/470k, V2 120k (470p) con 764//2.2u, 22n, 1M//1M, 470k, V3 120k (470p) con 764 non bypassato, inseguitore, 22n/1M, 10k, stack 250k/1M/25k, 39k, 470p/22n/20n, 100k + VOLUME 1M, MASTER, finale 4 x EL34 con Presence (~4 kHz) e Deep (~80 Hz) sulla NFB; Ch4 con lo stadio 220k/4k7 in piu', Ch2 con 220k||39p, 220k, 220k||39p e bright 470p. Stime: tutto il circuito, B+ 320 V, stadio di ritorno del loop (12AX7 100k/1k5) prima del MASTER, NFB 47k/4k7 con presence 25k/4n7 e Deep come depth 100k/0.1u.",
+  "control_notes": "Pannello: GAIN/BASS/MIDDLE/TREBLE/VOLUME per ciascuno dei 4 canali, MASTER, MIX, PRESENCE, DEEP, pulsanti di canale. Qui una sola serie per il canale scelto con CHANNEL (CH2, CH2 BRT, CH3, CH4); PRESENCE/DEEP concentrici; Ch1 pulito e MIX del loop omessi."
+ },
+ "amjc120": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.25,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDDLE",
+    "role": "mid",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "DISTORTION",
+    "role": "drive",
+    "default": 0.0,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "REVERB",
+    "role": "reverb",
+    "default": 0.25,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "VIB SPEED",
+    "role": "rate",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "VIB DEPTH",
+    "role": "depth",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "EFFECT",
+    "role": "mode",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "CHORUS",
+     "OFF",
+     "VIBRATO"
+    ],
+    "short": [
+     "CHO",
+     "OFF",
+     "VIB"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "BRIGHT",
+    "role": "bright",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "mna R.i.g=33k C.g.0=490p R.g.0=1M OUT.g=1; bjt g=9.4 vp=13 vn=11 soft=3 inv=1; mna R.i.in=12k R.in.s=100k C.in.top=150p R.top.out=potr(1,250k,B) R.out.a=pot(1,250k,B) R.a.mtop=pot(3,251k,A) C.s.a=82n C.s.mtop=47n R.mtop.0=pot(2,10k,B) R.out.0=470k OUT.out=1 ramp=1; gain a=0.94; gain a=1+taper(4,C)*40; dclip R=4.7k C=100p d=si; gain a=1+taper(4,C)*-0.6; tap n=0; bbd ms=3.7 mod=sw(8,2.4,0,0)+sw(8,0,0,2.4)*taper(7,B) rate=sw(8,830m,830m,0)+sw(8,0,0,1)*log(6,2,8) bw=9000 sat=6 max=20; chgain l=sw(8,0,0,1) r=sw(8,1,0,1); tap n=1; recall n=0; chgain l=sw(8,1,1,0) r=sw(8,0,1,0); mix n=1 wet=1 dry=1; mna R.i.a=200 C.a.b=82n R.b.w=potr(0,1M,B) R.w.0=pot(0,1M,B) R.b.sw31=sw(9,1000M,10) C.sw31.w=220p R.w.0=1M OUT.w=1 ramp=1; bjt g=10 vp=11 vn=11 soft=3 inv=1; bjt g=4 vp=12 vn=12 soft=3 inv=0; tap n=2; hpf R=47k C=10n; spring t1=29 t2=37 dec=2.3 lp=4200 hp=150 g=0.35; vol a=taper(5,B); tap n=3; recall n=2; mix n=3 wet=1 dry=1; hpf R=1k C=10u; gain a=28; bjt g=1 vp=33 vn=33 soft=6 inv=0; lpf2 f=16000 Q=0.6; gain db=-38.66",
+  "stereo": true,
+  "notes": "JC-120 (schema Roland JC-120/160): 2SK117 a source comune (12k/1k, 19.5 dB, 47p drain-gate), stack FMV passivo 250k B/251k A/10k B, 100k, 150p/82n/47n pilotato dal drain e caricato da 470k, inseguitore, distorsione a JFET con diodi al silicio a massa (DIST 10k C), VOLUME 1M B con bright 220p, 2SK117 (20 dB), stadio a BJT, riverbero a molla, chorus/vibrato MN3007 (1024 stadi, 1.3-6.1 ms) con LFO triangolare (chorus 0.83 Hz fisso, vibrato 2-8 Hz), due finali a transistor da 60 W (guadagno 28, binari +-37 V): in CHORUS il diretto esce a sinistra e il ritardato a destra, in VIBRATO entrambi ritardati. Stime: guadagno della distorsione e compensazione del livello, riverbero e chorus in ordine scambiato (lineari fino ai finali).",
+  "control_notes": "Pannello CH-2: BRIGHT, VOLUME, TREBLE, MIDDLE, BASS, DISTORTION, REVERB, VIBRATO SPEED, VIBRATO DEPTH, CHORUS/OFF/VIBRATO. SPEED/DEPTH concentrici, EFFECT e' un selettore (la levetta e' il BRIGHT); emulato il CH-2 (il CH-1 e' lo stesso preampli senza effetti)."
+ },
+ "amgk800rb": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "HI MID",
+    "role": "mid",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "LO MID",
+    "role": "lowmid",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BOOST",
+    "role": "drive",
+    "default": 0.3,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "FREQ",
+    "role": "freq",
+    "default": 0.3,
+    "units": "hz",
+    "lo": 100.0,
+    "hi": 1000.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "outer",
+    "label": "HIGH",
+    "role": "volume",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "inner",
+    "label": "LOW",
+    "role": "level",
+    "default": 0.6,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "VOICING",
+    "role": "type",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 7.0,
+    "choices": [
+     "FLAT",
+     "LO CUT",
+     "CONTOUR",
+     "HI BOOST",
+     "LC+CT",
+     "LC+HB",
+     "CT+HB",
+     "ALL"
+    ],
+    "short": [
+     "FLAT",
+     "LC",
+     "CT",
+     "HB",
+     "LCCT",
+     "LCHB",
+     "CTHB",
+     "ALL"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "BI-AMP",
+    "role": "biamp",
+    "default": 1.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "mna R.i.in=12k R.in.0=1M O.in.n.o=1 R.o.n=33k C.o.n=560p R.n.g=3.3k C.g.h=10u C.h.0=0.22u R.h.0=sw(9,10,1000M,10,10,1000M,1000M,10,1000M) OUT.o=1 ramp=1 rail=13; vol a=taper(0,A)*0.88; hpf R=33k C=3.3u; opni Rg=lin(0,2k,10.3k) Cg=22n Rf=sw(9,0,0,0,1,0,1,1,1)*lin(0,37k,0)+1 Cf=0; lshelf f=80 Q=0.7 g=sw(9,0,0,3,0,3,0,3,3); peak f=550 Q=0.7 g=sw(9,0,0,-10,0,-10,0,-10,-10); hshelf f=4000 Q=0.7 g=sw(9,0,0,3,0,3,0,3,3); opni Rg=4.7k Cg=0 Rf=22k Cf=560p rail=13; mna R.i.x1=4.7k R.x1.p1=22k R.p1.w1=potr(2,25k,B) R.w1.y1=pot(2,25k,B) R.y1.o1=4.7k C.x1.y1=4.7n C.w1.n1=4.7n R.i.n1=220k R.n1.o1=220k O.0.n1.o1=1 R.o1.x2=4.7k R.x2.p2=22k R.p2.w2=potr(3,25k,B) R.w2.y2=pot(3,25k,B) R.y2.o2=4.7k C.x2.y2=22n C.w2.n2=22n R.o1.n2=220k R.n2.o2=220k O.0.n2.o2=1 R.o2.t1=3.3k R.t1.q1=12k R.q1.wb=potr(4,25k,B) R.wb.t2=pot(4,25k,B) R.t2.out=3.3k C.t1.t2=220n R.wb.n3=22k R.o2.tb1=3.3k R.tb1.wt=potr(1,25k,B) R.wt.tb2=pot(1,25k,B) R.tb2.out=3.3k C.wt.n3=4.7n O.0.n3.out=1 OUT.out=1 ramp=1 rail=13; gain a=0.117+taper(5,A)*0.883; bjt g=11.6 vp=6.6 vn=6 soft=2.5 inv=1; hpf R=100k C=1u; tap n=0; lpf2 f=log(6,100,1000) Q=0.707; tap n=1; recall n=0; mix n=1 wet=sw(10,1,0) dry=sw(10,0,1); vol a=taper(8,A); gain a=30; bjt g=1 vp=57 vn=57 soft=6 inv=0; lpf2 f=16000 Q=0.6; gain db=-41.12; tap n=2; recall n=0; hpf2 f=log(6,100,1000) Q=0.707; vol a=taper(7,A)*sw(10,0,1); gain a=30; bjt g=1 vp=40 vn=40 soft=6 inv=0; lpf2 f=16000 Q=0.6; gain db=-38.04; mix n=2 wet=1 dry=1",
+  "stereo": false,
+  "notes": "800RB prima serie (service manual GK, schemi 60045 A / 60044 A): U1A LF353 +20.8 dB (33k||560p, 3.3k+10u; LO CUT 0.22u in serie), VOLUME 25k A (stadio di guadagno con rampa, carico 3.3u/33k) con HI BOOST 22n+3.3k (mensola esatta del 1o ordine che segue il volume), CONTOUR, U2A +15 dB, EQ attivo a 4 bande (tre op-amp, reti a T pontato, pot 25k: treble 4 kHz, hi-mid 1 kHz, lo-mid 250 Hz, bass 60 Hz), BOOST (partitore 25k+3.3k) e J113 a source comune (+21 dB, +-6 V), crossover 12 dB/ottava 100 Hz-1 kHz, finali a transistor 300 W (+-85 V) sui bassi e 100 W (+-60 V) sugli alti, sommati come in sala. Stime: rete del CONTOUR (80 Hz e 4 kHz +3 dB, 550 Hz -10 dB dalle specifiche GK), tapers lineari dell'EQ, guadagno dei finali.",
+  "control_notes": "Pannello: -10 dB, VOLUME, LO CUT, CONTOUR, HI BOOST, TREBLE, HI MID, LO MID, BASS, BOOST, FREQ, BI-AMP, HIGH, LOW. HI MID/LO MID e HIGH/LOW concentrici; i tre pulsanti di voce sono le combinazioni del selettore VOICING; BI-AMP e' la levetta (spento: il finale da 300 W a banda intera); pad -10 dB omesso."
+ },
+ "amsvt": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "gain",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "MIDRANGE",
+    "role": "mid",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "selector",
+    "label": "MID FREQ",
+    "role": "freq",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "220",
+     "800",
+     "3K"
+    ],
+    "short": [
+     "220",
+     "800",
+     "3K"
+    ]
+   },
+   {
+    "kind": "selector",
+    "label": "ULTRA LO",
+    "role": "type",
+    "default": 0.5,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 2.0,
+    "choices": [
+     "BASS CUT",
+     "OFF",
+     "ULTRA LO"
+    ],
+    "short": [
+     "CUT",
+     "OFF",
+     "ULO"
+    ]
+   },
+   {
+    "kind": "toggle",
+    "label": "ULTRA HI",
+    "role": "bright",
+    "default": 0.0,
+    "units": "choice",
+    "lo": 0.0,
+    "hi": 1.0,
+    "choices": [
+     "OFF",
+     "ON"
+    ],
+    "short": null
+   }
+  ],
+  "config": "mna R.i.g=47k R.g.0=5.6M C.g.0=23.48p OUT.g=1; triode Rp=220k Rk=3.3k B=300 byp=0 mu=21.5 ex=1.3 kg1=1180 kp=84 kvb=300; cf B=300 Rk=47k vg=86 Rs=60880; mna R.i.s=1k C.s.a=0.1u R.a.0=100k R.a.top=sw(5,1000M,10,1000M) R.a.m=sw(5,1000M,1000M,150k) R.m.top=sw(5,1000M,1000M,150k) C.m.0=2n R.a.a2=sw(5,10,1000M,10) C.a2.b=2n C.b.b2=2n R.b2.top=sw(5,10,1000M,10) R.b.0=sw(5,888k,1000M,68k) R.top.w=potr(0,1M,B) R.w.0=pot(0,1M,B) R.top.sw32=sw(6,1000M,10) C.sw32.w=500p C.w.0=28.95p OUT.w=1 ramp=1; triode Rp=47k Rk=1.5k B=300 byp=0; mna R.i.in=38.77k C.in.a=100n R.a.bt=220k R.bt.bw=potr(3,1M,A) R.bw.bb=pot(3,1M,A) R.bb.0=22k C.bt.bw=1n C.bw.bb=10n C.a.tt=47p R.tt.out=potr(1,1M,A) R.out.tb=pot(1,1M,A) C.tb.0=470p R.bw.out=120k R.out.0=1M OUT.out=1 ramp=1; hpf R=1M C=10n; triode Rp=220k Rk=560 B=300 byp=0 mu=21.5 ex=1.3 kg1=1180 kp=84 kvb=300; peak f=sw(4,220,800,3k) Q=1.1 g=lin(2,-20,20); gain db=-11; bjt g=1 vp=60 vn=60 soft=4 inv=0; cf B=300 Rk=48k vg=165 Rs=10000; hpf R=100k C=0.1u; hpf R=470k C=0.1u; triode Rp=220k Rk=2.42k B=300 byp=0 mu=21.5 ex=1.3 kg1=1180 kp=84 kvb=300; hpf R=1M C=0.1u; pp tube=6550 np=3 B=695 G2=350 vb=60 iq=0.024 pi=cat pia=11 piup=150 pidn=120 raa=1850 spk=4 fbR=47k fbG=220 fbk=12 rect=si cres=40u pw=300 og=4.073m",
+  "stereo": false,
+  "notes": "SVT 'blue line' 6 x 6550 (schemi Ampeg 1970): V1 12AU7 220k/3k3 non bypassato e inseguitore 12AX7, rete Ultra Lo (twin-T 150k/2n) o Bass Cut, VOLUME 1M lin (ULTRA HI 500p), V3A 47k/1k5 che pilota il Baxandall passivo (bass 1M con 220k/22k e 1n/10n, treble 1M con 47p/470p, 120k), V3B 12AU7 con l'anello dei medi a induttanza (220/800/3000 Hz), inseguitori, finale 12AU7 + cathodyne + pilota 12BH7 + 6 x 6550 a 695 V su OT 1850 ohm con NFB 47k||120p. Stime: medi come campana +-20 dB (manuali dei reissue), guadagno ad anello chiuso del blocco V3B-V4 (~37 dB), lettura dell'Ultra Lo, tapers A dello stack, B+ del preampli 300 V.",
+  "control_notes": "Pannello Ch.1: VOLUME, TREBLE, MIDRANGE, BASS, ULTRA HI, MID FREQ 1-2-3, BASS CUT/OFF/ULTRA LO; MID FREQ e ULTRA LO sono selettori, ULTRA HI la levetta; canale 2 omesso."
+ },
+ "amb15n": {
+  "family": "AmpSim",
+  "category": "Amplificatori",
+  "controls": [
+   {
+    "kind": "knob",
+    "label": "VOLUME",
+    "role": "level",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "TREBLE",
+    "role": "treble",
+    "default": 0.5,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   },
+   {
+    "kind": "knob",
+    "label": "BASS",
+    "role": "bass",
+    "default": 0.55,
+    "units": "dial",
+    "lo": 0.0,
+    "hi": 10.0,
+    "choices": null,
+    "short": null
+   }
+  ],
+  "config": "mna R.i.g=120k R.g.0=5.6M C.g.0=70.1p OUT.g=1; triode Rp=470k Rk=2.2k B=366 byp=0 mu=70 ex=1.4 kg1=1200 kp=700 kvb=300; mna R.i.in=152.4k C.in.a=20n R.a.bt=220k R.bt.bw=potr(2,1M,A) R.bw.bb=pot(2,1M,A) R.bw.bb=270k R.bb.0=22k C.bt.bw=1n C.bw.bb=10n C.a.tt=47p R.tt.out=potr(1,4M,A) R.out.tb=pot(1,4M,A) C.tb.0=470p R.bw.out=120k R.out.0=10M C.out.0=52.36p OUT.out=1 ramp=1; triode Rp=470k Rk=5.6k B=360 byp=0 mu=70 ex=1.4 kg1=1200 kp=700 kvb=300; mna R.i.p=234k C.p.a=20n R.a.w=potr(0,1M,A) R.w.0=pot(0,1M,A) C.a.x=5n R.x.w=100k R.w.s=270k R.s.0=270k R.s.0=1M OUT.s=1 ramp=1; hpf R=470k C=20n; pp tube=6L6 np=1 B=430 G2=425 rk=250 ck=50u vk=36 pi=para pia=20 piup=120 pidn=100 raa=4k spk=8 tap=16 fbR=10k fbG=220 rect=gz34 cres=40u pw=25 og=14.09m",
+  "stereo": false,
+  "notes": "Portaflex B-15NC 1964 (schema Ampeg): V1A 6SL7 470k/2k2 non bypassato che pilota il Baxandall (bass 1M con 270k e 220k/22k, 1n/10n, treble 4M con 47p/470p, 120k), V1B 6SL7 470k/5k6, VOLUME 1M con bright 0.005u, somma 270k + 270k, invertitore paraphase 6SL7, 2 x 6L6GC a bias catodico comune (250 ohm, 36 V) con 5AR4 e NFB 10k. Stime: parametri del 6SL7, resistenza in serie al bright (100k), tapers A dello stack.",
+  "control_notes": "Pannello Ch.1: VOLUME, TREBLE, BASS (gli ingressi 1/2 non sono comandi; canale 2 omesso)."
+ }
+}

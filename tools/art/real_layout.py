@@ -587,6 +587,9 @@ def real_layout(r):
     if s == "stomp":
         import stomp_layout           # MXR, Electro-Harmonix...: contenitore e comandi del pedale vero
         return stomp_layout.stomp_layout(r)
+    if s == "amp":
+        import amp_layout             # amplificatori e casse (tappa 6)
+        return amp_layout.amp_layout(r)
     if s == "compact":
         return compact_layout(r)
     if s in ("treadle_volume", "treadle_wah", "rocker"):

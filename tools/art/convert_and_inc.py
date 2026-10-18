@@ -32,6 +32,17 @@ for r in real_catalog.real_models(strict=False):
         A.convert_image(r["id"], A.REAL_SRC, A.REAL_RES, "r_" + r["id"], (geo["imageW"], geo["imageH"]), max_side=1150)
         print("real", r["id"])
 
+# retro degli ampli e delle casse (tappa 6): <id>_back.png -> Resources/pedals/<id>_back.jpg (+ _back_a.png) e
+# build/real/<id>_back.png -> Resources/pedals_real/r_<id>_back.jpg; l'interfaccia li trova per nome nel BinaryData
+from PIL import Image as _Img
+for ids, src, res, pre in ((norm, A.PEDALS, A.RES, ""), (real, A.REAL_SRC, A.REAL_RES, "r_")):
+    for mid in sorted(ids):
+        p = os.path.join(src, mid + "_back.png")
+        if os.path.exists(p):
+            w, h = _Img.open(p).size
+            A.convert_image(mid + "_back", src, res, pre + mid + "_back", (w, h), max_side=1150)
+            print("retro", pre + mid)
+
 # .inc senza toccare immagini
 A.convert_image = lambda *a, **k: None
 _exists = os.path.exists

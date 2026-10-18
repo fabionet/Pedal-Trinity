@@ -187,3 +187,34 @@ modello in `TWEAKS`. Parte funzionale da `sound_stage5_drive.json`, `sound_stage
 * inserti dei coperchi con `arch=mm` (gomma col bordo lontano bombato);
 * `gfx`: `name.lines=2` nome su due righe, `code.box=dict(col, padx, pady, radius)` sigla in un riquadro pieno,
   `real_texts=[("text", ...)]` scritte solo sulle repliche (nome della serie), `real_code=False` niente sigla sulla replica.
+
+## Amplificatori e casse (tappa 6: `catalog_amps.py`, `catalog_cabs.py`)
+I due cataloghi sono GENERATI da `gen_catalog_amps.py` a partire dalle schede `~/.config/PedalTrinity/stage6/stage6_amps.json` e
+`stage6_cabs.json` (misure, pannello vero con le posizioni in % dei comandi, levette, spie, ingressi; retro con prese,
+selettori, fusibili e valvole); l'aspetto si cambia nelle tabelle `STYLE` (ampli), `MANUAL_ENTRIES` (posizioni stimate degli
+ampli senza posizioni nelle schede) e `CAB_STYLE` (casse) del generatore. Categorie del menu: "Amplificatori" e "Casse"
+(i simulatori d'ampli e i caricatori di IR gia' a catalogo vi sono spostati da `catalog.CATEGORY_MOVE`, con il sottotitolo
+stampato della categoria di origine: le loro serigrafie non cambiano). Sigle originali `AX-` (ampli) e `KX-` (casse).
+Parte funzionale da `sound_stage6_amps_a.json`, `sound_stage6_amps_b.json`, `sound_stage6_cabs.json` (`amp_catalog.py`;
+segnaposto dai comandi della scheda finche' l'id manca).
+* Stile `box` con `look["amp"]` (formato in `amp_layout.py`): `kind` combo | head | cab | rack | flip, `dims` (W, H, D) mm,
+  `scale` (riduzione che da' ai pomelli disegnati dall'interfaccia la grandezza apparente dei pomelli veri), `view` front | top
+  (pannello sul frontale o sul cielo: AC30, AC15, Bassman tweed, B-15), `panel` (rettangolo, colori, finitura, incasso, nome),
+  `entries` (posizioni del pannello vero), `face` (griglie, lamiera mandorlata), `covering`, `logo`, `corners`, `handle`, `feet`,
+  `speakers`, `back`, `console` (casse).
+* I comandi funzionali si posano sulle posizioni del pannello vero per etichetta, canale e sinonimi (`amp_layout.assign`):
+  i concentrici delle schede funzionali tornano pomelli separati e un comando che cade su un cursore del pannello vero diventa
+  cursore (`amp_catalog.fit_kinds`, valori e ruoli invariati); i selettori senza un posto proprio (MODE, CHANNEL, EFFECT...)
+  vanno sul commutatore che riassumono (il pannello stampa allora l'etichetta del comando), poi in uno spazio libero, su un
+  comando fisso senza funzione o, per INPUT, al posto di una coppia di prese d'ingresso. Le posizioni senza comando restano
+  comandi fissi modellati nel render (pomelli a gonna, a calotta dorata, a puntatore, levette, prese, spia a gioiello).
+* Inquadratura: camera quasi orizzontale (80 gradi) per i pannelli frontali, 38 gradi per quelli sul cielo; le filmstrip dei
+  pomelli sono centrate sul punto del pannello (`pedal_geometry.amp_control`). Casse: i comandi CabIR stanno su una pedaliera a
+  leggio davanti alla cassa (una o due file), con footswitch e LED.
+* Serigrafie e tele: `amp_textures.py` (`<id>_apanel`, `_agrille<k>`, `_alogo` solo in modalita' normale con la scritta originale
+  "Trinity", `_aback`, `_aconsole`, lamiera mandorlata); geometria Blender: `render_amps.py`. Modalita' normale: nome e sigla
+  Pedal Trinity; REAL MOD: nome e sigla reali senza marchio (marche in `real_catalog.NO_BRAND`), nessun logo.
+* Retro: `render_pedals.py` renderizza anche `<id>_back.png` (ampli girato di 180 gradi: piastra del telaio con le prese,
+  valvole visibili, trasformatori, magneti, pannelli posteriori o feritoie); `convert_and_inc.py` lo converte in
+  `Resources/pedals/<id>_back.jpg` (+ `_back_a.png`) e `Resources/pedals_real/r_<id>_back.jpg`: l'interfaccia mostra il tasto
+  Retro nello zoom quando trova l'immagine.
