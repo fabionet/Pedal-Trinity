@@ -2,7 +2,7 @@
     Pedal Trinity - Copyright (C) 2026 FabioNET - GNU GPL v3 (vedi LICENSE)
 
     Applicazione Standalone personalizzata:
-      * finestra con titolo "Pedal Trinity 1.3.1 beta";
+      * finestra con titolo "Pedal Trinity 1.4.0 beta";
       * su Windows, al primo avvio, seleziona i driver ASIO se presenti;
       * ingresso audio attivo di default (e' un effetto per chitarra);
       * riga di comando:
@@ -11,6 +11,8 @@
               --scale s  --size WxH  --view n  --first i  --factory numero|nome
               --zoom slot  --info  --options  --theme pro|tolex|walnut|green|alu|night  --chain id,id@B,split=0.5,...  --set slot:comando=valore (ripetibile)
               --nam slot:A|B=file.nam  --ir slot:A|B=file.wav   (NAM-A1A2)  --real (REAL MOD)  --photos (usa le foto personali)
+              --routing (Mappa di Routing)  --routezoom z  --routemove slot:x,y (ripetibile; slot I/O = in/out)
+              --back (con --zoom: mostra il retro)  --backimage file.jpg (immagine di prova del retro, solo screenshot)
 */
 
 #include <juce_audio_devices/juce_audio_devices.h>
@@ -33,6 +35,8 @@
 #include "PluginEditor.h"
 #include "gui/Theme.h"
 #include "gui/Pedalboard.h"
+#include "gui/RoutingMap.h"
+#include "gui/Rack.h"
 #include "Version.h"
 #include "engine/Circuit.h"
 #include "engine/FxNam.h"
@@ -42,6 +46,12 @@
 #include "gui/RealMod.h"
 #include "Presets.h"
 #include "gui/Assets.h"
+
+namespace pt::engine
+{
+    /** FxStage6Cab.cpp: true quando la IR dei comandi attuali e' pronta (aiuto per i banchi di prova). */
+    bool i6CabSettled (const Effect& fx);
+}
 
 namespace
 {
@@ -315,10 +325,26 @@ namespace
             bool noBrand = true;
             for (auto* brand : { "BOSS", "Roland", "Dunlop", "Ernie Ball", "Morley", "DeArmond", "MXR", "Ibanez", "Electro-Harmonix", "Behringer", "Cuvave", "M-VAVE", "MVAVE" })
                 noBrand = noBrand && ! rn.containsIgnoreCase (brand);
+            // tappa 6: marchi degli ampli, delle casse, dei coni e dei microfoni, come parola intera ("English Muff'n" non contiene ENGL)
+            auto hasWord = [] (const juce::String& s, const juce::String& w)
+            {
+                for (int i = s.indexOfIgnoreCase (w); i >= 0; i = s.indexOfIgnoreCase (i + 1, w))
+                {
+                    const int e = i + w.length();
+                    if ((i == 0 || ! juce::CharacterFunctions::isLetterOrDigit (s[i - 1])) && (e >= s.length() || ! juce::CharacterFunctions::isLetterOrDigit (s[e])))
+                        return true;
+                }
+                return false;
+            };
+            for (auto* brand : { "Fender", "Vox", "Marshall", "Mesa", "Boogie", "Mesa/Boogie", "Peavey", "Soldano", "Orange", "Hiwatt", "Matchless", "Dumble",
+                                 "Friedman", "Bogner", "ENGL", "Diezel", "Ampeg", "Gallien-Krueger", "Gallien", "Krueger", "Celestion", "Jensen", "Eminence",
+                                 "Electro-Voice", "JBL", "Weber", "Fane", "EVH", "Laney", "Supro", "Hughes & Kettner", "Shure", "Sennheiser", "Royer", "Neumann",
+                                 "AKG", "beyerdynamic", "Audio-Technica" })
+                noBrand = noBrand && ! hasWord (rn, brand);
             same = same && r->image != nullptr && pt::ui::Assets::pedalImage (r->image).isValid() && noBrand && r->bodyW > 0;
             if (same) ++ok; else { ++bad; if (firstBad.isEmpty()) firstBad = d.id; }
         }
-        report ("REAL MOD: una replica per ogni pedale BOSS (e per gli altri pedali reali), stessi comandi nello stesso ordine",
+        report ("REAL MOD: una replica per ogni pedale BOSS (e per gli altri pedali, ampli e casse reali), stessi comandi nello stesso ordine, nomi senza marchi",
                 bad == 0 && ok == withReal && numRealModels() == withReal && withReal >= boss,
                 juce::String (ok) + "/" + juce::String (withReal) + " repliche (" + juce::String (boss) + " BOSS)"
                     + (firstBad.isNotEmpty() ? ", problema: " + firstBad : juce::String()));
@@ -657,6 +683,384 @@ namespace
             }
             report ("Pedane: tutti i materiali disegnati (anche ricolorati)", painted == (int) themes.size(),
                     juce::String (painted) + "/" + juce::String ((int) themes.size()));
+        }
+    }
+
+    //==============================================================================
+    // Mappa di Routing e retro degli ampli (preparazione)
+    //==============================================================================
+    /** Catena da una descrizione "id,id@B,id!,split=0.5,-" (- = slot vuoto, ! = staccato, @B = corsia B). */
+    juce::ValueTree routeChainSpec (const juce::String& spec)
+    {
+        juce::ValueTree t ("CHAIN");
+        for (auto& tok : juce::StringArray::fromTokens (spec, ",", ""))
+        {
+            juce::ValueTree s ("SLOT");
+            const auto id = tok.upToFirstOccurrenceOf ("@", false, false).upToFirstOccurrenceOf ("=", false, false).upToFirstOccurrenceOf ("!", false, false);
+            s.setProperty ("model", id == "-" ? juce::String() : id, nullptr);
+            s.setProperty ("on", true, nullptr);
+            if (tok.contains ("!")) s.setProperty ("patched", false, nullptr);
+            if (tok.contains ("@B")) s.setProperty ("lane", 1, nullptr);
+            if (tok.contains ("=")) s.setProperty ("p0", tok.fromFirstOccurrenceOf ("=", false, false).getFloatValue(), nullptr);
+            t.appendChild (s, nullptr);
+        }
+        return t;
+    }
+
+    void runRoutingTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using pt::ui::RoutingMap;
+        auto findBoard = [] (juce::Component& ed) -> pt::ui::Pedalboard*
+        {
+            for (auto* c : ed.getChildren())
+                if (auto* b = dynamic_cast<pt::ui::Pedalboard*> (c)) return b;
+            return nullptr;
+        };
+        auto patchMask = [] (const pt::engine::Chain& ch)
+        {
+            juce::String m;
+            for (int i = 0; i < ch.size(); ++i) m << (ch.isPatched (i) ? '1' : '0');
+            return m;
+        };
+
+        // 1. ogni spina, ogni estremita', ogni bersaglio: la mappa fa esattamente cio' che fa la pedaliera
+        {
+            const char* specs[] = { "ds1,ce2!,-,bd2,dd3,mt2", "ds1,split=0.5,dd3,rv6@B,bd2,mt2@B,ce2!", "ds1,split=1,ce2,dd3,bd2" };
+            int cases = 0, same = 0, changed = 0, refused = 0;
+            juce::String firstDiff;
+            for (auto* spec : specs)
+            {
+                PedalTrinityProcessor p;
+                p.chain.fromValueTree (routeChainSpec (spec));
+                p.uiState.setProperty ("view", 18, nullptr);
+                std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
+                ed->setSize (1920, 1080);
+                auto* editor = dynamic_cast<PedalTrinityEditor*> (ed.get());
+                auto* board = findBoard (*ed);
+                if (editor == nullptr || board == nullptr) { report ("Mappa di Routing: pedaliera ed editor", false, "non trovati"); return; }
+                board->refresh();
+                editor->showRouting (true);
+                auto* map = editor->routingMap();
+                map->fitAll (false);
+                const auto initial = patchMask (p.chain);
+                auto restore = [&]
+                {
+                    for (int i = 0; i < p.chain.size(); ++i) p.chain.setPatched (i, initial[i] == '1');
+                    board->refresh();
+                    map->refresh();
+                };
+                if (board->describeCables() != map->describeCables())
+                {
+                    report ("Mappa di Routing: stessi cavi della pedaliera", false, board->describeCables() + " / " + map->describeCables());
+                    return;
+                }
+                // bersagli corrispondenti: pedali, INPUT, OUTPUT, spazio libero, fuori
+                struct T { juce::Point<float> b, m; juce::String name; };
+                std::vector<T> targets;
+                for (int i = 0; i < p.chain.size(); ++i)
+                    if (p.chain.slot (i)->fx != nullptr)
+                        targets.push_back ({ board->slotArea (i).getCentre().toFloat(), map->nodeScreenCentre (i), "slot " + juce::String (i) });
+                targets.push_back ({ board->inputPanelArea().getCentre().toFloat(), map->nodeScreenCentre (RoutingMap::inputNode), "INPUT" });
+                targets.push_back ({ board->outputPanelArea().getCentre().toFloat(), map->nodeScreenCentre (RoutingMap::outputNode), "OUTPUT" });
+                targets.push_back ({ board->emptyPointForTest(), map->emptyScreenPoint(), "vuoto" });
+                targets.push_back ({ { -50.0f, -50.0f }, { 3.0f, 3.0f }, "fuori" });
+                const int nConn = map->numCables();
+                for (int c = 0; c < nConn; ++c)
+                    for (bool dest : { false, true })
+                        for (const auto& t : targets)
+                        {
+                            restore();
+                            const bool rb = board->dropPlugForTest (c, dest, t.b);
+                            const auto sb = board->describeCables() + " " + patchMask (p.chain);
+                            restore();
+                            const bool rm = map->dropPlugForTest (c, dest, t.m);
+                            const auto sm = map->describeCables() + " " + patchMask (p.chain);
+                            ++cases;
+                            if (rb == rm && sb == sm) ++same;
+                            else if (firstDiff.isEmpty())
+                                firstDiff = juce::String (spec) + " cavo " + juce::String (c) + (dest ? " dest " : " sorg ") + t.name + ": " + sb + " / " + sm;
+                            changed += rm ? 1 : 0;
+                            refused += (! rm && map->lastNoticeWasError()) ? 1 : 0;
+                        }
+                restore();
+            }
+            report ("Mappa di Routing: replug dalla mappa uguale al replug della pedaliera (ogni cavo, estremita' e bersaglio; singola, DUAL, STEREO)",
+                    cases > 100 && same == cases && changed > 10 && refused > 10,
+                    juce::String (same) + "/" + juce::String (cases) + " casi uguali, " + juce::String (changed) + " cambi, "
+                        + juce::String (refused) + " rifiuti con avviso" + (firstDiff.isEmpty() ? juce::String() : " | " + firstDiff));
+        }
+
+        // 2. rifiuto con avviso chiaro, sincronia mappa <-> pedaliera, LED, Esc
+        {
+            PedalTrinityProcessor p;
+            p.chain.fromValueTree (routeChainSpec ("ds1,ce2,bd2,dd3"));
+            p.uiState.setProperty ("view", 6, nullptr);
+            std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
+            ed->setSize (1280, 760);
+            auto* editor = dynamic_cast<PedalTrinityEditor*> (ed.get());
+            auto* board = findBoard (*ed);
+            editor->showRouting (true);
+            auto* map = editor->routingMap();
+            const auto start = map->describeCables();
+            // ingresso di BD-2 (cavo 2) portato all'indietro su DS-1: rifiutato, il cavo torna dov'era
+            const bool moved = map->dropPlugForTest (2, true, map->nodeScreenCentre (0));
+            const bool refusedOk = ! moved && map->describeCables() == start && map->lastNoticeWasError()
+                                   && map->lastNotice().contains ("non ammesso") && map->lastNotice().contains ("sinistra a destra");
+            report ("Mappa di Routing: ricollegamento non ammesso, il cavo torna dov'era con un avviso", refusedOk, map->lastNotice());
+
+            // la mappa stacca CE-2: la pedaliera lo vede subito (stessa catena), e viceversa
+            map->dropPlugForTest (1, true, map->emptyScreenPoint());
+            p.chain.dispatchPendingMessages();
+            const bool m2b = ! p.chain.isPatched (1) && board->describeCables() == map->describeCables() && board->describeCables() == "I>0 0>2 2>3 3>O";
+            board->dropPlugForTest (0, true, board->slotArea (1).getCentre().toFloat());      // INPUT infilato in CE-2: torna in catena, DS-1 scavalcato
+            p.chain.dispatchPendingMessages();
+            const bool b2m = map->describeCables() == board->describeCables() && map->describeCables() == "I>1 1>2 2>3 3>O";
+            map->clickLedForTest (2);
+            p.chain.dispatchPendingMessages();
+            const bool led = ! p.chain.slot (2)->enabled.load();
+            map->clickLedForTest (2);
+            const bool led2 = p.chain.slot (2)->enabled.load();
+            bool closed = false;
+            map->onClose = [&closed] { closed = true; };
+            map->keyPressed (juce::KeyPress (juce::KeyPress::escapeKey));
+            report ("Mappa di Routing: cambi dalla mappa subito sulla pedaliera e viceversa, LED cliccabile, Esc chiude",
+                    m2b && b2m && led && led2 && closed,
+                    juce::String (m2b ? "mappa->pedaliera " : "- ") + (b2m ? "pedaliera->mappa " : "- ") + (led && led2 ? "LED " : "- ") + (closed ? "Esc" : "-")
+                        + " | " + map->describeCables());
+        }
+
+        // 3. posizioni salvate nello stato del progetto (non nei preset) e ricaricate; progetti vecchi = automatica
+        {
+            PedalTrinityProcessor p;
+            p.chain.fromValueTree (routeChainSpec ("ds1,ce2,bd2,dd3,mt2"));
+            p.routeLayout.fromValueTree ({});
+            std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
+            ed->setSize (1280, 760);
+            auto* editor = dynamic_cast<PedalTrinityEditor*> (ed.get());
+            editor->showRouting (true);
+            auto* map = editor->routingMap();
+            const auto before = map->nodeWorldBounds (2);
+            const auto target = map->nodeScreenCentre (4).translated (0.0f, 260.0f * map->getZoom());
+            map->dragNodeForTest (2, target);
+            map->dragNodeForTest (RoutingMap::inputNode, map->nodeScreenCentre (RoutingMap::inputNode).translated (0.0f, 300.0f * map->getZoom()));
+            map->setZoom (0.9f, map->nodeScreenCentre (0));
+            juce::Point<float> p2, pin;
+            const bool stored = p.routeLayout.slotPos (2, p2) && p.routeLayout.ioPos (0, pin) && p.routeLayout.numPlaced() == 2
+                                && p2 != before.getTopLeft() && map->nodeWorldBounds (2).getTopLeft() == p2;
+            editor->showRouting (false);
+            juce::MemoryBlock blob;
+            p.getStateInformation (blob);
+            PedalTrinityProcessor q;
+            q.setStateInformation (blob.getData(), (int) blob.getSize());
+            juce::Point<float> q2, qin;
+            const bool reloaded = q.routeLayout.slotPos (2, q2) && q.routeLayout.ioPos (0, qin) && q2.getDistanceFrom (p2) < 0.01f
+                                  && qin.getDistanceFrom (pin) < 0.01f && std::abs (q.routeLayout.zoom() - 0.9f) < 0.001f && q.routeLayout.numPlaced() == 2;
+            // la mappa riaperta mostra l'oggetto dove era stato lasciato
+            std::unique_ptr<juce::AudioProcessorEditor> ed2 (q.createEditor());
+            ed2->setSize (1280, 760);
+            auto* editor2 = dynamic_cast<PedalTrinityEditor*> (ed2.get());
+            editor2->showRouting (true);
+            const bool reopened = editor2->routingMap()->nodeWorldBounds (2).getTopLeft().getDistanceFrom (p2) < 0.01f
+                                  && std::abs (editor2->routingMap()->getZoom() - 0.9f) < 0.001f;
+            // preset: formato invariato (nessun nodo della mappa); progetto vecchio senza mappa: disposizione automatica
+            const bool presetClean = ! p.captureState().getChildWithName ("ROUTEMAP").isValid();
+            juce::MemoryBlock old;
+            if (auto xml = p.captureState().createXml()) juce::AudioProcessor::copyXmlToBinary (*xml, old);
+            PedalTrinityProcessor r;
+            r.setStateInformation (old.getData(), (int) old.getSize());
+            const bool oldProject = r.routeLayout.numPlaced() == 0 && r.routeLayout.zoom() == 0.0f && r.chain.size() == 5;
+            report ("Mappa di Routing: posizioni e zoom salvati nel progetto e ricaricati; preset invariati; progetti vecchi in disposizione automatica",
+                    stored && reloaded && reopened && presetClean && oldProject,
+                    juce::String (stored ? "salvate " : "- ") + (reloaded ? "ricaricate " : "- ") + (reopened ? "riaperte " : "- ")
+                        + (presetClean ? "preset puliti " : "- ") + (oldProject ? "progetto vecchio" : "-")
+                        + "  slot 3 in " + juce::String (q2.x, 1) + "," + juce::String (q2.y, 1));
+
+            // le posizioni seguono gli slot: spostamenti, inserimenti, cambio di pedale, rimozione
+            auto& ch = q.chain;
+            auto& lay = q.routeLayout;
+            juce::Point<float> t0;
+            ch.move (2, 0);
+            const bool mv = lay.slotPos (0, t0) && t0.getDistanceFrom (p2) < 0.01f && ! lay.slotPos (2, t0);
+            ch.insert (0, "ce2");
+            const bool ins = lay.slotPos (1, t0) && t0.getDistanceFrom (p2) < 0.01f && ! lay.slotPos (0, t0);
+            ch.setModel (1, "ds1");
+            const bool mdl = lay.slotPos (1, t0) && t0.getDistanceFrom (p2) < 0.01f;
+            ch.remove (1);
+            const bool rem = lay.numPlaced() == 1;                       // resta solo l'INPUT
+            // nodo alterato in un progetto: valori non validi scartati
+            juce::ValueTree bad ("ROUTEMAP");
+            bad.setProperty ("zoom", std::nan (""), nullptr);
+            for (auto v : { std::nan (""), 1.0e30, 3.0 })
+            {
+                juce::ValueTree n ("NODE");
+                n.setProperty ("i", v == 3.0 ? 99.0 : 1.0, nullptr);
+                n.setProperty ("x", v, nullptr);
+                n.setProperty ("y", 10.0, nullptr);
+                bad.appendChild (n, nullptr);
+            }
+            lay.fromValueTree (bad);
+            const bool safe = lay.numPlaced() == 0 && lay.zoom() == 0.0f;
+            report ("Mappa di Routing: le posizioni seguono gli slot (sposta, inserisci, cambia pedale, rimuovi); valori alterati scartati",
+                    mv && ins && mdl && rem && safe,
+                    juce::String (mv ? "sposta " : "- ") + (ins ? "inserisci " : "- ") + (mdl ? "cambio " : "- ") + (rem ? "rimuovi " : "- ") + (safe ? "alterati" : "-"));
+        }
+
+        // 4. mappa con 100 slot e splitter DUAL
+        {
+            juce::StringArray tok;
+            const char* ids[] = { "ds1", "ce2", "bd2", "dd3", "rv6", "mt2", "ph3", "cs3", "gq7", "od3" };
+            for (int i = 0; i < 100; ++i)
+                tok.add (i == 40 ? juce::String ("split=0.5") : juce::String (ids[i % 10]) + (i > 40 && i % 2 == 0 ? "@B" : ""));
+            PedalTrinityProcessor p;
+            p.chain.fromValueTree (routeChainSpec (tok.joinIntoString (",")));
+            std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
+            ed->setSize (1280, 760);
+            auto* editor = dynamic_cast<PedalTrinityEditor*> (ed.get());
+            auto* board = findBoard (*ed);
+            editor->showRouting (true);
+            auto* map = editor->routingMap();
+            int overlaps = 0;
+            bool finite = true;
+            for (int i = -2; i < 100; ++i)
+            {
+                const auto a = map->nodeWorldBounds (i);
+                finite = finite && ! a.isEmpty() && std::isfinite (a.getX()) && std::isfinite (a.getY());
+                for (int j = i + 1; j < 100; ++j)
+                    overlaps += a.intersects (map->nodeWorldBounds (j)) ? 1 : 0;
+            }
+            const auto t0 = juce::Time::getMillisecondCounterHiRes();
+            auto img = ed->createComponentSnapshot (ed->getLocalBounds(), true, 1.0f);
+            const double ms = juce::Time::getMillisecondCounterHiRes() - t0;
+            const bool counts = map->numNodes() == 102 && map->numCables() == (int) pt::ui::routing::connections (p.chain).size()
+                                && map->describeCables() == board->describeCables();
+            const bool readable = map->getZoom() >= 0.69f;
+            // uno slot della corsia B staccato dalla mappa (dopo averlo portato in vista), e uno che prova a cambiare corsia
+            map->scrollToNode (60);
+            int connB = -1, connA = -1;
+            const auto conns = pt::ui::routing::connections (p.chain);
+            for (int c = 0; c < (int) conns.size(); ++c)
+            {
+                if (conns[(size_t) c].b.kind == pt::ui::routing::End::SlotIn && conns[(size_t) c].b.slot == 60) connA = c;      // 60: corsia A
+                if (conns[(size_t) c].b.kind == pt::ui::routing::End::SlotIn && conns[(size_t) c].b.slot == 61) connB = c;      // 61: corsia B
+            }
+            const bool laneRefused = ! map->dropPlugForTest (connB, true, map->nodeScreenCentre (62)) && map->lastNotice().contains ("Corsia diversa");
+            map->scrollToNode (60);
+            const bool unplug = map->dropPlugForTest (connA, true, map->emptyScreenPoint()) && ! p.chain.isPatched (60);
+            p.chain.dispatchPendingMessages();
+            const bool synced = board->describeCables() == map->describeCables();
+            map->scrollToNode (99);
+            map->dragNodeForTest (99, map->nodeScreenCentre (99).translated (40.0f, 60.0f));
+            const int placed = p.routeLayout.numPlaced();
+            map->autoArrange();
+            report ("Mappa di Routing: 100 slot con splitter DUAL (102 oggetti senza sovrapposizioni, cavi, corsie, disegno, disposizione automatica)",
+                    counts && overlaps == 0 && finite && readable && img.isValid() && ms < 3000.0 && laneRefused && unplug && synced && placed == 1
+                        && p.routeLayout.numPlaced() == 0,
+                    juce::String (map->numNodes()) + " oggetti, " + juce::String (map->numCables()) + " cavi, " + juce::String (overlaps) + " sovrapposizioni, zoom "
+                        + juce::String (map->getZoom(), 2) + ", disegno " + juce::String (ms, 0) + " ms" + (laneRefused ? ", corsia rifiutata" : ", corsia ??")
+                        + (unplug ? ", staccato" : ", stacco ??") + (synced ? ", pedaliera allineata" : ", pedaliera ??")
+                        + ", spostati " + juce::String (placed) + " -> " + juce::String (p.routeLayout.numPlaced()) + (finite ? "" : ", posizioni non valide"));
+        }
+
+        // 5. tasto "Mappa di Routing" nella barra: visibile e senza sovrapposizioni da 1280x760 a 2560x1440
+        {
+            PedalTrinityProcessor p;
+            p.chain.fromValueTree (routeChainSpec ("ds1,ce2,bd2,dd3,rv6,mt2,ph3,cs3,gq7,od3,ds1,ce2"));
+            p.uiState.setProperty ("first", 3, nullptr);
+            std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
+            int bad = 0, sizes = 0;
+            juce::String detail;
+            for (auto sz : PedalTrinityEditor::sizePresets())
+            {
+                ed->setSize (sz.x, sz.y);
+                ++sizes;
+                juce::Array<juce::Component*> bar;
+                juce::Component* mapButton = nullptr;
+                for (auto* c : ed->getChildren())
+                {
+                    if (! c->isVisible() || c->getBounds().getBottom() > 50 || c->getWidth() <= 0) continue;
+                    bar.add (c);
+                    if (c->getName() == "Mappa di Routing") mapButton = c;
+                }
+                bool okSize = mapButton != nullptr && mapButton->getWidth() >= 70 && ed->getLocalBounds().contains (mapButton->getBounds());
+                for (int i = 0; i < bar.size(); ++i)
+                {
+                    okSize = okSize && bar[i]->getX() >= 0 && bar[i]->getRight() <= sz.x;
+                    if (auto* b = dynamic_cast<juce::Button*> (bar[i])) okSize = okSize && b->getWidth() >= 26;
+                    for (int j = i + 1; j < bar.size(); ++j)
+                        if (bar[i]->getBounds().intersects (bar[j]->getBounds()))
+                        {
+                            okSize = false;
+                            detail << sz.x << ": " << bar[i]->getName() << "/" << bar[j]->getName() << " ";
+                        }
+                }
+                if (! okSize) { ++bad; if (detail.isEmpty()) detail << sz.x << ": tasto della mappa assente o stretto "; }
+            }
+            report ("Barra: tasto \"Mappa di Routing\" visibile, nessuna sovrapposizione da 1280x760 a 2560x1440",
+                    bad == 0 && sizes == 5, juce::String (sizes - bad) + "/" + juce::String (sizes) + " misure " + detail);
+        }
+
+        // 6. leggibilita' della mappa con ogni tema (contrasto WCAG >= 4.5:1)
+        {
+            double worst = 99;
+            juce::String worstName;
+            for (const auto& t : pt::ui::allThemes())
+                if (const double c = RoutingMap::minContrast (t); c < worst) { worst = c; worstName = t.name; }
+            report ("Mappa di Routing: testi leggibili con tutti i temi (WCAG >= 4.5:1)", worst >= 4.5,
+                    "minimo " + juce::String (worst, 1) + ":1 (" + worstName + ")");
+        }
+
+        // 7. retro degli ampli: ricerca per nome nel BinaryData, tasto Retro/Fronte nello zoom
+        {
+            using pt::ui::Assets;
+            const bool names = Assets::backResourceFor ("ds1_jpg") == "ds1_back_jpg" && Assets::backResourceFor ("r_ds1_jpg") == "r_ds1_back_jpg"
+                               && Assets::backResourceFor ("ds1_back_jpg").isEmpty() && Assets::backResourceFor ("ds1_png").isEmpty()
+                               && Assets::backResourceFor (nullptr).isEmpty() && Assets::backResourceFor ("_jpg").isEmpty();
+            int withBack = 0;
+            for (int i = 0; i < pt::engine::numModels(); ++i)
+                withBack += pt::ui::backImageFor (&pt::engine::model (i)).isValid() ? 1 : 0;
+            const bool binary = Assets::hasResource ("ds1_jpg") && ! Assets::hasResource ("ds1_back_jpg") && ! Assets::hasResource ("");
+            report ("Retro degli ampli: nome della risorsa del retro (<id>_back.jpg, r_<id>_back.jpg) cercato nel BinaryData",
+                    names && binary, juce::String (withBack) + " modelli con il retro nel BinaryData (arriveranno con gli ampli)");
+
+            // immagine di prova creata solo qui (mai nel programma): retro per DS-1 e per la sua replica REAL MOD
+            juce::Image test (juce::Image::ARGB, 300, 200, true);
+            {
+                juce::Graphics g (test);
+                g.fillAll (juce::Colour (0xff3a3c40));
+                g.setColour (juce::Colours::white);
+                g.drawText ("RETRO DI PROVA", test.getBounds(), juce::Justification::centred);
+            }
+            juce::StringArray asked;
+            pt::ui::setBackImageLookup ([test, &asked] (const juce::String& name)
+            {
+                asked.add (name);
+                return name == "ds1_back_jpg" || name == "r_ds1_back_jpg" ? test : juce::Image();
+            });
+            pt::engine::Chain chain;
+            chain.fromValueTree (routeChainSpec ("ds1,ce2"));
+            juce::SharedResourcePointer<pt::ui::ThemeManager> themes;
+            const bool wasReal = themes->realMode();
+            themes->previewRealMode (false);
+            pt::ui::ZoomPanel zp (chain, 0, nullptr);
+            zp.setSize (1280, 760);
+            const bool front = zp.hasBack() && zp.flipButtonVisible() && ! zp.showingBack() && zp.flipButtonText() == "Retro";
+            zp.setShowBack (true, false);
+            const bool backOn = zp.showingBack() && zp.flipButtonText() == "Fronte";
+            zp.setShowBack (false, false);
+            const bool backOff = ! zp.showingBack() && zp.flipButtonText() == "Retro";
+            zp.setShowBack (true, false);
+            zp.show (1);                                           // CE-2: nessun retro, si torna al fronte e il tasto sparisce
+            const bool none = ! zp.hasBack() && ! zp.flipButtonVisible() && ! zp.showingBack();
+            themes->previewRealMode (true);
+            zp.show (0);
+            const bool real = zp.hasBack() && asked.contains ("r_ds1_back_jpg");
+            themes->previewRealMode (wasReal);
+            pt::ui::setBackImageLookup ({});
+            const bool restored = ! pt::ui::backImageFor (pt::engine::findModel ("ds1")).isValid();
+            report ("Retro degli ampli: tasto Retro/Fronte nello zoom solo se c'e' l'immagine del retro (anche REAL MOD; immagine di prova solo nel test)",
+                    front && backOn && backOff && none && real && restored,
+                    juce::String (front ? "fronte " : "- ") + (backOn ? "retro " : "- ") + (backOff ? "di nuovo fronte " : "- ") + (none ? "senza retro " : "- ")
+                        + (real ? "REAL MOD " : "- ") + (restored ? "BinaryData" : "-"));
         }
     }
 
@@ -1358,6 +1762,25 @@ namespace
         "cvminiuniverse", "cvelemental", "cvelementalpro", "cvgalaxia", "cvirbox" };
     /** Modelli s2/s3/s4 della tappa 5 che makeClassic non aggancia: WahWah (type=inductor, makeWah), SE200 e VB1 (netlist Circuit), looper. */
     const char* const kStage5NotHooked[] = { "bhwahwah", "bhse200", "bhvb1", "cvlooper", "cvlooperpro", "cvloop2" };
+
+    //==============================================================================
+    // Tappa 6 (simulatori d'ampli e di cassa): 27 ampli (famiglia AmpSim, categoria "Amplificatori": lavoro A Fender/Vox/Hiwatt/Orange/
+    // Marshall, lavoro B alto guadagno, JC-120 e ampli da basso) e 31 casse (famiglia CabIR, tipo "i6cab", categoria "Casse") piu' il
+    // laboratorio di cassa
+    //==============================================================================
+    const char* const kStage6Amps[] = { "amtwinreverb", "amdeluxereverb", "amprincetonreverb", "ambassman5f6a", "amac30tb", "amac15", "amdc30",
+        "amdr103", "amor120", "amjtm45", "am1959slp", "amjcm800", "amjcm900", "amjubilee", "ammark2cplus", "amdualrecto", "am5150", "amslo100",
+        "ambe100", "amdumbleods", "amecstasy", "ampowerball", "amvh4", "amjc120", "amgk800rb", "amsvt", "amb15n" };
+    /** I primi 14 di kStage6Amps sono del lavoro A, gli altri 13 del lavoro B. */
+    constexpr int kStage6AmpsA = 14;
+    const char* const kStage6Cabs[] = { "cbprinceton110", "cbdeluxe112", "cbtwin212", "cbbassman410", "cbac30212", "cbac15112", "cbv212blue",
+        "cbm1960a", "cbm1960b", "cbm1960bw", "cbm1936", "cbhiwatt412", "cbppc412", "cbppc212", "cbmatchless212", "cbjc120212", "cbrecto412",
+        "cbrecto412tr", "cbmesa112", "cbmesa212", "cb5150412", "cbsoldano412", "cbengl412", "cbdiezel412", "cbbogner412", "cbfriedman412",
+        "cbfriedman212", "cbsvt810", "cbsvt410", "cbb15115", "cbgk410" };
+    /** Laboratorio di cassa (formato, banco di coni, microfono e posizione a scelta): entra nei controlli comuni delle casse e
+        nell'aggancio di makeClassic quando e' a catalogo. */
+    constexpr const char* kStage6Lab = "cblab";
+    template <size_t N> constexpr int countOf (const char* const (&)[N]) { return (int) N; }
 
 
     void runStage3AnalogTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
@@ -2107,6 +2530,9 @@ namespace
                 for (const char* n : kStage5Dyn) if (std::strcmp (n, id) == 0) return true;
                 for (const char* n : kStage5Mod) if (std::strcmp (n, id) == 0) return true;
                 for (const char* n : kStage5Digital) if (std::strcmp (n, id) == 0) return true;
+                // tappa 6: le casse e il laboratorio (tipo "i6cab", makeStage6); gli ampli sono netlist AmpSim (motore Circuit)
+                for (const char* n : kStage6Cabs) if (std::strcmp (n, id) == 0) return true;
+                if (std::strcmp (id, kStage6Lab) == 0) return true;
                 return false;
             };
             int hooked = 0, total = 0;
@@ -2124,13 +2550,14 @@ namespace
                 const bool h = makeClassic (realModel (i)) != nullptr;
                 if (h) { ++hooked; if (! isNew (realModel (i).id)) bad << realModel (i).id << "(REAL) "; }
             }
-            constexpr int expected = (int) (sizeof (kStage3Digital) / sizeof (kStage3Digital[0]) + sizeof (kStage3BDigital) / sizeof (kStage3BDigital[0])
+            const int expected = (int) (sizeof (kStage3Digital) / sizeof (kStage3Digital[0]) + sizeof (kStage3BDigital) / sizeof (kStage3BDigital[0])
                                             + sizeof (kStage4Dyn) / sizeof (kStage4Dyn[0]) + sizeof (kStage4Mod) / sizeof (kStage4Mod[0])
                                             + sizeof (kStage4Digital) / sizeof (kStage4Digital[0])) - 2
                                      + (int) (sizeof (kStage5Dyn) / sizeof (kStage5Dyn[0]) + sizeof (kStage5Mod) / sizeof (kStage5Mod[0])
-                                             + sizeof (kStage5Digital) / sizeof (kStage5Digital[0]) - sizeof (kStage5NotHooked) / sizeof (kStage5NotHooked[0]));
-            report ("Tappa 3A/3B/4/5: makeClassic aggancia i modelli nuovi (53 della 3A, 50 della 3B, 105 'i4' della tappa 4, 86 della tappa 5: 80 'i5' e 6 "
-                    "cloni sui tipi i4ross / otaphase / jfetphase) e nessun pedale esistente "
+                                             + sizeof (kStage5Digital) / sizeof (kStage5Digital[0]) - sizeof (kStage5NotHooked) / sizeof (kStage5NotHooked[0]))
+                                     + countOf (kStage6Cabs) + (findModel (kStage6Lab) != nullptr ? 1 : 0);
+            report ("Tappa 3A/3B/4/5/6: makeClassic aggancia i modelli nuovi (53 della 3A, 50 della 3B, 105 'i4' della tappa 4, 86 della tappa 5: 80 'i5' e 6 "
+                    "cloni sui tipi i4ross / otaphase / jfetphase; 31 casse 'i6cab' della tappa 6 piu' il laboratorio se a catalogo) e nessun pedale esistente "
                     "(catalogo e REAL MOD)",
                     bad.isEmpty() && hooked == expected, juce::String (hooked) + " agganciati su " + juce::String (total) + (bad.isEmpty() ? juce::String() : ", errati: " + bad.trim()));
         }
@@ -3706,7 +4133,6 @@ namespace
     //==============================================================================
     // Simulatori di cassa IR Loader: uscita deterministica (IR pronto dal primo campione, non dal thread di caricamento)
     //==============================================================================
-    template <size_t N> constexpr int countOf (const char* const (&)[N]) { return (int) N; }
 
     /** Copia di un modello "type=..." con chiavi aggiunte in fondo alla config (le chiavi ripetute sostituiscono le
         precedenti): solo il ramo ritardato ("mix=0,1"), senza rumore e compander ("noise=0 comp=0"), gate aperto ("gate=0").
@@ -7652,6 +8078,1219 @@ namespace
 
     /** 1.3.1: involucro senza click delle famiglie della prima versione del motore (Effects.cpp, SmoothFamily), dissolvenze
         del MUTE dei tuner e di LEVEL/MIX degli IR loader, modi separati della famiglia Acoustic. */
+    //==============================================================================
+    // Tappa 6: controlli numerici dei tre lavori del suono. Lavoro A: stadi nuovi di Circuit.cpp (pp finale push-pull con PI, NFB,
+    // presence/depth, trasformatore, carico d'altoparlante e sag; cf; pent; spring; opto; mna ramp=1) e 14 ampli; lavoro B: 13 ampli
+    // (alto guadagno, JC-120, ampli da basso); cassa: FxStage6Cab.cpp (IR generate, 31 casse e laboratorio). Metodi e valori dei
+    // banchi della tappa (work/ampA, work/ampB, work/cab: tests.md e report.md).
+    //==============================================================================
+    /** Stringa valida fino alla fine del programma (netlist di prova costruite a runtime; registrazione solo dal thread principale). */
+    const char* keepS6 (const std::string& s)
+    {
+        static std::deque<std::string> pool;
+        pool.push_back (s);
+        return pool.back().c_str();
+    }
+
+    /** Stadi di una netlist (separati da ';', senza spazi ai bordi). */
+    std::vector<std::string> stagesS6 (const char* cfg)
+    {
+        std::vector<std::string> out;
+        const std::string s (cfg != nullptr ? cfg : "");
+        for (size_t a = 0; a <= s.size();)
+        {
+            size_t b = s.find (';', a);
+            if (b == std::string::npos) b = s.size();
+            const auto t = juce::String (s.substr (a, b - a)).trim().toStdString();
+            if (! t.empty()) out.push_back (t);
+            a = b + 1;
+        }
+        return out;
+    }
+
+    /** I primi n stadi riuniti in una netlist (misura dei guadagni stadio per stadio, come stages.py del lavoro A). */
+    std::string prefixS6 (const std::vector<std::string>& st, size_t n)
+    {
+        std::string r;
+        for (size_t i = 0; i < n && i < st.size(); ++i) r += (i > 0 ? "; " : "") + st[i];
+        return r;
+    }
+
+    /** Misura su un modello del catalogo con la netlist sostituita per intero (comandi, scatti e default del modello, come il
+        "--cfg" del banco B); modello assente: la misura fallisce come le altre. */
+    int addWithNetlistS6 (Lab& lab, const char* id, const std::string& cfg, Lab::Measure m)
+    {
+        if (const auto* d = pt::engine::findModel (id))
+        {
+            auto c = *d;
+            c.config = keepS6 (cfg);
+            return lab.add (c, std::move (m));
+        }
+        return lab.add (id, std::move (m));
+    }
+
+    /** Stadio pp di un ampli da solo (measure2.py del lavoro A): presence, tremolo sul bias e CUT a 0, volume fra PI e finali a 1, finali
+        a pentodo; 'noNfb' toglie la resistenza della controreazione (fbR). */
+    std::string ppAloneS6 (const char* cfg, bool noNfb)
+    {
+        std::string pp, out;
+        for (const auto& s : stagesS6 (cfg)) if (s.rfind ("pp ", 0) == 0) pp = s;
+        juce::StringArray toks;
+        toks.addTokens (juce::String (pp), " ", "");
+        for (auto tok : toks)
+        {
+            if (tok.isEmpty()) continue;
+            const auto key = tok.upToFirstOccurrenceOf ("=", false, false);
+            if (key == "pr" || key == "bvib" || key == "cutR") tok = key + "=0";
+            else if (key == "mv") tok = "mv=1";
+            else if (tok == "rp=sw(0,15k,2k)") tok = "rp=15k";
+            else if (tok == "ipk=sw(0,0.5,0.32)") tok = "ipk=0.5";
+            else if (noNfb && key == "fbR") continue;
+            out += (out.empty() ? "" : " ") + tok.toStdString();
+        }
+        return out;
+    }
+
+    /** Riff del banco del lavoro B (Karplus-Strong, mt19937 seme 77: power chord in palm mute, accordi aperti, note singole acute),
+        picco -12 dBFS. */
+    Buf riffB6 (double sr, double seconds)
+    {
+        Buf y ((size_t) (sr * seconds), 0.0f);
+        std::mt19937 rng (77);
+        std::uniform_real_distribution<float> U (-1, 1);
+        struct Note { double t, f, dur, amp, damp; };
+        std::vector<Note> notes;
+        const double E2 = 82.41, A2 = 110.0, G3 = 196.0, B3 = 246.94, E4 = 329.63;
+        double t = 0.05;
+        for (int bar = 0; bar < 64 && t < seconds - 1.0; ++bar)
+        {
+            const int sec = bar % 8;
+            if (sec < 4)
+                for (int k = 0; k < 8; ++k)
+                {
+                    const double f = (k == 6 || k == 7) ? A2 : E2;
+                    notes.push_back ({ t, f, 0.12, 1.0, 0.88 });
+                    notes.push_back ({ t, f * 1.4983, 0.12, 0.8, 0.88 });
+                    t += 0.125;
+                }
+            else if (sec < 6)
+            {
+                for (double f : { E2, B3 * 0.5, E2 * 2, G3 * 1.26 / 1.26 * 1.0, B3, E4 }) notes.push_back ({ t, f, 0.95, 0.7, 0.996 });
+                t += 1.0;
+            }
+            else
+                for (double f : { E4, 392.0, 440.0, 493.88, 440.0, 392.0, E4, 293.66 }) { notes.push_back ({ t, f, 0.12, 0.9, 0.994 }); t += 0.125; }
+        }
+        for (const auto& nt : notes)
+        {
+            const int L = std::max (2, (int) std::lround (sr / nt.f));
+            std::vector<float> line ((size_t) L);
+            for (auto& v : line) v = U (rng);
+            for (int k = 1; k < L; ++k) line[(size_t) k] = 0.5f * (line[(size_t) k] + line[(size_t) k - 1]);
+            const size_t s0 = (size_t) (nt.t * sr), len = (size_t) (nt.dur * sr);
+            int idx = 0;
+            for (size_t i = 0; i < len + (size_t) (0.01 * sr) && s0 + i < y.size(); ++i)
+            {
+                const int j = (idx + 1) % L;
+                const float v = line[(size_t) idx];
+                line[(size_t) idx] = (float) (nt.damp * 0.5 * (line[(size_t) idx] + line[(size_t) j]));
+                idx = j;
+                double env = 1.0;
+                if (i > len) env = 1.0 - (double) (i - len) / (0.01 * sr);
+                y[s0 + i] += (float) (nt.amp * v * env);
+            }
+        }
+        float pk = 0;
+        for (float v : y) pk = std::max (pk, std::abs (v));
+        const float g = (float) (std::pow (10.0, -12.0 / 20.0) / std::max (1e-9f, pk));
+        for (auto& v : y) v *= g;
+        return y;
+    }
+
+    /** Banco B 'level': riff di 8 s, comandi per indice prima di prepare, blocchi da 256, 2 canali con lo stesso ingresso per i modelli
+        stereo; per canale { picco, RMS } in dBFS su tutto il segnale, poi (2 canali) la correlazione fra i canali, poi finito. */
+    std::vector<double> levelB6 (const pt::engine::ModelDef& d, const std::map<int, float>& p)
+    {
+        static const Buf riff = riffB6 (48000.0, 8.0);
+        const auto out = runS2 (d, riff, p, 48000.0, 256, d.stereo ? 2 : 1);
+        std::vector<double> r;
+        bool fin = true;
+        for (const auto& y : out)
+        {
+            double pk = 0;
+            for (float v : y) { fin = fin && std::isfinite (v); pk = std::max (pk, (double) std::abs (v)); }
+            r.push_back (20.0 * std::log10 (std::max (pk, 1e-12)));
+            r.push_back (20.0 * std::log10 (std::max (rmsOf (y), 1e-12)));
+        }
+        if (out.size() == 2)
+        {
+            double xy = 0, xx = 0, yy = 0;
+            for (size_t i = 0; i < out[0].size(); ++i)
+            {
+                xy += (double) out[0][i] * out[1][i];
+                xx += (double) out[0][i] * out[0][i];
+                yy += (double) out[1][i] * out[1][i];
+            }
+            r.push_back (xy / std::sqrt (xx * yy + 1e-30));
+        }
+        r.push_back (fin ? 1.0 : 0.0);
+        return r;
+    }
+
+    /** Ritardo (ms) di 'sig' rispetto a 'ref' nel tempo con un seno di frequenza f (periodo piu' lungo dell'escursione del ritardo, niente
+        ambiguita'): differenza di fase su finestre di un periodo ogni 2.5 ms, da 'from'; 400 valori al secondo. */
+    std::vector<double> phaseDelayS6 (const Buf& ref, const Buf& sig, double f, size_t from)
+    {
+        const double sr = 48000.0;
+        const int W = (int) std::lround (sr / f), step = 120;
+        auto phase = [&] (const Buf& y, size_t a)
+        {
+            double sn = 0, cs = 0;
+            for (int i = 0; i < W; ++i)
+            {
+                const double ph = 2 * kPi * f * (double) (a + (size_t) i) / sr;
+                sn += y[a + (size_t) i] * std::sin (ph);
+                cs += y[a + (size_t) i] * std::cos (ph);
+            }
+            return std::atan2 (cs, sn);
+        };
+        std::vector<double> out;
+        for (size_t a = from; a + (size_t) W < ref.size() && a + (size_t) W < sig.size(); a += (size_t) step)
+        {
+            double d = std::fmod (phase (ref, a) - phase (sig, a), 2 * kPi);
+            if (d < 0) d += 2 * kPi;
+            out.push_back (d / (2 * kPi * f) * 1000.0);
+        }
+        return out;
+    }
+
+    /** Frequenza di una serie (fs valori al secondo) dai passaggi per la media con isteresi (un quarto dell'escursione). */
+    double rateS6 (const std::vector<double>& v, double fs)
+    {
+        if (v.size() < 4) return 0;
+        const auto [mn, mx] = std::minmax_element (v.begin(), v.end());
+        const double mean = 0.5 * (*mn + *mx), h = 0.25 * (*mx - *mn);
+        std::vector<double> ups;
+        int state = 0;
+        for (size_t i = 0; i < v.size(); ++i)
+        {
+            if (v[i] > mean + h && state != 1) { if (state == -1) ups.push_back ((double) i / fs); state = 1; }
+            else if (v[i] < mean - h) state = -1;
+        }
+        if (ups.size() < 2) return 0;
+        return (double) (ups.size() - 1) / (ups.back() - ups.front());
+    }
+
+    /** Escursione del tremolo (banco del lavoro A): seno 440 Hz a -40 dBFS, comandi per etichetta prima di prepare, RMS su finestre di
+        10 ms per 2 s (da 0.5 s): massimo - minimo in dB. */
+    double tremoloDepthS6 (const pt::engine::ModelDef& d, const Sets& sets)
+    {
+        auto fx = makeS1 (d, sets);
+        const double sr = 48000.0;
+        Buf x = sineBuf (sr, 440.0, 0.01, 2.5);
+        processMono (*fx, x, 512);
+        double lo = 1e9, hi = -1e9;
+        for (size_t a = (size_t) (0.5 * sr); a + 480 <= x.size(); a += 480)
+        {
+            const double v = dbOf (rmsOf (x, a, a + 480));
+            lo = std::min (lo, v);
+            hi = std::max (hi, v);
+        }
+        return hi - lo;
+    }
+
+    /** Tappa 6, lavori A e B: stadi nuovi del motore Circuit, 27 ampli (tonestack contro la scheda, guadagni, livelli, canali e modi,
+        tremolo, sag, chorus del JC-120), click, determinismo, costo. */
+    void runStage6AmpTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        constexpr int numAmps = countOf (kStage6Amps);
+        Lab lab;
+        auto frDef = [&lab] (const ModelDef& def, std::vector<double> freqs, double amp, ISets sets = {})
+        {
+            return lab.add (def, [freqs, amp, sets] (const ModelDef& d) { auto fx = makeIdx (d, sets); return smallSignalOf (*fx, freqs, amp, 48000.0); });
+        };
+        auto fr = [&lab] (const char* id, Sets sets, std::vector<double> freqs, double amp)
+        {
+            return lab.add (id, [sets, freqs, amp] (const ModelDef& d) { return smallSignalDb (d, sets, freqs, amp); });
+        };
+        auto riffSets = [&lab] (const char* id, Sets sets)
+        {
+            return lab.add (id, [sets] (const ModelDef& d) { return riffLevelsS5 (d, [&] (Effect& fx) { setsS1 (fx, d, sets); }); });
+        };
+        auto levelB = [&lab] (const char* id, std::map<int, float> p)
+        {
+            return lab.add (id, [p] (const ModelDef& d) { return levelB6 (d, p); });
+        };
+        auto cfgOf = [] (const char* id) { const auto* d = findModel (id); return d != nullptr && d->config != nullptr ? d->config : ""; };
+
+        // 1. modelli esistenti invariati bit per bit dopo gli stadi nuovi di Circuit.cpp (banco s1 'raw', comandi fermi e poi mossi; il
+        //    lavoro A ha confrontato tutte le 598 netlist Circuit/AmpSim del catalogo e delle repliche con il motore di 3efdd92): ED-9, DS-1
+        //    e i due AmpSim con triode/fmv/power FDR-1 e FBM-1; impronte misurate con GCC su Linux x86-64
+        {
+            struct Ref { const char* id; uint64_t hash; };
+            static const Ref refs[] = { { "ed9", 0xa0db19c13960768dull }, { "ds1", 0xae0a3f3ff8388e33ull }, { "fdr1", 0xd90ba45f0d8c6ccdull },
+                                        { "fbm1", 0xa4a46973eed25012ull } };
+            std::vector<int> h;
+            for (const auto& r : refs) { h.push_back (addRawHashS5 (lab, r.id)); lab.first (h.back()); }
+            lab.check (h, "Tappa 6: ED-9, DS-1, FDR-1 e FBM-1 (AmpSim) invariati bit per bit dopo gli stadi nuovi di Circuit.cpp", [&lab, h] {
+                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                    if (hashOfS5 (lab, h[k], 0) != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k], 0)) << ") ";
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici" : bad.trim() };
+            });
+        }
+        // impronte dei 14 ampli del lavoro A (regressione: config di sound_stage6_amps_a.json, stessi comandi e default nel catalogo)
+        {
+            struct Ref { const char* id; uint64_t hash; };
+            static const Ref refs[] = {
+                { "amtwinreverb", 0x550da15c15137a31ull }, { "amdeluxereverb", 0xa0001d4b4a3fb309ull }, { "amprincetonreverb", 0x249a46f0e8105ea5ull },
+                { "ambassman5f6a", 0x95fa7192893e2f40ull }, { "amac30tb", 0xe176587cb9ae8ea7ull }, { "amac15", 0xdd81e737895bab33ull },
+                { "amdc30", 0xaa710516e7fb3784ull }, { "amdr103", 0xee2f524396a28452ull }, { "amor120", 0xf9eff9d1a61387feull },
+                { "amjtm45", 0xa1f04571870f66ffull }, { "am1959slp", 0xc8f95cb3e408d76eull }, { "amjcm800", 0x3e76434ac8f51062ull },
+                { "amjcm900", 0x5cb4fa1b6eb0af1bull }, { "amjubilee", 0x70381e9e836f37b8ull } };
+            std::vector<int> h;
+            for (const auto& r : refs) { h.push_back (addRawHashS5 (lab, r.id)); lab.first (h.back()); }
+            lab.check (h, "Tappa 6: impronte dei 14 ampli del lavoro A (banco s1 'raw', regressione)", [&lab, h] {
+                if (! kBitExactRefs) return Verdict { true, "impronte di riferimento misurate con GCC su Linux: confronto non applicabile a questo compilatore" };
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                    if (hashOfS5 (lab, h[k], 0) != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k], 0)) << ") ";
+                return Verdict { bad.isEmpty(), bad.isEmpty() ? juce::String ((int) h.size()) + "/" + juce::String ((int) h.size()) + " hash identici" : bad.trim() };
+            });
+        }
+
+        // 2. stadi nuovi con netlist di prova (circuitDef)
+        {
+            // pp: finale del Twin (4 x 6L6, bias fisso, OT 2k:4, NFB 820/100), con e senza NFB
+            const std::string twin = "pp tube=6L6 np=2 B=460 vb=52 iq=0.04 raa=2k spk=4 tap=4 fbR=820 fbG=100 pia=12 piup=200 pidn=110 rect=si cres=35u pw=85";
+            const std::string twinNo = "pp tube=6L6 np=2 B=460 vb=52 iq=0.04 raa=2k spk=4 tap=4 pia=12 piup=200 pidn=110 rect=si cres=35u pw=85";
+            const int g = frDef (circuitDef (keepS6 (twin)), { 1000.0 }, 0.1);
+            const int a = frDef (circuitDef (keepS6 (twin)), { 100.0, 1000.0, 5000.0 }, 1.0e-4);
+            const int b = frDef (circuitDef (keepS6 (twinNo)), { 100.0, 1000.0, 5000.0 }, 1.0e-4);
+            lab.check ({ g, a, b }, "Circuito: pp (finale del Twin), guadagno a 1 kHz con 0.1 V +9.71 dB (+-0.3), NFB 3.47 dB (+-0.5); carico d'altoparlante "
+                                    "100 Hz e 5 kHz rispetto a 1 kHz senza NFB +7.4 / +5.7 dB, con NFB +4.2 / +3.4 dB (+-1)", [&lab, g, a, b] {
+                const double gain = lab.v (g), nfb = lab.v (b, 1) - lab.v (a, 1);
+                const double l0 = lab.v (b, 0) - lab.v (b, 1), h0 = lab.v (b, 2) - lab.v (b, 1), l1 = lab.v (a, 0) - lab.v (a, 1), h1 = lab.v (a, 2) - lab.v (a, 1);
+                const bool ok = within (gain, 9.71, 0.3) && within (nfb, 3.47, 0.5) && within (l0, 7.4, 1.0) && within (h0, 5.7, 1.0) && within (l1, 4.2, 1.0) && within (h1, 3.4, 1.0);
+                return Verdict { ok, "guadagno " + num (gain) + " dB, NFB " + num (nfb) + " dB, senza NFB " + num (l0, 1) + " / " + num (h0, 1) + ", con NFB " + num (l1, 1)
+                                         + " / " + num (h1, 1) + " dB" };
+            });
+        }
+        {
+            // pp: rete CUT dell'AC30 fra le fasi (pot 250k C + 4.7n), relativa alla stessa rete senza CUT
+            const std::string base = "pp tube=EL84 np=2 B=320 rk=50 ck=250u vk=10 pi=ltp pia=25 pirs=45k cc=1u rg=220k raa=4k spk=15 rect=si sz=1.2 sl=0 fhf=100k og=1";
+            const int c = frDef (circuitDef (keepS6 (base + " cutR=potr(0,250k,C) cutC=4.7n"), 1), { 1000.0, 4000.0 }, 1.0e-4, { { 0, 1.0f } });
+            const int n = frDef (circuitDef (keepS6 (base), 1), { 1000.0, 4000.0 }, 1.0e-4);
+            lab.check ({ c, n }, "Circuito: pp, CUT dell'AC30 al massimo a 1 kHz / 4 kHz -7.69 / -18.98 dB rispetto alla rete senza CUT (+-0.3; scheda -9.31 / -20.59 "
+                                 "con 1.63 dB di perdita piatta)", [&lab, c, n] {
+                const double a = lab.v (c, 0) - lab.v (n, 0), b = lab.v (c, 1) - lab.v (n, 1);
+                return Verdict { within (a, -7.69, 0.3) && within (b, -18.98, 0.3), num (a) + " / " + num (b) + " dB" };
+            });
+        }
+        {
+            // cf: inseguitore catodico accoppiato in continua dopo V2A del 5F6-A (DAFx-16: x0.984); pent: EF86 dell'AC15
+            const int t = frDef (circuitDef ("triode Rp=100k Rk=820 B=325 byp=0"), { 1000.0 }, 0.01);
+            const int c = frDef (circuitDef ("triode Rp=100k Rk=820 B=325 byp=0; cf B=325 Rk=100k vg=180 Rs=40k"), { 1000.0 }, 0.01);
+            const int p = frDef (circuitDef ("pent B=250 Ra=220k Rk=2.2k Bg2=250 Rg2=1M Cg2=0.1u"), { 1000.0 }, 1.0e-3);
+            lab.check ({ t, c, p }, "Circuito: cf (5F6-A, 100k di catodo) -0.14 dB a 1 kHz con 0.01 V (+-0.1); pent (EF86 220k/2k2, schermo 1M/0.1u) +42.5 dB "
+                                    "a 1 kHz con 1 mV (+-1)", [&lab, t, c, p] {
+                const double cf = lab.v (c) - lab.v (t), pe = lab.v (p);
+                return Verdict { within (cf, -0.14, 0.1) && within (pe, 42.5, 1.0), "cf " + num (cf, 3) + " dB, pent " + num (pe) + " dB" };
+            });
+        }
+        {
+            // mna ramp=1: a comandi fermi identico allo stadio senza ramp (stack del Twin di gen/calib.py, 3 pomelli)
+            const char* withRamp = "mna ramp=1 R.i.n=38k R.n.s=100k C.n.t=250p R.t.o=potr(0,250k,A) R.o.a=pot(0,250k,A) R.a.m=pot(1,250k,A) C.s.a=100n "
+                                   "C.s.m=47n R.m.0=pot(2,10k,A) R.o.0=1M OUT.o=1";
+            const char* noRamp = "mna R.i.n=38k R.n.s=100k C.n.t=250p R.t.o=potr(0,250k,A) R.o.a=pot(0,250k,A) R.a.m=pot(1,250k,A) C.s.a=100n "
+                                 "C.s.m=47n R.m.0=pot(2,10k,A) R.o.0=1M OUT.o=1";
+            const int a = frDef (circuitDef (withRamp, 3), { 100.0, 1000.0, 4000.0 }, 1.0e-4), b = frDef (circuitDef (noRamp, 3), { 100.0, 1000.0, 4000.0 }, 1.0e-4);
+            auto fixedHash = [] (const ModelDef& d)
+            {
+                static const Buf raw = rawSignalS1 (48000.0);
+                uint64_t f = 0;
+                rawHashS1 (d, raw, &f);
+                return std::vector<double> { (double) (uint32_t) (f >> 32), (double) (uint32_t) f };
+            };
+            const int ha = lab.add (circuitDef (withRamp, 3), fixedHash), hb = lab.add (circuitDef (noRamp, 3), fixedHash);
+            lab.check ({ a, b, ha, hb }, "Circuito: mna ramp=1 a comandi fermi come mna senza ramp (stack del Twin: 100 Hz / 1 kHz / 4 kHz entro 0.001 dB, uscita "
+                                         "identica bit per bit)", [&lab, a, b, ha, hb] {
+                double w = 0;
+                for (size_t k = 0; k < 3; ++k) w = std::max (w, std::abs (lab.v (a, k) - lab.v (b, k)));
+                const bool same = hashOfS5 (lab, ha) == hashOfS5 (lab, hb);
+                return Verdict { w <= 0.001 && same, "scarto max " + num (w, 4) + " dB, uscita " + (same ? juce::String ("identica") : juce::String ("DIVERSA")) };
+            });
+        }
+        {
+            // spring: riverbero a molle (solo umido). Una molla senza dispersione (disp=0) e filtri aperti: la cascata di 36 all-pass e' un
+            // ritardo puro di 36 x 6 campioni a 48 kHz (4.5 ms, primo arrivo), l'anello dura t1 + 4.5 ms = 37.5 ms e il guadagno d'anello e'
+            // calcolato su t1 + meta' cascata: T60 = dec x 37.5 / 35.25 (3.19 s con dec=3, 1.60 s con dec=1.5, misurato sotto 1 kHz); il serbatoio del Fender
+            // (t1=33 t2=41 dec=3.2 disp=-0.6 lp=4200 hp=150) solo come informazione
+            auto spr = [&lab] (const char* cfg)
+            {
+                return lab.add (circuitDef (cfg), [] (const ModelDef& d)
+                {
+                    const double sr = 48000;
+                    Buf in ((size_t) sr, 0.0f);
+                    in[100] = 1.0f;
+                    const Buf y = runS2 (d, in, {})[0];
+                    auto peak = [&y] (size_t a, size_t e) { size_t k = a; for (size_t i = a; i < e && i < y.size(); ++i) if (std::abs (y[i]) > std::abs (y[k])) k = i; return k; };
+                    const size_t p1 = peak (100, 100 + (size_t) (0.02 * sr)), p2 = peak (p1 + (size_t) (0.02 * sr), p1 + (size_t) (0.06 * sr));
+                    double before = 0, total = 0;
+                    for (size_t i = 0; i < y.size(); ++i) { total += (double) y[i] * y[i]; if (i < 100 + (size_t) (0.003 * sr)) before += (double) y[i] * y[i]; }
+                    // T60 sotto 1 kHz (Butterworth del 4o ordine): i filtri a un polo dell'anello tolgono un po' di acuti a ogni giro
+                    Buf z = runS2 (d, [] { Buf b ((size_t) (6 * 48000), 0.0f); b[100] = 1.0f; return b; }(), {})[0];
+                    juce::dsp::IIR::Filter<float> l1, l2;
+                    l1.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass (sr, 1000.0f, 0.5412f);
+                    l2.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass (sr, 1000.0f, 1.3066f);
+                    for (auto& v : z) v = l2.processSample (l1.processSample (v));
+                    std::vector<double> sch (z.size() + 1, 0.0);
+                    for (size_t i = z.size(); i-- > 0;) sch[i] = sch[i + 1] + (double) z[i] * z[i];
+                    double t5 = -1, t35 = -1;
+                    for (size_t i = 0; i < z.size() && t35 < 0; ++i)
+                    {
+                        const double L = 10 * std::log10 (sch[i] / sch[0] + 1e-30);
+                        if (t5 < 0 && L <= -5) t5 = (double) i / sr;
+                        if (L <= -35) t35 = (double) i / sr;
+                    }
+                    return std::vector<double> { (double) (p1 - 100) * 1000.0 / sr, (double) (p2 - p1) * 1000.0 / sr, 10.0 * std::log10 (before / std::max (total, 1e-30) + 1e-30),
+                                                 t35 > 0 ? (t35 - t5) * 2.0 : 999.0 };
+                });
+            };
+            const int s3 = spr ("spring t1=33 t2=0 dec=3 disp=0 lp=20000 hp=5 bw=20000 g=1"), s1 = spr ("spring t1=33 t2=0 dec=1.5 disp=0 lp=20000 hp=5 bw=20000 g=1");
+            const int fe = lab.add (circuitDef ("spring t1=33 t2=41 dec=3.2 disp=-0.6 lp=4200 hp=150 g=1"), [] (const ModelDef& d) { return std::vector<double> { rt60 (d, {}, 6.0) }; });
+            lab.check ({ s3, s1, fe }, "Circuito: spring, una molla senza dispersione: primo arrivo 4.5 ms (+-0.5, solo umido: prima dei 3 ms meno di -40 dB), anello 37.5 ms "
+                                       "(+-0.2), T60 sotto 1 kHz 3.19 / 1.60 s con dec=3 / 1.5 (+-10%)", [&lab, s3, s1, fe] {
+                const double first = lab.v (s3, 0), loop = lab.v (s3, 1), early = lab.v (s3, 2), t3 = lab.v (s3, 3), t1 = lab.v (s1, 3);
+                const bool ok = within (first, 4.5, 0.5) && within (loop, 37.5, 0.2) && early < -40.0 && within (t3, 3.19, 0.32) && within (t1, 1.60, 0.16);
+                return Verdict { ok, "primo arrivo " + num (first) + " ms, anello " + num (loop) + " ms, prima dei 3 ms " + num (early, 1) + " dB, T60 " + num (t3) + " / "
+                                         + num (t1) + " s (serbatoio del Fender, dec=3.2: T60 " + num (lab.v (fe)) + " s)" };
+            });
+        }
+        {
+            // opto: tremolo ottico (neon + LDR), frequenza dell'oscillatore e profondita' crescente col cursore
+            auto trem = [&lab] (const char* cfg)
+            {
+                return lab.add (circuitDef (cfg), [] (const ModelDef& d)
+                {
+                    const double sr = 48000.0;
+                    const auto y = runS2 (d, sineBuf (sr, 440.0, 0.1, 4.0), {})[0];
+                    double lo = 1e9, hi = -1e9;
+                    for (size_t a = (size_t) (1.0 * sr); a + 480 <= y.size(); a += 480)
+                    {
+                        const double v = dbOf (rmsOf (y, a, a + 480));
+                        lo = std::min (lo, v); hi = std::max (hi, v);
+                    }
+                    return std::vector<double> { modRate (y, sr, (size_t) (1.0 * sr), 1.0), hi - lo };
+                });
+            };
+            const int o5 = trem ("opto rate=5 pos=1"), o2 = trem ("opto rate=2 pos=1"), h = trem ("opto rate=5 pos=0.5"), z = trem ("opto rate=5 pos=0");
+            lab.check ({ o5, o2, h, z }, "Circuito: opto, oscillatore a 5 / 2 Hz (+-5%), escursione con il cursore a 0 / 0.5 / 1 crescente (a 0 sotto 0.5 dB)",
+                       [&lab, o5, o2, h, z] {
+                const double f5 = lab.v (o5, 0), f2 = lab.v (o2, 0), d1 = lab.v (o5, 1), dh = lab.v (h, 1), d0 = lab.v (z, 1);
+                const bool ok = within (f5, 5.0, 0.25) && within (f2, 2.0, 0.1) && d0 < 0.5 && dh > d0 + 1.0 && d1 > dh + 1.0;
+                return Verdict { ok, num (f5) + " / " + num (f2) + " Hz, escursione " + num (d0, 1) + " / " + num (dh, 1) + " / " + num (d1, 1) + " dB" };
+            });
+        }
+        {
+            // sag: finale del Deluxe (2 x 6V6, OT 6k6:8, NFB 820/47) con raddrizzatore al silicio, GZ34 e 5U4: la caduta della B+ abbassa la
+            // fondamentale in saturazione (seno 220 Hz a +10 dBFS, 3.2 V di picco alla griglia del PI)
+            const std::string pp = ppAloneS6 (cfgOf ("amdeluxereverb"), false);
+            std::vector<int> h;
+            for (const char* r : { "rect=si", "rect=gz34", "rect=5u4" })
+            {
+                const auto s = juce::String (pp).replace ("rect=gz34", r).toStdString();
+                h.push_back (lab.add (circuitDef (keepS6 (s), 1), [] (const ModelDef& d) { auto fx = makeS1 (d, {}); return harmonicsOf (*fx, 220.0, 10.0, { 1.0 }); }));
+            }
+            lab.check (h, "Circuito: pp, sag del finale del Deluxe (seno 220 Hz +10 dBFS): fondamentale con GZ34 / 5U4 -0.36 / -0.71 dB rispetto al silicio (+-0.1)",
+                       [&lab, h, pp] {
+                if (pp.find ("rect=gz34") == std::string::npos) return Verdict { false, "stadio pp del Deluxe senza rect=gz34" };
+                const double g = dbOf (lab.v (h[1])) - dbOf (lab.v (h[0])), u = dbOf (lab.v (h[2])) - dbOf (lab.v (h[0]));
+                return Verdict { within (g, -0.36, 0.1) && within (u, -0.71, 0.1), "GZ34 " + num (g) + " dB, 5U4 " + num (u) + " dB" };
+            });
+        }
+
+        // 3. tonestack dei 27 ampli contro i punti della scheda (63 Hz - 10 kHz, +-0.5 dB): lavoro A = frammenti di gen/calib.py (stessa rete
+        //    degli ampli con Rs/Rl della scheda, pomelli per indice, punti calcolati con tonestack.py in stage6_amps.json); lavoro B = reti di
+        //    tests/cal_tests.json dentro i comandi del modello (scatti dei selettori), con i punti della scheda
+        {
+            static const char* const nets[] = {
+            "mna ramp=1 R.i.n=38k R.n.s=100k C.n.t=250p R.t.o=potr(0,250k,A) R.o.a=pot(0,250k,A) R.a.m=pot(1,250k,A) C.s.a=100n C.s.m=47n R.m.0=pot(2,10k,A) R.o.0=1M OUT.o=1",
+            "mna ramp=1 R.i.n=38k R.n.s=100k C.n.t=250p R.t.o=potr(0,250k,A) R.o.a=pot(0,250k,A) R.a.m=pot(1,250k,A) C.s.a=100n C.s.m=47n R.m.0=6.8k R.o.0=1M OUT.o=1",
+            "mna ramp=1 R.i.n=1k R.n.s=56k C.n.t=250p R.t.o=potr(0,250k,B) R.o.a=pot(0,250k,B) R.a.m=pot(1,1M,A) C.s.a=20n C.s.m=20n R.m.0=pot(2,25k,B) R.o.0=1M OUT.o=1",
+            "mna ramp=1 R.i.n=1k R.n.s=56k C.n.t=220p R.t.o=potr(0,220k,B) R.o.a=pot(0,220k,B) R.a.m=pot(1,1M,A) C.s.a=22n C.s.m=22n R.m.0=pot(2,22k,B) R.o.0=1M OUT.o=1",
+            "mna ramp=1 R.i.n=1k R.n.s=33k C.n.t=470p R.t.o=potr(0,250k,B) R.o.a=pot(0,250k,B) R.a.m=pot(1,1M,A) C.s.a=22n C.s.m=22n R.m.0=pot(2,25k,B) R.o.0=1M OUT.o=1",
+            "mna ramp=1 R.i.n=1k R.n.s=33k C.n.t=470p R.t.o=potr(0,220k,B) R.o.a=pot(0,220k,B) R.a.m=pot(1,1M,A) C.s.a=22n C.s.m=22n R.m.0=pot(2,22k,B) R.o.0=1M OUT.o=1",
+            "mna ramp=1 R.i.n=1k R.n.s=33k C.n.t=470p R.t.o=potr(0,220k,B) R.o.a=pot(0,220k,B) R.a.m=pot(1,1M,A) C.s.a=22n C.s.m=22n R.m.0=pot(2,22k,B) R.o.0=940k OUT.o=1",
+            "mna ramp=1 R.i.in=70k C.in.p6a=100n R.p6a.n1=potr(1,1M,A) R.n1.p6b=pot(1,1M,A) R.p6b.0=100k C.in.n1=4.7n C.n1.t=220p R.n1.n2=100k C.n2.m5w=10n R.m5a.m5w=potr(2,100k,A) R.m5w.0=pot(2,100k,A) C.t.m5a=470p C.n2.n2b=100n R.n2b.n3=10k C.n3.0=2.2n R.t.out=potr(0,220k,B) R.out.n3=pot(0,220k,B) R.n3.n4=100k R.n4.0=pot(1,1M,A) R.out.0=1M OUT.out=1",
+            "mna ramp=1 R.i.n=1k C.n.tc=50p R.tc.o=potr(0,1M,A) R.o.t1=pot(0,1M,A) R.n.m=100k C.m.t1=22n C.m.x=22n R.x.t1=pot(1,1M,A) R.0.x=potr(1,1M,A) R.x.0=10k R.o.0=430k OUT.o=1",
+            "mna ramp=1 R.i.n=1k C.n.tc=56p R.tc.o=potr(0,1M,A) R.o.t1=pot(0,1M,A) R.n.m=18k C.m.t1=22n C.m.x=22n R.x.t1=pot(1,1M,A) R.0.x=potr(1,1M,A) R.o.0=238k OUT.o=1",
+            "mna ramp=1 R.i.n=300k C.n.t=360p R.t.w=potr(0,1M,A) R.w.0=pot(0,1M,A) C.t.w=180p R.w.0=470k C.w.x=10n R.x.0=1M OUT.x=1",
+            "mna ramp=1 R.i.n=300k C.n.t=560p R.t.w=potr(0,1M,A) R.w.0=pot(0,1M,A) C.t.w=180p R.w.0=470k C.w.x=10n R.x.0=1M OUT.x=1",
+            "mna ramp=1 R.i.n=300k C.n.t=1.2n R.t.w=potr(0,1M,A) R.w.0=pot(0,1M,A) C.t.w=180p R.w.0=470k C.w.x=10n R.x.0=1M OUT.x=1",
+            "mna ramp=1 R.i.n=300k C.n.t=2.2n R.t.w=potr(0,1M,A) R.w.0=pot(0,1M,A) C.t.w=180p R.w.0=470k C.w.x=10n R.x.0=1M OUT.x=1",
+            "mna ramp=1 R.i.n=300k C.n.t=4.7n R.t.w=potr(0,1M,A) R.w.0=pot(0,1M,A) C.t.w=180p R.w.0=470k C.w.x=10n R.x.0=1M OUT.x=1",
+            "mna ramp=1 R.i.n=300k C.n.t=10n R.t.w=potr(0,1M,A) R.w.0=pot(0,1M,A) C.t.w=180p R.w.0=470k C.w.x=10n R.x.0=1M OUT.x=1",
+            "mna ramp=1 R.i.n=200k C.n.t=10n R.t.w=potr(0,500k,A) R.w.0=pot(0,500k,A) C.t.w=250p C.w.o=10n R.o.0=1M OUT.o=1",
+            "mna ramp=1 R.i.n=200k C.n.t=10n R.t.w=potr(0,500k,A) R.w.0=pot(0,500k,A) C.t.w=1p C.w.o=10n R.o.0=1M OUT.o=1",
+            "mna ramp=1 R.i.n=31k C.n.t=1n C.t.tt=220p R.tt.o=potr(0,220k,B) R.o.a=pot(0,220k,B) R.t.a=220k R.a.b=22k R.b.c=pot(1,100k,B) C.b.c=1n R.n.e=100k C.e.0=47n C.e.c=47n R.c.0=pot(2,470k,A) R.o.0=242k OUT.o=1",
+            "mna ramp=1 R.i.n=48k C.n.i2=68n R.i2.bt=100k R.bw.bb=pot(1,1M,A) R.bt.bw=potr(1,1M,A) C.bt.bw=2.2n C.bw.bb=22n R.bb.0=22k R.bw.o=100k C.i2.tt=1.5n R.o.tb=pot(0,1M,A) R.tt.o=potr(0,1M,A) C.tb.0=10n R.o.0=1M OUT.o=1",
+            "mna ramp=1 R.i.n=48k C.n.o=68n R.o.0=200k OUT.o=1",
+            "mna ramp=1 R.i.n=48k C.n.o=4.4n R.o.0=200k OUT.o=1",
+            "mna ramp=1 R.i.n=48k C.n.o=2.27n R.o.0=200k OUT.o=1",
+            "mna ramp=1 R.i.n=48k C.n.o=1.12n R.o.0=200k OUT.o=1",
+            "mna ramp=1 R.i.n=48k C.n.o=0.53n R.o.0=200k OUT.o=1",
+            "mna ramp=1 R.i.n=48k C.n.o=0.2n R.o.0=200k OUT.o=1",
+            "mna R.i.in=44k R.in.s=100k R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(2,250k,A) C.s.a=100n C.s.mtop=47n R.mtop.0=pot(3,10k,B) R.out.0=1M C.in.top=250p R.in.sw4=sw(11,10,10,10,10,1000M) C.sw4.top=750p OUT.out=1 ramp=1",
+            "mna R.i.in=44k R.in.s=100k R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(2,250k,A) C.s.a=100n C.s.mtop=47n R.mtop.0=pot(3,10k,B) R.out.0=1M C.in.top=250p R.in.sw5=sw(11,10,10,10,10,1000M) C.sw5.top=750p OUT.out=1 ramp=1",
+            "mna R.i.in=44k R.in.s=100k R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(2,250k,A) C.s.a=100n C.s.mtop=47n R.mtop.0=pot(3,10k,B) R.out.0=1M C.in.top=250p R.in.sw6=sw(11,10,10,10,10,1000M) C.sw6.top=750p OUT.out=1 ramp=1",
+            "mna R.i.in=44k R.in.s=100k R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(2,250k,A) C.s.a=100n C.s.mtop=47n R.mtop.0=pot(3,10k,B) R.out.0=1M C.in.top=250p R.in.sw7=sw(11,10,10,10,10,1000M) C.sw7.top=750p OUT.out=1 ramp=1",
+            "mna R.i.in=44k R.in.s=100k R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(2,250k,A) C.s.a=100n C.s.mtop=47n R.mtop.0=pot(3,10k,B) R.out.0=1M C.in.top=250p R.in.sw8=sw(11,10,10,10,10,1000M) C.sw8.top=750p OUT.out=1 ramp=1",
+            "mna R.i.in=44k R.in.s=100k R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(2,250k,A) C.s.a=100n C.s.mtop=47n R.mtop.0=pot(3,10k,B) R.out.0=1M C.in.top=250p R.in.sw9=sw(11,10,10,10,10,1000M) C.sw9.top=750p OUT.out=1 ramp=1",
+            "mna R.i.in=44k R.in.s=100k R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(2,250k,A) C.s.a=100n C.s.mtop=47n R.mtop.0=pot(3,10k,B) R.out.0=1M C.in.top=250p R.in.sw10=sw(11,10,10,10,10,1000M) C.sw10.top=750p OUT.out=1 ramp=1",
+            "mna R.i.in=44k R.in.s=100k R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(2,250k,A) C.s.a=100n C.s.mtop=47n R.mtop.0=pot(3,10k,B) R.out.0=1M C.in.top=250p R.in.sw11=sw(11,10,10,10,10,1000M) C.sw11.top=750p OUT.out=1 ramp=1",
+            "mna R.i.in=1k R.in.s=47k C.in.top=680p R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(3,1M,A) C.s.a=20n C.s.mtop=20n R.mtop.0=pot(2,25k,B) R.out.0=1M OUT.out=1 ramp=1",
+            "mna R.i.in=1k R.in.s=47k C.in.top=500p R.top.out=potr(1,250k,A) R.out.a=pot(1,250k,A) R.a.mtop=pot(3,1M,A) C.s.a=20n C.s.mtop=20n R.mtop.0=pot(2,25k,B) R.out.0=1M OUT.out=1 ramp=1",
+            "mna R.i.in=478k R.in.0=33k R.in.x=47k C.x.0=1n C.in.top=570p R.top.out=potr(6,250k,B) R.out.bt=pot(6,250k,B) R.in.s=47k C.s.bt=22n R.bt.mt=pot(4,1M,A) C.s.mw=22n R.mt.mw=potr(5,50k,B) R.mw.0=pot(5,50k,B) R.mt.0=47k R.out.0=500k OUT.out=1 ramp=1",
+            "mna R.i.in=1k R.in.s=47k C.in.top=470p R.top.out=potr(4,250k,B) R.out.a=pot(4,250k,B) R.a.mtop=pot(2,1M,A) C.s.a=20n C.s.mtop=20n R.mtop.0=pot(3,25k,B) R.out.0=1M OUT.out=1 ramp=1",
+            "mna R.i.in=1k R.in.s=33k C.in.top=470p R.top.out=potr(3,220k,B) R.out.a=pot(3,220k,B) R.a.mtop=pot(1,1M,A) C.s.a=22n C.s.mtop=22n R.mtop.0=pot(2,22k,B) R.out.0=1M OUT.out=1 ramp=1",
+            "mna R.i.in=38k C.in.top=330p R.top.out=potr(1,250k,A) R.out.T=pot(1,250k,A) R.in.N=100k C.N.B=100n R.B.T=1 R.B.T=potr(3,250k,A) R.T.M=pot(3,250k,A) C.N.P=50n R.P.M=pot(2,100k,B) R.M.0=1.8k R.out.0=1M OUT.out=1 ramp=1",
+            "mna R.i.in=38k C.in.top=330p R.top.out=potr(1,250k,A) R.out.T=pot(1,250k,A) R.in.N=100k C.N.B=100n R.B.T=potr(3,250k,A) R.T.M=pot(3,250k,A) C.T.0=5n R.T.out=100k C.N.P=50n R.P.M=pot(2,100k,B) R.M.0=1.8k R.out.0=1M OUT.out=1 ramp=1",
+            "mna R.i.in=1k R.in.s=33k C.in.top=470p R.top.out=potr(3,250k,B) R.out.a=pot(3,250k,B) R.a.mtop=pot(1,1M,A) C.s.a=22n C.s.mtop=22n R.mtop.0=pot(2,25k,B) R.out.0=1M OUT.out=1 ramp=1",
+            "mna R.i.in=38k R.in.s=100k C.in.top=470p R.top.out=potr(4,250k,B) R.out.a=pot(4,250k,B) R.a.mtop=pot(2,1M,A) C.s.a=220n C.s.mtop=22n R.mtop.0=pot(3,20k,B) R.out.0=720k OUT.out=1 ramp=1",
+            "mna R.i.in=38k R.in.s=100k C.in.top=940p R.top.out=potr(4,250k,B) R.out.a=pot(4,250k,B) R.a.mtop=pot(2,1M,A) C.s.a=220n C.s.mtop=47n R.mtop.0=pot(3,20k,B) R.out.0=720k OUT.out=1 ramp=1",
+            "mna R.i.in=38k R.in.s=100k C.in.top=470p R.top.out=potr(4,250k,B) R.out.a=pot(4,250k,B) R.a.mtop=pot(2,1M,A) C.s.a=220n C.s.mtop=100n R.mtop.0=pot(3,20k,B) R.out.0=470k OUT.out=1 ramp=1",
+            "mna R.i.in=38k R.in.s=100k C.in.top=940p R.top.out=potr(4,250k,B) R.out.a=pot(4,250k,B) R.a.mtop=pot(2,1M,A) C.s.a=220n C.s.mtop=147n R.mtop.0=pot(3,20k,B) R.out.0=470k OUT.out=1 ramp=1",
+            "mna R.i.in=11k R.in.s=39k C.in.top=470p R.top.out=potr(3,250k,B) R.out.a=pot(3,250k,B) R.a.mtop=pot(1,1M,A) C.s.a=22n C.s.mtop=20n R.mtop.0=pot(2,25k,B) R.out.0=1.1M OUT.out=1 ramp=1",
+            "mna R.i.in=12k R.in.s=100k C.in.top=150p R.top.out=potr(1,250k,B) R.out.a=pot(1,250k,B) R.a.mtop=pot(3,251k,A) C.s.a=82n C.s.mtop=47n R.mtop.0=pot(2,10k,B) R.out.0=470k OUT.out=1 ramp=1",
+            "mna R.i.x1=4.7k R.x1.p1=22k R.p1.w1=potr(2,25k,B) R.w1.y1=pot(2,25k,B) R.y1.o1=4.7k C.x1.y1=4.7n C.w1.n1=4.7n R.i.n1=220k R.n1.o1=220k O.0.n1.o1=1 R.o1.x2=4.7k R.x2.p2=22k R.p2.w2=potr(3,25k,B) R.w2.y2=pot(3,25k,B) R.y2.o2=4.7k C.x2.y2=22n C.w2.n2=22n R.o1.n2=220k R.n2.o2=220k O.0.n2.o2=1 R.o2.t1=3.3k R.t1.q1=12k R.q1.wb=potr(4,25k,B) R.wb.t2=pot(4,25k,B) R.t2.out=3.3k C.t1.t2=220n R.wb.n3=22k R.o2.tb1=3.3k R.tb1.wt=potr(1,25k,B) R.wt.tb2=pot(1,25k,B) R.tb2.out=3.3k C.wt.n3=4.7n O.0.n3.out=1 OUT.out=1 ramp=1",
+            "mna O.i.n.out=1 R.out.n=33k C.out.n=560p R.n.g=3.3k C.g.h=10u C.h.0=220n OUT.out=1 ramp=1",
+            "vol a=taper(0,A)*0.88; hpf R=33k C=3.3u; opni Rg=lin(0,2k,10.3k) Cg=22n Rf=sw(9,0,0,0,1,0,1,1,1)*lin(0,37k,0)+1 Cf=0",
+            "mna R.i.in=39k C.in.a=100n R.a.bt=220k R.bt.bw=potr(3,1M,A) R.bw.bb=pot(3,1M,A) R.bb.0=22k C.bt.bw=1n C.bw.bb=10n C.a.tt=47p R.tt.out=potr(1,1M,A) R.out.tb=pot(1,1M,A) C.tb.0=470p R.bw.out=120k R.out.0=1M OUT.out=1 ramp=1",
+            "mna R.i.in=1k C.in.a=100n R.a.0=100k R.a.m=150k R.m.out=150k C.m.0=2n C.a.b=2n C.b.out=2n R.b.0=68k R.out.0=1M OUT.out=1 ramp=1",
+            "mna R.i.in=1k C.in.a=100n R.a.0=100k C.a.b=2n C.b.out=2n R.b.0=888k R.out.0=1M OUT.out=1 ramp=1",
+            "mna R.i.s=1k C.s.a=0.1u R.a.0=100k R.a.top=sw(5,1000M,10,1000M) R.a.m=sw(5,1000M,1000M,150k) R.m.top=sw(5,1000M,1000M,150k) C.m.0=2n R.a.a2=sw(5,10,1000M,10) C.a2.b=2n C.b.b2=2n R.b2.top=sw(5,10,1000M,10) R.b.0=sw(5,888k,1000M,68k) R.top.0=1M OUT.top=1 ramp=1",
+            "mna R.i.in=140k C.in.a=20n R.a.bt=220k R.bt.bw=potr(2,1M,A) R.bw.bb=pot(2,1M,A) R.bw.bb=270k R.bb.0=22k C.bt.bw=1n C.bw.bb=10n C.a.tt=47p R.tt.out=potr(1,4M,A) R.out.tb=pot(1,4M,A) C.tb.0=470p R.bw.out=120k R.out.0=10M OUT.out=1 ramp=1",
+            };
+            struct StackCase { const char* id; int net; int knobs; bool own; ISets sets; double db[12]; };
+            static const StackCase cases[] = {
+            { "amtwinreverb", 0, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.5f } }, { -16.65, -17.54, -19.33, -22.11, -26.20, -30.31, -29.34, -25.35, -22.57, -20.88, -20.07, -19.70 } },
+            { "amtwinreverb", 0, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 1.0f } }, { -12.11, -15.49, -19.66, -23.04, -21.61, -17.38, -13.27, -9.71, -7.09, -5.28, -4.33, -3.87 } },
+            { "amtwinreverb", 0, 3, false, { { 0, 0.0f }, { 1, 0.0f }, { 2, 1.0f } }, { -23.52, -23.49, -23.46, -23.44, -23.40, -23.30, -23.10, -22.75, -22.35, -21.99, -21.79, -21.69 } },
+            { "amtwinreverb", 0, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.0f } }, { -17.06, -17.96, -19.80, -22.69, -27.24, -33.20, -32.35, -26.99, -23.80, -21.97, -21.11, -20.72 } },
+            { "amdeluxereverb", 1, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.5f } }, { -15.36, -16.17, -17.75, -19.97, -22.54, -24.00, -23.27, -21.15, -19.25, -17.93, -17.28, -16.97 } },
+            { "amdeluxereverb", 1, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 0.5f } }, { -12.19, -15.70, -20.38, -25.08, -23.17, -18.00, -13.57, -9.90, -7.24, -5.41, -4.45, -3.99 } },
+            { "amdeluxereverb", 1, 3, false, { { 0, 0.0f }, { 1, 0.0f }, { 2, 0.5f } }, { -26.66, -26.62, -26.60, -26.57, -26.53, -26.43, -26.23, -25.87, -25.46, -25.09, -24.88, -24.77 } },
+            { "amdeluxereverb", 1, 3, false, { { 0, 0.7f }, { 1, 0.3f }, { 2, 0.5f } }, { -20.05, -20.20, -20.60, -21.35, -22.33, -22.18, -20.00, -17.10, -14.88, -13.42, -12.70, -12.36 } },
+            { "amprincetonreverb", 1, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.5f } }, { -15.36, -16.17, -17.75, -19.97, -22.54, -24.00, -23.27, -21.15, -19.25, -17.93, -17.28, -16.97 } },
+            { "amprincetonreverb", 1, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 0.5f } }, { -12.19, -15.70, -20.38, -25.08, -23.17, -18.00, -13.57, -9.90, -7.24, -5.41, -4.45, -3.99 } },
+            { "amprincetonreverb", 1, 3, false, { { 0, 0.0f }, { 1, 0.0f }, { 2, 0.5f } }, { -26.66, -26.62, -26.60, -26.57, -26.53, -26.43, -26.23, -25.87, -25.46, -25.09, -24.88, -24.77 } },
+            { "amprincetonreverb", 1, 3, false, { { 0, 0.7f }, { 1, 0.3f }, { 2, 0.5f } }, { -20.05, -20.20, -20.60, -21.35, -22.33, -22.18, -20.00, -17.10, -14.88, -13.42, -12.70, -12.36 } },
+            { "ambassman5f6a", 2, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.5f } }, { -5.93, -5.85, -6.75, -8.53, -11.04, -12.95, -12.63, -10.41, -8.19, -6.57, -5.72, -5.32 } },
+            { "ambassman5f6a", 2, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 1.0f } }, { -3.96, -5.13, -7.10, -9.27, -10.91, -10.81, -8.96, -6.28, -3.88, -2.04, -1.01, -0.50 } },
+            { "ambassman5f6a", 2, 3, false, { { 0, 0.0f }, { 1, 0.0f }, { 2, 1.0f } }, { -12.46, -11.34, -10.80, -10.57, -10.45, -10.36, -10.24, -10.04, -9.80, -9.56, -9.42, -9.35 } },
+            { "ambassman5f6a", 2, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.0f } }, { -6.60, -6.39, -7.25, -9.27, -13.00, -18.70, -20.98, -14.91, -11.06, -8.75, -7.63, -7.10 } },
+            { "amjtm45", 3, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.5f } }, { -5.82, -5.91, -6.99, -8.95, -11.64, -13.87, -14.05, -11.94, -9.45, -7.38, -6.17, -5.56 } },
+            { "amjtm45", 3, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 1.0f } }, { -3.90, -5.20, -7.29, -9.59, -11.45, -11.75, -10.27, -7.68, -5.07, -2.83, -1.45, -0.71 } },
+            { "amjtm45", 3, 3, false, { { 0, 0.0f }, { 1, 0.0f }, { 2, 1.0f } }, { -13.06, -12.03, -11.54, -11.33, -11.23, -11.16, -11.06, -10.89, -10.63, -10.32, -10.10, -9.98 } },
+            { "amjtm45", 3, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 0.0f } }, { -3.63, -4.65, -6.76, -10.12, -15.90, -25.95, -17.01, -10.41, -6.38, -3.49, -1.79, -0.90 } },
+            { "am1959slp", 4, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.5f } }, { -4.36, -4.06, -4.70, -6.16, -8.17, -9.24, -8.41, -6.79, -5.64, -4.99, -4.70, -4.58 } },
+            { "am1959slp", 4, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 1.0f } }, { -3.12, -3.95, -5.45, -7.08, -7.95, -7.10, -5.09, -3.01, -1.61, -0.80, -0.44, -0.28 } },
+            { "am1959slp", 4, 3, false, { { 0, 0.0f }, { 1, 0.0f }, { 2, 1.0f } }, { -10.43, -8.91, -8.10, -7.74, -7.56, -7.44, -7.32, -7.19, -7.09, -7.04, -7.01, -7.00 } },
+            { "am1959slp", 4, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 0.0f } }, { -2.95, -3.48, -4.87, -7.61, -13.13, -15.85, -8.99, -4.67, -2.41, -1.21, -0.68, -0.46 } },
+            { "amjcm800", 5, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.5f } }, { -4.33, -4.01, -4.64, -6.12, -8.30, -9.75, -9.15, -7.40, -6.04, -5.23, -4.86, -4.71 } },
+            { "amjcm800", 5, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 1.0f } }, { -2.91, -3.71, -5.22, -7.03, -8.28, -7.73, -5.73, -3.50, -1.91, -0.95, -0.51, -0.31 } },
+            { "amjcm800", 5, 3, false, { { 0, 0.0f }, { 1, 0.0f }, { 2, 1.0f } }, { -11.30, -9.68, -8.81, -8.42, -8.22, -8.09, -7.96, -7.81, -7.68, -7.60, -7.56, -7.54 } },
+            { "amjcm800", 5, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 0.0f } }, { -2.75, -3.26, -4.60, -7.22, -12.49, -17.10, -10.10, -5.33, -2.79, -1.39, -0.76, -0.49 } },
+            { "amjcm900", 6, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.5f } }, { -4.41, -4.09, -4.70, -6.18, -8.35, -9.81, -9.20, -7.44, -6.07, -5.26, -4.90, -4.74 } },
+            { "amjcm900", 6, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 1.0f } }, { -3.02, -3.82, -5.33, -7.13, -8.37, -7.82, -5.81, -3.55, -1.95, -0.97, -0.52, -0.32 } },
+            { "amjcm900", 6, 3, false, { { 0, 0.0f }, { 1, 0.0f }, { 2, 1.0f } }, { -11.31, -9.69, -8.82, -8.43, -8.23, -8.10, -7.97, -7.81, -7.69, -7.60, -7.56, -7.55 } },
+            { "amjcm900", 6, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 0.0f } }, { -2.87, -3.37, -4.70, -7.32, -12.58, -17.19, -10.17, -5.39, -2.82, -1.41, -0.77, -0.50 } },
+            { "amjubilee", 7, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.5f } }, { -19.30, -18.39, -18.31, -19.38, -21.86, -24.35, -23.94, -22.20, -21.06, -20.14, -19.08, -17.87 } },
+            { "amjubilee", 7, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 1.0f } }, { -7.61, -9.32, -11.19, -12.59, -13.45, -13.81, -13.80, -13.50, -13.17, -12.97, -12.96, -13.18 } },
+            { "amjubilee", 7, 3, false, { { 0, 0.0f }, { 1, 0.0f }, { 2, 1.0f } }, { -26.60, -24.39, -22.26, -20.50, -19.17, -18.57, -18.68, -19.64, -21.43, -24.07, -26.91, -29.57 } },
+            { "amjubilee", 7, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 0.0f } }, { -6.75, -8.36, -11.18, -15.20, -21.90, -34.23, -24.00, -19.22, -16.75, -14.63, -12.69, -11.07 } },
+            { "amac30tb", 8, 2, false, { { 0, 0.5f }, { 1, 0.5f } }, { -10.63, -11.06, -12.45, -14.65, -17.56, -20.23, -21.59, -20.77, -18.92, -17.14, -16.06, -15.50 } },
+            { "amac30tb", 8, 2, false, { { 0, 1.0f }, { 1, 1.0f } }, { -14.11, -16.12, -19.49, -24.39, -34.55, -31.68, -22.87, -17.41, -13.19, -9.25, -5.97, -3.39 } },
+            { "amac30tb", 8, 2, false, { { 0, 0.0f }, { 1, 0.0f } }, { -22.19, -21.59, -21.33, -21.22, -21.17, -21.13, -21.08, -20.99, -20.85, -20.68, -20.55, -20.48 } },
+            { "amac30tb", 8, 2, false, { { 0, 1.0f }, { 1, 0.0f } }, { -31.39, -30.55, -29.71, -28.50, -26.42, -23.61, -20.18, -16.40, -12.76, -9.07, -5.88, -3.34 } },
+            { "amac30tb", 8, 2, false, { { 0, 0.0f }, { 1, 1.0f } }, { -4.83, -6.16, -8.54, -11.56, -15.22, -18.95, -22.80, -26.65, -30.21, -33.92, -37.59, -41.45 } },
+            { "amdc30", 9, 2, false, { { 0, 0.5f }, { 1, 0.5f } }, { -5.31, -5.12, -4.98, -4.90, -4.85, -4.81, -4.77, -4.68, -4.56, -4.42, -4.31, -4.25 } },
+            { "amdc30", 9, 2, false, { { 0, 1.0f }, { 1, 1.0f } }, { -14.89, -14.99, -15.45, -16.51, -18.84, -23.25, -31.32, -24.32, -17.71, -12.76, -8.86, -5.61 } },
+            { "amdc30", 9, 2, false, { { 0, 0.0f }, { 1, 0.0f } }, { -1.13, -0.94, -0.87, -0.84, -0.82, -0.82, -0.82, -0.81, -0.81, -0.81, -0.81, -0.81 } },
+            { "amdc30", 10, 1, false, { { 0, 1.0f } }, { -29.44, -25.37, -21.35, -17.68, -14.14, -11.28, -9.22, -8.01, -7.44, -7.18, -7.07, -7.03 } },
+            { "amdc30", 11, 1, false, { { 0, 1.0f } }, { -25.65, -21.63, -17.74, -14.35, -11.36, -9.30, -8.06, -7.44, -7.19, -7.07, -7.03, -7.01 } },
+            { "amdc30", 12, 1, false, { { 0, 1.0f } }, { -19.27, -15.55, -12.30, -9.96, -8.40, -7.62, -7.26, -7.10, -7.04, -7.02, -7.01, -7.00 } },
+            { "amdc30", 13, 1, false, { { 0, 1.0f } }, { -14.64, -11.58, -9.37, -8.12, -7.47, -7.20, -7.08, -7.03, -7.01, -7.00, -7.00, -7.00 } },
+            { "amdc30", 14, 1, false, { { 0, 1.0f } }, { -10.26, -8.57, -7.68, -7.29, -7.11, -7.05, -7.02, -7.01, -7.00, -7.00, -7.00, -7.00 } },
+            { "amdc30", 15, 1, false, { { 0, 1.0f } }, { -8.13, -7.48, -7.19, -7.08, -7.03, -7.01, -7.00, -7.00, -7.00, -7.00, -7.00, -7.00 } },
+            { "amdc30", 15, 1, false, { { 0, 0.5f } }, { -22.23, -21.97, -21.82, -21.65, -21.32, -20.65, -19.39, -17.51, -15.54, -13.84, -12.82, -12.30 } },
+            { "amac15", 16, 1, false, { { 0, 0.5f } }, { -20.81, -20.34, -20.13, -20.00, -19.81, -19.46, -18.73, -17.42, -15.76, -14.07, -12.91, -12.26 } },
+            { "amac15", 17, 1, false, { { 0, 0.5f } }, { -20.74, -20.28, -20.09, -20.02, -19.98, -19.97, -19.97, -19.96, -19.96, -19.96, -19.96, -19.96 } },
+            { "amac15", 16, 1, false, { { 0, 1.0f } }, { -5.32, -4.61, -4.30, -4.17, -4.12, -4.10, -4.09, -4.08, -4.08, -4.08, -4.08, -4.08 } },
+            { "amac15", 16, 1, false, { { 0, 0.3f } }, { -28.63, -28.16, -27.94, -27.79, -27.56, -27.12, -26.22, -24.66, -22.74, -20.80, -19.45, -18.68 } },
+            { "amdr103", 18, 3, false, { { 0, 0.5f }, { 1, 0.5f }, { 2, 0.5f } }, { -19.66, -21.04, -23.60, -26.28, -25.87, -23.11, -20.29, -17.54, -15.14, -13.15, -11.88, -11.17 } },
+            { "amdr103", 18, 3, false, { { 0, 1.0f }, { 1, 1.0f }, { 2, 1.0f } }, { -17.72, -21.64, -27.06, -29.23, -25.27, -22.16, -19.67, -16.85, -13.67, -10.34, -7.76, -6.06 } },
+            { "amdr103", 18, 3, false, { { 0, 0.0f }, { 1, 1.0f }, { 2, 0.0f } }, { -32.19, -28.39, -24.68, -21.52, -18.90, -17.20, -16.21, -15.71, -15.67, -16.21, -17.23, -18.36 } },
+            { "amdr103", 18, 3, false, { { 0, 0.5f }, { 1, 0.0f }, { 2, 0.5f } }, { -18.67, -19.82, -22.05, -25.37, -30.64, -32.80, -25.82, -20.36, -16.60, -13.80, -12.13, -11.25 } },
+            { "amdr103", 18, 3, false, { { 0, 0.5f }, { 1, 1.0f }, { 2, 0.5f } }, { -20.49, -21.92, -24.08, -24.51, -22.23, -20.05, -18.44, -16.92, -15.26, -13.48, -12.12, -11.28 } },
+            { "amor120", 19, 2, false, { { 0, 0.5f }, { 1, 0.5f } }, { -19.89, -19.90, -19.78, -19.66, -19.54, -19.45, -19.39, -19.35, -19.33, -19.32, -19.31, -19.31 } },
+            { "amor120", 19, 2, false, { { 0, 1.0f }, { 1, 1.0f } }, { -8.83, -11.39, -14.64, -15.97, -13.39, -10.13, -7.67, -6.19, -5.48, -5.15, -5.02, -4.96 } },
+            { "amor120", 19, 2, false, { { 0, 0.0f }, { 1, 0.0f } }, { -24.17, -22.74, -22.66, -23.81, -25.94, -28.62, -31.86, -35.54, -39.25, -43.25, -47.17, -51.17 } },
+            { "amor120", 19, 2, false, { { 0, 0.0f }, { 1, 1.0f } }, { -9.63, -12.57, -16.07, -19.60, -23.45, -27.26, -31.21, -35.27, -39.13, -43.21, -47.15, -51.17 } },
+            { "amor120", 19, 2, false, { { 0, 1.0f }, { 1, 0.0f } }, { -23.59, -19.85, -16.12, -12.88, -10.04, -8.03, -6.64, -5.76, -5.31, -5.08, -4.99, -4.95 } },
+            { "amor120", 20, 0, false, {  }, { -1.96, -1.91, -1.88, -1.87, -1.87, -1.87, -1.87, -1.87, -1.87, -1.87, -1.87, -1.87 } },
+            { "amor120", 21, 0, false, {  }, { -9.90, -6.82, -4.50, -3.14, -2.41, -2.10, -1.96, -1.90, -1.88, -1.87, -1.87, -1.87 } },
+            { "amor120", 22, 0, false, {  }, { -15.12, -11.41, -8.02, -5.45, -3.63, -2.67, -2.20, -2.00, -1.92, -1.89, -1.88, -1.87 } },
+            { "amor120", 23, 0, false, {  }, { -21.10, -17.16, -13.28, -9.83, -6.71, -4.49, -3.10, -2.39, -2.09, -1.96, -1.90, -1.88 } },
+            { "amor120", 24, 0, false, {  }, { -27.59, -23.59, -19.56, -15.78, -11.97, -8.61, -5.81, -3.85, -2.79, -2.25, -2.03, -1.93 } },
+            { "amor120", 25, 0, false, {  }, { -35.88, -31.87, -27.79, -23.93, -19.89, -16.05, -12.28, -8.77, -6.02, -3.98, -2.84, -2.28 } },
+            { "ammark2cplus", 26, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.5f }, { 11, 0.0f } }, { -16.01, -16.86, -18.43, -20.21, -20.99, -20.18, -19.14, -18.50, -18.22, -18.09, -18.03, -18.01 } },
+            { "ammark2cplus", 27, 0, true, { { 1, 1.0f }, { 2, 1.0f }, { 3, 1.0f }, { 11, 0.0f } }, { -13.18, -17.40, -19.18, -15.05, -10.72, -7.73, -5.81, -4.79, -4.34, -4.13, -4.05, -4.02 } },
+            { "ammark2cplus", 28, 0, true, { { 1, 0.0f }, { 2, 0.0f }, { 3, 1.0f }, { 11, 0.0f } }, { -23.80, -23.73, -23.62, -23.44, -23.11, -22.72, -22.39, -22.20, -22.11, -22.07, -22.05, -22.04 } },
+            { "ammark2cplus", 29, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.0f }, { 11, 0.0f } }, { -17.33, -18.31, -20.23, -22.83, -24.65, -23.83, -22.42, -21.57, -21.20, -21.03, -20.96, -20.94 } },
+            { "ammark2cplus", 30, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.5f }, { 11, 1.0f } }, { -16.09, -16.94, -18.60, -21.02, -24.04, -26.02, -25.22, -22.74, -20.63, -19.23, -18.54, -18.22 } },
+            { "ammark2cplus", 31, 0, true, { { 1, 1.0f }, { 2, 1.0f }, { 3, 1.0f }, { 11, 1.0f } }, { -12.41, -15.81, -20.00, -23.38, -21.95, -17.72, -13.62, -10.08, -7.48, -5.69, -4.76, -4.32 } },
+            { "ammark2cplus", 32, 0, true, { { 1, 0.0f }, { 2, 0.0f }, { 3, 1.0f }, { 11, 1.0f } }, { -23.86, -23.83, -23.81, -23.79, -23.75, -23.65, -23.46, -23.13, -22.74, -22.40, -22.20, -22.11 } },
+            { "ammark2cplus", 33, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.0f }, { 11, 1.0f } }, { -17.39, -18.30, -20.14, -23.05, -27.60, -33.57, -32.73, -27.38, -24.22, -22.41, -21.56, -21.18 } },
+            { "amdualrecto", 34, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.5f } }, { -4.67, -4.43, -5.12, -6.56, -8.49, -9.88, -10.26, -10.03, -9.78, -9.63, -9.56, -9.53 } },
+            { "amdualrecto", 34, 0, true, { { 1, 1.0f }, { 2, 1.0f }, { 3, 1.0f } }, { -3.57, -4.67, -6.56, -8.35, -8.34, -6.21, -3.74, -1.93, -0.97, -0.48, -0.28, -0.20 } },
+            { "amdualrecto", 34, 0, true, { { 1, 0.0f }, { 2, 1.0f }, { 3, 0.0f } }, { -11.77, -10.45, -9.77, -9.46, -9.25, -9.06, -8.86, -8.69, -8.59, -8.54, -8.52, -8.51 } },
+            { "amdualrecto", 34, 0, true, { { 1, 0.5f }, { 2, 0.0f }, { 3, 0.5f } }, { -5.33, -4.94, -5.53, -7.11, -9.80, -13.03, -15.84, -17.05, -17.16, -17.07, -17.01, -16.98 } },
+            { "amdualrecto", 35, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.5f } }, { -4.73, -4.48, -5.16, -6.62, -8.67, -10.32, -10.87, -10.52, -10.06, -9.76, -9.62, -9.56 } },
+            { "amdualrecto", 35, 0, true, { { 1, 1.0f }, { 2, 1.0f }, { 3, 1.0f } }, { -3.58, -4.64, -6.49, -8.46, -9.22, -7.72, -5.18, -2.92, -1.52, -0.73, -0.39, -0.24 } },
+            { "amdualrecto", 35, 0, true, { { 1, 0.0f }, { 2, 1.0f }, { 3, 0.0f } }, { -11.80, -10.49, -9.82, -9.52, -9.34, -9.19, -9.00, -8.80, -8.65, -8.57, -8.53, -8.52 } },
+            { "amdualrecto", 35, 0, true, { { 1, 0.5f }, { 2, 0.0f }, { 3, 0.5f } }, { -5.39, -4.98, -5.56, -7.12, -9.89, -13.41, -16.93, -18.39, -18.00, -17.45, -17.17, -17.04 } },
+            { "am5150", 36, 0, true, { { 4, 0.5f }, { 5, 0.5f }, { 6, 0.5f } }, { -31.99, -32.43, -33.81, -35.67, -37.16, -37.01, -35.78, -34.75, -34.49, -34.73, -35.03, -35.23 } },
+            { "am5150", 36, 0, true, { { 4, 1.0f }, { 5, 1.0f }, { 6, 1.0f } }, { -30.70, -32.36, -34.81, -37.00, -37.40, -35.53, -33.03, -31.16, -30.36, -30.25, -30.40, -30.53 } },
+            { "am5150", 36, 0, true, { { 4, 0.0f }, { 5, 1.0f }, { 6, 0.0f } }, { -37.75, -37.06, -36.75, -36.63, -36.57, -36.56, -36.63, -36.92, -37.45, -38.10, -38.60, -38.88 } },
+            { "am5150", 36, 0, true, { { 4, 0.5f }, { 5, 0.0f }, { 6, 0.5f } }, { -32.17, -32.57, -34.15, -37.02, -41.59, -44.76, -41.95, -39.34, -38.37, -38.24, -38.38, -38.51 } },
+            { "amslo100", 37, 0, true, { { 2, 0.5f }, { 3, 0.5f }, { 4, 0.5f } }, { -5.32, -5.11, -5.90, -7.57, -9.75, -10.64, -9.30, -7.37, -6.09, -5.39, -5.09, -4.95 } },
+            { "amslo100", 37, 0, true, { { 2, 1.0f }, { 3, 1.0f }, { 4, 1.0f } }, { -3.58, -4.63, -6.47, -8.46, -9.35, -8.00, -5.49, -3.16, -1.66, -0.80, -0.42, -0.26 } },
+            { "amslo100", 37, 0, true, { { 2, 0.0f }, { 3, 1.0f }, { 4, 0.0f } }, { -11.81, -10.50, -9.83, -9.53, -9.36, -9.21, -9.03, -8.82, -8.67, -8.58, -8.54, -8.52 } },
+            { "amslo100", 37, 0, true, { { 2, 0.5f }, { 3, 0.0f }, { 4, 0.5f } }, { -5.97, -5.63, -6.38, -8.34, -12.05, -16.16, -14.30, -10.60, -8.55, -7.51, -7.07, -6.89 } },
+            { "ambe100", 38, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.5f } }, { -4.33, -4.01, -4.64, -6.12, -8.30, -9.75, -9.15, -7.40, -6.04, -5.23, -4.86, -4.71 } },
+            { "ambe100", 38, 0, true, { { 1, 1.0f }, { 2, 1.0f }, { 3, 1.0f } }, { -2.91, -3.71, -5.22, -7.03, -8.28, -7.73, -5.73, -3.50, -1.91, -0.95, -0.51, -0.31 } },
+            { "ambe100", 38, 0, true, { { 1, 0.0f }, { 2, 1.0f }, { 3, 0.0f } }, { -11.30, -9.68, -8.81, -8.42, -8.22, -8.09, -7.96, -7.81, -7.68, -7.60, -7.56, -7.54 } },
+            { "ambe100", 38, 0, true, { { 1, 0.5f }, { 2, 0.0f }, { 3, 0.5f } }, { -4.89, -4.41, -4.90, -6.47, -9.66, -14.30, -15.62, -11.66, -9.10, -7.76, -7.19, -6.95 } },
+            { "amdumbleods", 39, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.5f } }, { -16.78, -16.96, -17.04, -16.99, -16.75, -16.22, -15.31, -14.19, -13.30, -12.72, -12.45, -12.33 } },
+            { "amdumbleods", 39, 0, true, { { 1, 1.0f }, { 2, 1.0f }, { 3, 1.0f } }, { -10.90, -11.18, -11.21, -11.01, -10.42, -9.31, -7.60, -5.65, -4.13, -3.13, -2.65, -2.44 } },
+            { "amdumbleods", 39, 0, true, { { 1, 0.0f }, { 2, 1.0f }, { 3, 0.0f } }, { -38.10, -37.92, -37.80, -37.73, -37.63, -37.47, -37.17, -36.73, -36.32, -36.03, -35.89, -35.82 } },
+            { "amdumbleods", 39, 0, true, { { 1, 0.5f }, { 2, 0.0f }, { 3, 0.5f } }, { -16.76, -17.73, -19.65, -22.56, -26.60, -29.07, -26.59, -23.30, -21.26, -20.13, -19.63, -19.41 } },
+            { "amdumbleods", 40, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.5f } }, { -26.08, -26.97, -27.24, -26.97, -26.10, -24.87, -23.64, -22.81, -22.43, -22.27, -22.21, -22.19 } },
+            { "amdumbleods", 40, 0, true, { { 1, 1.0f }, { 2, 1.0f }, { 3, 1.0f } }, { -10.07, -10.47, -10.79, -11.24, -12.23, -14.18, -17.64, -19.45, -15.25, -11.07, -8.48, -7.02 } },
+            { "amdumbleods", 40, 0, true, { { 1, 0.0f }, { 2, 1.0f }, { 3, 0.0f } }, { -41.52, -41.41, -41.34, -41.26, -41.10, -40.77, -40.19, -39.43, -38.80, -38.48, -38.56, -39.14 } },
+            { "amdumbleods", 40, 0, true, { { 1, 0.5f }, { 2, 0.0f }, { 3, 0.5f } }, { -27.04, -30.89, -35.16, -35.25, -31.16, -27.63, -25.18, -23.79, -23.19, -22.94, -22.85, -22.82 } },
+            { "amecstasy", 41, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.5f } }, { -4.36, -4.06, -4.70, -6.16, -8.17, -9.24, -8.41, -6.79, -5.64, -4.99, -4.70, -4.58 } },
+            { "amecstasy", 41, 0, true, { { 1, 1.0f }, { 2, 1.0f }, { 3, 1.0f } }, { -3.12, -3.95, -5.45, -7.08, -7.95, -7.10, -5.09, -3.01, -1.61, -0.80, -0.44, -0.28 } },
+            { "amecstasy", 41, 0, true, { { 1, 0.0f }, { 2, 1.0f }, { 3, 0.0f } }, { -10.43, -8.91, -8.10, -7.74, -7.56, -7.44, -7.32, -7.19, -7.09, -7.04, -7.01, -7.00 } },
+            { "amecstasy", 41, 0, true, { { 1, 1.0f }, { 2, 0.0f }, { 3, 1.0f } }, { -2.95, -3.48, -4.87, -7.61, -13.13, -15.85, -8.99, -4.67, -2.41, -1.21, -0.68, -0.46 } },
+            { "ampowerball", 42, 0, true, { { 2, 0.5f }, { 3, 0.5f }, { 4, 0.5f } }, { -9.10, -10.68, -13.40, -16.91, -19.53, -17.48, -14.09, -11.64, -10.33, -9.66, -9.38, -9.26 } },
+            { "ampowerball", 42, 0, true, { { 2, 1.0f }, { 3, 1.0f }, { 4, 1.0f } }, { -8.25, -11.08, -14.83, -17.82, -16.40, -12.54, -9.01, -6.38, -4.83, -3.98, -3.61, -3.45 } },
+            { "ampowerball", 42, 0, true, { { 2, 0.0f }, { 3, 1.0f }, { 4, 0.0f } }, { -18.16, -18.14, -18.11, -18.05, -17.93, -17.70, -17.34, -16.95, -16.69, -16.53, -16.47, -16.44 } },
+            { "ampowerball", 42, 0, true, { { 2, 1.0f }, { 3, 0.0f }, { 4, 1.0f } }, { -7.85, -10.72, -15.42, -23.29, -22.84, -15.00, -10.36, -7.33, -5.62, -4.69, -4.29, -4.12 } },
+            { "ampowerball", 43, 0, true, { { 2, 0.5f }, { 3, 0.5f }, { 4, 0.5f } }, { -12.25, -15.48, -18.98, -18.93, -15.57, -12.70, -10.87, -9.91, -9.49, -9.30, -9.23, -9.20 } },
+            { "ampowerball", 43, 0, true, { { 2, 1.0f }, { 3, 1.0f }, { 4, 1.0f } }, { -13.27, -16.92, -17.67, -14.43, -10.57, -7.57, -5.49, -4.30, -3.76, -3.51, -3.41, -3.36 } },
+            { "ampowerball", 44, 0, true, { { 2, 0.5f }, { 3, 0.5f }, { 4, 0.5f } }, { -17.47, -20.86, -23.48, -23.21, -20.32, -17.01, -14.06, -11.90, -10.69, -10.05, -9.78, -9.67 } },
+            { "ampowerball", 44, 0, true, { { 2, 1.0f }, { 3, 1.0f }, { 4, 1.0f } }, { -18.60, -20.69, -20.87, -19.08, -16.02, -12.71, -9.52, -6.90, -5.23, -4.26, -3.82, -3.63 } },
+            { "ampowerball", 44, 0, true, { { 2, 0.0f }, { 3, 1.0f }, { 4, 0.0f } }, { -18.26, -18.25, -18.22, -18.17, -18.04, -17.81, -17.45, -17.06, -16.79, -16.64, -16.57, -16.54 } },
+            { "ampowerball", 45, 0, true, { { 2, 0.5f }, { 3, 0.5f }, { 4, 0.5f } }, { -20.42, -22.90, -21.98, -18.86, -15.50, -12.93, -11.22, -10.30, -9.90, -9.71, -9.64, -9.61 } },
+            { "amvh4", 46, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.5f } }, { -5.11, -5.05, -5.92, -7.65, -9.95, -11.19, -10.30, -8.61, -7.45, -6.80, -6.52, -6.40 } },
+            { "amvh4", 46, 0, true, { { 1, 1.0f }, { 2, 1.0f }, { 3, 1.0f } }, { -3.45, -4.54, -6.40, -8.42, -9.56, -8.64, -6.47, -4.33, -2.95, -2.17, -1.82, -1.67 } },
+            { "amvh4", 46, 0, true, { { 1, 0.0f }, { 2, 1.0f }, { 3, 0.0f } }, { -11.77, -10.59, -10.00, -9.75, -9.61, -9.51, -9.38, -9.25, -9.15, -9.08, -9.06, -9.04 } },
+            { "amvh4", 46, 0, true, { { 1, 1.0f }, { 2, 0.0f }, { 3, 1.0f } }, { -3.23, -4.04, -5.90, -9.22, -15.36, -17.25, -10.57, -6.52, -4.42, -3.33, -2.86, -2.65 } },
+            { "amjc120", 47, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.5f } }, { -16.47, -17.21, -18.82, -21.36, -24.63, -25.37, -21.96, -17.79, -14.33, -11.51, -9.70, -8.70 } },
+            { "amjc120", 47, 0, true, { { 1, 1.0f }, { 2, 1.0f }, { 3, 1.0f } }, { -12.59, -15.53, -19.20, -22.70, -24.05, -21.37, -17.35, -13.30, -9.76, -6.54, -4.21, -2.73 } },
+            { "amjc120", 47, 0, true, { { 1, 0.0f }, { 2, 1.0f }, { 3, 0.0f } }, { -21.99, -21.92, -21.89, -21.88, -21.85, -21.81, -21.70, -21.47, -21.09, -20.56, -20.11, -19.82 } },
+            { "amjc120", 47, 0, true, { { 1, 1.0f }, { 2, 0.0f }, { 3, 1.0f } }, { -12.65, -15.77, -20.27, -26.94, -38.63, -25.12, -18.70, -13.96, -10.17, -6.84, -4.45, -2.93 } },
+            { "amgk800rb", 48, 0, true, { { 1, 0.5f }, { 2, 0.5f }, { 3, 0.5f }, { 4, 0.5f } }, { -7.43, -8.23, -8.78, -9.32, -9.80, -9.65, -8.70, -7.22, -5.59, -3.76, -2.17, -1.07 } },
+            { "amgk800rb", 48, 0, true, { { 1, 1.0f }, { 2, 1.0f }, { 3, 1.0f }, { 4, 1.0f } }, { 4.65, 3.86, 2.93, 2.51, 3.01, 4.51, 6.83, 9.58, 12.03, 13.94, 15.01, 15.52 } },
+            { "amgk800rb", 48, 0, true, { { 1, 0.0f }, { 2, 0.0f }, { 3, 0.0f }, { 4, 0.0f } }, { -18.53, -19.61, -22.32, -24.78, -24.32, -24.80, -26.69, -25.40, -22.44, -20.00, -18.18, -16.78 } },
+            { "amgk800rb", 48, 0, true, { { 1, 0.0f }, { 2, 1.0f }, { 3, 1.0f }, { 4, 0.0f } }, { -10.76, -7.08, -3.67, -1.22, -0.04, -0.59, -2.66, -5.66, -8.65, -11.37, -13.21, -14.28 } },
+            { "amgk800rb", 48, 0, true, { { 1, 1.0f }, { 2, 0.0f }, { 3, 0.0f }, { 4, 1.0f } }, { -3.12, -8.67, -15.72, -21.05, -21.27, -19.70, -17.19, -10.15, -1.75, 5.31, 10.05, 13.02 } },
+            { "amgk800rb", 49, 0, true, {  }, { 9.93, 13.23, 16.20, 18.31, 19.66, 20.31, 20.58, 20.62, 20.46, 19.99, 19.00, 17.18 } },
+            { "amgk800rb", 50, 0, true, { { 0, 0.5f }, { 9, 0.42857142857142855f } }, { -17.10, -16.84, -16.24, -15.12, -13.23, -10.94, -8.71, -7.05, -6.14, -5.68, -5.49, -5.40 } },
+            { "amsvt", 51, 0, true, { { 1, 0.5f }, { 3, 0.5f } }, { -20.13, -20.71, -21.52, -22.26, -22.77, -23.01, -23.09, -22.94, -22.45, -21.72, -21.11, -20.74 } },
+            { "amsvt", 51, 0, true, { { 1, 1.0f }, { 3, 1.0f } }, { -6.74, -8.63, -11.45, -14.70, -18.27, -21.34, -23.32, -23.38, -21.61, -18.57, -15.17, -11.71 } },
+            { "amsvt", 51, 0, true, { { 1, 0.0f }, { 3, 0.0f } }, { -35.47, -34.28, -32.24, -29.67, -26.75, -24.28, -22.49, -21.52, -21.43, -22.39, -24.45, -27.45 } },
+            { "amsvt", 51, 0, true, { { 1, 0.0f }, { 3, 1.0f } }, { -6.69, -8.53, -11.26, -14.40, -17.82, -20.70, -22.37, -22.50, -22.24, -22.83, -24.65, -27.54 } },
+            { "amsvt", 52, 0, true, {  }, { -3.49, -3.93, -5.25, -7.88, -13.38, -22.16, -12.46, -6.77, -3.68, -1.86, -1.00, -0.61 } },
+            { "amsvt", 53, 0, true, {  }, { -12.58, -8.28, -4.90, -2.67, -1.28, -0.61, -0.31, -0.19, -0.14, -0.12, -0.11, -0.11 } },
+            { "amsvt", 54, 0, true, { { 5, 1.0f } }, { -3.49, -3.93, -5.25, -7.88, -13.38, -22.16, -12.46, -6.77, -3.68, -1.86, -1.00, -0.61 } },
+            { "amsvt", 54, 0, true, { { 5, 0.0f } }, { -12.58, -8.28, -4.90, -2.67, -1.28, -0.61, -0.31, -0.19, -0.14, -0.12, -0.11, -0.11 } },
+            { "amb15n", 55, 0, true, { { 1, 0.5f }, { 2, 0.5f } }, { -21.60, -21.76, -22.05, -22.43, -22.89, -23.33, -23.66, -23.83, -23.90, -23.93, -23.94, -23.94 } },
+            { "amb15n", 55, 0, true, { { 1, 1.0f }, { 2, 1.0f } }, { -10.25, -11.37, -13.35, -15.96, -19.12, -22.02, -24.04, -24.24, -22.57, -19.63, -16.43, -13.35 } },
+            { "amb15n", 55, 0, true, { { 1, 0.0f }, { 2, 0.0f } }, { -35.29, -34.06, -32.04, -29.61, -27.08, -25.25, -24.36, -24.55, -25.77, -28.12, -31.20, -34.81 } },
+            { "amb15n", 55, 0, true, { { 1, 0.0f }, { 2, 1.0f } }, { -10.12, -11.21, -13.24, -15.90, -18.98, -21.51, -23.14, -24.30, -25.77, -28.16, -31.23, -34.82 } },
+            };
+            static const std::vector<double> f12 { 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000 };
+            std::vector<int> h;
+            for (const auto& c : cases)
+            {
+                const ISets sets = c.sets;
+                if (c.own) h.push_back (addWithNetlistS6 (lab, c.id, nets[c.net], [sets] (const ModelDef& d) { auto fx = makeIdx (d, sets); return smallSignalOf (*fx, f12, 1.0e-3, 48000.0); }));
+                else h.push_back (frDef (circuitDef (nets[c.net], c.knobs), f12, 1.0e-4, sets));
+            }
+            lab.check (h, "Tappa 6: tonestack dei 27 ampli contro i punti della scheda (" + juce::String ((int) h.size()) + " curve, 63 Hz - 10 kHz, +-0.5 dB)", [&lab, h] {
+                double worst = 0;
+                juce::String worstWhat, bad;
+                juce::StringArray amps;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    amps.addIfNotAlreadyThere (cases[k].id);
+                    double w = 0, wf = 0;
+                    for (size_t i = 0; i < 12; ++i)
+                        if (std::abs (lab.v (h[k], i) - cases[k].db[i]) > w) { w = std::abs (lab.v (h[k], i) - cases[k].db[i]); wf = f12[i]; }
+                    if (w > 0.5) bad << cases[k].id << " #" << (int) k << " " << num (w) << " dB a " << juce::String ((int) wf) << " Hz ";
+                    if (w > worst) { worst = w; worstWhat = juce::String (cases[k].id) + " a " + juce::String ((int) wf) + " Hz"; }
+                }
+                return Verdict { bad.isEmpty() && amps.size() == numAmps, juce::String (amps.size()) + " ampli, scarto max " + num (worst, 3) + " dB (" + worstWhat + ") " + bad.trim() };
+            });
+        }
+
+        // 4. guadagni degli stadi del Deluxe Reverb (AB763) contro le misure di Rob Robinette: netlist del modello troncata dopo ogni stadio
+        //    (stages.py del lavoro A), 1 kHz con 1 mV, TREBLE/BASS/VOLUME a 0.5, REVERB 0
+        {
+            const auto st = stagesS6 (cfgOf ("amdeluxereverb"));
+            const Sets sets { { "TREBLE", 0.5f }, { "BASS", 0.5f }, { "VOLUME", 0.5f }, { "REVERB", 0.0f } };
+            std::vector<int> h;
+            for (int n : { 1, 2, 3, 4, 6, 14, 16 })
+                h.push_back (addWithNetlistS6 (lab, "amdeluxereverb", prefixS6 (st, (size_t) n), [sets] (const ModelDef& d) { return smallSignalDb (d, sets, { 1000.0 }, 1.0e-3); }));
+            const bool shape = st.size() > 16 && st[1].rfind ("triode", 0) == 0 && st[3].rfind ("triode", 0) == 0 && st[5].rfind ("mna", 0) == 0
+                               && st[13].rfind ("mix", 0) == 0 && st[14].rfind ("triode", 0) == 0 && st[15].rfind ("gain", 0) == 0;
+            lab.check (h, "Deluxe Reverb: guadagni a 1 kHz, V2A a vuoto +34.4 dB (+-0.3, modello); contro Robinette V2B +35.1, rete del riverbero (secco) -27.4, "
+                          "V4B col carico dell'INTENSITY +30.4 dB (+-1)", [&lab, h, shape] {
+                if (! shape) return Verdict { false, "netlist del Deluxe diversa da quella misurata (ordine degli stadi)" };
+                const double v2a = lab.v (h[1]) - lab.v (h[0]), v2b = lab.v (h[3]) - lab.v (h[2]), rev = lab.v (h[4]) - lab.v (h[3]), v4b = lab.v (h[6]) - lab.v (h[5]);
+                const bool ok = within (v2a, 34.4, 0.3) && within (v2b, 35.1, 1.0) && within (rev, -27.4, 1.0) && within (v4b, 30.4, 1.0);
+                return Verdict { ok, "V2A " + num (v2a) + ", V2B " + num (v2b) + ", riverbero " + num (rev) + ", V4B " + num (v4b) + " dB" };
+            });
+        }
+
+        // 5. livelli dei 27 ampli: riff del banco s1 (3 s a -12 dBFS) con i comandi di default, tutti a 1 e tutti a 0 (finiti, picco < +18 dBFS);
+        //    lavoro A: valori del banco (+-1.5 dB, default RMS -24..-10 dBFS e picco < 0 dBFS); lavoro B: riff del suo banco (8 s), default e
+        //    tutto al massimo (+-1.5 dB); costo: i 3 piu' lenti sopra 3 x tempo reale (CPU del thread)
+        std::vector<int> hDef, hMax, hMin;
+        for (int m = 0; m < numAmps; ++m)
+        {
+            hDef.push_back (lab.add (kStage6Amps[m], [] (const ModelDef& d) { return riffLevelsS5 (d, {}); }));
+            for (float v : { 1.0f, 0.0f })
+                (v > 0.5f ? hMax : hMin).push_back (lab.add (kStage6Amps[m], [v] (const ModelDef& d)
+                {
+                    return riffLevelsS5 (d, [&d, v] (Effect& fx) { for (int k = 0; k < d.numControls; ++k) fx.params[k].store (v); });
+                }));
+        }
+        {
+            auto ext = hMax;
+            ext.insert (ext.end(), hMin.begin(), hMin.end());
+            lab.check (ext, "Tappa 6 ampli: comandi tutti al massimo e tutti al minimo (27 ampli, riff a -12 dBFS): finiti, picco < +18 dBFS", [&lab, hMax, hMin] {
+                double worst = -200;
+                juce::String bad, worstId;
+                for (int m = 0; m < numAmps; ++m)
+                    for (int s = 0; s < 2; ++s)
+                    {
+                        const int h = (s == 0 ? hMax : hMin)[(size_t) m];
+                        const bool fin = lab.v (h, 2) > 0.5;
+                        const double p = fin ? lab.v (h, 1) : 999.0;
+                        if (p > worst) { worst = p; worstId = juce::String (kStage6Amps[m]) + (s == 0 ? " max" : " min"); }
+                        if (! fin || p >= 18.0) bad << kStage6Amps[m] << (s == 0 ? "/max" : "/min") << (fin ? "" : " NaN") << " ";
+                    }
+                return Verdict { bad.isEmpty(), "picco max " + num (worst, 1) + " dBFS (" + worstId + ") " + bad.trim() };
+            });
+            // lavoro A: { RMS, picco } di default e con tutti i comandi a 1 (report.md del lavoro A)
+            static const double refA[kStage6AmpsA][4] = {
+                { -23.7, -8.1, -13.8, -2.7 }, { -17.0, -2.8, -12.7, -2.4 }, { -22.4, -8.7, -9.9, -1.3 }, { -21.6, -5.3, -14.2, -5.7 },
+                { -13.7, -3.3, -13.3, -8.0 }, { -15.7, -5.1, -14.3, -9.9 }, { -11.5, -2.6, -12.9, -8.0 }, { -10.3, -1.3, -9.4, -1.1 },
+                { -14.7, -6.6, -12.6, -5.7 }, { -14.9, -0.7, -10.9, -1.8 }, { -11.0, -3.0, -10.7, -2.6 }, { -14.9, -4.8, -12.6, -3.2 },
+                { -11.1, -4.3, -11.2, -4.6 }, { -17.4, -7.6, -16.1, -8.9 } };
+            auto need = hDef;
+            need.insert (need.end(), hMax.begin(), hMax.end());
+            lab.check (need, "Tappa 6 ampli del lavoro A: riff a -12 dBFS, default RMS -24..-10 dBFS e picco < 0 dBFS; RMS e picco di default e con tutti i comandi a 1 "
+                             "come il banco (+-1.5 dB)", [&lab, hDef, hMax] {
+                juce::String bad;
+                double w = 0;
+                for (int m = 0; m < kStage6AmpsA; ++m)
+                {
+                    const double v[4] = { lab.v (hDef[(size_t) m], 0), lab.v (hDef[(size_t) m], 1), lab.v (hMax[(size_t) m], 0), lab.v (hMax[(size_t) m], 1) };
+                    bool good = lab.v (hDef[(size_t) m], 2) > 0.5 && v[0] > -24.0 && v[0] < -10.0 && v[1] < 0.0;
+                    for (int k = 0; k < 4; ++k) { good = good && within (v[k], refA[m][k], 1.5); w = std::max (w, std::abs (v[k] - refA[m][k])); }
+                    if (! good) bad << kStage6Amps[m] << " (" << num (v[0], 1) << "/" << num (v[1], 1) << ", max " << num (v[2], 1) << "/" << num (v[3], 1) << ") ";
+                }
+                return Verdict { bad.isEmpty(), "scarto max " + num (w) + " dB " + bad.trim() };
+            });
+            lab.check (hDef, "Tappa 6 ampli: costo, i 3 piu' lenti (riff mono 3 s, rimisurati da soli) sopra 3 x tempo reale (CPU del thread)", [&lab, hDef] {
+                std::vector<std::pair<double, int>> speed;
+                for (int m = 0; m < numAmps; ++m) speed.push_back ({ lab.v (hDef[(size_t) m], 3), m });
+                std::sort (speed.begin(), speed.end());
+                static const Buf riff = guitarS1 (true, 48000.0, 3.0, -12.0);
+                bool ok = true;
+                juce::String detail;
+                for (int k = 0; k < 3; ++k)
+                {
+                    const auto* d = findModel (kStage6Amps[speed[(size_t) k].second]);
+                    auto fx = makeS1 (*d, {});
+                    Buf y = riff;
+                    const double t0 = threadCpuSeconds();
+                    processMono (*fx, y, 512);
+                    const double x = 3.0 / std::max (1.0e-6, threadCpuSeconds() - t0);
+                    ok = ok && x > 3.0;
+                    detail << d->id << " " << num (x, 1) << "x ";
+                }
+                return Verdict { ok, detail.trim() };
+            });
+        }
+        {
+            // lavoro B: { picco, RMS } del suo banco, default e tutti i comandi a 1 (tests.md del lavoro B; JC-120: sinistro e destro)
+            struct RefB { const char* id; double def[4], mx[4]; };
+            static const RefB refB[] = {
+                { "ammark2cplus", { -8.5, -16.5 }, { -8.2, -15.6 } }, { "amdualrecto", { -12.1, -21.9 }, { -7.1, -18.2 } },
+                { "am5150", { -13.1, -23.5 }, { -1.8, -9.9 } }, { "amslo100", { -10.8, -19.4 }, { -3.0, -10.3 } }, { "ambe100", { -7.8, -16.8 }, { -4.2, -11.9 } },
+                { "amdumbleods", { -11.7, -20.0 }, { -4.3, -11.9 } }, { "amecstasy", { -9.2, -18.6 }, { -5.4, -12.4 } },
+                { "ampowerball", { -7.3, -16.3 }, { -6.8, -15.0 } }, { "amvh4", { -6.9, -14.3 }, { -4.6, -11.9 } },
+                { "amjc120", { -6.3, -20.8, -7.2, -21.3 }, { -5.2, -9.6, -5.3, -9.6 } }, { "amgk800rb", { -19.7, -39.6 }, { 1.3, -8.4 } },
+                { "amsvt", { -8.6, -20.8 }, { -8.5, -17.8 } }, { "amb15n", { -10.3, -28.5 }, { -4.0, -19.1 } } };
+            std::vector<int> hd, hm;
+            for (const auto& r : refB)
+            {
+                hd.push_back (levelB (r.id, {}));
+                lab.first (hd.back());
+                std::map<int, float> all;
+                if (const auto* d = findModel (r.id)) for (int k = 0; k < d->numControls; ++k) all[k] = 1.0f;
+                hm.push_back (levelB (r.id, all));
+                lab.first (hm.back());
+            }
+            auto need = hd;
+            need.insert (need.end(), hm.begin(), hm.end());
+            lab.check (need, "Tappa 6 ampli del lavoro B: riff del banco B (8 s, -12 dBFS), picco e RMS di default e con tutti i comandi a 1 come il banco (+-1.5 dB, "
+                             "13 ampli)", [&lab, hd, hm] {
+                juce::String bad;
+                double w = 0;
+                for (size_t m = 0; m < hd.size(); ++m)
+                {
+                    const int nv = std::strcmp (refB[m].id, "amjc120") == 0 ? 4 : 2;
+                    bool good = lab.all (hd[m]).back() > 0.5 && lab.all (hm[m]).back() > 0.5;
+                    for (int k = 0; k < nv; ++k)
+                    {
+                        const double a = lab.v (hd[m], (size_t) k), b = lab.v (hm[m], (size_t) k);
+                        good = good && within (a, refB[m].def[k], 1.5) && within (b, refB[m].mx[k], 1.5);
+                        w = std::max (w, std::max (std::abs (a - refB[m].def[k]), std::abs (b - refB[m].mx[k])));
+                    }
+                    if (! good) bad << refB[m].id << " (" << num (lab.v (hd[m], 0), 1) << "/" << num (lab.v (hd[m], 1), 1) << ", max " << num (lab.v (hm[m], 0), 1) << "/"
+                                    << num (lab.v (hm[m], 1), 1) << ") ";
+                }
+                return Verdict { bad.isEmpty(), "scarto max " + num (w) + " dB " + bad.trim() };
+            });
+        }
+
+        // 6. voce dei circuiti, canali e modi
+        {
+            const int h = lab.add ("amtwinreverb", [] (const ModelDef& d) { auto fx = makeS1 (d, { { "REVERB", 0.0f } }); return harmonicsOf (*fx, 220.0, -20.0, { 1, 2, 3 }); });
+            lab.check ({ h }, "Twin Reverb pulito (seno 220 Hz -20 dBFS, REVERB 0): H2 -50, H3 -47 dB (+-4)", [&lab, h] {
+                const double h2 = dbOf (lab.v (h, 1) / lab.v (h, 0)), h3 = dbOf (lab.v (h, 2) / lab.v (h, 0));
+                return Verdict { within (h2, -50.0, 4.0) && within (h3, -47.0, 4.0), "H2 " + num (h2, 1) + ", H3 " + num (h3, 1) + " dB" };
+            });
+        }
+        {
+            // NFB dello stadio pp da solo: JTM45 (presa 16 ohm) contro Bassman 5F6-A (presa 2 ohm)
+            auto nfb = [&lab, &frDef, &cfgOf] (const char* id)
+            {
+                return std::pair<int, int> { frDef (circuitDef (keepS6 (ppAloneS6 (cfgOf (id), false)), 1), { 100.0, 1000.0 }, 1.0e-3),
+                                             frDef (circuitDef (keepS6 (ppAloneS6 (cfgOf (id), true)), 1), { 100.0, 1000.0 }, 1.0e-3) };
+            };
+            const auto j = nfb ("amjtm45"), b = nfb ("ambassman5f6a"), ac = nfb ("amac30tb");
+            lab.check ({ j.first, j.second, b.first, b.second, ac.first }, "Stadio pp da solo: NFB del JTM45 8.5 dB contro 2.4 del Bassman a 1 kHz (+-1); AC30 senza NFB, "
+                                                                          "100 Hz rispetto a 1 kHz +13 dB (+-2, carico d'altoparlante)", [&lab, j, b, ac] {
+                const double nj = lab.v (j.second, 1) - lab.v (j.first, 1), nb = lab.v (b.second, 1) - lab.v (b.first, 1), sp = lab.v (ac.first, 0) - lab.v (ac.first, 1);
+                return Verdict { within (nj, 8.5, 1.0) && within (nb, 2.4, 1.0) && within (sp, 13.0, 2.0),
+                                 "JTM45 " + num (nj) + " dB, Bassman " + num (nb) + " dB, AC30 " + num (sp, 1) + " dB" };
+            });
+        }
+        {
+            const int p0 = fr ("amjcm800", { { "PRESENCE", 0.0f } }, { 1000.0, 6000.0 }, 1.0e-5), p1 = fr ("amjcm800", { { "PRESENCE", 1.0f } }, { 1000.0, 6000.0 }, 1.0e-5);
+            lab.check ({ p0, p1 }, "JCM800: PRESENCE 1 meno PRESENCE 0, 6 kHz rispetto a 1 kHz +4.1 dB (+-1)", [&lab, p0, p1] {
+                const double d = (lab.v (p1, 1) - lab.v (p1, 0)) - (lab.v (p0, 1) - lab.v (p0, 0));
+                return Verdict { within (d, 4.1, 1.0), num (d) + " dB" };
+            });
+        }
+        {
+            // tremolo ottico del Deluxe e tremolo sul bias del Princeton (VOLUME 0.3, REVERB 0)
+            std::vector<int> h;
+            for (const char* id : { "amdeluxereverb", "amprincetonreverb" })
+                for (float i : { 0.5f, 1.0f })
+                    h.push_back (lab.add (id, [i] (const ModelDef& d) {
+                        return std::vector<double> { tremoloDepthS6 (d, { { "VOLUME", 0.3f }, { "REVERB", 0.0f }, { "INTENSITY", i } }) }; }));
+            lab.check (h, "Tremolo: Deluxe (ottico) INTENSITY 0.5 / 1 escursione 8.0 / 16.7 dB, Princeton (bias) 3.8 / 20.4 dB (+-2; seno 440 Hz -40 dBFS, RMS su 10 ms)",
+                       [&lab, h] {
+                const double ref[] = { 8.0, 16.7, 3.8, 20.4 };
+                bool ok = true;
+                juce::String s;
+                for (size_t k = 0; k < 4; ++k) { ok = ok && within (lab.v (h[k]), ref[k], 2.0); s << (k ? " / " : "") << num (lab.v (h[k]), 1); }
+                return Verdict { ok, s + " dB" };
+            });
+        }
+        {
+            std::vector<int> h;
+            for (float s : { 0.0f, 0.5f, 1.0f }) h.push_back (riffSets ("amac30tb", { { "INPUT", s } }));
+            for (float r : { 0.0f, 1.0f }) h.push_back (riffSets ("amdeluxereverb", { { "VOLUME", 0.25f }, { "REVERB", r } }));
+            lab.check (h, "AC30 INPUT BRILLIANT / NORMAL / BOTH: RMS del riff -13.7 / -28.1 / -13.8 dBFS (+-1); Deluxe VOLUME 0.25 REVERB 0 / 1: -21.3 / -16.3 dBFS (+-1.5)",
+                       [&lab, h] {
+                const double ref[] = { -13.7, -28.1, -13.8, -21.3, -16.3 };
+                bool ok = true;
+                juce::String s;
+                for (size_t k = 0; k < 5; ++k) { ok = ok && within (lab.v (h[k]), ref[k], k < 3 ? 1.0 : 1.5); s << (k == 0 ? "" : k == 3 ? "; Deluxe " : " / ") << num (lab.v (h[k]), 1); }
+                return Verdict { ok, s + " dBFS" };
+            });
+        }
+        {
+            // Dual Rectifier (riff del banco B): modi Vintage con NFB e rolloff sotto i Modern; raddrizzatore a diodi piu' forte del 5U4
+            std::vector<int> h;
+            for (float m : { 0.25f, 0.5f, 0.75f, 1.0f }) h.push_back (levelB ("amdualrecto", { { 6, m } }));
+            h.push_back (levelB ("amdualrecto", { { 8, 0.0f } }));
+            h.push_back (levelB ("amdualrecto", { { 8, 1.0f } }));
+            for (int x : h) lab.first (x);
+            lab.check (h, "Dual Rectifier: RMS ORN VINT / ORN MODERN / RED VINT / RED MODERN -27.4 / -19.4 / -26.5 / -21.9 dBFS, RECTIFIER DIODE / TUBE -20.5 / -21.9 "
+                          "(+-1.5); Vintage almeno 3 dB sotto Modern, diodi sopra la valvola", [&lab, h] {
+                const double ref[] = { -27.4, -19.4, -26.5, -21.9, -20.5, -21.9 };
+                bool ok = true;
+                juce::String s;
+                for (size_t k = 0; k < 6; ++k) { ok = ok && within (lab.v (h[k], 1), ref[k], 1.5); s << (k == 0 ? "" : k == 4 ? "; " : " / ") << num (lab.v (h[k], 1), 1); }
+                ok = ok && lab.v (h[0], 1) < lab.v (h[1], 1) - 3.0 && lab.v (h[2], 1) < lab.v (h[3], 1) - 3.0 && lab.v (h[4], 1) > lab.v (h[5], 1);
+                return Verdict { ok, s + " dBFS" };
+            });
+        }
+        {
+            // 5150 RESONANCE: stadio pp da solo (presence a 0), depth 1M/6.8n sulla NFB
+            const auto pp = ppAloneS6 (cfgOf ("am5150"), false), ppNo = ppAloneS6 (cfgOf ("am5150"), true);
+            const int r0 = frDef (circuitDef (keepS6 (pp), 9), { 60.0, 1000.0 }, 1.0e-3, { { 7, 0.0f } });
+            const int r1 = frDef (circuitDef (keepS6 (pp), 9), { 60.0, 1000.0 }, 1.0e-3, { { 7, 1.0f } });
+            const int n = frDef (circuitDef (keepS6 (ppNo), 9), { 60.0, 1000.0 }, 1.0e-3, { { 7, 0.0f } });
+            lab.check ({ r0, r1, n }, "5150: RESONANCE 0 -> 1 (stadio pp da solo) +6.7 dB a 60 Hz rispetto a 1 kHz (+-1); al massimo a 60 Hz come senza NFB (+-0.5)",
+                       [&lab, r0, r1, n, pp] {
+                if (pp.find ("dp=") == std::string::npos) return Verdict { false, "stadio pp del 5150 senza depth" };
+                const double boost = (lab.v (r1, 0) - lab.v (r1, 1)) - (lab.v (r0, 0) - lab.v (r0, 1)), open = lab.v (r1, 0) - lab.v (n, 0);
+                return Verdict { within (boost, 6.7, 1.0) && std::abs (open) <= 0.5, "RESONANCE " + num (boost) + " dB, a 60 Hz " + num (open) + " dB dal finale senza NFB" };
+            });
+        }
+        {
+            // JC-120: CHORUS = diretto a sinistra e ramo ritardato a destra (MN3007, 3.7 +- 2.4 ms, LFO triangolare 0.83 Hz), VIBRATO = ritardo su
+            // entrambi con VIB SPEED 2-8 Hz; seno a 100 Hz di 20 mV (periodo di 10 ms, piu' lungo dell'escursione), REVERB 0, fase su finestre
+            // di un periodo. Riff del banco B: canali scorrelati in CHORUS
+            const int ch = lab.add ("amjc120", [] (const ModelDef& d)
+            {
+                const auto out = runS2 (d, sineBuf (48000.0, 100.0, 0.02, 3.6), { { 5, 0.0f }, { 8, 0.0f } }, 48000.0, 256, 2);
+                const auto t = phaseDelayS6 (out[0], out[1], 100.0, (size_t) (0.3 * 48000.0));
+                const auto [mn, mx] = std::minmax_element (t.begin(), t.end());
+                return std::vector<double> { *mn, *mx, rateS6 (t, 400.0) };
+            });
+            auto vib = [&lab] (float speed)
+            {
+                return lab.add ("amjc120", [speed] (const ModelDef& d)
+                {
+                    const Buf x = sineBuf (48000.0, 100.0, 0.02, 2.3);
+                    const auto off = runS2 (d, x, { { 5, 0.0f }, { 8, 0.5f } })[0];
+                    const auto v = runS2 (d, x, { { 5, 0.0f }, { 6, speed }, { 7, 1.0f }, { 8, 1.0f } })[0];
+                    const auto t = phaseDelayS6 (off, v, 100.0, (size_t) (0.3 * 48000.0));
+                    const auto [mn, mx] = std::minmax_element (t.begin(), t.end());
+                    return std::vector<double> { *mn, *mx, rateS6 (t, 400.0) };
+                });
+            };
+            const int v0 = vib (0.0f), v1 = vib (1.0f);
+            const int lv = levelB ("amjc120", {});
+            lab.first (ch);
+            lab.check ({ ch, v0, v1, lv }, "JC-120: CHORUS ritardo del destro 1.3 - 6.1 ms (+-0.3) con LFO a 0.83 Hz (+-0.05); VIBRATO VIB SPEED 0 / 1 a 2 / 8 Hz (+-10%), "
+                                           "escursione 1.3 - 6.1 ms (+-0.4); canali del riff scorrelati in CHORUS (|r| < 0.2)", [&lab, ch, v0, v1, lv] {
+                const double lo = lab.v (ch, 0), hi = lab.v (ch, 1), rate = lab.v (ch, 2), f0 = lab.v (v0, 2), f1 = lab.v (v1, 2), corr = lab.v (lv, 4);
+                const bool ok = within (lo, 1.3, 0.3) && within (hi, 6.1, 0.3) && within (rate, 0.83, 0.05) && within (f0, 2.0, 0.2) && within (f1, 8.0, 0.8)
+                                && within (lab.v (v0, 0), 1.3, 0.4) && within (lab.v (v0, 1), 6.1, 0.4) && std::abs (corr) < 0.2;
+                return Verdict { ok, "chorus " + num (lo) + " - " + num (hi) + " ms a " + num (rate, 3) + " Hz, vibrato " + num (f0) + " / " + num (f1) + " Hz ("
+                                         + num (lab.v (v0, 0)) + " - " + num (lab.v (v0, 1)) + " ms), correlazione " + num (corr, 3) };
+            });
+        }
+
+        // 7. click (seno 220 Hz, ogni comando e ogni scatto, soglia 10x senza eccezioni) e determinismo fra due istanze nuove
+        addClickAndDeterminism (lab, kStage6Amps, numAmps, "Tappa 6 ampli", 10.0, false);
+        lab.run (report);
+    }
+
+    /** Rumore rosa (filtro di Kellet, mt19937 seme 77) con passa-banda 70 Hz - 5 kHz, RMS 'amp' (banco della cassa). */
+    Buf pinkS6 (double sr, double seconds, float amp)
+    {
+        std::mt19937 rng (77);
+        std::normal_distribution<float> N (0, 1);
+        Buf x ((size_t) (sr * seconds));
+        double b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+        for (auto& v : x)
+        {
+            const double w = N (rng);
+            b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759; b2 = 0.96900 * b2 + w * 0.1538520;
+            b3 = 0.86650 * b3 + w * 0.3104856; b4 = 0.55000 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.0168980;
+            v = (float) (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362); b6 = w * 0.115926;
+        }
+        juce::dsp::IIR::Filter<float> hp, lp, hp2, lp2;
+        hp.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass (sr, 70.0f);
+        hp2.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass (sr, 70.0f);
+        lp.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass (sr, 5000.0f);
+        lp2.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass (sr, 5000.0f);
+        double e = 0;
+        for (auto& v : x) { v = lp2.processSample (lp.processSample (hp2.processSample (hp.processSample (v)))); e += (double) v * v; }
+        const float g = amp / (float) std::sqrt (e / (double) x.size());
+        for (auto& v : x) v *= g;
+        return x;
+    }
+
+    /** Tappa 6, lavoro della cassa: 31 casse (type=i6cab, IR generate) e laboratorio. Metodi del banco della cassa (test/cabtest.cpp). */
+    void runStage6CabTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using namespace pt::engine;
+        constexpr int numCabs = countOf (kStage6Cabs);
+        Lab lab;
+
+        // 1. modelli esistenti con IR di cassa invariati bit per bit (test/legacytest.cpp del lavoro della cassa: default, ogni scatto di
+        //    ogni selettore, ogni pomello a 0 e a 1; rumore e impulsi stereo di 1 s, blocchi da 256): IRL-1/2, Cube Baby/Bass/AC, MINI-AMP,
+        //    MINI-EFX, IR BOX con FxStage6Cab.cpp nuovo come con lo stub di 823c22b; impronte misurate con GCC su Linux x86-64
+        {
+            struct Ref { const char* id; int runs; uint64_t hash; };
+            static const Ref refs[] = { { "irl1", 15, 0xa7ce98eb1db78563ull }, { "irl2", 14, 0xbe9d70b679b0e82bull }, { "cvcubebaby", 35, 0x343f1c1f67b3437bull },
+                                        { "cvcubebabybass", 28, 0x8f796c877ded027full }, { "cvcubebabyac", 28, 0xd978e9c2ca1999cfull },
+                                        { "cvminiamp", 20, 0x3e84b93fb52c91bfull }, { "cvminiefx", 20, 0xb26ad96580d0546bull }, { "cvirbox", 39, 0x6aeeecb01e875dfbull } };
+            std::vector<int> h;
+            for (const auto& ref : refs)
+            {
+                h.push_back (lab.add (ref.id, [] (const ModelDef& d)
+                {
+                    static const Buf src = []
+                    {
+                        std::mt19937 rng (5);
+                        std::uniform_real_distribution<float> U (-1, 1);
+                        Buf s (48000);
+                        for (int i = 0; i < 48000; ++i) s[(size_t) i] = 0.2f * U (rng) * (float) std::exp (-(i % 12000) / 3000.0) + (i % 9600 == 0 ? 0.8f : 0.0f);
+                        return s;
+                    }();
+                    std::vector<std::vector<std::pair<int, float>>> sets { {} };
+                    for (int c = 0; c < d.numControls; ++c)
+                        if (d.controls[c].steps > 1) for (int s = 0; s < d.controls[c].steps; ++s) sets.push_back ({ { c, (float) s / (d.controls[c].steps - 1) } });
+                        else if (d.controls[c].kind != ControlKind::Button) { sets.push_back ({ { c, 0.0f } }); sets.push_back ({ { c, 1.0f } }); }
+                    uint64_t hash = 1469598103934665603ull;
+                    for (const auto& st : sets)
+                    {
+                        auto fx = createEffect (d);
+                        for (const auto& p : st) fx->params[p.first].store (p.second);
+                        fx->prepare (48000, 256);
+                        Buf l = src, r = src;
+                        for (auto& v : r) v *= 0.7f;
+                        runStereo256 (*fx, l, r);
+                        hash = fnvBytes (l, fnvBytes (r, hash));
+                    }
+                    return std::vector<double> { (double) (uint32_t) (hash >> 32), (double) (uint32_t) hash, (double) sets.size() };
+                }));
+                lab.first (h.back());
+            }
+            lab.check (h, "Tappa 6: IRL-1/2, Cube Baby/Bass/AC, MINI-AMP, MINI-EFX e IR BOX invariati bit per bit (199 prove con FxStage6Cab.cpp)", [&lab, h] {
+                int runs = 0;
+                juce::String bad;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    runs += (int) lab.v (h[k], 2);
+                    if (kBitExactRefs && hashOfS5 (lab, h[k], 0) != refs[k].hash) bad << refs[k].id << " DIVERSO (" << juce::String::toHexString ((juce::int64) hashOfS5 (lab, h[k], 0)) << ") ";
+                    if ((int) lab.v (h[k], 2) != refs[k].runs) bad << refs[k].id << " prove " << (int) lab.v (h[k], 2) << " invece di " << refs[k].runs << " ";
+                }
+                return Verdict { bad.isEmpty(), juce::String (runs) + " prove" + (kBitExactRefs ? juce::String (", impronte identiche") : juce::String (", impronte non confrontate (compilatore)")) + " " + bad.trim() };
+            });
+        }
+
+        // 2. combinazione di fabbrica (cono di serie, microfono di fabbrica, centro della cupola, ROOM 0, un microfono) contro il bersaglio cono su
+        //    baffle (punti del datasheet) + curva del microfono + prossimita' calcolata: IR dell'effetto intero lisciata a 1/12 di ottava, scarto RMS
+        //    254 Hz - 5.8 kHz dopo aver tolto la differenza media (py/verify.py); valori del prodotto calibrato misurati dagli autori ("def." prodotto)
+        {
+            struct Target { const char* id; int mic; double rms; float db[55]; };
+            static const Target targets[] = {
+            { "cbprinceton110", 0, 3.150, { -0.76, -1.41, -2.05, -2.71, -3.66, -4.59, -5.51, -6.42, -7.07, -6.56, -6.04, -5.52, -4.99, -4.48, -3.97, -3.44, -2.91, -2.38, -2.02, -2.24, -2.26, -1.59, -0.91, -0.23, 0.40, 0.92, 1.43, 1.72, 1.35, 0.97, 0.77, 0.84, 0.14, 0.21, 2.46, 4.73, 6.82, 7.92, 7.57, 7.52, 8.29, 9.14, 9.56, 9.37, 10.30, 11.23, 11.85, 11.95, 11.75, 10.76, 9.78, 8.79, 7.97, 7.37, 6.77 } },
+            { "cbdeluxe112", 0, 3.290, { -1.92, -2.50, -3.07, -3.63, -4.21, -4.79, -5.35, -5.90, -6.42, -6.71, -6.23, -5.75, -5.27, -4.81, -4.35, -3.89, -3.48, -3.06, -2.66, -2.38, -2.44, -2.27, -1.37, -0.47, 0.49, 1.61, 2.72, 3.18, 1.63, 0.08, -1.46, -2.09, -0.01, 2.07, 4.15, 6.24, 7.87, 7.97, 7.14, 6.32, 5.62, 5.10, 4.58, 4.55, 5.45, 6.34, 6.70, 6.01, 5.19, 4.03, 2.86, 1.69, 0.96, 1.24, 2.29 } },
+            { "cbtwin212", 0, 3.219, { -1.92, -2.50, -3.07, -3.63, -4.21, -4.79, -5.35, -5.90, -6.42, -6.71, -6.23, -5.75, -5.27, -4.81, -4.35, -3.89, -3.48, -3.06, -2.66, -2.38, -2.44, -2.27, -1.37, -0.47, 0.49, 1.61, 2.72, 3.18, 1.63, 0.08, -1.46, -2.09, -0.01, 2.07, 4.15, 6.24, 7.87, 7.97, 7.14, 6.32, 5.62, 5.10, 4.58, 4.55, 5.45, 6.34, 6.70, 6.01, 5.19, 4.03, 2.86, 1.69, 0.96, 1.24, 2.29 } },
+            { "cbbassman410", 0, 3.029, { -0.76, -1.41, -2.05, -2.71, -3.66, -4.59, -5.51, -6.42, -7.07, -6.56, -6.04, -5.52, -4.99, -4.48, -3.97, -3.44, -2.91, -2.38, -2.02, -2.24, -2.26, -1.59, -0.91, -0.23, 0.40, 0.92, 1.43, 1.72, 1.35, 0.97, 0.77, 0.84, 0.14, 0.21, 2.46, 4.73, 6.82, 7.92, 7.57, 7.52, 8.29, 9.14, 9.56, 9.37, 10.30, 11.23, 11.85, 11.95, 11.75, 10.76, 9.78, 8.79, 7.97, 7.37, 6.77 } },
+            { "cbac30212", 0, 2.895, { -0.64, -0.94, -1.22, -1.50, -1.83, -2.15, -2.46, -2.75, -2.62, -2.14, -1.65, -1.16, -0.73, -0.52, -0.32, -0.13, 0.06, 0.26, 0.36, 0.38, 0.76, 1.14, 1.41, 0.76, 0.08, -0.70, -1.47, -2.24, -3.01, -3.78, -4.54, -4.63, -2.73, -0.83, 1.07, 2.97, 4.67, 5.83, 6.99, 8.15, 8.30, 6.99, 5.69, 4.91, 5.66, 6.41, 7.20, 7.91, 7.66, 7.09, 6.51, 5.94, 4.95, 3.34, 1.73 } },
+            { "cbac15112", 0, 3.075, { 0.26, -0.10, -0.46, -0.81, -1.26, -1.70, -2.12, -2.45, -2.14, -1.74, -1.32, -0.90, -0.52, -0.27, -0.00, 0.27, 0.54, 0.82, 1.06, 1.26, 1.47, 1.68, 1.31, 0.60, 0.11, 0.18, 0.19, -0.26, -0.70, -1.14, -1.59, -1.53, -0.04, 1.46, 2.96, 4.46, 5.84, 6.89, 7.94, 8.13, 7.16, 5.29, 5.72, 7.64, 9.67, 10.19, 9.86, 9.60, 9.16, 8.26, 7.35, 6.44, 5.01, 2.83, 0.65 } },
+            { "cbv212blue", 0, 2.822, { -0.64, -0.94, -1.22, -1.50, -1.83, -2.15, -2.46, -2.75, -2.62, -2.14, -1.65, -1.16, -0.73, -0.52, -0.32, -0.13, 0.06, 0.26, 0.36, 0.38, 0.76, 1.14, 1.41, 0.76, 0.08, -0.70, -1.47, -2.24, -3.01, -3.78, -4.54, -4.63, -2.73, -0.83, 1.07, 2.97, 4.67, 5.83, 6.99, 8.15, 8.30, 6.99, 5.69, 4.91, 5.66, 6.41, 7.20, 7.91, 7.66, 7.09, 6.51, 5.94, 4.95, 3.34, 1.73 } },
+            { "cbm1960a", 0, 2.692, { 0.08, -0.19, -0.45, -0.72, -1.19, -1.65, -2.10, -2.46, -2.21, -1.87, -1.52, -1.16, -0.85, -0.70, -0.54, -0.37, -0.20, -0.02, 0.14, 0.27, 0.41, 0.55, 0.65, 0.38, -0.01, -0.74, -1.46, -2.19, -2.91, -2.26, -0.75, 0.64, 1.51, 1.23, 1.94, 3.28, 4.71, 6.40, 8.10, 8.33, 7.37, 5.99, 6.17, 6.69, 5.37, 4.06, 2.81, 1.59, 0.90, 1.61, 2.31, 2.13, 0.17, -3.56, -7.29 } },
+            { "cbm1960b", 0, 2.691, { 0.08, -0.19, -0.45, -0.72, -1.19, -1.65, -2.10, -2.46, -2.21, -1.87, -1.52, -1.16, -0.85, -0.70, -0.54, -0.37, -0.20, -0.02, 0.14, 0.27, 0.41, 0.55, 0.65, 0.38, -0.01, -0.74, -1.46, -2.19, -2.91, -2.26, -0.75, 0.64, 1.51, 1.23, 1.94, 3.28, 4.71, 6.40, 8.10, 8.33, 7.37, 5.99, 6.17, 6.69, 5.37, 4.06, 2.81, 1.59, 0.90, 1.61, 2.31, 2.13, 0.17, -3.56, -7.29 } },
+            { "cbm1960bw", 0, 2.888, { 0.26, -0.10, -0.46, -0.81, -1.26, -1.70, -2.12, -2.45, -2.14, -1.74, -1.32, -0.90, -0.52, -0.27, -0.00, 0.27, 0.54, 0.82, 1.06, 1.26, 1.47, 1.68, 1.31, 0.60, 0.11, 0.18, 0.19, -0.26, -0.70, -1.14, -1.59, -1.53, -0.04, 1.46, 2.96, 4.46, 5.84, 6.89, 7.94, 8.13, 7.16, 5.29, 5.72, 7.64, 9.67, 10.19, 9.86, 9.60, 9.16, 8.26, 7.35, 6.44, 5.01, 2.83, 0.65 } },
+            { "cbm1936", 0, 2.777, { 0.08, -0.19, -0.45, -0.72, -1.19, -1.65, -2.10, -2.46, -2.21, -1.87, -1.52, -1.16, -0.85, -0.70, -0.54, -0.37, -0.20, -0.02, 0.14, 0.27, 0.41, 0.55, 0.65, 0.38, -0.01, -0.74, -1.46, -2.19, -2.91, -2.26, -0.75, 0.64, 1.51, 1.23, 1.94, 3.28, 4.71, 6.40, 8.10, 8.33, 7.37, 5.99, 6.17, 6.69, 5.37, 4.06, 2.81, 1.59, 0.90, 1.61, 2.31, 2.13, 0.17, -3.56, -7.29 } },
+            { "cbhiwatt412", 0, 2.832, { -1.08, -0.81, -0.52, -0.26, -0.29, -0.31, -0.31, -0.31, -0.28, -0.16, -0.03, 0.11, 0.21, 0.23, 0.25, 0.28, 0.31, 0.35, 0.36, 0.32, 0.29, 0.26, 0.23, 0.20, 0.16, 0.07, -0.02, -0.10, -0.19, -0.27, -0.35, -0.03, 1.49, 3.01, 4.52, 6.04, 7.17, 7.27, 7.37, 7.47, 7.49, 7.39, 7.29, 7.14, 6.84, 6.54, 6.16, 5.73, 5.26, 4.72, 4.17, 3.63, 1.81, -1.82, -5.46 } },
+            { "cbppc412", 0, 2.789, { -0.50, -0.68, -1.32, -1.86, -1.86, -1.84, -1.81, -1.77, -1.70, -1.55, -1.39, -1.22, -1.06, -0.92, -0.78, -0.63, -0.47, -0.31, -0.19, -0.12, -0.04, 0.05, 0.13, 0.22, 0.14, -0.39, -0.92, -1.44, -1.79, -0.85, 0.08, 0.77, 0.73, 0.81, 1.78, 2.74, 3.69, 4.60, 5.50, 5.18, 4.26, 3.61, 4.21, 5.47, 6.29, 6.10, 5.79, 5.40, 4.81, 3.73, 2.64, 1.55, -0.23, -3.02, -5.80 } },
+            { "cbppc212", 0, 2.896, { -0.50, -0.68, -1.32, -1.86, -1.86, -1.84, -1.81, -1.77, -1.70, -1.55, -1.39, -1.22, -1.06, -0.92, -0.78, -0.63, -0.47, -0.31, -0.19, -0.12, -0.04, 0.05, 0.13, 0.22, 0.14, -0.39, -0.92, -1.44, -1.79, -0.85, 0.08, 0.77, 0.73, 0.81, 1.78, 2.74, 3.69, 4.60, 5.50, 5.18, 4.26, 3.61, 4.21, 5.47, 6.29, 6.10, 5.79, 5.40, 4.81, 3.73, 2.64, 1.55, -0.23, -3.02, -5.80 } },
+            { "cbmatchless212", 0, 3.022, { 1.00, 0.69, 0.39, 0.09, -0.28, -0.64, -1.00, -1.34, -1.23, -0.78, -0.31, 0.16, 0.55, 0.72, 0.90, 1.08, 1.27, 1.47, 1.46, 1.22, 0.97, 0.73, 0.49, 0.26, -0.14, -0.96, -1.78, -2.60, -3.41, -4.23, -4.90, -4.15, -2.31, -0.47, 1.37, 3.21, 4.86, 5.99, 7.13, 8.26, 8.51, 7.50, 6.48, 5.94, 6.80, 7.66, 8.07, 8.15, 7.98, 7.12, 6.27, 5.41, 4.42, 3.22, 2.02 } },
+            { "cbjc120212", 0, 2.042, { 1.44, 1.12, 0.80, 0.51, 0.30, 0.11, -0.08, -0.25, -0.40, -0.47, -0.52, -0.56, -0.58, -0.55, -0.51, -0.46, -0.41, -0.36, -0.29, -0.22, -0.14, -0.05, 0.03, 0.12, 0.21, 0.31, 0.40, 0.50, 0.60, 0.70, 0.81, 0.93, 1.13, 1.32, 1.51, 1.71, 1.91, 2.14, 2.37, 2.60, 2.76, 2.82, 2.88, 2.93, 2.97, 3.00, 3.07, 3.15, 3.25, 3.38, 3.50, 3.63, 3.71, 3.72, 3.72 } },
+            { "cbrecto412", 0, 2.763, { -0.50, -0.68, -1.32, -1.86, -1.86, -1.84, -1.81, -1.77, -1.70, -1.55, -1.39, -1.22, -1.06, -0.92, -0.78, -0.63, -0.47, -0.31, -0.19, -0.12, -0.04, 0.05, 0.13, 0.22, 0.14, -0.39, -0.92, -1.44, -1.79, -0.85, 0.08, 0.77, 0.73, 0.81, 1.78, 2.74, 3.69, 4.60, 5.50, 5.18, 4.26, 3.61, 4.21, 5.47, 6.29, 6.10, 5.79, 5.40, 4.81, 3.73, 2.64, 1.55, -0.23, -3.02, -5.80 } },
+            { "cbrecto412tr", 0, 2.790, { -0.50, -0.68, -1.32, -1.86, -1.86, -1.84, -1.81, -1.77, -1.70, -1.55, -1.39, -1.22, -1.06, -0.92, -0.78, -0.63, -0.47, -0.31, -0.19, -0.12, -0.04, 0.05, 0.13, 0.22, 0.14, -0.39, -0.92, -1.44, -1.79, -0.85, 0.08, 0.77, 0.73, 0.81, 1.78, 2.74, 3.69, 4.60, 5.50, 5.18, 4.26, 3.61, 4.21, 5.47, 6.29, 6.10, 5.79, 5.40, 4.81, 3.73, 2.64, 1.55, -0.23, -3.02, -5.80 } },
+            { "cbmesa112", 0, 3.233, { 0.70, 0.45, 0.23, 0.03, -0.04, -0.10, -0.15, -0.19, -0.21, -0.14, -0.05, 0.04, 0.16, 0.35, 0.54, 0.74, 0.95, 1.16, 1.12, 0.77, 0.43, 0.13, 0.15, 0.17, 0.02, -0.57, -1.17, -1.77, -2.36, -1.74, -0.35, 0.90, 1.74, 1.94, 1.84, 2.60, 3.70, 5.73, 7.77, 8.28, 7.92, 7.67, 7.95, 8.10, 6.82, 5.54, 4.61, 3.92, 3.25, 2.66, 3.38, 4.91, 4.16, 0.14, -3.88 } },
+            { "cbmesa212", 0, 2.937, { -0.50, -0.68, -1.32, -1.86, -1.86, -1.84, -1.81, -1.77, -1.70, -1.55, -1.39, -1.22, -1.06, -0.92, -0.78, -0.63, -0.47, -0.31, -0.19, -0.12, -0.04, 0.05, 0.13, 0.22, 0.14, -0.39, -0.92, -1.44, -1.79, -0.85, 0.08, 0.77, 0.73, 0.81, 1.78, 2.74, 3.69, 4.60, 5.50, 5.18, 4.26, 3.61, 4.21, 5.47, 6.29, 6.10, 5.79, 5.40, 4.81, 3.73, 2.64, 1.55, -0.23, -3.02, -5.80 } },
+            { "cb5150412", 0, 2.591, { -2.43, -2.87, -3.30, -3.67, -3.76, -3.83, -3.89, -3.94, -3.97, -3.90, -3.83, -3.75, -3.68, -3.63, -3.57, -3.51, -3.44, -3.37, -3.07, -2.51, -1.95, -1.38, -0.81, -0.23, 0.10, -0.97, -2.03, -3.10, -4.16, -5.22, -6.28, -6.08, -3.98, -1.88, 0.22, 2.32, 4.15, 5.23, 6.32, 7.31, 7.05, 6.86, 6.67, 6.59, 5.64, 4.49, 3.56, 2.78, 2.15, 1.91, 1.68, 1.45, 0.70, -0.79, -2.27 } },
+            { "cbsoldano412", 0, 2.827, { -0.50, -0.68, -1.32, -1.86, -1.86, -1.84, -1.81, -1.77, -1.70, -1.55, -1.39, -1.22, -1.06, -0.92, -0.78, -0.63, -0.47, -0.31, -0.19, -0.12, -0.04, 0.05, 0.13, 0.22, 0.14, -0.39, -0.92, -1.44, -1.79, -0.85, 0.08, 0.77, 0.73, 0.81, 1.78, 2.74, 3.69, 4.60, 5.50, 5.18, 4.26, 3.61, 4.21, 5.47, 6.29, 6.10, 5.79, 5.40, 4.81, 3.73, 2.64, 1.55, -0.23, -3.02, -5.80 } },
+            { "cbengl412", 0, 2.791, { -0.50, -0.68, -1.32, -1.86, -1.86, -1.84, -1.81, -1.77, -1.70, -1.55, -1.39, -1.22, -1.06, -0.92, -0.78, -0.63, -0.47, -0.31, -0.19, -0.12, -0.04, 0.05, 0.13, 0.22, 0.14, -0.39, -0.92, -1.44, -1.79, -0.85, 0.08, 0.77, 0.73, 0.81, 1.78, 2.74, 3.69, 4.60, 5.50, 5.18, 4.26, 3.61, 4.21, 5.47, 6.29, 6.10, 5.79, 5.40, 4.81, 3.73, 2.64, 1.55, -0.23, -3.02, -5.80 } },
+            { "cbdiezel412", 0, 2.811, { -0.50, -0.68, -1.32, -1.86, -1.86, -1.84, -1.81, -1.77, -1.70, -1.55, -1.39, -1.22, -1.06, -0.92, -0.78, -0.63, -0.47, -0.31, -0.19, -0.12, -0.04, 0.05, 0.13, 0.22, 0.14, -0.39, -0.92, -1.44, -1.79, -0.85, 0.08, 0.77, 0.73, 0.81, 1.78, 2.74, 3.69, 4.60, 5.50, 5.18, 4.26, 3.61, 4.21, 5.47, 6.29, 6.10, 5.79, 5.40, 4.81, 3.73, 2.64, 1.55, -0.23, -3.02, -5.80 } },
+            { "cbbogner412", 0, 2.785, { -0.50, -0.68, -1.32, -1.86, -1.86, -1.84, -1.81, -1.77, -1.70, -1.55, -1.39, -1.22, -1.06, -0.92, -0.78, -0.63, -0.47, -0.31, -0.19, -0.12, -0.04, 0.05, 0.13, 0.22, 0.14, -0.39, -0.92, -1.44, -1.79, -0.85, 0.08, 0.77, 0.73, 0.81, 1.78, 2.74, 3.69, 4.60, 5.50, 5.18, 4.26, 3.61, 4.21, 5.47, 6.29, 6.10, 5.79, 5.40, 4.81, 3.73, 2.64, 1.55, -0.23, -3.02, -5.80 } },
+            { "cbfriedman412", 0, 2.786, { -0.50, -0.68, -1.32, -1.86, -1.86, -1.84, -1.81, -1.77, -1.70, -1.55, -1.39, -1.22, -1.06, -0.92, -0.78, -0.63, -0.47, -0.31, -0.19, -0.12, -0.04, 0.05, 0.13, 0.22, 0.14, -0.39, -0.92, -1.44, -1.79, -0.85, 0.08, 0.77, 0.73, 0.81, 1.78, 2.74, 3.69, 4.60, 5.50, 5.18, 4.26, 3.61, 4.21, 5.47, 6.29, 6.10, 5.79, 5.40, 4.81, 3.73, 2.64, 1.55, -0.23, -3.02, -5.80 } },
+            { "cbfriedman212", 0, 2.877, { -0.50, -0.68, -1.32, -1.86, -1.86, -1.84, -1.81, -1.77, -1.70, -1.55, -1.39, -1.22, -1.06, -0.92, -0.78, -0.63, -0.47, -0.31, -0.19, -0.12, -0.04, 0.05, 0.13, 0.22, 0.14, -0.39, -0.92, -1.44, -1.79, -0.85, 0.08, 0.77, 0.73, 0.81, 1.78, 2.74, 3.69, 4.60, 5.50, 5.18, 4.26, 3.61, 4.21, 5.47, 6.29, 6.10, 5.79, 5.40, 4.81, 3.73, 2.64, 1.55, -0.23, -3.02, -5.80 } },
+            { "cbsvt810", 1, 2.627, { 1.78, 1.43, 1.09, 0.81, 0.91, 1.03, 1.16, 1.30, 1.46, 1.44, 0.20, -1.04, -2.20, -3.19, -3.74, -3.31, -2.87, -2.42, -2.01, -1.62, -1.23, -0.83, -0.43, -0.03, 0.22, 0.05, -0.12, -0.28, -0.45, -0.61, -0.76, -0.89, -0.20, 0.45, -0.42, -1.30, -1.87, 0.96, 3.80, 6.63, 7.76, 6.84, 5.92, 5.32, 5.69, 6.10, 7.00, 7.82, 8.43, 8.48, 8.54, 8.32, 5.72, 1.34, -3.03 } },
+            { "cbsvt410", 1, 2.626, { 1.78, 1.43, 1.09, 0.81, 0.91, 1.03, 1.16, 1.30, 1.46, 1.44, 0.20, -1.04, -2.20, -3.19, -3.74, -3.31, -2.87, -2.42, -2.01, -1.62, -1.23, -0.83, -0.43, -0.03, 0.22, 0.05, -0.12, -0.28, -0.45, -0.61, -0.76, -0.89, -0.20, 0.45, -0.42, -1.30, -1.87, 0.96, 3.80, 6.63, 7.76, 6.84, 5.92, 5.32, 5.69, 6.10, 7.00, 7.82, 8.43, 8.48, 8.54, 8.32, 5.72, 1.34, -3.03 } },
+            { "cbb15115", 1, 2.491, { -2.58, -2.98, -3.36, -3.76, -4.30, -4.83, -5.35, -5.86, -6.20, -5.79, -5.37, -4.94, -4.50, -4.01, -3.52, -3.03, -2.53, -2.03, -1.66, -1.57, -1.09, -0.62, -0.14, 0.20, 0.53, 2.22, 3.90, 5.03, 4.45, 4.25, 5.23, 6.36, 7.93, 9.51, 10.63, 10.51, 10.34, 10.00, 9.66, 9.55, 9.47, 8.03, 6.59, 5.11, 3.54, 1.96, -0.84, -4.52, -7.83, -8.97, -7.53, -6.98, -7.81, -7.40, -5.11 } },
+            { "cbgk410", 1, 1.654, { 0.21, -0.26, -0.71, -1.15, -1.58, -1.99, -2.38, -2.77, -3.14, -3.50, -3.85, -4.19, -4.39, -4.24, -4.09, -3.92, -3.75, -3.58, -3.21, -2.61, -2.01, -1.41, -0.80, -0.18, 0.32, 0.50, 0.69, 0.88, 1.08, 1.27, 1.47, 1.81, 2.54, 2.02, 0.90, -0.22, -1.42, -2.82, -4.23, -5.63, -6.85, -7.80, -8.76, -9.43, -9.29, -9.14, -8.86, -8.55, -8.99, -10.86, -12.73, -14.82, -17.11, -19.36, -21.61 } },
+
+            };
+            std::vector<int> h;
+            for (const auto& t : targets)
+            {
+                const int mic = t.mic;
+                h.push_back (lab.add (t.id, [mic, &t] (const ModelDef& d)
+                {
+                    auto fx = createEffect (d);
+                    setStepS4 (*fx, "speaker", 0);
+                    setStepS4 (*fx, "mic", mic);
+                    setStepS4 (*fx, "position", 0);
+                    setRoleS4 (*fx, "room", 0.0f);
+                    fx->prepare (48000.0, 256);
+                    Buf x (24000, 0.0f);
+                    x[0] = 1.0f;
+                    processMono (*fx, x, 256);
+                    const int order = 17, N = 1 << order;
+                    juce::dsp::FFT fft (order);
+                    std::vector<float> w ((size_t) (2 * N), 0.0f);
+                    std::copy (x.begin(), x.end(), w.begin());
+                    fft.performFrequencyOnlyForwardTransform (w.data(), true);
+                    std::vector<double> dev;
+                    double mean = 0;
+                    for (int i = 32; i <= 86; ++i)
+                    {
+                        const double f = 40.0 * std::pow (2.0, i / 12.0);
+                        const int k0 = std::max (1, (int) std::floor (f * std::pow (2.0, -1.0 / 24) * N / 48000.0));
+                        const int k1 = std::max (k0, (int) std::ceil (f * std::pow (2.0, 1.0 / 24) * N / 48000.0));
+                        double p = 0;
+                        for (int k = k0; k <= k1; ++k) p += (double) w[(size_t) k] * w[(size_t) k];
+                        dev.push_back (10.0 * std::log10 (p / (k1 - k0 + 1) + 1e-30) - t.db[i - 32]);
+                        mean += dev.back();
+                    }
+                    mean /= (double) dev.size();
+                    double e = 0;
+                    for (double v : dev) e += (v - mean) * (v - mean);
+                    return std::vector<double> { std::sqrt (e / (double) dev.size()) };
+                }));
+            }
+            lab.check (h, "Tappa 6 casse: combinazione di fabbrica (centro) contro cono + microfono + prossimita', scarto RMS 254 Hz - 5.8 kHz come il banco "
+                          "(+-0.1 dB, 31 casse, tutte sotto 3.5 dB)", [&lab, h] {
+                juce::String bad;
+                double lo = 99, hi = 0, w = 0;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    const double v = lab.v (h[k]);
+                    lo = std::min (lo, v); hi = std::max (hi, v); w = std::max (w, std::abs (v - targets[k].rms));
+                    if (! within (v, targets[k].rms, 0.1) || v >= 3.5) bad << targets[k].id << " " << num (v) << " (" << num (targets[k].rms) << ") ";
+                }
+                return Verdict { bad.isEmpty() && (int) h.size() == numCabs, "RMS " + num (lo) + " .. " + num (hi) + " dB, scarto dal banco max " + num (w, 3) + " dB " + bad.trim() };
+            });
+        }
+
+        // 3. livello fra le casse (rumore rosa 70 Hz - 5 kHz a 0.1 V, uscita da 1 s): comandi di fabbrica e ogni cono con microfono e posizione
+        //    di fabbrica, tutti entro 2 dB; costo dell'elaborazione (CPU del thread, la IR si genera in un thread a parte) e della IR in prepare
+        std::vector<int> cabIds;
+        std::vector<const char*> ids (std::begin (kStage6Cabs), std::end (kStage6Cabs));
+        if (findModel (kStage6Lab) != nullptr) ids.push_back (kStage6Lab);
+        {
+            std::vector<int> h;
+            for (int m = 0; m < numCabs; ++m)
+                h.push_back (lab.add (kStage6Cabs[m], [] (const ModelDef& d)
+                {
+                    static const Buf in = pinkS6 (48000.0, 3.0, 0.1f);
+                    auto rms = [] (const Buf& b) { return dbOf (rmsOf (b, 48000)); };
+                    std::vector<double> r;
+                    double cpu = 0, prep = 0;
+                    const int ns = stepsOfRole (d, "speaker");
+                    for (int s = -1; s < ns; ++s)
+                    {
+                        auto fx = createEffect (d);
+                        if (s >= 0) setStepS4 (*fx, "speaker", s);
+                        const double t0 = threadCpuSeconds();
+                        fx->prepare (48000.0, 256);
+                        const double t1 = threadCpuSeconds();
+                        Buf y = in;
+                        processMono (*fx, y, 256);
+                        const double t2 = threadCpuSeconds();
+                        if (s < 0) { cpu = 3.0 / std::max (1.0e-6, t2 - t1); prep = t1 - t0; }
+                        r.push_back (rms (y) - rms (in));
+                    }
+                    r.insert (r.begin(), { cpu, prep });
+                    return r;
+                }));
+            for (int x : h) lab.first (x);
+            lab.check (h, "Tappa 6 casse: livello (rumore rosa 70 Hz - 5 kHz) di fabbrica e di ogni cono entro 2 dB fra tutte le casse", [&lab, h] {
+                double lo = 99, hi = -99, flo = 99, fhi = -99;
+                int n = 0;
+                for (int x : h)
+                {
+                    const auto& v = lab.all (x);
+                    flo = std::min (flo, v[2]); fhi = std::max (fhi, v[2]);
+                    for (size_t k = 2; k < v.size(); ++k) { lo = std::min (lo, v[k]); hi = std::max (hi, v[k]); ++n; }
+                }
+                return Verdict { hi - lo <= 2.0, "fabbrica " + num (flo) + " .. " + num (fhi) + " dB, " + juce::String (n) + " prove " + num (lo) + " .. " + num (hi) + " dB" };
+            });
+            lab.check (h, "Tappa 6 casse: costo, la piu' lenta sopra 10 x tempo reale (CPU del thread audio, 48 kHz / 256) e IR di fabbrica calcolata in prepare "
+                          "in meno di 50 ms di CPU", [&lab, h] {
+                double slow = 1e9, prep = 0;
+                juce::String slowId, prepId;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    if (lab.v (h[k], 0) < slow) { slow = lab.v (h[k], 0); slowId = kStage6Cabs[k]; }
+                    if (lab.v (h[k], 1) > prep) { prep = lab.v (h[k], 1); prepId = kStage6Cabs[k]; }
+                }
+                return Verdict { slow > 10.0 && prep < 0.05, "piu' lenta " + slowId + " " + num (slow, 1) + "x, prepare max " + num (prep * 1000.0, 1) + " ms (" + prepId + ")" };
+            });
+        }
+
+        // 4. IR sincrona in prepare: subito dopo prepare la IR dei comandi e' pronta (i6CabSettled) e il primo blocco e' uguale a quello di un'istanza
+        //    che ha aspettato il thread di lavoro; la cassa e' attiva dal primo campione (non passa il segnale secco)
+        {
+            std::vector<int> h;
+            for (const char* id : ids)
+                h.push_back (lab.add (id, [] (const ModelDef& d)
+                {
+                    auto first = [&d] (int waitMs, bool& settled)
+                    {
+                        auto fx = createEffect (d);
+                        fx->prepare (48000.0, 256);
+                        settled = i6CabSettled (*fx);
+                        if (waitMs > 0) juce::Thread::sleep (waitMs);
+                        Buf x (256, 0.0f);
+                        x[0] = 1.0f;
+                        processMono (*fx, x, 256);
+                        return x;
+                    };
+                    bool s1 = false, s2 = false;
+                    const Buf a = first (0, s1), b = first (60, s2);
+                    double e = 0;
+                    for (float v : a) e += (double) v * v;
+                    return std::vector<double> { s1 ? 1.0 : 0.0, std::memcmp (a.data(), b.data(), a.size() * sizeof (float)) == 0 ? 1.0 : 0.0,
+                                                 std::abs (a[0]) / std::sqrt (e + 1e-30) };
+                }));
+            lab.check (h, "Tappa 6 casse: IR calcolata in prepare (pronta subito, primo blocco uguale a quello dopo l'attesa del thread di lavoro, cassa attiva dal "
+                          "primo campione; " + juce::String ((int) h.size()) + " modelli)", [&lab, h, ids] {
+                juce::String bad;
+                double sim = 0;
+                for (size_t k = 0; k < h.size(); ++k)
+                {
+                    sim = std::max (sim, lab.v (h[k], 2));
+                    if (lab.v (h[k], 0) < 0.5 || lab.v (h[k], 1) < 0.5 || lab.v (h[k], 2) >= 0.999) bad << ids[k] << " ";
+                }
+                return Verdict { bad.isEmpty(), "somiglianza al segnale secco max " + num (sim, 3) + " " + bad.trim() };
+            });
+        }
+
+        // 5. click (seno 220 Hz: ogni scatto di cono, microfono, posizione, secondo microfono e levetta, ogni pomello; soglia 10x senza eccezioni)
+        //    e determinismo (due istanze nuove e dopo reset())
+        addClickAndDeterminism (lab, ids.data(), (int) ids.size(), "Tappa 6 casse", 10.0, true);
+        lab.run (report);
+    }
+
     void runSmoothFamilyTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
     {
         using namespace pt::engine;
@@ -7679,6 +9318,10 @@ namespace
                     if (kase == 1) for (int k = 0; k < d.numControls; ++k) fx->params[k].store (rnd[(size_t) k]);
                     fx->prepare (48000.0, blk);
                     if (kase == 2) for (int k = 0; k < d.numControls; ++k) fx->params[k].store (1.0f - rnd[(size_t) k]);
+                    // casse della tappa 6: la IR dei comandi nuovi si genera nel thread di lavoro (fuori dal thread audio); si aspetta
+                    // che sia pronta, cosi' la dissolvenza verso la IR nuova parte dal primo blocco in tutte e due le istanze e il
+                    // confronto resta sull'involucro, non sui tempi del thread
+                    if (kase == 2) for (int t = 0; t < 2000 && ! i6CabSettled (*fx); ++t) juce::Thread::sleep (1);
                     std::vector<Buf> ch ((size_t) nch, riff);
                     if (nch == 2) for (auto& v : ch[1]) v *= 0.7f;
                     auto run = [&] (std::vector<Buf>& c)
@@ -8015,6 +9658,7 @@ namespace
         runRealModTests (report);
         runSafetyTests (report);
         runCableTests (report);
+        runRoutingTests (report);
         runMidiTests (report);
         runWahTests (report);
         runCabIRTests (report);
@@ -8030,6 +9674,8 @@ namespace
         runStage5DynTests (report);
         runStage5ModTests (report);
         runStage5DigitalTests (report);
+        runStage6AmpTests (report);
+        runStage6CabTests (report);
         runSmoothFamilyTests (report);
 
         // 7. processore completo e bypass
@@ -8083,7 +9729,9 @@ namespace
         PedalTrinityProcessor p;
         float scale = 1.0f;
         int w = 1280, h = 760, zoomSlot = -1;
-        bool info = false, options = false, midiPanel = false, learn = false;
+        bool info = false, options = false, midiPanel = false, learn = false, routingMap = false;
+        float routeZoom = 0.0f;
+        juce::StringArray routeMoves;
         juce::SharedResourcePointer<pt::ui::ThemeManager> themes;
         for (int i = 0; i < args.size(); ++i)
         {
@@ -8109,6 +9757,17 @@ namespace
             else if (args[i] == "--options") options = true;
             else if (args[i] == "--midi") midiPanel = true;
             else if (args[i] == "--learn") learn = true;
+            else if (args[i] == "--routing") routingMap = true;
+            else if (args[i] == "--routezoom") routeZoom = next.getFloatValue();
+            else if (args[i] == "--routemove") routeMoves.add (next);
+            else if (args[i] == "--backimage")
+            {
+                // immagine di prova del retro (non nel programma): vale per qualsiasi modello
+                const auto f = juce::File::getCurrentWorkingDirectory().getChildFile (next.unquoted());
+                const auto img = juce::ImageFileFormat::loadFrom (f);
+                if (! img.isValid()) std::cerr << "Immagine del retro non valida: " << f.getFullPathName() << std::endl;
+                else pt::ui::setBackImageLookup ([img] (const juce::String&) { return img; });
+            }
             else if (args[i] == "--cablecolour") themes->previewCableColour (next.getIntValue());     // anteprime: non tocca le preferenze
             else if (args[i] == "--board") themes->previewBoardSource (next);
             else if (args[i] == "--theme")
@@ -8163,7 +9822,25 @@ namespace
         auto* editor = dynamic_cast<PedalTrinityEditor*> (ed.get());
         if (editor == nullptr) return 3;
         editor->setSize (w, h);
-        if (zoomSlot >= 0) editor->showZoom (zoomSlot);
+        if (zoomSlot >= 0 && ! routingMap) editor->showZoom (zoomSlot);
+        if (routingMap)
+        {
+            // posizioni di prova (coordinate della mappa) e zoom, poi la mappa sotto lo zoom eventuale
+            for (const auto& m : routeMoves)
+            {
+                const auto who = m.upToFirstOccurrenceOf (":", false, false).trim();
+                const auto xy = m.fromFirstOccurrenceOf (":", false, false);
+                const juce::Point<float> pos (xy.upToFirstOccurrenceOf (",", false, false).getFloatValue(), xy.fromFirstOccurrenceOf (",", false, false).getFloatValue());
+                if (who == "in") p.routeLayout.setIoPos (0, pos);
+                else if (who == "out") p.routeLayout.setIoPos (1, pos);
+                else p.routeLayout.setSlotPos (who.getIntValue(), pos);
+            }
+            if (routeZoom > 0.0f) p.routeLayout.setView (routeZoom, {});
+            editor->showRouting (true);
+            if (zoomSlot >= 0) editor->showZoom (zoomSlot);       // doppio clic dalla mappa: zoom sopra la mappa
+        }
+        if (zoomSlot >= 0 && args.contains ("--back"))
+            if (auto* z = editor->zoomView()) z->setShowBack (true, false);
         if (zoomSlot >= 0 && args.contains ("--align")) editor->startZoomAlign();
         if (info) editor->showInfo (true);
         if (options) editor->showOptions (true);

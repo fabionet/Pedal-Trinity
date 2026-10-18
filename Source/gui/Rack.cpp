@@ -415,8 +415,61 @@ namespace pt::ui
     }
 
     //==============================================================================
+    namespace
+    {
+        std::function<juce::Image (const juce::String&)>& backLookup()
+        {
+            static std::function<juce::Image (const juce::String&)> f;
+            return f;
+        }
+        constexpr juce::uint32 flipMs = 260;
+    }
+
+    void setBackImageLookup (std::function<juce::Image (const juce::String&)> f) { backLookup() = std::move (f); }
+
+    juce::Image backImageFor (const ModelDef* visual)
+    {
+        if (visual == nullptr || visual->image == nullptr) return {};
+        const auto name = Assets::backResourceFor (visual->image);
+        if (name.isEmpty()) return {};
+        if (backLookup()) return backLookup() (name);
+        if (! Assets::hasResource (name)) return {};
+        return Assets::pedalImage (name.toRawUTF8());          // come il fronte: JPEG + maschera "<id>_back_a_png" se c'e'
+    }
+
+    /** Retro del modello: solo l'immagine (nessun comando regolabile sul retro, per ora). */
+    class ZoomPanel::BackView : public juce::Component
+    {
+    public:
+        BackView() { setInterceptsMouseClicks (false, false); }
+        void setImage (const juce::Image& i) { img = i; scaled = {}; repaint(); }
+        void paint (juce::Graphics& g) override
+        {
+            if (! img.isValid()) return;
+            const auto a = area();
+            const float sc = juce::Component::getApproximateScaleFactorForComponent (this);
+            const auto phys = (a * sc).getSmallestIntegerContainer();
+            if (phys.getWidth() > 0 && (scaled.getWidth() != phys.getWidth() || scaled.getHeight() != phys.getHeight()))
+                scaled = img.rescaled (phys.getWidth(), phys.getHeight(), juce::Graphics::highResamplingQuality);
+            g.drawImage (scaled, a, juce::RectanglePlacement::stretchToFit);
+        }
+    private:
+        juce::Rectangle<float> area() const
+        {
+            const auto b = getLocalBounds().toFloat();
+            const float s = juce::jmin (b.getWidth() / (float) img.getWidth(), b.getHeight() / (float) img.getHeight());
+            return juce::Rectangle<float> ((float) img.getWidth() * s, (float) img.getHeight() * s).withCentre (b.getCentre());
+        }
+        juce::Image img, scaled;
+    };
+
     ZoomPanel::ZoomPanel (Chain& c, int i, juce::Component* popupParent) : chain (c), index (i), view (c, i, popupParent)
     {
+        backView = std::make_unique<BackView>();
+        addChildComponent (*backView);
+        flip.setTooltip ("Gira il pedale: mostra il retro (pannello posteriore) o di nuovo il fronte");
+        flip.onClick = [this] { setShowBack (! back, true); };
+        addChildComponent (flip);
         setWantsKeyboardFocus (true);
         addAndMakeVisible (view);
         title.setFont (juce::Font (24.0f, juce::Font::bold));
@@ -481,6 +534,9 @@ namespace pt::ui
         }
         else nam.reset();
         info.setVisible (nam == nullptr);
+        backImage = backImageFor (v);
+        backView->setImage (backImage);
+        setShowBack (false, false);
         resized();
         prev.setEnabled (i > 0);
         next.setEnabled (i < chain.size() - 1);
@@ -497,6 +553,7 @@ namespace pt::ui
         alignHint.setVisible (photo && on);
         prev.setEnabled (! on && index > 0);
         next.setEnabled (! on && index < chain.size() - 1);
+        if (const bool fv = hasBack() && ! on; flip.isVisible() != fv) { flip.setVisible (fv); resized(); }
         alignHint.setColour (juce::Label::textColourId, themes->current().accent);
     }
 
@@ -524,6 +581,11 @@ namespace pt::ui
         next.setBounds (top.removeFromRight (40).reduced (0, 4));
         prev.setBounds (top.removeFromRight (40).reduced (0, 4));
         top.removeFromRight (12);
+        if (flip.isVisible())
+        {
+            flip.setBounds (top.removeFromRight (96).reduced (0, 4));
+            top.removeFromRight (8);
+        }
         cancelAlign.setBounds (top.removeFromRight (90).reduced (0, 4));
         top.removeFromRight (6);
         align.setBounds (top.removeFromRight (210).reduced (0, 4));
@@ -534,6 +596,51 @@ namespace pt::ui
         info.setBounds (side.reduced (10, 0));
         if (nam != nullptr) nam->setBounds (side.reduced (4, 0));
         view.setBounds (c);
+        backView->setBounds (c);
+        applyFlipTransform (isTimerRunning() ? (float) (juce::Time::getMillisecondCounter() - flipStart) / (float) flipMs : 1.0f);
+    }
+
+    ZoomPanel::~ZoomPanel() { stopTimer(); }
+
+    void ZoomPanel::setShowBack (bool showBack, bool animate)
+    {
+        if (showBack && ! hasBack()) showBack = false;
+        if (showBack && view.isAligning()) return;
+        const bool changed = showBack != back;
+        back = showBack;
+        flip.setButtonText (back ? "Fronte" : "Retro");
+        if (changed && animate && isShowing())
+        {
+            // mezza rotazione: la faccia vecchia si stringe fino al taglio, poi si allarga la nuova
+            flipStart = juce::Time::getMillisecondCounter();
+            startTimerHz (60);
+            applyFlipTransform (0.0f);
+            return;
+        }
+        stopTimer();
+        applyFlipTransform (1.0f);
+    }
+
+    void ZoomPanel::applyFlipTransform (float phase)
+    {
+        phase = juce::jlimit (0.0f, 1.0f, phase);
+        const bool newFace = phase >= 0.5f;
+        const bool showBackFace = newFace ? back : ! back;
+        view.setVisible (! showBackFace);
+        backView->setVisible (showBackFace);
+        const float sx = juce::jmax (0.02f, std::abs (std::cos (phase * juce::MathConstants<float>::pi)));
+        auto* face = showBackFace ? static_cast<juce::Component*> (backView.get()) : static_cast<juce::Component*> (&view);
+        auto* other = showBackFace ? static_cast<juce::Component*> (&view) : static_cast<juce::Component*> (backView.get());
+        other->setTransform ({});
+        const auto b = face->getBounds().toFloat();
+        face->setTransform (phase >= 1.0f ? juce::AffineTransform() : juce::AffineTransform::scale (sx, 1.0f, b.getCentreX(), b.getCentreY()));
+    }
+
+    void ZoomPanel::timerCallback()
+    {
+        const float phase = (float) (juce::Time::getMillisecondCounter() - flipStart) / (float) flipMs;
+        if (phase >= 1.0f) { stopTimer(); applyFlipTransform (1.0f); return; }
+        applyFlipTransform (phase);
     }
 
     void ZoomPanel::mouseUp (const juce::MouseEvent& e)

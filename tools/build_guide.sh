@@ -35,6 +35,11 @@ NAMX="$ROOT/build/_deps/nam_core-src/example_models"      # modelli di esempio d
 "$APP" --screenshot "$TMP/nam.png" --theme pro --size 1600x900 --view 3 --chain nama1a2 \
     --nam "0:A=$NAMX/A2.nam" --nam "0:B=$NAMX/wavenet_a1_standard.nam" --zoom 0
 "$APP" --screenshot "$TMP/info.png" --theme pro --size 1280x760 --info
+"$APP" --screenshot "$TMP/amps.png" --theme pro --size 1920x1080 --view 6 \
+    --chain sd1,amjcm800,cbm1960a,ce2,amtwinreverb,cbtwin212
+"$APP" --screenshot "$TMP/ampback.png" --theme pro --size 1600x900 --view 3 --chain amac30tb,cbac30212 --zoom 0 --back
+"$APP" --screenshot "$TMP/routing.png" --theme pro --size 1920x1080 --view 6 --routing \
+    --chain ns2,sd1,split=0.5,amjcm800,cbm1960a,amtwinreverb@B,cbtwin212@B,dd3,rv6
 python3 "$ROOT/tools/art/guide_images.py" "$TMP"
 python3 "$ROOT/tools/art/guide_catalog.py"
 

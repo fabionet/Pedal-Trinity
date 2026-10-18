@@ -17,6 +17,16 @@
     Stadi aggiunti nella tappa 5: octdiv o1 o2 hys thr dec gate (divisore d'ottava a flip-flop tipo OC-2: il segnale filtrato
     moltiplicato per le onde quadre a f/2 e f/4, commutate ai passaggi per lo zero, con porta sotto la soglia thr).
 
+    Stadi aggiunti nella tappa 6 (simulatori d'amplificatore, commento completo in Circuit.cpp):
+        pp      finale push-pull completo dentro l'anello di NFB (invertitore di fase pi=ltp|cat|para, valvole finali tube=6L6|5881|
+                KT66|EL34|6CA7|6V6|EL84|6550|KT88 in classe AB/A a bias fisso o catodico, conduzione di griglia e 'blocking',
+                trasformatore d'uscita con saturazione del nucleo e banda, carico d'altoparlante nominale con risonanza e bobina,
+                controreazione con presence e depth/resonance, sag dell'alimentazione rect=si|gz34|5u4|ez81|5v4, tremolo sul bias);
+        cf      cathode follower accoppiato in continua (conduzione di griglia e caduta anodo-catodo);
+        pent    pentodo EF86 con griglia schermo disaccoppiata (compressione);
+        spring  riverbero a molle (molle dispersive in anello, a 1/4 della frequenza degli stadi);
+        opto    tremolo ottico dei Fender (oscillatore, neon e fotoresistenza sul pot INTENSITY).
+
     Espressioni ammesse nei valori (somma di prodotti):
         numero con suffisso SI (p n u m k M)       es. 4.7k, 47n
         pot(i,R,T)   resistenza del ramo del potenziometro i (curva T=A|B|C)

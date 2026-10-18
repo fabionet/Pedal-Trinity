@@ -137,7 +137,7 @@ void PedalTrinityProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 juce::ValueTree PedalTrinityProcessor::captureState() const
 {
     juce::ValueTree root ("PedalTrinityState");
-    root.setProperty ("version", "1.3.1-beta", nullptr);
+    root.setProperty ("version", "1.4.0-beta", nullptr);
     root.appendChild (const_cast<juce::AudioProcessorValueTreeState&> (apvts).copyState(), nullptr);
     root.appendChild (chain.toValueTree(), nullptr);
     root.appendChild (uiState.createCopy(), nullptr);
@@ -158,6 +158,7 @@ void PedalTrinityProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     auto state = captureState();
     state.appendChild (midi.toValueTree(), nullptr);        // assegnazioni MIDI: nel progetto, non nei preset
+    state.appendChild (routeLayout.toValueTree(), nullptr); // Mappa di Routing: nel progetto, non nei preset
     if (auto xml = state.createXml())
         copyXmlToBinary (*xml, destData);
 }
@@ -176,9 +177,13 @@ void PedalTrinityProcessor::setStateInformation (const void* data, int sizeInByt
             const auto root = juce::ValueTree::fromXml (*xml);
             restoreState (root);
             midi.fromValueTree (root.getChildWithName ("MIDI"));
+            routeLayout.fromValueTree (root.getChildWithName ("ROUTEMAP"));     // assente nei progetti vecchi: disposizione automatica
         }
         else if (xml->hasTagName ("PedalTrinity"))
+        {
             migrateFromV1 (*xml);
+            routeLayout.fromValueTree ({});
+        }
     }
 }
 

@@ -372,6 +372,8 @@ def as_shaped(m):
     r["dims"] = tuple(float(v) / 1000.0 for v in lk["dims"])
     if m["style"] == "box" and lk.get("stomp"):
         r["series"] = "stomp"           # MXR, Electro-Harmonix...: forma del pedale vero (stomp_layout.py)
+    elif m["style"] == "box" and lk.get("amp"):
+        r["series"] = "amp"             # amplificatori e casse (tappa 6, amp_layout.py)
     elif m["style"] == "box":
         r["series"] = "other"
         r["real_layout"] = lk.get("rows")
@@ -389,6 +391,9 @@ def layout_of(r):
     if r["series"] == "stomp":
         import stomp_layout
         return stomp_layout.stomp_layout(r)
+    if r["series"] == "amp":
+        import amp_layout
+        return amp_layout.amp_layout(r)
     if r["series"] in ("treadle_volume", "treadle_wah", "rocker"):
         return real_layout.treadle_layout(r)
     return real_layout.box_layout(r)

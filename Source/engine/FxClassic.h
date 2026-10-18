@@ -32,6 +32,7 @@ namespace pt::engine
     std::unique_ptr<Effect> makeStage3B (const ModelDef&, const std::string& type);         // FxClassicB.cpp
     std::unique_ptr<Effect> makeStage4 (const ModelDef&, const std::string& type);          // FxStage4.cpp
     std::unique_ptr<Effect> makeStage5 (const ModelDef&, const std::string& type);          // FxStage5.cpp
+    std::unique_ptr<Effect> makeStage6 (const ModelDef&, const std::string& type);          // FxStage6.cpp
 
     namespace cx
     {

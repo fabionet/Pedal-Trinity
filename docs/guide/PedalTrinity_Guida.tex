@@ -34,7 +34,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small\color{steel}\textbf{PEDAL TRINITY} \,·\, Guida all'uso}
-\fancyhead[R]{\small\color{steel}v1.3.1 beta}
+\fancyhead[R]{\small\color{steel}v1.4.0 beta}
 \fancyfoot[L]{\small\color{steel}© 2026 FabioNET \,·\, GNU GPL v3}
 \fancyfoot[R]{\small\color{steel}\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -62,7 +62,7 @@
       {{\heavy\fontsize{54}{58}\selectfont PEDAL TRINITY}\\[0.6em]
        {\Large\color{gold}Pedaliera virtuale fino a 100 pedali \,·\, \modelcount\ modelli}\\[2.2em]
        {\LARGE\bfseries Guida illustrata all'uso}\\[0.4em]
-       {\large Versione 1.3.1 beta}};
+       {\large Versione 1.4.0 beta}};
   \node[anchor=south west,text width=17cm,align=left,text=white] at ([xshift=2cm,yshift=2.2cm]current page.south west)
       {\large by \textbf{FabioNET}\\[0.3em]
        \color{white!70}Plugin VST3 \,·\, LV2 \,·\, Standalone \quad per Linux e Windows (ASIO)\\
@@ -110,13 +110,13 @@ informazioni disponibili per ogni modello (alta = schema di fabbrica verificato)
 \subsection{Linux (pacchetto .deb)}
 Per Ubuntu 22.04 o successivi, Debian 12, Linux Mint 21 e derivate (64 bit):
 \begin{tcolorbox}[colback=charcoal,colupper=white,boxrule=0pt,arc=2mm]
-\texttt{sudo apt install ./pedal-trinity\_1.3.1-beta\_amd64.deb}
+\texttt{sudo apt install ./pedal-trinity\_1.4.0-beta\_amd64.deb}
 \end{tcolorbox}
 Installa il VST3 in \texttt{/usr/lib/vst3}, l'LV2 in \texttt{/usr/lib/lv2}, l'applicazione
 \texttt{pedal-trinity} (menu \emph{Audio}) e questa guida in \texttt{/usr/share/doc/pedal-trinity/}.
 
 \subsection{Windows 10/11}
-Avvia \texttt{PedalTrinity-1.3.1-beta-Windows-x64-Setup.exe}: installa lo Standalone (con driver
+Avvia \texttt{PedalTrinity-1.4.0-beta-Windows-x64-Setup.exe}: installa lo Standalone (con driver
 \textbf{ASIO}), il VST3 in \texttt{C:\textbackslash Program Files\textbackslash Common Files\textbackslash VST3}
 e l'LV2 in \texttt{...\textbackslash Common Files\textbackslash LV2}.
 
@@ -251,6 +251,27 @@ catena}). I pedali staccati sono salvati nei preset e nei progetti.
 \small Il chorus AQ-2 è staccato: il cavo va direttamente dal DX-1 al CD-2 (tema Lamiera mandorlata, cavi Multicolore).
 \end{center}
 
+\subsection{Mappa di Routing}\label{sec:mappa}
+Il tasto \textbf{Mappa di Routing} nella barra (su due righe, \textsc{mappa di routing}, nelle finestre
+strette) apre una vista d'insieme di tutta la catena: \textbf{INPUT}, ogni slot occupato con la miniatura
+e il nome del pedale, lo splitter SPL-3 con le uscite A e B e \textbf{OUTPUT}, collegati dai cavi.
+\begin{itemize}
+  \item \textbf{Spostare gli oggetti}: trascinali dove vuoi. Le posizioni sono salvate nel progetto
+        (non nei preset) e ritrovate alla riapertura; \emph{Disposizione automatica} rimette tutto in
+        righe ordinate (con lo splitter in DUAL la corsia A sopra e la corsia B sotto).
+  \item \textbf{Cavi}: le spine si staccano e si riagganciano esattamente come sulla pedaliera, con le
+        stesse regole (segnale da sinistra a destra, splitter che non si stacca, corsie separate in DUAL,
+        spina lasciata nel vuoto = pedale \textsc{staccato}). Se un collegamento non è ammesso il cavo
+        torna dov'era e un avviso in basso spiega il motivo.
+  \item \textbf{Doppio clic} su un pedale apre il suo zoom; un clic sul \textbf{LED} lo accende o lo spegne.
+  \item \textbf{Rotellina} o barre di scorrimento per muoversi, \textbf{Ctrl + rotellina} (o i tasti
+        $-$ e $+$) per lo zoom, \emph{Adatta} per vedere tutta la catena, anche di 100 slot;
+        \textbf{Esc} o \emph{Chiudi} per tornare alla pedaliera.
+\end{itemize}
+\begin{center}\includegraphics[width=\linewidth]{../images/guide_routing.jpg}\end{center}
+La mappa non cambia il suono né l'ordine dei pedali: è un altro modo di vedere e di ricablare la stessa
+catena, e ogni modifica si vede subito anche sulla pedaliera (e viceversa).
+
 % ------------------------------------------------------------------
 \clearpage
 \section{Opzioni e temi}\label{sec:opzioni}
@@ -363,7 +384,8 @@ lo stato completo viene salvato anche nel progetto.
   \item \textbf{Simulatori d'ampli e di cassa} (stile IR-2, IR-200, FBM-1, FDR-1): preamp a valvole,
         stack di tono reale, finale con sag e cassa. I pedali \emph{IR Loader} convolvono il segnale con
         risposte all'impulso di casse generate dal modello dell'altoparlante; con un \textbf{clic destro sul
-        numero dello slot} puoi caricare le tue risposte all'impulso (\texttt{.wav}).
+        numero dello slot} puoi caricare le tue risposte all'impulso (\texttt{.wav}). Gli ampli e le casse veri
+        e propri sono nelle categorie \emph{Amplificatori} e \emph{Casse} (sezione~\ref{sec:ampli}).
   \item \textbf{Accordatori}: mostrano nota e scostamento in cent; in modo MUTE silenziano l'uscita.
   \item \textbf{Looper}: il pedale avvia registrazione → riproduzione → sovraincisione; i pulsanti
         STOP e CLEAR (e UNDO dove presente) completano i comandi; il display mostra stato e durata.
@@ -461,6 +483,63 @@ I cabinet dei Cube Baby e dell'IR BOX sono \textbf{generati} (altoparlante, mobi
 carattere del cabinet nominato ma non sono copie di risposte di prodotti esistenti; si può caricare un proprio file
 IR \texttt{.wav}. I footswitch a doppia funzione (tap tempo, preset, hold) sono resi come levette dove indispensabile.
 I valori non pubblicati sono stimati e segnati nelle note di ciascun pedale.
+
+% ------------------------------------------------------------------
+\section{Amplificatori e casse}\label{sec:ampli}
+Nel menu di ogni slot ci sono due categorie separate, \textbf{Amplificatori} e \textbf{Casse}: un ampli e una
+cassa sono due oggetti distinti, da mettere in catena uno dopo l'altro (o con pedali in mezzo, come un loop
+effetti), proprio come una testata e il suo mobile. Nelle due categorie si trovano anche i simulatori che c'erano
+già (IR-2, IR-200, FBM-1, FDR-1, NAM-A1A2, Cube Baby, MINI-AMP, gli IR loader e l'IR BOX).
+\begin{center}\includegraphics[width=\linewidth]{../images/guide_amps.jpg}\end{center}
+
+\subsection*{I 27 amplificatori}
+Gli ampli più usati, con sigle AX- e nomi originali (i nomi veri compaiono con la REAL MOD PEDALBOARD):
+Fender Twin Reverb, Deluxe Reverb, Princeton Reverb, Bassman 5F6-A; Vox AC30 Top Boost e AC15; Hiwatt DR103;
+Matchless DC-30; Orange OR120; Marshall JTM45, 1959 Super Lead, JCM800 2203, JCM900 e Silver Jubilee;
+Mesa/Boogie Mark IIC+ e Dual Rectifier; Peavey 5150; Soldano SLO-100; Friedman BE-100; Dumble Overdrive Special;
+Bogner Ecstasy; ENGL Powerball; Diezel VH4; Roland JC-120 (stereo, con chorus e vibrato); e per il basso Ampeg
+SVT, Ampeg B-15N e Gallien-Krueger 800RB.
+\begin{itemize}
+  \item \textbf{Il circuito vero}: ogni ampli è ricostruito dallo schema, stadio per stadio — preampli a triodi,
+        tonestack con i valori reali (scarto dalle curve calcolate dallo schema entro 0,3 dB), riverbero a molla,
+        tremolo ottico o a polarizzazione, invertitore di fase, finale push-pull con le sue valvole (6L6, EL34,
+        6V6, EL84, KT88\dots), controreazione con PRESENCE e RESONANCE, trasformatore d'uscita, carico
+        dell'altoparlante e \emph{sag} del raddrizzatore (silicio o valvola GZ34/5U4). I guadagni degli stadi
+        sono stati calibrati con le misure pubblicate.
+  \item \textbf{Comandi e canali}: quelli del pannello vero (canali, modi, BRIGHT, INPUT, VOICING, EQ a cursori del
+        Mark IIC+\dots); dove i comandi reali erano più di 12 la scelta è spiegata nelle note.
+  \item \textbf{Il retro}: nel pannello di zoom il tasto \textbf{Retro} gira l'ampli e mostra il pannello
+        posteriore con prese, selettori, fusibili, valvole, trasformatori e altoparlanti; \textbf{Fronte} lo
+        rimette com'era.
+\end{itemize}
+\begin{center}\includegraphics[width=0.9\linewidth]{../images/guide_ampback.jpg}\end{center}
+\begin{itemize}
+  \item L'ampli \textbf{non contiene la cassa}: per il suono completo mettigli dopo una cassa. Senza cassa si sente
+        il segnale dell'uscita dell'altoparlante, utile per mandarlo a un IR esterno.
+\end{itemize}
+
+\subsection*{Le 31 casse e il laboratorio}
+Le casse (sigle KX-) seguono le marche degli ampli, dall'1x10 al 4x12 e alle casse da basso 4x10, 8x10 e 1x15:
+Fender, Vox, Marshall (1960A angolata, 1960B diritta, 1960TV, 1936), Hiwatt, Orange, Matchless, Roland, Mesa
+(anche in versione Traditional e 1x12/2x12), Peavey, Soldano, ENGL, Diezel, Bogner, Friedman, Ampeg e
+Gallien-Krueger. In più c'è \textbf{Cab Lab} (KX-LAB), con cui si sceglie liberamente il formato.
+I comandi stanno sulla pedaliera posata davanti alla cassa:
+\begin{itemize}
+  \item \textbf{SPEAKER}: il cono (fino a 12 per cassa: Celestion G12T-75, Vintage 30, Greenback, Creamback,
+        Alnico Blue e Gold, Jensen, JBL, Eminence, Fane\dots);
+  \item \textbf{MIC}: 11 microfoni tra i più usati (SM57, MD 421, e 906, R-121, M 160, C414, U 87, U 47 fet,
+        MD 441, SM7B, AT4050) e \textbf{POSITION}: centro o bordo della cupola, metà o bordo del cono, fuori asse,
+        a 1/5/15/30 cm, ambiente, fra due coni;
+  \item \textbf{DISTANCE} e \textbf{ROOM}: distanza del microfono (con l'effetto di prossimità) e stanza;
+  \item \textbf{MIC 2}, \textbf{BLEND} e \textbf{M2 DIST}: un secondo microfono accanto al primo
+        (\textbf{MIC 2 AT} = SAME) o in ambiente (ROOM), da miscelare;
+  \item \textbf{LOW CUT}, \textbf{HIGH CUT} e \textbf{LEVEL} in uscita.
+\end{itemize}
+La risposta della cassa è \textbf{calcolata} (mobile aperto o chiuso, volume e porte, coni, diffrazione del
+pannello, percorso fino al microfono e caratteristica del microfono): non è una copia di risposte di prodotti
+esistenti. Le combinazioni di fabbrica restano entro circa 1 dB dalle curve pubblicate dei coni. Il cambio di
+cono o di microfono è senza click. Come con gli IR loader, con un clic destro sul numero dello slot si può caricare un
+proprio file \texttt{.wav}.
 
 % ------------------------------------------------------------------
 \section{REAL MOD PEDALBOARD}\label{sec:realmod}
@@ -627,7 +706,7 @@ Lo Standalone ascolta l'ingresso: con microfono e altoparlanti del portatile usa
 \includegraphics[width=\linewidth]{../images/guide_info.jpg}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.46\linewidth}\vspace{0pt}
-Il tasto \textbf{INFO} mostra versione (\textbf{1.3.1 beta}), autore (\textbf{FabioNET}), il testo
+Il tasto \textbf{INFO} mostra versione (\textbf{1.4.0 beta}), autore (\textbf{FabioNET}), il testo
 completo della \textbf{GNU GPL v3} seguito dalle licenze dei componenti del NAM-A1A2 (MIT ed
 Eigen MPL 2.0), i crediti e apre questa guida.
 \end{minipage}
@@ -646,6 +725,7 @@ di Roland Corporation; Ibanez, Tube Screamer, Tube King, Weeping Demon, Soundtan
 Gakki; Maxon di Nisshin Onpa; Nutube di Korg; Behringer, V-Tone e Hellbabe di Music Tribe; Cuvave, M-VAVE e Cube Baby
 di Zhuhai Sinco Intelligent Technology; SansAmp di Tech 21; Klon di Klon LLC; Moogerfooger di Moog Music; Line 6 di Yamaha
 Guitar Group; Mu-Tron, Uni-Vibe, Tycobrahe e Lovetone dei rispettivi titolari; Fender di Fender Musical Instruments.
+Twin Reverb, Deluxe Reverb, Princeton e Bassman di Fender Musical Instruments; JC-120 di Roland Corporation; Vox, AC30 e AC15; Marshall, JTM45, JCM800, JCM900 e Silver Jubilee; Mesa/Boogie, Mark IIC+ e Dual Rectifier; Peavey e 5150; Soldano e SLO-100; Hiwatt, Matchless, Orange, Dumble, Friedman, Bogner, ENGL, Diezel, Ampeg, SVT, Gallien-Krueger; Celestion, Jensen, Eminence, JBL, Fane, Weber; Shure, Sennheiser, beyerdynamic, Royer, AKG, Neumann e Audio-Technica sono marchi dei rispettivi titolari (ampli, altoparlanti e microfoni citati solo come riferimento del suono).
 Pedal Trinity è un progetto indipendente, non affiliato né approvato: i modelli hanno nomi e sigle
 originali e i riferimenti servono solo a indicare il suono di riferimento; in modalità REAL MOD le
 repliche 3D, modellate da zero e senza loghi, riportano sigla e nome del pedale solo per identificarlo. Le immagini sono render 3D
@@ -674,5 +754,5 @@ La pedaliera MIDI non risponde & Nello Standalone attiva il dispositivo in \emph
 Un pedale non si sente & Se mostra \textsc{staccato} il cavo lo scavalca: infila una spina nel pedale o usa \emph{Ricollega tutti i pedali staccati} (tasto destro sull'intestazione dello slot). \\ \bottomrule
 \end{tabularx}
 \vfill
-\begin{center}\small\color{steel}Pedal Trinity 1.3.1 beta \,·\, © 2026 FabioNET \,·\, GNU General Public License v3\end{center}
+\begin{center}\small\color{steel}Pedal Trinity 1.4.0 beta \,·\, © 2026 FabioNET \,·\, GNU General Public License v3\end{center}
 \end{document}

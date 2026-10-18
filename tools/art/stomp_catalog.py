@@ -24,7 +24,10 @@ SOUND_FILES = [os.path.join(HERE, "sound_stage3_analog.json"), os.path.join(HERE
                os.path.join(HERE, "sound_stage4_mod.json"), os.path.join(HERE, "sound_stage4_digital.json"),
                # tappa 5 (Behringer, Cuvave / M-VAVE)
                os.path.join(HERE, "sound_stage5_drive.json"), os.path.join(HERE, "sound_stage5_dyn.json"),
-               os.path.join(HERE, "sound_stage5_mod.json"), os.path.join(HERE, "sound_stage5_digital.json")]
+               os.path.join(HERE, "sound_stage5_mod.json"), os.path.join(HERE, "sound_stage5_digital.json"),
+               # tappa 6 (amplificatori e casse: amp_catalog.py)
+               os.path.join(HERE, "sound_stage6_amps_a.json"), os.path.join(HERE, "sound_stage6_amps_b.json"),
+               os.path.join(HERE, "sound_stage6_cabs.json")]
 _SOUND = None
 SOUND_ERRORS = []
 

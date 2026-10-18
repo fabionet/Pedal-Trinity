@@ -14,13 +14,13 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")  # nessun redistributable VC++ richiesto
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "")
 
-project(PedalTrinity VERSION 1.3.1 LANGUAGES C CXX)
+project(PedalTrinity VERSION 1.4.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)        # NeuralAmpModelerCore richiede la libreria C++20
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(PT_VERSION_STRING "1.3.1-beta")
+set(PT_VERSION_STRING "1.4.0-beta")
 set(PT_JUCE_DIR "" CACHE PATH "Cartella dei sorgenti di JUCE 7 (vuoto = download automatico)")
 set(PT_ASIO_SDK_DIR "" CACHE PATH "Cartella dello Steinberg ASIO SDK (solo Windows)")
 set(PT_JUCE_GIT_SHA "4f43011b96eb0636104cb3e433894cda98243626")
@@ -134,6 +134,8 @@ target_sources(PedalTrinity PRIVATE
     Source/gui/RealMod.cpp
     Source/gui/OptionsPanel.cpp
     Source/gui/MidiPanel.cpp
+    Source/gui/Routing.cpp
+    Source/gui/RoutingMap.cpp
     Source/engine/FxNam.cpp
     Source/engine/NamSecurity.cpp
     Source/engine/FxClassic.cpp
@@ -153,7 +155,9 @@ target_sources(PedalTrinity PRIVATE
     Source/engine/FxStage5.cpp
     Source/engine/FxStage5Dyn.cpp
     Source/engine/FxStage5Mod.cpp
-    Source/engine/FxStage5Time.cpp)
+    Source/engine/FxStage5Time.cpp
+    Source/engine/FxStage6.cpp
+    Source/engine/FxStage6Cab.cpp)
 # banco di filtri complessi (FxSpectral.h): senza errno/trap sulle radici i cicli per banda si vettorizzano
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     set_source_files_properties(Source/engine/FxPolyPitch.cpp Source/engine/FxInstrument.cpp

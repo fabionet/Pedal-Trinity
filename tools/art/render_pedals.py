@@ -945,6 +945,8 @@ scene.cycles.samples = SAMPLES
 
 
 import pedal_geometry as PG  # noqa: E402
+import render_amps  # noqa: E402  (tappa 6: amplificatori e casse)
+render_amps.setup(globals())
 
 
 def export(m, lay):
@@ -969,6 +971,15 @@ for m in models:
         continue
     for o in list(PEDAL.objects):
         bpy.data.objects.remove(o, do_unlink=True)
+    if lay.get("builder") == "amp":
+        # ampli e casse (tappa 6): fronte e retro (<id>_back.png), camera e luci proprie
+        if not REAL:
+            import shaped_layout
+            m = shaped_layout.as_shaped(m)
+        render_amps.render(m, lay, png, REAL)
+        done += 1
+        print("RENDER %s (%d)" % (m["id"], done), flush=True)
+        continue
     # inquadratura dello stile (il contenitore grande e' piu' profondo)
     PG.use_frame(m["style"], lay.get("frame"))
     scene.render.resolution_x = PG.RES_X

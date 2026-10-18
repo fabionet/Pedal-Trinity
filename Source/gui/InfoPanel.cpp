@@ -100,7 +100,7 @@ namespace pt::ui
             "Behringer, V-Tone e Hellbabe di Music Tribe; Cuvave, M-VAVE e Cube Baby di Zhuhai Sinco; SansAmp di Tech 21; Klon di Klon LLC; "
             "Moogerfooger di Moog Music; Line 6 di Yamaha Guitar Group; Mu-Tron, Uni-Vibe, Tycobrahe e Lovetone dei rispettivi titolari; Fender di Fender Musical Instruments; Dunlop, Cry Baby e MXR di Dunlop Manufacturing; "
             "Ernie Ball di Ernie Ball Inc.; Electro-Harmonix, Big Muff, Memory Man, POG e Holy Grail di New Sensor Corp.; "
-            "Sovtek, Morley e DeArmond dei rispettivi titolari. I nomi degli artisti delle "
+            "Sovtek, Morley e DeArmond dei rispettivi titolari. Twin Reverb, Deluxe Reverb, Princeton e Bassman di Fender Musical Instruments; JC-120 di Roland Corporation; Vox, AC30 e AC15; Marshall, JTM45, JCM800, JCM900 e Silver Jubilee; Mesa/Boogie, Mark IIC+ e Dual Rectifier; Peavey e 5150; Soldano e SLO-100; Hiwatt, Matchless, Orange, Dumble, Friedman, Bogner, ENGL, Diezel, Ampeg, SVT, Gallien-Krueger; Celestion, Jensen, Eminence, JBL, Fane, Weber; Shure, Sennheiser, beyerdynamic, Royer, AKG, Neumann e Audio-Technica sono marchi dei rispettivi titolari (ampli, altoparlanti e microfoni citati solo come riferimento del suono). I nomi degli artisti delle "
             "versioni signature servono solo a identificare il modello di riferimento. Pedal Trinity \xc3\xa8 un progetto indipendente, "
             "non affiliato n\xc3\xa9 approvato: i modelli hanno nomi e sigle originali, i riferimenti indicano solo il "
             "suono di riferimento. Le immagini dei pedali sono render 3D originali. In modalit\xc3\xa0 REAL MOD le repliche, "

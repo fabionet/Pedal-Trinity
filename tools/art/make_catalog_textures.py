@@ -41,7 +41,8 @@ SUBTITLES = {"Overdrive / Boost": "OVERDRIVE", "Distorsione": "DISTORTION", "Fuz
              "Chorus / Dimension": "CHORUS", "Flanger": "FLANGER", "Phaser": "PHASER", "Tremolo / Pan / Slicer": "TREMOLO",
              "Vibrato / Rotary": "VIBRATO", "Delay": "DIGITAL DELAY", "Eco a nastro": "TAPE ECHO", "Riverbero": "REVERB",
              "Pitch / Ottave": "PITCH SHIFTER", "Synth": "SYNTHESIZER", "Acustica": "ACOUSTIC", "Amp / IR": "AMP & CABINET",
-             "Utility / Routing": "LINE SELECTOR", "Tuner / Looper": "TUNER / LOOPER"}
+             "Utility / Routing": "LINE SELECTOR", "Tuner / Looper": "TUNER / LOOPER",
+             "Amplificatori": "AMPLIFIER", "Casse": "CABINET"}
 
 
 def fit_size(label, base, maxw_m, font):
@@ -287,7 +288,8 @@ def tread_texture(m, lay):
     name_size = fit_size(m["name"], k["name_size"], 0.060, MT.F_BLACKIT)
     c.text(0.0, top - k["name"], m["name"], name_size, MT.F_BLACKIT, accent)
     c.line(-0.0300, top - k["line"], 0.0300, top - k["line"], text, 0.00030)
-    sub = (m.get("subtitle") or SUBTITLES.get(m["category"], "EFFECT")).upper().strip()
+    # i modelli spostati di categoria (tappa 6) conservano il sottotitolo della categoria di origine
+    sub = (m.get("subtitle") or SUBTITLES.get(m.get("print_category") or m["category"], "EFFECT")).upper().strip()
     c.text(-0.0300, top - k["sub"], sub, fit_size(sub, 0.0024, 0.034, MT.F_BOLD), MT.F_BOLD, text, anchor="lm", spacing=0.0002)
     c.text(0.0300, top - k["sub"] - 0.0002, m["code"], fit_size(m["code"], k["code_size"], 0.026, MT.F_BLACK), MT.F_BLACK, text, anchor="rm")
     c.save("%s_tread.png" % m["id"])

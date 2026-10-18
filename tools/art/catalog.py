@@ -27,7 +27,21 @@ FAMILIES = ["Circuit", "Compressor", "NoiseGate", "GraphicEQ", "ParametricEQ", "
 CATEGORIES = ["Overdrive / Boost", "Distorsione", "Fuzz", "Metal", "Basso", "Dinamica", "Equalizzatori",
               "Wah / Filtri", "Chorus / Dimension", "Flanger", "Phaser", "Tremolo / Pan / Slicer",
               "Vibrato / Rotary", "Delay", "Eco a nastro", "Riverbero", "Pitch / Ottave", "Synth", "Acustica",
-              "Amp / IR", "Utility / Routing", "Tuner / Looper", "Splitter"]
+              "Amp / IR", "Amplificatori", "Casse", "Utility / Routing", "Tuner / Looper", "Splitter"]
+
+# tappa 6: i simulatori d'ampli e i caricatori di IR/cassa gia' a catalogo passano nelle categorie nuove "Amplificatori" e
+# "Casse" (la categoria "Amp / IR", rimasta vuota, sparisce dal menu). Le serigrafie non cambiano: il sottotitolo
+# stampato resta quello della categoria di origine (campo 'print_category', vedi make_catalog_textures.SUBTITLES).
+CATEGORY_MOVE = {
+    # simulatori d'ampli (famiglia AmpSim e preampli/modellatori), il NAM-A1A2 (cattura neurale di un ampli: si usa al
+    # posto di un ampli, quindi "Amplificatori"), le V-Tone/TM300 (modellatori d'ampli Circuit)
+    "nama1a2": "Amplificatori", "fbm1": "Amplificatori", "fdr1": "Amplificatori", "ir2": "Amplificatori",
+    "ir200": "Amplificatori", "bhtm300": "Amplificatori", "bhgdi21": "Amplificatori", "cvcubebaby": "Amplificatori",
+    "cvminiamp": "Amplificatori", "cvcubebabybass": "Amplificatori",
+    # caricatori di IR e simulatori di cassa (famiglia CabIR; l'EC50 Parrot Box e' un simulatore di altoparlante)
+    "irl1": "Casse", "irl2": "Casse", "cvirbox": "Casse", "ibxec50": "Casse",
+}
+EMPTY_CATEGORIES = {"Amp / IR"}
 
 UNITS = {"dial", "db", "hz", "ms", "percent", "semitone", "choice"}
 
@@ -106,13 +120,20 @@ GROUP_FILES = ["catalog_core", "catalog_drive", "catalog_dist", "catalog_mod", "
                "catalog_wah", "catalog_volume", "catalog_mxr", "catalog_ehx", "catalog_mxr_b", "catalog_ehx_b",
                "catalog_ibanez", "catalog_ibanez_b",
                # tappa 5 (Behringer, Cuvave / M-VAVE)
-               "catalog_behringer", "catalog_behringer_b", "catalog_cuvave"]
+               "catalog_behringer", "catalog_behringer_b", "catalog_cuvave",
+               # tappa 6 (amplificatori e casse)
+               "catalog_amps", "catalog_cabs"]
 
 BANNED = re.compile(r"\bBOSS\b|\bRoland\b|\bIbanez\b|Tube\s*Screamer|Metal\s*Zone|Blues\s*Driver|Waza|"
                     r"Dunlop|Cry\s*Baby|Ernie\s*Ball|Morley|De\s*Armond|\bMXR\b|\bVox\b|Electro\s*-?\s*Harmonix|\bEHX\b|"
                     r"Sovtek|\bMuff\b|Memory\s*(Man|Boy|Toy)|Holy\s*(Grail|Stain)|\bPOG\b|Small\s*(Stone|Clone)|Mistress|"
                     r"Q-?Tron|Superego|Cathedral|Canyon|Oceans\s*1|Hazarai|Zakk|Wylde|\bEVH\b|Van\s*Halen|Dimebag|\bSlash\b|"
-                    r"Dookie|Behringer|Cuvave|M-?VAVE|Music\s*Tribe|V-?Tone|Hell\s*Babe|Cube\s*Baby|Moogerfooger|Lovetone|SansAmp|Klon|Centaur", re.I)
+                    r"Dookie|Behringer|Cuvave|M-?VAVE|Music\s*Tribe|V-?Tone|Hell\s*Babe|Cube\s*Baby|Moogerfooger|Lovetone|SansAmp|Klon|Centaur|"
+                    # tappa 6: marche e modelli di ampli, casse e altoparlanti ("Orange" e "JTM" no: gia' in nomi originali)
+                    r"\bFender\b|\bMarshall\b|\bMesa\b|\bBoogie\b|\bPeavey\b|\bSoldano\b|\bHiwatt\b|Hi-?Watt|\bMatchless\b|"
+                    r"\bDumble\b|\bFriedman\b|\bBogner\b|\bENGL\b|\bDiezel\b|\bAmpeg\b|Gallien|Krueger|\bCelestion\b|\bJensen\b|"
+                    r"Twin\s*Reverb|Deluxe\s*Reverb|Princeton|Bassman|\bPlexi\b|\bJCM\b|Rectifier|Top\s*Boost|Jazz\s*Chorus|\bSVT\b|"
+                    r"Portaflex|Powerball|Ecstasy|Uberschall|\b5150\b|\b6505\b|Greenback|Jubilee|Super\s*Lead", re.I)
 STYLES = ("boss", "ts", "nam", "treadle", "box")
 
 
@@ -125,6 +146,9 @@ def load_all(strict=True):
         mod = importlib.import_module(g)
         for m in getattr(mod, "MODELS", []):
             m["group"] = g
+            if m["id"] in CATEGORY_MOVE and m["category"] != CATEGORY_MOVE[m["id"]]:
+                m.setdefault("print_category", m["category"])
+                m["category"] = CATEGORY_MOVE[m["id"]]
             models.append(m)
     for m in models:
         e = validate(m)
@@ -145,7 +169,7 @@ def validate(m):
     e = []
     if not re.fullmatch(r"[a-z0-9_]+", m["id"]): e.append("id non valido")
     if m["family"] not in FAMILIES: e.append("famiglia sconosciuta %s" % m["family"])
-    if m["category"] not in CATEGORIES: e.append("categoria sconosciuta %s" % m["category"])
+    if m["category"] not in CATEGORIES or m["category"] in EMPTY_CATEGORIES: e.append("categoria sconosciuta %s" % m["category"])
     if BANNED.search(m["name"]) or BANNED.search(m["code"]): e.append("nome/sigla con marchio registrato")
     if not 1 <= len(m["controls"]) <= 12: e.append("numero di comandi non valido")
     if len(m["name"]) > 22: e.append("nome troppo lungo (max 22)")
@@ -162,7 +186,7 @@ def validate(m):
         # il primo comando e' il bilanciere (strip 254): non occupa una posizione rotativa
         if m["controls"][0]["kind"] != "knob": e.append("stile treadle: il primo comando deve essere il bilanciere")
         rot = rot[1:]
-    stomp = m["style"] == "box" and isinstance(m.get("look"), dict) and m["look"].get("stomp")
+    stomp = m["style"] == "box" and isinstance(m.get("look"), dict) and (m["look"].get("stomp") or m["look"].get("amp"))
     if len(rot) > (12 if stomp else (9 if m["style"] == "nam" else 8)):
         e.append("troppi pomelli (max 8 posizioni, 9 sul contenitore grande)")
     sl = [c for c in m["controls"] if c["kind"] == "slider"]

@@ -280,6 +280,9 @@ def main(only):
         elif lay["builder"] == "stomp":
             import stomp_textures
             stomp_textures.top_texture(r, lay, OUT)
+        elif lay["builder"] == "amp":
+            import amp_textures         # amplificatori e casse (tappa 6)
+            amp_textures.textures(r, lay, OUT)
         else:
             box_top(r, lay)
         n += 1

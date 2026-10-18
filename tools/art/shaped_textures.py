@@ -302,5 +302,8 @@ def normal(m, lay, out):
     elif lay["builder"] == "stomp":
         import stomp_textures
         stomp_textures.top_texture(r, lay, out)
+    elif lay["builder"] == "amp":
+        import amp_textures             # amplificatori e casse (tappa 6)
+        amp_textures.textures(r, lay, out)
     else:
         MR.box_top(r, lay, out=out)

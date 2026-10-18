@@ -33,10 +33,11 @@ namespace pt::ui
         {
             CableOverlay::Target t;
             if (! juce::isPositiveAndBelow (id, (int) conns.size())) return t;
-            const auto r = resolveReplug (conns[(size_t) id], destEnd, p);
-            t.any = r.kind != Replug::Cancel || r.hint.isNotEmpty();
+            juce::Rectangle<float> area;
+            const auto r = resolveReplug (conns[(size_t) id], destEnd, p, &area);
+            t.any = r.kind != routing::Replug::Cancel || r.hint.isNotEmpty();
             t.ok = r.ok;
-            t.area = r.area;
+            t.area = area;
             t.hint = r.hint;
             return t;
         };
@@ -313,54 +314,7 @@ namespace pt::ui
 
     void Pedalboard::updateCables()
     {
-        conns.clear();
-        const int n = chain.size();
-        const auto mode = chain.splitMode();
-        End srcA { End::Input }, srcB { End::Input }, laneSrc[2] { { End::Input }, { End::Input } };
-        bool hasB = false, splitSeen = false;
-        for (int i = 0; i < n; ++i)
-        {
-            auto* s = chain.slot (i);
-            if (s == nullptr || s->fx == nullptr) continue;          // slot vuoto: il cavo lo attraversa
-            if (! s->patched.load() && ! s->isSplitter()) continue;  // pedale staccato: il cavo lo scavalca
-            const End in0 { End::SlotIn, i, 0 }, in1 { End::SlotIn, i, 1 }, out0 { End::SlotOut, i, 0 }, out1 { End::SlotOut, i, 1 };
-            if (s->isSplitter())
-            {
-                conns.push_back ({ srcA, in0 });
-                splitSeen = true;
-                if (mode == SplitMode::Dual) { laneSrc[0] = out0; laneSrc[1] = out1; }
-                else if (mode == SplitMode::Stereo) { srcA = out0; srcB = out1; hasB = true; }
-                else { srcA = out0; hasB = false; }
-                continue;
-            }
-            if (splitSeen && mode == SplitMode::Dual)
-            {
-                const int l = juce::jlimit (0, 1, s->lane.load());
-                conns.push_back ({ laneSrc[l], in0 });
-                laneSrc[l] = out0;
-            }
-            else if (splitSeen && mode == SplitMode::Stereo && s->def->stereo)
-            {
-                conns.push_back ({ srcA, in0 });
-                if (hasB) conns.push_back ({ srcB, in1 });
-                srcA = out0; srcB = out1; hasB = true;
-            }
-            else
-            {
-                conns.push_back ({ srcA, in0 });
-                srcA = out0; hasB = false;
-            }
-        }
-        if (splitSeen && mode == SplitMode::Dual)
-        {
-            conns.push_back ({ laneSrc[0], { End::Output, -1, 0 } });
-            conns.push_back ({ laneSrc[1], { End::Output, -1, 1 } });
-        }
-        else
-        {
-            conns.push_back ({ srcA, { End::Output, -1, 0 } });
-            if (hasB) conns.push_back ({ srcB, { End::Output, -1, 1 } });
-        }
+        conns = routing::connections (chain);          // stesse regole della Mappa di Routing
 
         auto unitOf = [this] (const End& e)
         {
@@ -493,123 +447,48 @@ namespace pt::ui
 
     //==============================================================================
     // cavi staccabili
-    int Pedalboard::segmentOfSlot (int i) const
+    routing::Replug Pedalboard::resolveReplug (const Conn& c, bool destEnd, juce::Point<float> p, juce::Rectangle<float>* areaOut) const
     {
-        // tratto della catena: 0 = prima dello splitter (o catena senza corsie), 1/2 = corsia A/B in DUAL
-        return dual && splitIndex >= 0 && i > splitIndex ? 1 + chain.lane (i) : 0;
-    }
-
-    int Pedalboard::segmentOf (const End& e) const
-    {
-        switch (e.kind)
-        {
-            case End::Input:   return 0;
-            case End::Output:  return dual ? 1 + e.line : 0;
-            case End::SlotIn:  return segmentOfSlot (e.slot);
-            case End::SlotOut: return dual && e.slot == splitIndex ? 1 + e.line : segmentOfSlot (e.slot);
-        }
-        return 0;
-    }
-
-    Pedalboard::Replug Pedalboard::resolveReplug (const Conn& c, bool destEnd, juce::Point<float> p) const
-    {
-        Replug r;
-        const int n = chain.size();
-        auto pos = [n] (const End& e) { return e.kind == End::Input ? -1 : e.kind == End::Output ? n : e.slot; };
-        const End& moving = destEnd ? c.b : c.a;
-        const int seg = segmentOf (moving);
-        const int lo0 = pos (c.a), hi0 = pos (c.b);
-
-        // pedali collegati che il cavo smetterebbe di attraversare tra lo e hi (esclusi), nello stesso tratto
-        auto between = [&] (int lo, int hi, std::vector<int>& out)
-        {
-            for (int k = lo + 1; k < hi; ++k)
-            {
-                auto* s = chain.slot (k);
-                if (s == nullptr || s->fx == nullptr || ! s->patched.load() || segmentOfSlot (k) != seg) continue;
-                if (s->isSplitter()) return false;           // lo splitter non si scavalca
-                out.push_back (k);
-            }
-            return true;
-        };
-
-        // bersaglio: un pedale (il suo corpo, con un po' di margine), il pannello INPUT/OUTPUT o la pedana libera
+        // bersaglio: un pedale (il suo corpo, con un po' di margine), il pannello INPUT/OUTPUT o la pedana libera;
+        // le regole sono quelle comuni (routing::resolve), uguali nella Mappa di Routing
+        juce::Rectangle<float> area;
+        routing::Target t;
+        bool onPedal = false;
         const auto ip = p.toInt();
         for (auto* comp : slotComps)
         {
             const auto body = comp->pedalBounds().translated ((float) comp->getX(), (float) comp->getY());
             if (body.isEmpty() || ! body.expanded (12.0f).contains (p)) continue;
-            const int y = comp->getIndex();
-            auto* s = chain.slot (y);
-            r.area = body.expanded (4.0f);
+            area = body.expanded (4.0f);
+            auto* s = chain.slot (comp->getIndex());
             if (s == nullptr || s->fx == nullptr) continue;
-            const End& fixed = destEnd ? c.a : c.b;
-            if (y == moving.slot && moving.kind != End::Input && moving.kind != End::Output)
-                { r.hint = "Rilascia altrove per staccarlo"; return r; }
-            if (fixed.kind != End::Input && fixed.kind != End::Output && y == fixed.slot)
-                { r.hint = "Un pedale non si collega a se stesso"; return r; }
-            if (segmentOfSlot (y) != seg && ! (s->isSplitter() && seg == 0))
-                { r.hint = "Corsia diversa: sposta il pedale nella corsia del cavo"; return r; }
-            r.kind = Replug::Plug;
-            if (destEnd)
-            {
-                if (y <= lo0) { r.hint = "Il segnale va da sinistra a destra: il pedale e' prima del cavo"; return r; }
-                if (! between (lo0, y, r.unpatch)) { r.hint = "Lo splitter non si puo' scavalcare"; return r; }
-            }
-            else
-            {
-                if (y >= hi0) { r.hint = "Il segnale va da sinistra a destra: il pedale e' dopo il cavo"; return r; }
-                if (! between (y, hi0, r.unpatch)) { r.hint = "Lo splitter non si puo' scavalcare"; return r; }
-            }
-            r.patch = s->patched.load() ? -1 : y;
-            r.ok = true;
-            const auto name = juce::String (s->def->code);
-            r.hint = (destEnd ? "Ingresso di " : "Uscita di ") + name
-                   + (r.unpatch.empty() ? juce::String() : "  (scavalca " + juce::String ((int) r.unpatch.size()) + (r.unpatch.size() == 1 ? " pedale)" : " pedali)"));
-            return r;
+            t = { routing::Target::Slot, comp->getIndex() };
+            onPedal = true;
+            break;
         }
-        const auto& panel = destEnd ? outPanel : inPanel;
-        if (panel.getBounds().contains (ip))
+        if (! onPedal)
         {
-            r.area = panel.getBounds().toFloat().reduced (3.0f);
-            const bool right = destEnd ? (moving.kind == End::Output) : (moving.kind == End::Input);
-            if (right) { r.hint = "Gia' collegato qui"; return r; }
-            r.kind = Replug::Plug;
-            if (! between (destEnd ? lo0 : -1, destEnd ? n : hi0, r.unpatch)) { r.hint = "Lo splitter non si puo' scavalcare"; r.kind = Replug::Cancel; return r; }
-            r.ok = true;
-            r.hint = juce::String (destEnd ? "OUTPUT" : "INPUT") + "  (scavalca " + juce::String ((int) r.unpatch.size())
-                   + (r.unpatch.size() == 1 ? " pedale)" : " pedali)");
-            return r;
+            const auto& panel = destEnd ? outPanel : inPanel;
+            if (panel.getBounds().contains (ip))
+            {
+                area = panel.getBounds().toFloat().reduced (3.0f);
+                t.kind = destEnd ? routing::Target::OutputPanel : routing::Target::InputPanel;
+            }
+            else t.kind = boardRect.contains (ip) ? routing::Target::Empty : routing::Target::Outside;
         }
-        if (! boardRect.contains (ip)) { r.hint = "Fuori dalla pedaliera: il cavo torna al suo posto"; return r; }
-        // pedana vuota: si stacca il pedale a quell'estremita' (la catena si richiude da sola)
-        if (moving.kind == End::Input || moving.kind == End::Output)
-            { r.hint = juce::String ("Il cavo dell'") + (moving.kind == End::Input ? "INPUT" : "OUTPUT") + " non si stacca"; return r; }
-        auto* s = chain.slot (moving.slot);
-        if (s == nullptr || s->isSplitter()) { r.hint = "Lo splitter non si stacca"; return r; }
-        r.kind = Replug::Unplug;
-        r.ok = true;
-        r.unpatch.push_back (moving.slot);
-        r.hint = "Rilascia per staccare " + juce::String (s->def != nullptr ? s->def->code : "") + " dalla catena";
-        return r;
+        if (areaOut != nullptr) *areaOut = area;
+        return routing::resolve (chain, c, destEnd, t);
     }
 
     bool Pedalboard::applyReplug (int id, bool destEnd, juce::Point<float> p)
     {
         if (! juce::isPositiveAndBelow (id, (int) conns.size())) return false;
-        const auto r = resolveReplug (conns[(size_t) id], destEnd, p);
-        if (! r.ok || r.kind == Replug::Cancel) return false;
-        for (int k : r.unpatch) chain.setPatched (k, false);
-        if (r.patch >= 0) chain.setPatched (r.patch, true);
-        return ! r.unpatch.empty() || r.patch >= 0;
+        return routing::apply (chain, resolveReplug (conns[(size_t) id], destEnd, p));
     }
 
     juce::String Pedalboard::describeCables() const
     {
-        auto end = [] (const End& e) { return e.kind == End::Input ? juce::String ("I") : e.kind == End::Output ? juce::String ("O") : juce::String (e.slot); };
-        juce::StringArray out;
-        for (const auto& c : conns) out.add (end (c.a) + ">" + end (c.b));
-        return out.joinIntoString (" ");
+        return routing::describe (conns);
     }
 
     bool Pedalboard::dropPlugForTest (int conn, bool destEnd, juce::Point<float> p)
@@ -617,6 +496,20 @@ namespace pt::ui
         const bool changed = applyReplug (conn, destEnd, p);
         updateCables();
         return changed;
+    }
+
+    juce::Point<float> Pedalboard::emptyPointForTest() const
+    {
+        for (int y = boardRect.getBottom() - 4; y > boardRect.getY(); y -= 6)
+            for (int x = boardRect.getX() + 4; x < boardRect.getRight(); x += 6)
+            {
+                const juce::Point<float> p ((float) x, (float) y);
+                bool free = true;
+                for (auto* comp : slotComps)
+                    if (comp->pedalBounds().translated ((float) comp->getX(), (float) comp->getY()).expanded (16.0f).contains (p)) { free = false; break; }
+                if (free) return p;
+            }
+        return {};
     }
 
     juce::Rectangle<int> Pedalboard::slotArea (int slot) const

@@ -24,7 +24,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SPECS = os.path.join(HERE, "real_specs.json")
 
 SERIES = ("compact", "twin", "series200", "series500", "floor", "treadle_volume", "treadle_wah", "rocker",
-          "vintage_box", "tabletop", "other", "shaped", "stomp")
+          "vintage_box", "tabletop", "other", "shaped", "stomp", "amp")
 
 # misure tipiche (mm) per famiglia, se la scheda non le riporta
 DEFAULT_DIMS = {"compact": (73, 129, 59), "twin": (173, 158, 57), "series200": (101, 138, 63),
@@ -41,7 +41,11 @@ NO_BRAND = re.compile(r"\bBOSS\b|\bRoland\b|\bFender\b|\bIbanez\b|\bJHS\b|\bJim\
                       r"\bCustom\s+Audio\s+Electronics\b|\bCAE\b|\bDaredevil(\s+Pedals)?\b|\bWylde\s+Audio\b|"
                       r"\bPedaltrain\b|\bElectro\s*-?\s*Harmonix\b|\bEHX\b|\bSovtek\b|\bGuild\b|\bMaxon\b|"
                       r"\bNisshin\s+Onpa\b|\bHoshino(\s+Gakki)?\b|\bVemuram\b|\bKorg\b|"
-                      r"\bBehringer\b|\bCuvave\b|\bM-?VAVE\b|\bMusic\s*Tribe\b", re.I)
+                      r"\bBehringer\b|\bCuvave\b|\bM-?VAVE\b|\bMusic\s*Tribe\b|"
+                      # tappa 6: marche di ampli, casse e altoparlanti
+                      r"\bVox\b|\bMarshall\b|\bMesa\s*/\s*Boogie\b|\bMesa\b|\bBoogie\b|\bPeavey\b|\bSoldano\b|\bOrange\b|"
+                      r"\bHiwatt\b|\bHi-Watt\b|\bMatchless\b|\bDumble\b|\bFriedman\b|\bBogner\b|\bENGL\b|\bDiezel\b|\bAmpeg\b|"
+                      r"\bGallien\s*-?\s*Krueger\b|\bGK\b|\bCelestion\b|\bJensen\b", re.I)
 
 
 def hex_rgb(h, fallback):
@@ -145,7 +149,7 @@ def _shaped_replica(m):
     r = copy.deepcopy(m)
     r["real_code"] = clean_text(m["real"]["code"])
     r["real_name"] = clean_text(m["real"]["name"])
-    r["series"] = "shaped" if m["style"] == "treadle" else ("stomp" if lk.get("stomp") else "other")
+    r["series"] = "shaped" if m["style"] == "treadle" else ("stomp" if lk.get("stomp") else ("amp" if lk.get("amp") else "other"))
     r["dims"] = tuple(float(v) / 1000.0 for v in lk["dims"])
     r["colour"] = tuple(lk.get("real_colour") or m["colour"])
     r["text"] = m.get("text")

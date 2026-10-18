@@ -21,10 +21,16 @@ RES_Y = int(round((V1 - V0) * PPM))
 VC = (V0 + V1) / 2
 
 
-def use_frame(style, box=None):
+SIN_STRIP = math.sin(math.radians(L.TILT_DEG))    # inclinazione con cui sono renderizzate le filmstrip dei pomelli
+
+
+def use_frame(style, box=None, tilt=None):
     """Imposta l'inquadratura dello stile (usata da proj e dal render).
-    box = (x0, x1, v0, v1) per le repliche REAL MOD di misura diversa dal compatto."""
-    global X0, X1, V0, V1, RES_X, RES_Y, VC
+    box = (x0, x1, v0, v1) per le repliche REAL MOD di misura diversa dal compatto.
+    tilt = inclinazione della camera in gradi (tappa 6: ampli e casse in piedi); None = quella dei pedali."""
+    global X0, X1, V0, V1, RES_X, RES_Y, VC, TILT, COS, SIN
+    TILT = math.radians(L.TILT_DEG if tilt is None else tilt)
+    COS, SIN = math.cos(TILT), math.sin(TILT)
     if box is not None:
         X0, X1, V0, V1 = box
     else:
@@ -43,12 +49,14 @@ def proj(x, y, z):
 
 def geometry(m, lay=None):
     lay = lay or PL.pedal_layout(m)
-    use_frame(m.get("style", "boss"), lay.get("frame"))
+    use_frame(m.get("style", "boss"), lay.get("frame"), lay.get("tilt"))
     data = dict(id=m["id"], imageW=RES_X / RS, imageH=RES_Y / RS, controls=[])
     for k, c in enumerate(m["controls"]):
         p = lay["controls"][k]
         e = dict(strip=PL.STRIP_ID[p["strip"]])
-        if p["strip"] == "slider":
+        if p.get("amp"):
+            e.update(amp_control(p))
+        elif p["strip"] == "slider":
             e["anchor"] = proj(p["x"], p["y"], p["z"]); e["top"] = proj(p["x"], p["y1"], p["z"]); e["radius"] = 10.0
         elif p["strip"] == "toggle":
             e["anchor"] = proj(p["x"], p["y"], p.get("z", PL.PANEL_H) + 0.0048); e["top"] = e["anchor"]; e["radius"] = 14.0
@@ -80,11 +88,36 @@ def geometry(m, lay=None):
     return data
 
 
+def amp_control(p):
+    """Comando di un ampli o di una cassa (tappa 6): la filmstrip (renderizzata vista dall'alto con l'inclinazione dei
+    pedali) va centrata sul punto del pannello, qualunque sia l'orientamento del pannello (frontale, cielo, leggio):
+    base mezza altezza proiettata sotto il centro, sommita' mezza altezza sopra."""
+    c = proj(*p["c3"])
+    if p["strip"] == "slider":
+        return dict(anchor=c, top=proj(*p["t3"]), radius=10.0)
+    if p["strip"] == "toggle":
+        return dict(anchor=c, top=c, radius=14.0)
+    if p["strip"] in ("button", "footswitch", "footbutton"):
+        return dict(anchor=c, top=c, radius=p["r"] * PPM / RS)
+    d = 0.5 * p["h"] * SIN_STRIP * PPM / RS
+    if p.get("inner_of"):
+        # pomello interno del concentrico: appoggiato sulla sommita' dell'esterno
+        do = 0.5 * p["inner_of"] * SIN_STRIP * PPM / RS
+        base = [c[0], round(c[1] - do, 3)]
+        return dict(anchor=base, top=[c[0], round(base[1] - 2 * d, 3)], radius=p["r"] * PPM / RS)
+    return dict(anchor=[c[0], round(c[1] + d, 3)], top=[c[0], round(c[1] - d, 3)], radius=p["r"] * PPM / RS)
+
+
 def body_rect(lay):
     """Piano superiore del pedale nell'immagine [x, y, w, h] e altezza del fronte (px logici):
     dove le foto personali si appoggiano in modalita' REAL MOD."""
     b = lay.get("body") or dict(W=PL.W, D=PL.D, H=PL.PANEL_H)
     W, D = b["W"], b["D"]
+    if lay.get("builder") == "amp":
+        # ampli e casse: faccia frontale e cielo (dove stanno i pannelli sul piano superiore)
+        a = proj(-W / 2, D / 2, b["H"])
+        c = proj(W / 2, -D / 2, 0.0)
+        return [a[0], a[1], c[0] - a[0], c[1] - a[1], 0.0]
     if lay.get("builder") == "treadle":
         t = lay["treadle"]
         z_back, z_front = lay["back_block"]["z"], t["z0"]
