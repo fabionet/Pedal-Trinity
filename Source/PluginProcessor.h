@@ -8,6 +8,7 @@
 #include "engine/Chain.h"
 #include "Presets.h"
 #include "MidiMap.h"
+#include "gui/Routing.h"
 
 class PedalTrinityProcessor : public juce::AudioProcessor
 {
@@ -52,6 +53,9 @@ public:
     juce::ValueTree uiState { "UI" };       // vista, pagina, zoom (salvati nel progetto)
     pt::engine::LevelMeter outputMeter;     // picchi d'uscita (dopo il volume OUT) per il meter
     pt::midi::MidiManager midi { *this };   // assegnazioni MIDI (salvate nel progetto, non nei preset)
+    /** Posizioni e vista della Mappa di Routing: nello stato del progetto (nodo ROUTEMAP), non nei preset;
+        i progetti vecchi senza il nodo usano la disposizione automatica. */
+    pt::ui::RouteLayout routeLayout { chain };
 
 private:
     static juce::AudioProcessorValueTreeState::ParameterLayout createLayout();

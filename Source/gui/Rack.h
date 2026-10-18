@@ -77,11 +77,20 @@ namespace pt::ui
     };
 
     //==============================================================================
-    /** Pannello di zoom: un pedale ingrandito, con descrizione e navigazione. */
-    class ZoomPanel : public juce::Component
+    /** Retro del pedale o dell'ampli disegnato (normale o replica REAL MOD): immagine "<id>_back.jpg"
+        ("r_<id>_back.jpg" per la REAL MOD) cercata per nome nel BinaryData. Non valida se il modello non ha il retro. */
+    juce::Image backImageFor (const engine::ModelDef* visual);
+    /** Solo autotest e screenshot: sostituisce la ricerca nel BinaryData (nome della risorsa -> immagine);
+        una funzione vuota torna al BinaryData. */
+    void setBackImageLookup (std::function<juce::Image (const juce::String& resource)>);
+
+    /** Pannello di zoom: un pedale ingrandito, con descrizione e navigazione.
+        Se il modello ha l'immagine del retro compare il tasto "Retro" / "Fronte" che gira la vista. */
+    class ZoomPanel : public juce::Component, private juce::Timer
     {
     public:
         ZoomPanel (engine::Chain&, int index, juce::Component* popupParent);
+        ~ZoomPanel() override;
         void paint (juce::Graphics&) override;
         void resized() override;
         void mouseUp (const juce::MouseEvent&) override;
@@ -90,9 +99,27 @@ namespace pt::ui
         int currentIndex() const { return index; }
         std::function<void()> onClose;
         /** Avvia l'allineamento dei pomelli sulla foto (screenshot della guida). */
-        void startAlign() { view.setAlignMode (true); updateAlignButtons(); }
+        void startAlign() { setShowBack (false, false); view.setAlignMode (true); updateAlignButtons(); }
+
+        /** Il modello mostrato ha l'immagine del retro? */
+        bool hasBack() const { return backImage.isValid(); }
+        bool showingBack() const { return back; }
+        bool isFlipping() const { return isTimerRunning(); }
+        /** Gira la vista sul retro (true) o sul fronte; animate = breve rotazione. */
+        void setShowBack (bool showBack, bool animate = true);
+        juce::String flipButtonText() const { return flip.getButtonText(); }
+        bool flipButtonVisible() const { return flip.isVisible(); }
 
     private:
+        class BackView;
+        void timerCallback() override;
+        void applyFlipTransform (float phase);
+        std::unique_ptr<BackView> backView;
+        juce::TextButton flip { "Retro" };
+        juce::Image backImage;
+        bool back = false;
+        juce::uint32 flipStart = 0;
+
         juce::Rectangle<int> card() const;
         engine::Chain& chain;
         int index;

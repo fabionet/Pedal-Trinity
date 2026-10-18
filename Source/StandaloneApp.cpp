@@ -11,6 +11,8 @@
               --scale s  --size WxH  --view n  --first i  --factory numero|nome
               --zoom slot  --info  --options  --theme pro|tolex|walnut|green|alu|night  --chain id,id@B,split=0.5,...  --set slot:comando=valore (ripetibile)
               --nam slot:A|B=file.nam  --ir slot:A|B=file.wav   (NAM-A1A2)  --real (REAL MOD)  --photos (usa le foto personali)
+              --routing (Mappa di Routing)  --routezoom z  --routemove slot:x,y (ripetibile; slot I/O = in/out)
+              --back (con --zoom: mostra il retro)  --backimage file.jpg (immagine di prova del retro, solo screenshot)
 */
 
 #include <juce_audio_devices/juce_audio_devices.h>
@@ -33,6 +35,8 @@
 #include "PluginEditor.h"
 #include "gui/Theme.h"
 #include "gui/Pedalboard.h"
+#include "gui/RoutingMap.h"
+#include "gui/Rack.h"
 #include "Version.h"
 #include "engine/Circuit.h"
 #include "engine/FxNam.h"
@@ -657,6 +661,384 @@ namespace
             }
             report ("Pedane: tutti i materiali disegnati (anche ricolorati)", painted == (int) themes.size(),
                     juce::String (painted) + "/" + juce::String ((int) themes.size()));
+        }
+    }
+
+    //==============================================================================
+    // Mappa di Routing e retro degli ampli (preparazione)
+    //==============================================================================
+    /** Catena da una descrizione "id,id@B,id!,split=0.5,-" (- = slot vuoto, ! = staccato, @B = corsia B). */
+    juce::ValueTree routeChainSpec (const juce::String& spec)
+    {
+        juce::ValueTree t ("CHAIN");
+        for (auto& tok : juce::StringArray::fromTokens (spec, ",", ""))
+        {
+            juce::ValueTree s ("SLOT");
+            const auto id = tok.upToFirstOccurrenceOf ("@", false, false).upToFirstOccurrenceOf ("=", false, false).upToFirstOccurrenceOf ("!", false, false);
+            s.setProperty ("model", id == "-" ? juce::String() : id, nullptr);
+            s.setProperty ("on", true, nullptr);
+            if (tok.contains ("!")) s.setProperty ("patched", false, nullptr);
+            if (tok.contains ("@B")) s.setProperty ("lane", 1, nullptr);
+            if (tok.contains ("=")) s.setProperty ("p0", tok.fromFirstOccurrenceOf ("=", false, false).getFloatValue(), nullptr);
+            t.appendChild (s, nullptr);
+        }
+        return t;
+    }
+
+    void runRoutingTests (const std::function<void (const juce::String&, bool, const juce::String&)>& report)
+    {
+        using pt::ui::RoutingMap;
+        auto findBoard = [] (juce::Component& ed) -> pt::ui::Pedalboard*
+        {
+            for (auto* c : ed.getChildren())
+                if (auto* b = dynamic_cast<pt::ui::Pedalboard*> (c)) return b;
+            return nullptr;
+        };
+        auto patchMask = [] (const pt::engine::Chain& ch)
+        {
+            juce::String m;
+            for (int i = 0; i < ch.size(); ++i) m << (ch.isPatched (i) ? '1' : '0');
+            return m;
+        };
+
+        // 1. ogni spina, ogni estremita', ogni bersaglio: la mappa fa esattamente cio' che fa la pedaliera
+        {
+            const char* specs[] = { "ds1,ce2!,-,bd2,dd3,mt2", "ds1,split=0.5,dd3,rv6@B,bd2,mt2@B,ce2!", "ds1,split=1,ce2,dd3,bd2" };
+            int cases = 0, same = 0, changed = 0, refused = 0;
+            juce::String firstDiff;
+            for (auto* spec : specs)
+            {
+                PedalTrinityProcessor p;
+                p.chain.fromValueTree (routeChainSpec (spec));
+                p.uiState.setProperty ("view", 18, nullptr);
+                std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
+                ed->setSize (1920, 1080);
+                auto* editor = dynamic_cast<PedalTrinityEditor*> (ed.get());
+                auto* board = findBoard (*ed);
+                if (editor == nullptr || board == nullptr) { report ("Mappa di Routing: pedaliera ed editor", false, "non trovati"); return; }
+                board->refresh();
+                editor->showRouting (true);
+                auto* map = editor->routingMap();
+                map->fitAll (false);
+                const auto initial = patchMask (p.chain);
+                auto restore = [&]
+                {
+                    for (int i = 0; i < p.chain.size(); ++i) p.chain.setPatched (i, initial[i] == '1');
+                    board->refresh();
+                    map->refresh();
+                };
+                if (board->describeCables() != map->describeCables())
+                {
+                    report ("Mappa di Routing: stessi cavi della pedaliera", false, board->describeCables() + " / " + map->describeCables());
+                    return;
+                }
+                // bersagli corrispondenti: pedali, INPUT, OUTPUT, spazio libero, fuori
+                struct T { juce::Point<float> b, m; juce::String name; };
+                std::vector<T> targets;
+                for (int i = 0; i < p.chain.size(); ++i)
+                    if (p.chain.slot (i)->fx != nullptr)
+                        targets.push_back ({ board->slotArea (i).getCentre().toFloat(), map->nodeScreenCentre (i), "slot " + juce::String (i) });
+                targets.push_back ({ board->inputPanelArea().getCentre().toFloat(), map->nodeScreenCentre (RoutingMap::inputNode), "INPUT" });
+                targets.push_back ({ board->outputPanelArea().getCentre().toFloat(), map->nodeScreenCentre (RoutingMap::outputNode), "OUTPUT" });
+                targets.push_back ({ board->emptyPointForTest(), map->emptyScreenPoint(), "vuoto" });
+                targets.push_back ({ { -50.0f, -50.0f }, { 3.0f, 3.0f }, "fuori" });
+                const int nConn = map->numCables();
+                for (int c = 0; c < nConn; ++c)
+                    for (bool dest : { false, true })
+                        for (const auto& t : targets)
+                        {
+                            restore();
+                            const bool rb = board->dropPlugForTest (c, dest, t.b);
+                            const auto sb = board->describeCables() + " " + patchMask (p.chain);
+                            restore();
+                            const bool rm = map->dropPlugForTest (c, dest, t.m);
+                            const auto sm = map->describeCables() + " " + patchMask (p.chain);
+                            ++cases;
+                            if (rb == rm && sb == sm) ++same;
+                            else if (firstDiff.isEmpty())
+                                firstDiff = juce::String (spec) + " cavo " + juce::String (c) + (dest ? " dest " : " sorg ") + t.name + ": " + sb + " / " + sm;
+                            changed += rm ? 1 : 0;
+                            refused += (! rm && map->lastNoticeWasError()) ? 1 : 0;
+                        }
+                restore();
+            }
+            report ("Mappa di Routing: replug dalla mappa uguale al replug della pedaliera (ogni cavo, estremita' e bersaglio; singola, DUAL, STEREO)",
+                    cases > 100 && same == cases && changed > 10 && refused > 10,
+                    juce::String (same) + "/" + juce::String (cases) + " casi uguali, " + juce::String (changed) + " cambi, "
+                        + juce::String (refused) + " rifiuti con avviso" + (firstDiff.isEmpty() ? juce::String() : " | " + firstDiff));
+        }
+
+        // 2. rifiuto con avviso chiaro, sincronia mappa <-> pedaliera, LED, Esc
+        {
+            PedalTrinityProcessor p;
+            p.chain.fromValueTree (routeChainSpec ("ds1,ce2,bd2,dd3"));
+            p.uiState.setProperty ("view", 6, nullptr);
+            std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
+            ed->setSize (1280, 760);
+            auto* editor = dynamic_cast<PedalTrinityEditor*> (ed.get());
+            auto* board = findBoard (*ed);
+            editor->showRouting (true);
+            auto* map = editor->routingMap();
+            const auto start = map->describeCables();
+            // ingresso di BD-2 (cavo 2) portato all'indietro su DS-1: rifiutato, il cavo torna dov'era
+            const bool moved = map->dropPlugForTest (2, true, map->nodeScreenCentre (0));
+            const bool refusedOk = ! moved && map->describeCables() == start && map->lastNoticeWasError()
+                                   && map->lastNotice().contains ("non ammesso") && map->lastNotice().contains ("sinistra a destra");
+            report ("Mappa di Routing: ricollegamento non ammesso, il cavo torna dov'era con un avviso", refusedOk, map->lastNotice());
+
+            // la mappa stacca CE-2: la pedaliera lo vede subito (stessa catena), e viceversa
+            map->dropPlugForTest (1, true, map->emptyScreenPoint());
+            p.chain.dispatchPendingMessages();
+            const bool m2b = ! p.chain.isPatched (1) && board->describeCables() == map->describeCables() && board->describeCables() == "I>0 0>2 2>3 3>O";
+            board->dropPlugForTest (0, true, board->slotArea (1).getCentre().toFloat());      // INPUT infilato in CE-2: torna in catena, DS-1 scavalcato
+            p.chain.dispatchPendingMessages();
+            const bool b2m = map->describeCables() == board->describeCables() && map->describeCables() == "I>1 1>2 2>3 3>O";
+            map->clickLedForTest (2);
+            p.chain.dispatchPendingMessages();
+            const bool led = ! p.chain.slot (2)->enabled.load();
+            map->clickLedForTest (2);
+            const bool led2 = p.chain.slot (2)->enabled.load();
+            bool closed = false;
+            map->onClose = [&closed] { closed = true; };
+            map->keyPressed (juce::KeyPress (juce::KeyPress::escapeKey));
+            report ("Mappa di Routing: cambi dalla mappa subito sulla pedaliera e viceversa, LED cliccabile, Esc chiude",
+                    m2b && b2m && led && led2 && closed,
+                    juce::String (m2b ? "mappa->pedaliera " : "- ") + (b2m ? "pedaliera->mappa " : "- ") + (led && led2 ? "LED " : "- ") + (closed ? "Esc" : "-")
+                        + " | " + map->describeCables());
+        }
+
+        // 3. posizioni salvate nello stato del progetto (non nei preset) e ricaricate; progetti vecchi = automatica
+        {
+            PedalTrinityProcessor p;
+            p.chain.fromValueTree (routeChainSpec ("ds1,ce2,bd2,dd3,mt2"));
+            p.routeLayout.fromValueTree ({});
+            std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
+            ed->setSize (1280, 760);
+            auto* editor = dynamic_cast<PedalTrinityEditor*> (ed.get());
+            editor->showRouting (true);
+            auto* map = editor->routingMap();
+            const auto before = map->nodeWorldBounds (2);
+            const auto target = map->nodeScreenCentre (4).translated (0.0f, 260.0f * map->getZoom());
+            map->dragNodeForTest (2, target);
+            map->dragNodeForTest (RoutingMap::inputNode, map->nodeScreenCentre (RoutingMap::inputNode).translated (0.0f, 300.0f * map->getZoom()));
+            map->setZoom (0.9f, map->nodeScreenCentre (0));
+            juce::Point<float> p2, pin;
+            const bool stored = p.routeLayout.slotPos (2, p2) && p.routeLayout.ioPos (0, pin) && p.routeLayout.numPlaced() == 2
+                                && p2 != before.getTopLeft() && map->nodeWorldBounds (2).getTopLeft() == p2;
+            editor->showRouting (false);
+            juce::MemoryBlock blob;
+            p.getStateInformation (blob);
+            PedalTrinityProcessor q;
+            q.setStateInformation (blob.getData(), (int) blob.getSize());
+            juce::Point<float> q2, qin;
+            const bool reloaded = q.routeLayout.slotPos (2, q2) && q.routeLayout.ioPos (0, qin) && q2.getDistanceFrom (p2) < 0.01f
+                                  && qin.getDistanceFrom (pin) < 0.01f && std::abs (q.routeLayout.zoom() - 0.9f) < 0.001f && q.routeLayout.numPlaced() == 2;
+            // la mappa riaperta mostra l'oggetto dove era stato lasciato
+            std::unique_ptr<juce::AudioProcessorEditor> ed2 (q.createEditor());
+            ed2->setSize (1280, 760);
+            auto* editor2 = dynamic_cast<PedalTrinityEditor*> (ed2.get());
+            editor2->showRouting (true);
+            const bool reopened = editor2->routingMap()->nodeWorldBounds (2).getTopLeft().getDistanceFrom (p2) < 0.01f
+                                  && std::abs (editor2->routingMap()->getZoom() - 0.9f) < 0.001f;
+            // preset: formato invariato (nessun nodo della mappa); progetto vecchio senza mappa: disposizione automatica
+            const bool presetClean = ! p.captureState().getChildWithName ("ROUTEMAP").isValid();
+            juce::MemoryBlock old;
+            if (auto xml = p.captureState().createXml()) juce::AudioProcessor::copyXmlToBinary (*xml, old);
+            PedalTrinityProcessor r;
+            r.setStateInformation (old.getData(), (int) old.getSize());
+            const bool oldProject = r.routeLayout.numPlaced() == 0 && r.routeLayout.zoom() == 0.0f && r.chain.size() == 5;
+            report ("Mappa di Routing: posizioni e zoom salvati nel progetto e ricaricati; preset invariati; progetti vecchi in disposizione automatica",
+                    stored && reloaded && reopened && presetClean && oldProject,
+                    juce::String (stored ? "salvate " : "- ") + (reloaded ? "ricaricate " : "- ") + (reopened ? "riaperte " : "- ")
+                        + (presetClean ? "preset puliti " : "- ") + (oldProject ? "progetto vecchio" : "-")
+                        + "  slot 3 in " + juce::String (q2.x, 1) + "," + juce::String (q2.y, 1));
+
+            // le posizioni seguono gli slot: spostamenti, inserimenti, cambio di pedale, rimozione
+            auto& ch = q.chain;
+            auto& lay = q.routeLayout;
+            juce::Point<float> t0;
+            ch.move (2, 0);
+            const bool mv = lay.slotPos (0, t0) && t0.getDistanceFrom (p2) < 0.01f && ! lay.slotPos (2, t0);
+            ch.insert (0, "ce2");
+            const bool ins = lay.slotPos (1, t0) && t0.getDistanceFrom (p2) < 0.01f && ! lay.slotPos (0, t0);
+            ch.setModel (1, "ds1");
+            const bool mdl = lay.slotPos (1, t0) && t0.getDistanceFrom (p2) < 0.01f;
+            ch.remove (1);
+            const bool rem = lay.numPlaced() == 1;                       // resta solo l'INPUT
+            // nodo alterato in un progetto: valori non validi scartati
+            juce::ValueTree bad ("ROUTEMAP");
+            bad.setProperty ("zoom", std::nan (""), nullptr);
+            for (auto v : { std::nan (""), 1.0e30, 3.0 })
+            {
+                juce::ValueTree n ("NODE");
+                n.setProperty ("i", v == 3.0 ? 99.0 : 1.0, nullptr);
+                n.setProperty ("x", v, nullptr);
+                n.setProperty ("y", 10.0, nullptr);
+                bad.appendChild (n, nullptr);
+            }
+            lay.fromValueTree (bad);
+            const bool safe = lay.numPlaced() == 0 && lay.zoom() == 0.0f;
+            report ("Mappa di Routing: le posizioni seguono gli slot (sposta, inserisci, cambia pedale, rimuovi); valori alterati scartati",
+                    mv && ins && mdl && rem && safe,
+                    juce::String (mv ? "sposta " : "- ") + (ins ? "inserisci " : "- ") + (mdl ? "cambio " : "- ") + (rem ? "rimuovi " : "- ") + (safe ? "alterati" : "-"));
+        }
+
+        // 4. mappa con 100 slot e splitter DUAL
+        {
+            juce::StringArray tok;
+            const char* ids[] = { "ds1", "ce2", "bd2", "dd3", "rv6", "mt2", "ph3", "cs3", "gq7", "od3" };
+            for (int i = 0; i < 100; ++i)
+                tok.add (i == 40 ? juce::String ("split=0.5") : juce::String (ids[i % 10]) + (i > 40 && i % 2 == 0 ? "@B" : ""));
+            PedalTrinityProcessor p;
+            p.chain.fromValueTree (routeChainSpec (tok.joinIntoString (",")));
+            std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
+            ed->setSize (1280, 760);
+            auto* editor = dynamic_cast<PedalTrinityEditor*> (ed.get());
+            auto* board = findBoard (*ed);
+            editor->showRouting (true);
+            auto* map = editor->routingMap();
+            int overlaps = 0;
+            bool finite = true;
+            for (int i = -2; i < 100; ++i)
+            {
+                const auto a = map->nodeWorldBounds (i);
+                finite = finite && ! a.isEmpty() && std::isfinite (a.getX()) && std::isfinite (a.getY());
+                for (int j = i + 1; j < 100; ++j)
+                    overlaps += a.intersects (map->nodeWorldBounds (j)) ? 1 : 0;
+            }
+            const auto t0 = juce::Time::getMillisecondCounterHiRes();
+            auto img = ed->createComponentSnapshot (ed->getLocalBounds(), true, 1.0f);
+            const double ms = juce::Time::getMillisecondCounterHiRes() - t0;
+            const bool counts = map->numNodes() == 102 && map->numCables() == (int) pt::ui::routing::connections (p.chain).size()
+                                && map->describeCables() == board->describeCables();
+            const bool readable = map->getZoom() >= 0.69f;
+            // uno slot della corsia B staccato dalla mappa (dopo averlo portato in vista), e uno che prova a cambiare corsia
+            map->scrollToNode (60);
+            int connB = -1, connA = -1;
+            const auto conns = pt::ui::routing::connections (p.chain);
+            for (int c = 0; c < (int) conns.size(); ++c)
+            {
+                if (conns[(size_t) c].b.kind == pt::ui::routing::End::SlotIn && conns[(size_t) c].b.slot == 60) connA = c;      // 60: corsia A
+                if (conns[(size_t) c].b.kind == pt::ui::routing::End::SlotIn && conns[(size_t) c].b.slot == 61) connB = c;      // 61: corsia B
+            }
+            const bool laneRefused = ! map->dropPlugForTest (connB, true, map->nodeScreenCentre (62)) && map->lastNotice().contains ("Corsia diversa");
+            map->scrollToNode (60);
+            const bool unplug = map->dropPlugForTest (connA, true, map->emptyScreenPoint()) && ! p.chain.isPatched (60);
+            p.chain.dispatchPendingMessages();
+            const bool synced = board->describeCables() == map->describeCables();
+            map->scrollToNode (99);
+            map->dragNodeForTest (99, map->nodeScreenCentre (99).translated (40.0f, 60.0f));
+            const int placed = p.routeLayout.numPlaced();
+            map->autoArrange();
+            report ("Mappa di Routing: 100 slot con splitter DUAL (102 oggetti senza sovrapposizioni, cavi, corsie, disegno, disposizione automatica)",
+                    counts && overlaps == 0 && finite && readable && img.isValid() && ms < 3000.0 && laneRefused && unplug && synced && placed == 1
+                        && p.routeLayout.numPlaced() == 0,
+                    juce::String (map->numNodes()) + " oggetti, " + juce::String (map->numCables()) + " cavi, " + juce::String (overlaps) + " sovrapposizioni, zoom "
+                        + juce::String (map->getZoom(), 2) + ", disegno " + juce::String (ms, 0) + " ms" + (laneRefused ? ", corsia rifiutata" : ", corsia ??")
+                        + (unplug ? ", staccato" : ", stacco ??") + (synced ? ", pedaliera allineata" : ", pedaliera ??")
+                        + ", spostati " + juce::String (placed) + " -> " + juce::String (p.routeLayout.numPlaced()) + (finite ? "" : ", posizioni non valide"));
+        }
+
+        // 5. tasto "Mappa di Routing" nella barra: visibile e senza sovrapposizioni da 1280x760 a 2560x1440
+        {
+            PedalTrinityProcessor p;
+            p.chain.fromValueTree (routeChainSpec ("ds1,ce2,bd2,dd3,rv6,mt2,ph3,cs3,gq7,od3,ds1,ce2"));
+            p.uiState.setProperty ("first", 3, nullptr);
+            std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
+            int bad = 0, sizes = 0;
+            juce::String detail;
+            for (auto sz : PedalTrinityEditor::sizePresets())
+            {
+                ed->setSize (sz.x, sz.y);
+                ++sizes;
+                juce::Array<juce::Component*> bar;
+                juce::Component* mapButton = nullptr;
+                for (auto* c : ed->getChildren())
+                {
+                    if (! c->isVisible() || c->getBounds().getBottom() > 50 || c->getWidth() <= 0) continue;
+                    bar.add (c);
+                    if (c->getName() == "Mappa di Routing") mapButton = c;
+                }
+                bool okSize = mapButton != nullptr && mapButton->getWidth() >= 70 && ed->getLocalBounds().contains (mapButton->getBounds());
+                for (int i = 0; i < bar.size(); ++i)
+                {
+                    okSize = okSize && bar[i]->getX() >= 0 && bar[i]->getRight() <= sz.x;
+                    if (auto* b = dynamic_cast<juce::Button*> (bar[i])) okSize = okSize && b->getWidth() >= 26;
+                    for (int j = i + 1; j < bar.size(); ++j)
+                        if (bar[i]->getBounds().intersects (bar[j]->getBounds()))
+                        {
+                            okSize = false;
+                            detail << sz.x << ": " << bar[i]->getName() << "/" << bar[j]->getName() << " ";
+                        }
+                }
+                if (! okSize) { ++bad; if (detail.isEmpty()) detail << sz.x << ": tasto della mappa assente o stretto "; }
+            }
+            report ("Barra: tasto \"Mappa di Routing\" visibile, nessuna sovrapposizione da 1280x760 a 2560x1440",
+                    bad == 0 && sizes == 5, juce::String (sizes - bad) + "/" + juce::String (sizes) + " misure " + detail);
+        }
+
+        // 6. leggibilita' della mappa con ogni tema (contrasto WCAG >= 4.5:1)
+        {
+            double worst = 99;
+            juce::String worstName;
+            for (const auto& t : pt::ui::allThemes())
+                if (const double c = RoutingMap::minContrast (t); c < worst) { worst = c; worstName = t.name; }
+            report ("Mappa di Routing: testi leggibili con tutti i temi (WCAG >= 4.5:1)", worst >= 4.5,
+                    "minimo " + juce::String (worst, 1) + ":1 (" + worstName + ")");
+        }
+
+        // 7. retro degli ampli: ricerca per nome nel BinaryData, tasto Retro/Fronte nello zoom
+        {
+            using pt::ui::Assets;
+            const bool names = Assets::backResourceFor ("ds1_jpg") == "ds1_back_jpg" && Assets::backResourceFor ("r_ds1_jpg") == "r_ds1_back_jpg"
+                               && Assets::backResourceFor ("ds1_back_jpg").isEmpty() && Assets::backResourceFor ("ds1_png").isEmpty()
+                               && Assets::backResourceFor (nullptr).isEmpty() && Assets::backResourceFor ("_jpg").isEmpty();
+            int withBack = 0;
+            for (int i = 0; i < pt::engine::numModels(); ++i)
+                withBack += pt::ui::backImageFor (&pt::engine::model (i)).isValid() ? 1 : 0;
+            const bool binary = Assets::hasResource ("ds1_jpg") && ! Assets::hasResource ("ds1_back_jpg") && ! Assets::hasResource ("");
+            report ("Retro degli ampli: nome della risorsa del retro (<id>_back.jpg, r_<id>_back.jpg) cercato nel BinaryData",
+                    names && binary, juce::String (withBack) + " modelli con il retro nel BinaryData (arriveranno con gli ampli)");
+
+            // immagine di prova creata solo qui (mai nel programma): retro per DS-1 e per la sua replica REAL MOD
+            juce::Image test (juce::Image::ARGB, 300, 200, true);
+            {
+                juce::Graphics g (test);
+                g.fillAll (juce::Colour (0xff3a3c40));
+                g.setColour (juce::Colours::white);
+                g.drawText ("RETRO DI PROVA", test.getBounds(), juce::Justification::centred);
+            }
+            juce::StringArray asked;
+            pt::ui::setBackImageLookup ([test, &asked] (const juce::String& name)
+            {
+                asked.add (name);
+                return name == "ds1_back_jpg" || name == "r_ds1_back_jpg" ? test : juce::Image();
+            });
+            pt::engine::Chain chain;
+            chain.fromValueTree (routeChainSpec ("ds1,ce2"));
+            juce::SharedResourcePointer<pt::ui::ThemeManager> themes;
+            const bool wasReal = themes->realMode();
+            themes->previewRealMode (false);
+            pt::ui::ZoomPanel zp (chain, 0, nullptr);
+            zp.setSize (1280, 760);
+            const bool front = zp.hasBack() && zp.flipButtonVisible() && ! zp.showingBack() && zp.flipButtonText() == "Retro";
+            zp.setShowBack (true, false);
+            const bool backOn = zp.showingBack() && zp.flipButtonText() == "Fronte";
+            zp.setShowBack (false, false);
+            const bool backOff = ! zp.showingBack() && zp.flipButtonText() == "Retro";
+            zp.setShowBack (true, false);
+            zp.show (1);                                           // CE-2: nessun retro, si torna al fronte e il tasto sparisce
+            const bool none = ! zp.hasBack() && ! zp.flipButtonVisible() && ! zp.showingBack();
+            themes->previewRealMode (true);
+            zp.show (0);
+            const bool real = zp.hasBack() && asked.contains ("r_ds1_back_jpg");
+            themes->previewRealMode (wasReal);
+            pt::ui::setBackImageLookup ({});
+            const bool restored = ! pt::ui::backImageFor (pt::engine::findModel ("ds1")).isValid();
+            report ("Retro degli ampli: tasto Retro/Fronte nello zoom solo se c'e' l'immagine del retro (anche REAL MOD; immagine di prova solo nel test)",
+                    front && backOn && backOff && none && real && restored,
+                    juce::String (front ? "fronte " : "- ") + (backOn ? "retro " : "- ") + (backOff ? "di nuovo fronte " : "- ") + (none ? "senza retro " : "- ")
+                        + (real ? "REAL MOD " : "- ") + (restored ? "BinaryData" : "-"));
         }
     }
 
@@ -8015,6 +8397,7 @@ namespace
         runRealModTests (report);
         runSafetyTests (report);
         runCableTests (report);
+        runRoutingTests (report);
         runMidiTests (report);
         runWahTests (report);
         runCabIRTests (report);
@@ -8083,7 +8466,9 @@ namespace
         PedalTrinityProcessor p;
         float scale = 1.0f;
         int w = 1280, h = 760, zoomSlot = -1;
-        bool info = false, options = false, midiPanel = false, learn = false;
+        bool info = false, options = false, midiPanel = false, learn = false, routingMap = false;
+        float routeZoom = 0.0f;
+        juce::StringArray routeMoves;
         juce::SharedResourcePointer<pt::ui::ThemeManager> themes;
         for (int i = 0; i < args.size(); ++i)
         {
@@ -8109,6 +8494,17 @@ namespace
             else if (args[i] == "--options") options = true;
             else if (args[i] == "--midi") midiPanel = true;
             else if (args[i] == "--learn") learn = true;
+            else if (args[i] == "--routing") routingMap = true;
+            else if (args[i] == "--routezoom") routeZoom = next.getFloatValue();
+            else if (args[i] == "--routemove") routeMoves.add (next);
+            else if (args[i] == "--backimage")
+            {
+                // immagine di prova del retro (non nel programma): vale per qualsiasi modello
+                const auto f = juce::File::getCurrentWorkingDirectory().getChildFile (next.unquoted());
+                const auto img = juce::ImageFileFormat::loadFrom (f);
+                if (! img.isValid()) std::cerr << "Immagine del retro non valida: " << f.getFullPathName() << std::endl;
+                else pt::ui::setBackImageLookup ([img] (const juce::String&) { return img; });
+            }
             else if (args[i] == "--cablecolour") themes->previewCableColour (next.getIntValue());     // anteprime: non tocca le preferenze
             else if (args[i] == "--board") themes->previewBoardSource (next);
             else if (args[i] == "--theme")
@@ -8163,7 +8559,25 @@ namespace
         auto* editor = dynamic_cast<PedalTrinityEditor*> (ed.get());
         if (editor == nullptr) return 3;
         editor->setSize (w, h);
-        if (zoomSlot >= 0) editor->showZoom (zoomSlot);
+        if (zoomSlot >= 0 && ! routingMap) editor->showZoom (zoomSlot);
+        if (routingMap)
+        {
+            // posizioni di prova (coordinate della mappa) e zoom, poi la mappa sotto lo zoom eventuale
+            for (const auto& m : routeMoves)
+            {
+                const auto who = m.upToFirstOccurrenceOf (":", false, false).trim();
+                const auto xy = m.fromFirstOccurrenceOf (":", false, false);
+                const juce::Point<float> pos (xy.upToFirstOccurrenceOf (",", false, false).getFloatValue(), xy.fromFirstOccurrenceOf (",", false, false).getFloatValue());
+                if (who == "in") p.routeLayout.setIoPos (0, pos);
+                else if (who == "out") p.routeLayout.setIoPos (1, pos);
+                else p.routeLayout.setSlotPos (who.getIntValue(), pos);
+            }
+            if (routeZoom > 0.0f) p.routeLayout.setView (routeZoom, {});
+            editor->showRouting (true);
+            if (zoomSlot >= 0) editor->showZoom (zoomSlot);       // doppio clic dalla mappa: zoom sopra la mappa
+        }
+        if (zoomSlot >= 0 && args.contains ("--back"))
+            if (auto* z = editor->zoomView()) z->setShowBack (true, false);
         if (zoomSlot >= 0 && args.contains ("--align")) editor->startZoomAlign();
         if (info) editor->showInfo (true);
         if (options) editor->showOptions (true);

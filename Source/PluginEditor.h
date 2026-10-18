@@ -10,6 +10,7 @@
 #include "gui/InfoPanel.h"
 #include "gui/OptionsPanel.h"
 #include "gui/MidiPanel.h"
+#include "gui/RoutingMap.h"
 
 class PedalTrinityEditor : public juce::AudioProcessorEditor,
                            public juce::DragAndDropContainer,
@@ -28,6 +29,10 @@ public:
     void showMidi (bool shouldShow);
     /** Mappatura MIDI con il tocco (tasto MIDI della barra). */
     void setMidiLearn (bool on);
+    /** Mappa di Routing: tutta la catena come oggetti spostabili, cavi staccabili (tasto della barra). */
+    void showRouting (bool shouldShow);
+    pt::ui::RoutingMap* routingMap() const { return routing.get(); }
+    pt::ui::ZoomPanel* zoomView() const { return zoomPanel.get(); }
     void showZoom (int slotIndex);
     void startZoomAlign() { if (zoomPanel) zoomPanel->startAlign(); }
     void setView (int pedalsVisible);
@@ -61,7 +66,8 @@ private:
     std::unique_ptr<pt::ui::MidiPanel> midiPanel;
     std::unique_ptr<pt::ui::MidiLearnBar> learnBar;
     juce::TextButton midiButton { "MIDI" };
-    std::unique_ptr<juce::Button> optionsButton, realButton;
+    std::unique_ptr<pt::ui::RoutingMap> routing;
+    std::unique_ptr<juce::Button> optionsButton, realButton, routingButton;
     juce::SharedResourcePointer<pt::ui::ThemeManager> themes;
     juce::TooltipWindow tooltips { this, 500 };
     std::unique_ptr<juce::FileChooser> chooser;

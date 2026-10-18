@@ -20,6 +20,7 @@
 #include "Meters.h"
 #include "Cables.h"
 #include "Theme.h"
+#include "Routing.h"
 
 class PedalTrinityProcessor;
 
@@ -61,6 +62,11 @@ namespace pt::ui
         bool dropPlugForTest (int conn, bool destEnd, juce::Point<float> p);
         juce::Rectangle<int> slotArea (int slot) const;
         juce::Rectangle<int> boardBounds() const { return boardRect; }
+        /** Pannelli INPUT / OUTPUT (autotest: spine rilasciate sui meter). */
+        /** Un punto della pedana lontano dai pedali (autotest: spina lasciata nel vuoto). */
+        juce::Point<float> emptyPointForTest() const;
+        juce::Rectangle<int> inputPanelArea() const { return inPanel.getBounds(); }
+        juce::Rectangle<int> outputPanelArea() const { return outPanel.getBounds(); }
 
         bool isInterestedInDragSource (const SourceDetails&) override;
         void itemDragMove (const SourceDetails&) override;
@@ -75,23 +81,13 @@ namespace pt::ui
             int lane = 0;
             juce::Rectangle<int> bounds;
         };
-        struct End { enum Kind { Input, Output, SlotIn, SlotOut } kind; int slot = -1; int line = 0; };
-        struct Conn { End a, b; };          // cavo: sorgente (uscita) -> destinazione (ingresso)
+        using End = routing::End;
+        using Conn = routing::Conn;          // cavo: sorgente (uscita) -> destinazione (ingresso)
 
-        /** Cavi staccabili: dove finirebbe la spina rilasciata in p, e come cambierebbe la catena. */
-        struct Replug
-        {
-            enum Kind { Cancel, Unplug, Plug } kind = Cancel;
-            bool ok = false;
-            std::vector<int> unpatch;       // pedali che il cavo smette di attraversare
-            int patch = -1;                 // pedale che entra nella catena
-            juce::Rectangle<float> area;
-            juce::String hint;
-        };
-        Replug resolveReplug (const Conn&, bool destEnd, juce::Point<float>) const;
+        /** Cavi staccabili: dove finirebbe la spina rilasciata in p (regole comuni con la Mappa di Routing)
+            e il riquadro da evidenziare. */
+        routing::Replug resolveReplug (const Conn&, bool destEnd, juce::Point<float>, juce::Rectangle<float>* area = nullptr) const;
         bool applyReplug (int conn, bool destEnd, juce::Point<float>);
-        int segmentOf (const End&) const;
-        int segmentOfSlot (int slot) const;
 
         void timerCallback() override;
         void layout();

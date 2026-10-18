@@ -27,6 +27,11 @@ namespace pt::ui
         static juce::Image pedalImage (const char* resource);
 
         static juce::Image loadResource (const char* name);
+        /** La risorsa esiste nel BinaryData? */
+        static bool hasResource (const juce::String& name);
+        /** Nome della risorsa del retro di un pedale/ampli: "<id>_jpg" -> "<id>_back_jpg" (file "<id>_back.jpg";
+            REAL MOD "r_<id>_jpg" -> "r_<id>_back_jpg"). Vuoto se il nome non e' nella forma attesa. */
+        static juce::String backResourceFor (const char* frontResource);
         static juce::String resourceAsString (const char* name);
         static juce::MemoryBlock resourceAsBlock (const char* name);
 

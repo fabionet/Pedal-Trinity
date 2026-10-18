@@ -15,6 +15,19 @@ namespace pt::ui
         return {};
     }
 
+    bool Assets::hasResource (const juce::String& name)
+    {
+        int size = 0;
+        return name.isNotEmpty() && BinaryData::getNamedResource (name.toRawUTF8(), size) != nullptr && size > 0;
+    }
+
+    juce::String Assets::backResourceFor (const char* front)
+    {
+        const juce::String f (front != nullptr ? front : "");
+        if (! f.endsWith ("_jpg") || f.length() <= 4 || f.endsWith ("_back_jpg")) return {};
+        return f.dropLastCharacters (4) + "_back_jpg";
+    }
+
     juce::String Assets::resourceAsString (const char* name)
     {
         int size = 0;

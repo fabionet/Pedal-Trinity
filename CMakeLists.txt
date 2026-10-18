@@ -134,6 +134,8 @@ target_sources(PedalTrinity PRIVATE
     Source/gui/RealMod.cpp
     Source/gui/OptionsPanel.cpp
     Source/gui/MidiPanel.cpp
+    Source/gui/Routing.cpp
+    Source/gui/RoutingMap.cpp
     Source/engine/FxNam.cpp
     Source/engine/NamSecurity.cpp
     Source/engine/FxClassic.cpp
@@ -153,7 +155,9 @@ target_sources(PedalTrinity PRIVATE
     Source/engine/FxStage5.cpp
     Source/engine/FxStage5Dyn.cpp
     Source/engine/FxStage5Mod.cpp
-    Source/engine/FxStage5Time.cpp)
+    Source/engine/FxStage5Time.cpp
+    Source/engine/FxStage6.cpp
+    Source/engine/FxStage6Cab.cpp)
 # banco di filtri complessi (FxSpectral.h): senza errno/trap sulle radici i cicli per banda si vettorizzano
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     set_source_files_properties(Source/engine/FxPolyPitch.cpp Source/engine/FxInstrument.cpp

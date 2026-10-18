@@ -46,6 +46,34 @@ namespace
         }
     };
 
+    /** Tasto "Mappa di Routing": su una riga quando c'e' spazio, su due righe nelle barre strette. */
+    class RoutingButton : public juce::Button
+    {
+    public:
+        RoutingButton() : juce::Button ("Mappa di Routing")
+        {
+            setTooltip ("Mappa di Routing: tutta la catena come oggetti da spostare, con i cavi da staccare e ricollegare "
+                        "(stesse regole della pedaliera). Doppio clic su un pedale = zoom");
+            setMouseCursor (juce::MouseCursor::PointingHandCursor);
+        }
+        void paintButton (juce::Graphics& g, bool over, bool down) override
+        {
+            getLookAndFeel().drawButtonBackground (g, *this, findColour (juce::TextButton::buttonColourId), over, down);
+            g.setColour (findColour (juce::TextButton::textColourOffId));
+            auto r = getLocalBounds().reduced (4, 2);
+            if (getWidth() >= 120)
+            {
+                g.setFont (juce::Font (13.5f, juce::Font::bold));
+                g.drawFittedText ("Mappa di Routing", r, juce::Justification::centred, 1, 0.8f);
+                return;
+            }
+            g.setFont (juce::Font (12.5f, juce::Font::bold));
+            g.drawFittedText ("MAPPA DI", r.removeFromTop (r.getHeight() * 52 / 100), juce::Justification::centredBottom, 1, 0.8f);
+            g.setFont (juce::Font (11.0f, juce::Font::bold));
+            g.drawFittedText ("ROUTING", r, juce::Justification::centredTop, 1, 0.8f);
+        }
+    };
+
     class GearButton : public juce::Button
     {
     public:
@@ -146,6 +174,7 @@ PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcess
     zoomLabel.setJustificationType (juce::Justification::centred);
     zoomLabel.setColour (juce::Label::textColourId, juce::Colour (0xffb9b6ac));
     zoomLabel.setFont (juce::Font (13.0f));
+    zoomLabel.setMinimumHorizontalScale (0.75f);
     addAndMakeVisible (zoomLabel);
 
     infoButton.setTooltip ("Informazioni, licenza e guida");
@@ -161,6 +190,10 @@ PedalTrinityEditor::PedalTrinityEditor (PedalTrinityProcessor& p) : AudioProcess
                            "(impostazioni e assegnazioni: \"Assegnazioni...\" nella barra della mappatura o Opzioni -> MIDI)");
     midiButton.onClick = [this] { setMidiLearn (midiButton.getToggleState()); };
     addAndMakeVisible (midiButton);
+
+    routingButton = std::make_unique<RoutingButton>();
+    routingButton->onClick = [this] { showRouting (true); };
+    addAndMakeVisible (*routingButton);
 
     optionsButton = std::make_unique<GearButton>();
     optionsButton->onClick = [this] { showOptions (true); };
@@ -196,6 +229,7 @@ PedalTrinityEditor::~PedalTrinityEditor()
     processor.midi.removeChangeListener (this);
     learnBar.reset();
     midiPanel.reset();
+    routing.reset();
     processor.chain.removeChangeListener (this);
     themes->removeChangeListener (this);
     optionsPanel.reset();
@@ -248,30 +282,44 @@ juce::Rectangle<int> PedalTrinityEditor::rackArea() const
 void PedalTrinityEditor::resized()
 {
     auto bar = getLocalBounds().removeFromTop (toolbarH).reduced (10, 6);
-    // larghezze compatte: a 1280 px (minimo) tutti i tasti restano visibili
-    const bool wide = getWidth() >= 1500;
+    // tre misure della barra: si usa la piu' larga che lascia almeno 300 px alla navigazione delle pagine;
+    // a 1280 px (minimo) tutti i tasti restano visibili senza sovrapporsi
+    struct Sizes { int preset, real, map, gap, info, opt, midi, zoomBtn, zoomLbl, add, viewBtn; };
+    static const Sizes variants[] = {
+        { 240, 118, 140, 10, 60, 36, 54, 30, 90, 96, 34 },      // larga: "Mappa di Routing" su una riga
+        { 240, 118,  84, 10, 60, 36, 54, 30, 90, 96, 34 },      // media: tasto della mappa su due righe
+        { 128,  90,  80,  4, 56, 34, 46, 26, 58, 70, 34 } };    // compatta
+    auto leftWidth = [] (const Sizes& z) { return 192 + z.preset + z.gap + z.real + z.gap; };
+    auto rightWidth = [] (const Sizes& z) { return z.info + 6 + z.opt + 6 + z.midi + z.gap + z.map + z.gap + 2 * z.zoomBtn + z.zoomLbl
+                                                   + z.gap + z.add + z.gap + 4 * z.viewBtn; };
+    const Sizes* sz = &variants[2];
+    for (const auto& v : variants)
+        if (bar.getWidth() - leftWidth (v) - rightWidth (v) >= 300) { sz = &v; break; }
+
     logo.setBounds (bar.getX() + 6, 2, 184, 30);
     bar.removeFromLeft (192);
-    presetButton.setBounds (bar.removeFromLeft (wide ? 240 : 156).reduced (0, 3));
-    bar.removeFromLeft (wide ? 10 : 6);
-    realButton->setBounds (bar.removeFromLeft (wide ? 118 : 96).reduced (0, 3));
-    bar.removeFromLeft (wide ? 10 : 6);
+    presetButton.setBounds (bar.removeFromLeft (sz->preset).reduced (0, 3));
+    bar.removeFromLeft (sz->gap);
+    realButton->setBounds (bar.removeFromLeft (sz->real).reduced (0, 3));
+    bar.removeFromLeft (sz->gap);
 
-    const int gap = wide ? 10 : 6;
-    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 290, wide ? 610 : 530));
-    infoButton.setBounds (right.removeFromRight (60).reduced (0, 3));
+    const int gap = sz->gap;
+    auto right = bar.removeFromRight (juce::jmin (bar.getWidth() - 140, rightWidth (*sz)));
+    infoButton.setBounds (right.removeFromRight (sz->info).reduced (0, 3));
     right.removeFromRight (6);
-    optionsButton->setBounds (right.removeFromRight (36).reduced (0, 3));
+    optionsButton->setBounds (right.removeFromRight (sz->opt).reduced (0, 3));
     right.removeFromRight (6);
-    midiButton.setBounds (right.removeFromRight (wide ? 54 : 46).reduced (0, 3));
+    midiButton.setBounds (right.removeFromRight (sz->midi).reduced (0, 3));
     right.removeFromRight (gap);
-    zoomIn.setBounds (right.removeFromRight (30).reduced (0, 3));
-    zoomLabel.setBounds (right.removeFromRight (wide ? 90 : 64));
-    zoomOut.setBounds (right.removeFromRight (30).reduced (0, 3));
+    routingButton->setBounds (right.removeFromRight (sz->map).reduced (0, 3));
     right.removeFromRight (gap);
-    addButton.setBounds (right.removeFromRight (wide ? 96 : 80).reduced (0, 3));
+    zoomIn.setBounds (right.removeFromRight (sz->zoomBtn).reduced (0, 3));
+    zoomLabel.setBounds (right.removeFromRight (sz->zoomLbl));
+    zoomOut.setBounds (right.removeFromRight (sz->zoomBtn).reduced (0, 3));
     right.removeFromRight (gap);
-    for (int i = 3; i >= 0; --i) viewButtons[i].setBounds (right.removeFromRight (34).reduced (1, 3));
+    addButton.setBounds (right.removeFromRight (sz->add).reduced (0, 3));
+    right.removeFromRight (gap);
+    for (int i = 3; i >= 0; --i) viewButtons[i].setBounds (right.removeFromRight (sz->viewBtn).reduced (1, 3));
 
     bar.removeFromRight (6);
     firstButton.setBounds (bar.removeFromLeft (36).reduced (0, 3));
@@ -287,6 +335,7 @@ void PedalTrinityEditor::resized()
     if (infoPanel) infoPanel->setBounds (getLocalBounds());
     if (optionsPanel) optionsPanel->setBounds (getLocalBounds());
     if (midiPanel) midiPanel->setBounds (getLocalBounds());
+    if (routing) routing->setBounds (getLocalBounds());
     if (learnBar) learnBar->setBounds (rackArea().removeFromTop (44).reduced (60, 0));
     saveUiState();
 }
@@ -449,7 +498,12 @@ void PedalTrinityEditor::showZoom (int slotIndex)
     const juce::Component::SafePointer<PedalTrinityEditor> safeThis (this);
     zoomPanel->onClose = [safeThis]
     {
-        juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->zoomPanel.reset(); });
+        juce::MessageManager::callAsync ([safeThis]
+        {
+            if (safeThis == nullptr) return;
+            safeThis->zoomPanel.reset();
+            if (safeThis->routing != nullptr) safeThis->routing->grabKeyboardFocus();     // si torna alla mappa (Esc la chiude)
+        });
     };
     zoomPanel->setBounds (getLocalBounds());
     addAndMakeVisible (*zoomPanel);
@@ -521,4 +575,24 @@ void PedalTrinityEditor::showOptions (bool shouldShow)
     optionsPanel->setBounds (getLocalBounds());
     addAndMakeVisible (*optionsPanel);
     optionsPanel->grabKeyboardFocus();
+}
+
+void PedalTrinityEditor::showRouting (bool shouldShow)
+{
+    if (! shouldShow) { routing.reset(); return; }
+    routing = std::make_unique<pt::ui::RoutingMap> (processor.chain, processor.routeLayout);
+    const juce::Component::SafePointer<PedalTrinityEditor> safeThis (this);
+    routing->onClose = [safeThis]
+    {
+        juce::MessageManager::callAsync ([safeThis] { if (safeThis != nullptr) safeThis->showRouting (false); });
+    };
+    // doppio clic su un pedale: lo zoom si apre sopra la mappa (chiudendolo si torna alla mappa)
+    routing->onZoom = [safeThis] (int slot)
+    {
+        juce::MessageManager::callAsync ([safeThis, slot] { if (safeThis != nullptr) safeThis->showZoom (slot); });
+    };
+    routing->setBounds (getLocalBounds());
+    addAndMakeVisible (*routing);
+    if (learnBar != nullptr) learnBar->toFront (false);
+    routing->grabKeyboardFocus();
 }
