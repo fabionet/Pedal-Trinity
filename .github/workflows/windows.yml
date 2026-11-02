@@ -1,0 +1,102 @@
+# Pedal Trinity - build Windows (VST3 + LV2 + Standalone con driver ASIO) e installer
+name: Windows build
+
+on:
+  push:
+    branches: [main-windows]
+    tags: ["v*-windows"]
+  pull_request:
+    branches: [main-windows]
+  workflow_dispatch:
+
+# permessi minimi: solo il job di release puo' scrivere (azioni fissate per SHA del commit)
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Steinberg ASIO SDK (GPLv3)
+        shell: pwsh
+        env:
+          ASIO_SDK_URL: https://download.steinberg.net/sdk_downloads/ASIO-SDK_2.3.4_2025-10-15.zip
+          ASIO_SDK_SHA256: d5ebf0c20dd2c5f43771fd0c1418f4b361bf52434ee670097cfa6b3a335e2eca
+        run: |
+          Invoke-WebRequest -Uri $env:ASIO_SDK_URL -OutFile asiosdk.zip
+          $hash = (Get-FileHash asiosdk.zip -Algorithm SHA256).Hash.ToLower()
+          if ($hash -ne $env:ASIO_SDK_SHA256) { Write-Error "ASIO SDK: SHA-256 inatteso ($hash)"; exit 1 }
+          Expand-Archive asiosdk.zip -DestinationPath asiosdk_raw
+          $hdr = Get-ChildItem -Recurse asiosdk_raw -Filter iasiodrv.h | Select-Object -First 1
+          $sdk = $hdr.Directory.Parent.FullName
+          Write-Host "ASIO SDK: $sdk"
+          Get-ChildItem $sdk
+          "ASIO_SDK=$sdk" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Configura (JUCE 7.0.12, MSVC x64)
+        run: cmake -B build -G "Visual Studio 17 2022" -A x64 -DPT_ASIO_SDK_DIR="${{ env.ASIO_SDK }}"
+
+      - name: Compila
+        run: cmake --build build --config Release --parallel
+
+      - name: Autotest DSP
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath "build\PedalTrinity_artefacts\Release\Standalone\Pedal Trinity.exe" `
+                             -ArgumentList "--selftest" -Wait -PassThru `
+                             -RedirectStandardOutput "selftest.log" -RedirectStandardError "selftest.err"
+          Write-Host "Codice di uscita autotest: $($p.ExitCode)"
+          if (Test-Path "selftest.log") {
+            Select-String -Path "selftest.log" -Pattern "FALLITO" | ForEach-Object { Write-Host $_.Line }
+            Get-Content "selftest.log" -Tail 3
+          }
+          if ($p.ExitCode -ne 0) { exit 1 }
+
+      - name: Installer (Inno Setup)
+        shell: pwsh
+        run: |
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
+            choco install innosetup -y --no-progress
+          }
+          $iscc = (Get-Command iscc -ErrorAction SilentlyContinue).Source
+          if (-not $iscc) { $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" }
+          & $iscc packaging\windows\PedalTrinity.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Archivio portabile
+        shell: pwsh
+        run: |
+          $dst = "portable\Pedal Trinity"
+          New-Item -ItemType Directory -Force $dst | Out-Null
+          Copy-Item -Recurse "build\PedalTrinity_artefacts\Release\VST3\Pedal Trinity.vst3" $dst
+          Copy-Item -Recurse "build\PedalTrinity_artefacts\Release\LV2\Pedal Trinity.lv2" $dst
+          Copy-Item "build\PedalTrinity_artefacts\Release\Standalone\Pedal Trinity.exe" $dst
+          Copy-Item docs\PedalTrinity_Guida.pdf, LICENSE, README.md $dst
+          Compress-Archive -Path "portable\Pedal Trinity" -DestinationPath "dist\PedalTrinity-1.4.0-beta-Windows-x64.zip"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a   # v7.0.1
+        with:
+          name: PedalTrinity-Windows
+          path: dist/*
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c   # v8.0.1
+        with:
+          name: PedalTrinity-Windows
+          path: dist
+
+      - name: Pubblica release
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64   # v3.0.3
+        with:
+          prerelease: true
+          files: dist/*
